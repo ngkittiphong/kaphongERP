@@ -11,13 +11,18 @@ Route::get('/user/login', function () {
 });
 
 Route::get('/user/signin', [UserController::class, 'LogIn']);
-Route::post('/user/signin_process', [UserController::class, 'signInProcess']);
+Route::post('/user/signin_process', [UserController::class, 'signinProcess']);
+Route::get('/user/signOut', [UserController::class, 'signOut'])->middleware(EnsureTokenIsValid::class);
+
+
 Route::get('/user/register', [UserController::class, 'Register']);
 Route::post('/user/user_create', [UserController::class, 'createUserProcess']);
 
+Route::get('/menu/menu_user', function () {
+    return view('menu_user');
+});
 
 
-//Route::get('/user/signOut', [UserController::class, 'signOut'])->middleware(EnsureTokenIsValid::class);
 //Route::get('/user/info', [UserController::class, 'info'])->middleware(EnsureTokenIsValid::class);
 
 //Route::get('/user/list', [UserController::class, 'list']);

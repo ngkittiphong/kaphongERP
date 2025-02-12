@@ -17,7 +17,7 @@
             <ul class="left-branding pull-left">
                 <li><span class="left-toggle-switch visible-handheld"><i class="icon-menu7"></i></span></li>
                 <li>
-                    <a href="index.htm"><div class="logo"></div></a>
+                    <a href="/"><div class="logo"></div></a>
                 </li>
             </ul>				
         </div>
@@ -73,23 +73,23 @@
                             <div class="media-container">											
                                 <ul class="clearfix">
                                     <li class="clearfix">
-                                        <a href="index.htm#" class="media-thumb"><img src="assets/images/faces/face1.png" alt="image">
+                                        <a href="index.htm#" class="media-thumb"><img src="{{ asset('assets/images/faces/face1.png') }}" alt="image">
                                         </a><a href="index.htm#" class="media-title"><strong>Jane Elliott </strong>Sed ut perspiciatis... <span class="media-time">today at 18:20 pm</span></a>
                                     </li>
                                     <li class="clearfix">
-                                        <a href="index.htm#" class="media-thumb"><img src="assets/images/faces/face2.png" alt="image">
+                                        <a href="index.htm#" class="media-thumb"><img src="{{ asset('assets/images/faces/face2.png') }}" alt="image">
                                         </a><a href="index.htm#" class="media-title"><strong>Florence Douglas </strong>Nemo enim... <span class="media-time">today at 10:29 am</span></a>
                                     </li>
                                     <li class="clearfix">
-                                        <a href="index.htm#" class="media-thumb"><img src="assets/images/faces/face3.png" alt="image">
+                                        <a href="index.htm#" class="media-thumb"><img src="{{ asset('assets/images/faces/face3.png') }}" alt="image">
                                         </a><a href="index.htm#" class="media-title"><strong>Jacqueline Howell </strong>Neque porro... <span class="media-time">yesterday at 13:23 pm</span></a>
                                     </li>
                                     <li class="clearfix">
-                                        <a href="index.htm#" class="media-thumb"><img src="assets/images/faces/face4.png" alt="image">
+                                        <a href="index.htm#" class="media-thumb"><img src="{{ asset('assets/images/faces/face4.png') }}" alt="image">
                                         </a><a href="index.htm#" class="media-title"><strong>Eugine Turner </strong>Ut enim ad minima... <span class="media-time">yesterday at 14:40 pm</span></a>
                                     </li>
                                     <li class="clearfix">
-                                        <a href="index.htm#" class="media-thumb"><img src="assets/images/faces/face5.png" alt="image">
+                                        <a href="index.htm#" class="media-thumb"><img src="{{ asset('assets/images/faces/face5.png') }}" alt="image">
                                         </a><a href="index.htm#" class="media-title"><strong>Andrew Brewer </strong>Quis autem vel... <span class="media-time">1 month ago</span></a>
                                     </li>
                                     <li class="clearfix">
@@ -104,10 +104,10 @@
                 </li>
                 <li><a href="index.htm#" class="right-toggle-switch"><i class="icon-bubbles5"></i></a></li>
                 <li class="dropdown user-dropdown">
-                    <a href="index.htm#" class="btn-user dropdown-toggle hidden-xs" data-toggle="dropdown"><img src="assets/images/faces/face1.png" class="img-circle user" alt=""/></a>
+                    <a href="index.htm#" class="btn-user dropdown-toggle hidden-xs" data-toggle="dropdown"><img src="{{ asset('assets/images/faces/face1.png') }}" class="img-circle user" alt=""/></a>
                     <a href="index.htm#" class="dropdown-toggle visible-xs" data-toggle="dropdown"><i class="icon-more"></i></a>
                     <div class="dropdown-menu">	
-                        <div class="text-center"><img src="assets/images/faces/face1.png" class="img-circle img-70" alt=""/></div>
+                        <div class="text-center"><img src="{{ asset('assets/images/faces/face1.png') }}" class="img-circle img-70" alt=""/></div>
                         <h5 class="text-center"><b>Hi! Jane Elliott</b></h5>
                         <ul class="more-apps">
                             <li><a href="http://localhost/templates/penguin/material/user_profile_social.html"><i class="icon-profile"></i> My profile</a></li>

@@ -2,47 +2,74 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
+        'profile_id',
+        'user_status_id',
+        'user_type_id',
+        'request_change_pass',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    // 🔹 Relationship: One User has One Profile
+    public function profile()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasOne(UserProfile::class, 'user_id');
+    }
+
+    // 🔹 Relationship: One User has One Status
+    public function status()
+    {
+        return $this->belongsTo(UserStatus::class, 'user_status_id');
+    }
+
+    // 🔹 Relationship: One User has One Type
+    public function type()
+    {
+        return $this->belongsTo(UserType::class, 'user_type_id');
+    }
+
+    // 🔹 Role Checking Methods
+    public function isAdmin()
+    {
+        return $this->type->name === 'Admin';
+    }
+
+    public function isUser()
+    {
+        return $this->type->name === 'User';
+    }
+
+    // 🔹 Scope to Fetch Active Users
+    public function scopeActive($query)
+    {
+        return $query->whereHas('status', function ($q) {
+            $q->where('name', 'Active');
+        });
+    }
+
+    // 🔹 Mutator for Password Hashing
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = bcrypt($value);
     }
 }

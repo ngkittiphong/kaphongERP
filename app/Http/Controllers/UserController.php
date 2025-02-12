@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class UserController
 {  
@@ -13,36 +16,79 @@ class UserController
         return view('user.login');
     }
 
-    public function signInProcess(Request $request) {
-        $validator = Validator::make($request->all(), [
+    // public function signInProcess(Request $request) {
+    //     $validator = Validator::make($request->all(), [
+    //         'email' => 'required|email',
+    //         'password' => 'required',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return redirect('/user/login')
+    //             ->withErrors($validator)
+    //             ->withInput();
+    //     }
+
+    //     $user = DB::table('users')
+    //         ->select('id')
+    //         ->where('email', $request->email)
+    //         ->where('password', $request->password)
+    //         ->first();
+
+    //     if (isset($user)) {
+    //         session(['user_id' => $user->id]);
+            
+    //         return redirect('/');
+    //     } else {
+    //         return redirect('/user/login')
+    //             ->withErrors(['search' => 'Invalid email or password'])
+    //             ->withInput();
+    //     }
+    // }
+
+    /**
+     * Handle user sign-in process.
+     */
+    public function signinProcess(Request $request)
+    {
+        // Validate the input data
+        $request->validate([
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required|min:6',
         ]);
 
-        if ($validator->fails()) {
-            return redirect('/user/login')
-                ->withErrors($validator)
-                ->withInput();
-        }
+        // Attempt to log in the user
+        $credentials = $request->only('email', 'password');
 
-        $user = DB::table('users')
-            ->select('id')
-            ->where('email', $request->email)
-            ->where('password', $request->password)
-            ->first();
+        if (Auth::attempt($credentials)) {
+            // Authentication passed
+            $request->session()->regenerate();
 
-        if (isset($user)) {
-            session(['user_id' => $user->id]);
-            
             return redirect('/');
-        } else {
-            return redirect('/user/login')
-                ->withErrors(['search' => 'Invalid email or password'])
-                ->withInput();
+            
+            // return response()->json([
+            //     'message' => 'Login successful',
+            //     'user' => Auth::user(),
+            // ], 200);
         }
+
+        // Authentication failed
+        return redirect('/user/login')
+            ->withErrors(['search' => 'Invalid email or password'])
+            ->withInput();
+        // return response()->json([
+        //     'message' => 'Invalid email or password',
+        // ], 401);
     }
 
+    public function signOut(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/user/login');
+    }
 
+//****************************************************************************************** */
     public function Register() {
         return view('user.register');
     }
@@ -137,10 +183,12 @@ class UserController
     }
 
 
-    public function signOut() {
-        session()->forget('user_id');
-        return redirect('/user/login');
-    }
+    // public function signOut() {
+    //     session()->forget('user_id');
+    //     return redirect('/user/login');
+    // }
+
+
 
     public function info() {
         $user_id = session('user_id');

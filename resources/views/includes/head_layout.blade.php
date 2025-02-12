@@ -29,7 +29,6 @@
 	<link type="text/css" rel="stylesheet" href="{{ asset('css/loaders.css') }}">
 	<link type="text/css" rel="stylesheet" href="{{ asset('css/responsive.css') }}">
 	<link type="text/css" rel="stylesheet" href="{{ asset('css/fancybox/jquery.fancybox.css') }}">
-	<link type="text/css" rel="stylesheet" href="{{ asset('index.htm#') }}" id="theme">
 	@endunless
 	<!-- /global stylesheets -->
 
@@ -38,4 +37,5 @@
 	<link href="{{ asset('assets/icons/weather/weather-icons-wind.min.css') }}" rel="stylesheet" type="text/css">
 	<!-- /page css -->
 
+	@livewireStyles
 </head>

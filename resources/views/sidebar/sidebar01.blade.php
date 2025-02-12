@@ -9,7 +9,7 @@
             </ul>
         </li>
         <li class="list-title">User Management</li>	
-        <li><a href="tables_responsive.htm"><i class="icon-users2"></i> <span>Users list</span></a></li>
+        <li><a href="/menu/menu_user"><i class="icon-users2"></i> <span>Users list</span></a></li>
 
 
         <li class="list-title">Sell</li>	
@@ -72,7 +72,7 @@
     <div class="row">
         <div class="col-md-12 col-sm-12">
             <div class="text-center">
-                <img src="assets/images/faces/face7.png" class="img-responsive img-circle user-avatar" alt=""/>
+                <img src="{{ asset('assets/images/faces/face7.png') }}" class="img-responsive img-circle user-avatar" alt=""/>
                 <h4 class="no-margin-bottom m-t-10">Hi! Ann Porter</h4>
                 <div class="text-light text-size-small text-white">Company Secretary</div>							
             </div>
@@ -110,7 +110,7 @@
             <div class="leftbar-heading text-semibold m-b-15">FRIENDS ONLINE</div>
             <ul class="media-list">
                 <li class="media">
-                    <a href="index2.htm#" class="media-left"><img src="assets/images/faces/face5.png" class="img-sm img-circle" alt=""></a>
+                    <a href="index2.htm#" class="media-left"><img src="{{ asset('assets/images/faces/face5.png') }}" class="img-sm img-circle" alt=""></a>
                     <div class="media-body">
                         <a href="index2.htm#" class="media-heading">Florence Douglas</a>
                         <span class="text-size-mini text-muted display-block">Online</span>
@@ -121,7 +121,7 @@
                 </li>
 
                 <li class="media">
-                    <a href="index2.htm#" class="media-left"><img src="assets/images/faces/face6.png" class="img-sm img-circle" alt=""></a>
+                    <a href="index2.htm#" class="media-left"><img src="{{ asset('assets/images/faces/face6.png') }}" class="img-sm img-circle" alt=""></a>
                     <div class="media-body">
                         <a href="index2.htm#" class="media-heading">Eugine Turner</a>
                         <span class="text-size-mini text-muted display-block">Busy</span>
@@ -132,7 +132,7 @@
                 </li>
 
                 <li class="media">
-                    <a href="index2.htm#" class="media-left"><img src="assets/images/faces/face7.png" class="img-sm img-circle" alt=""></a>
+                    <a href="index2.htm#" class="media-left"><img src="{{ asset('assets/images/faces/face7.png') }}" class="img-sm img-circle" alt=""></a>
                     <div class="media-body">
                         <a href="index2.htm#" class="media-heading">Jacqueline Howell</a>
                         <span class="text-size-mini text-muted display-block">Online</span>
@@ -143,7 +143,7 @@
                 </li>
 
                 <li class="media">
-                    <a href="index2.htm#" class="media-left"><img src="assets/images/faces/face8.png" class="img-sm img-circle" alt=""></a>
+                    <a href="index2.htm#" class="media-left"><img src="{{ asset('assets/images/faces/face8.png') }}" class="img-sm img-circle" alt=""></a>
                     <div class="media-body">
                         <a href="index2.htm#" class="media-heading">Marilyn Romero</a>
                         <span class="text-size-mini text-muted display-block">Away</span>
@@ -154,7 +154,7 @@
                 </li>
 
                 <li class="media">
-                    <a href="index2.htm#" class="media-left"><img src="assets/images/faces/face9.png" class="img-sm img-circle" alt=""></a>
+                    <a href="index2.htm#" class="media-left"><img src="{{ asset('assets/images/faces/face9.png') }}" class="img-sm img-circle" alt=""></a>
                     <div class="media-body">
                         <a href="index2.htm#" class="media-heading">Andrew Brewer</a>
                         <span class="text-size-mini text-muted display-block">Invisible</span>

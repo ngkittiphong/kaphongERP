@@ -9,6 +9,7 @@
 	@yield('content')
 	@show
 
+	@livewireScripts
 </body>
 
 @include('includes.global_scripts')
