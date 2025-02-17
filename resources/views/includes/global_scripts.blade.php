@@ -5,7 +5,9 @@
 
 {{-- If a child view defines this section, skip global script --}}
 @unless (View::hasSection('skip_global_script'))
-<script src="{{ asset('js/jquery.ui.js') }}"></script>
+
+{{-- <script src="{{ asset('js/jquery.ui.js') }}"></script> --}}
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script src="{{ asset('js/nav.accordion.js') }}"></script>
 <script src="{{ asset('js/hammerjs.js') }}"></script>
 <script src="{{ asset('js/jquery.hammer.js') }}"></script>
