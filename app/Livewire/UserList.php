@@ -9,6 +9,7 @@ class UserList extends Component
 {
     public $users;
     public $selectedUserId;
+    public $search = ''; // 🔹 Store search input
 
     protected $listeners = [
         'userSelected' => 'selectUser',
@@ -18,7 +19,28 @@ class UserList extends Component
 
     public function mount()
     {
-        $this->users = User::all();
+        \Log::info("UserList Component Mounted");
+        $this->refreshUsers();
+    }
+
+    public function updatedSearch()
+    {
+        $this->refreshUsers(); // 🔹 Trigger filtering when search updates
+    }
+
+    public function searchUsers()
+    {
+        \Log::info("Search Triggered: " . $this->search);
+        $this->refreshUsers();
+    }
+
+    public function refreshUsers()
+    {
+        \Log::info("Refreshing User List with search: {$this->search}");
+        $this->users = User::where('username', 'like', "%{$this->search}%")
+            ->orWhere('email', 'like', "%{$this->search}%")
+            ->orderBy('username')
+            ->get();
     }
 
     public function selectUser($userId)
@@ -26,11 +48,6 @@ class UserList extends Component
         \Log::info("selectUser");
         $this->selectedUserId = $userId;
         $this->dispatch('ProfileSelected', userId: $userId);
-    }
-
-    public function refreshUsers()
-    {
-        $this->users = User::all();
     }
 
     public function render()
