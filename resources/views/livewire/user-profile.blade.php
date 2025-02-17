@@ -1,51 +1,55 @@
 <!-- resources/views/livewire/user-profile.blade.php -->
 <div wire:ignore.self>
     <div class="row p-l-10 p-r-10">
+        <div wire:loading class="text-center p-3">
+            <i class="icon-spinner2 spinner"></i> Loading profile...
+        </div>
+
         @if($showAddUsetForm)
             <div class="card p-4">
                 <h4>Add New User</h4>
-			<!-- Simple login form -->
-			<form wire:submit.prevent="saveUser">
-				@csrf
-				<div class="panel panel-body login-form border-left border-left-lg border-left-success">							
-					<div class="text-center m-b-20">
-						<div class="icon-object bg-success"><i class="icon-user"></i></div>
-						<h5>Create new account</h5>
-						
-					</div>
+            <!-- Simple login form -->
+            <form wire:submit.prevent="saveUser">
+                @csrf
+                <div class="panel panel-body login-form border-left border-left-lg border-left-success">							
+                    <div class="text-center m-b-20">
+                        <div class="icon-object bg-success"><i class="icon-user"></i></div>
+                        <h5>Create new account</h5>
+                        
+                    </div>
 
-					<div class="form-group has-feedback has-feedback-left">
-						<input type="text" class="form-control" wire:model="username" placeholder="username" name="username" required="required">
-						<div class="form-control-feedback">
-							<i class="icon-user text-muted"></i>
-						</div>
-						@error('username') <span class="text-danger">{{ $message }}</span> @enderror
-					</div>
-					
-					<div class="form-group has-feedback has-feedback-left">
-						<input type="email" class="form-control" wire:model="email" placeholder="Email" name="email" required="required">
-						<div class="form-control-feedback">
-							<i class="icon-envelope text-muted"></i>
-						</div>
-						@error('email') <span class="text-danger">{{ $message }}</span> @enderror
-					</div>
+                    <div class="form-group has-feedback has-feedback-left">
+                        <input type="text" class="form-control" wire:model="username" placeholder="username" name="username" required="required">
+                        <div class="form-control-feedback">
+                            <i class="icon-user text-muted"></i>
+                        </div>
+                        @error('username') <span class="text-danger">{{ $message }}</span> @enderror
+                    </div>
+                    
+                    <div class="form-group has-feedback has-feedback-left">
+                        <input type="email" class="form-control" wire:model="email" placeholder="Email" name="email" required="required">
+                        <div class="form-control-feedback">
+                            <i class="icon-envelope text-muted"></i>
+                        </div>
+                        @error('email') <span class="text-danger">{{ $message }}</span> @enderror
+                    </div>
 
-					<div class="form-group has-feedback has-feedback-left" >
-						<input type="password" class="form-control" wire:model="password" placeholder="Password" name="password" required="required">
-						<div class="form-control-feedback">
-							<i class="icon-lock text-muted"></i>
-						</div>
-						@error('password') <span class="text-danger">{{ $message }}</span> @enderror
-					</div>
-					
-					<div class="form-group has-feedback has-feedback-left">
-						<input type="password" class="form-control" wire:model="password_confirmation" placeholder="Confirm password" name="confirm" required="required">
-						<div class="form-control-feedback">
-							<i class="icon-lock text-muted"></i>
-						</div>
-					</div>
+                    <div class="form-group has-feedback has-feedback-left" >
+                        <input type="password" class="form-control" wire:model="password" placeholder="Password" name="password" required="required">
+                        <div class="form-control-feedback">
+                            <i class="icon-lock text-muted"></i>
+                        </div>
+                        @error('password') <span class="text-danger">{{ $message }}</span> @enderror
+                    </div>
+                    
+                    <div class="form-group has-feedback has-feedback-left">
+                        <input type="password" class="form-control" wire:model="password_confirmation" placeholder="Confirm password" name="confirm" required="required">
+                        <div class="form-control-feedback">
+                            <i class="icon-lock text-muted"></i>
+                        </div>
+                    </div>
 
-					<!-- User Type Dropdown -->
+                    <!-- User Type Dropdown -->
                     <div class="form-group">
                         <label>User Type:</label>
                         <select class="form-control" wire:model="user_type_id">
@@ -69,13 +73,13 @@
                         @error('user_status_id') <span class="text-danger">{{ $message }}</span> @enderror
                     </div>
 
-					<div class="form-group">
-						<button type="submit" class="btn btn-success btn-labeled btn-labeled-right btn-block"><b><i class="icon-user-plus"></i></b> Register now</button>								
-					</div>
-				</div>
-				
-			</form>
-			<!-- /simple login form -->
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success btn-labeled btn-labeled-right btn-block"><b><i class="icon-user-plus"></i></b> Register now</button>								
+                    </div>
+                </div>
+                
+            </form>
+            <!-- /simple login form -->
             </div>
         @elseif($user && $user->profile && $showEditProfileForm==false)
         <div class="col-md-4 col-xs-12">
