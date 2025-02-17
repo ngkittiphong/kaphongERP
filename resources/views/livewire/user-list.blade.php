@@ -20,7 +20,7 @@
         @foreach ($users as $user)
         {{-- <li class="media"> --}}
         <li class="p-2 cursor-pointer hover:bg-blue-100 {{ $selectedUserId == $user->id ? 'bg-blue-200' : '' }}"
-            wire:click="selectUser({{ $user->id }})">
+            wire:click="$dispatch('ProfileSelected', { userId: {{ $user->id }} })">
             <div class="media-link">
                 <div class="media-left"><img src="{{ asset('assets/images/faces/face1.png') }}" class="img-circle" alt=""></div>
                 <div class="media-body">

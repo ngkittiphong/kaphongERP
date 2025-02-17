@@ -38,7 +38,7 @@ class UserProfile extends Component
 
     public function loadProfile($userId)
     {
-        \Log::info("loadProfile");
+        \Log::info("loadUserProfile");
         $this->showEditProfileForm = false;
         $this->user = User::with('profile')->find($userId) ?? null;
         if ($this->user && !$this->user->profile) {
@@ -55,7 +55,7 @@ class UserProfile extends Component
             $this->description = $this->user->profile->description;
         }
 
-        $this->dispatch('refreshComponent');
+        //$this->dispatch('refreshComponent');
         $this->showAddUsetForm = false; // Hide form when selecting an existing user
     }
 
