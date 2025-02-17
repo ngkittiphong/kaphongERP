@@ -8,20 +8,17 @@
                 <b><i class="icon-plus3"></i></b> Add new user
             </button>
         </div>
-    </div>
-
-        <!-- Search Input Field -->
-    <div class="row">
+        <div class="row">
         <input type="text" class="form-control input-lg"
             wire:model.debounce.100ms="search"
             wire:keydown.debounce.100ms="searchUsers"
             placeholder="Search user...">
-        <div class="form-control-feedback">
-            <i class="icon-search4"></i>
+                <div class="form-control-feedback">
+                    <i class="icon-search4"></i>
+                </div>
+            </div>
         </div>
     </div>
-
-
     <ul class="media-list media-list-linked p-b-5">
         @foreach ($users as $user)
         {{-- <li class="media"> --}}
