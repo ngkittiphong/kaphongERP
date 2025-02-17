@@ -1,10 +1,18 @@
 <!-- resources/views/livewire/user-list.blade.php -->
 <div id="contacts" style="display:inherit">
     <div class="p-l-15 p-r-15 p-t-15 m-b-20">
+        <div class="row">
         <div class="form-group has-feedback has-feedback-left">
+            <button type="button" class="btn btn-sm btn-success btn-labeled"
+                wire:click="$dispatch('showAddUserForm')">
+                <b><i class="icon-plus3"></i></b> Add new user
+            </button>
+        </div>
+        <div class="row">
             <input type="text" class="form-control input-lg" placeholder="Search user...">
-            <div class="form-control-feedback">
-                <i class="icon-search4"></i>
+                <div class="form-control-feedback">
+                    <i class="icon-search4"></i>
+                </div>
             </div>
         </div>
     </div>

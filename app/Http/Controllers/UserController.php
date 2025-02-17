@@ -88,6 +88,17 @@ class UserController
         return redirect('/user/login');
     }
 
+    public function store(UserRequest $request)
+    {
+        User::create([
+            'username' => $request->username,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        return redirect()->back()->with('success', 'User added successfully!');
+    }
+
 //****************************************************************************************** */
     public function Register() {
         return view('user.register');

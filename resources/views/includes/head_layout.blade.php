@@ -32,7 +32,7 @@
 	@endunless
 	<!-- /global stylesheets -->
 
-		<!-- Page css -->
+	<!-- Page css -->
 	<link href="{{ asset('assets/icons/weather/weather-icons.min.css') }}" rel="stylesheet" type="text/css">
 	<link href="{{ asset('assets/icons/weather/weather-icons-wind.min.css') }}" rel="stylesheet" type="text/css">
 	<!-- /page css -->

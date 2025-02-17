@@ -22,11 +22,15 @@
 <script src="{{ asset('js/core.js') }}"></script>
 <!-- /global scripts -->
 <!-- Page scripts -->
-<script src="https://www.google.com/jsapi"></script>
+{{-- <script src="https://www.google.com/jsapi"></script> --}}
+{{-- <script src="{{ asset('js/pages/dashboard_default.js') }}"></script> --}}
 <script src="{{ asset('js/maps/jvectormap/jvectormap.min.js') }}"></script>
 <script src="{{ asset('js/maps/jvectormap/map_files/world.js') }}"></script>
-<script src="{{ asset('js/pages/dashboard_default.js') }}"></script>
 <!-- /page scripts -->
+
+{{-- SweetAlert2 --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 @endunless
 
 <script>
@@ -42,3 +46,5 @@
 		});
 	});
 </script>
+
+@stack('scripts')

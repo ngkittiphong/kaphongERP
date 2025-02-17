@@ -10,7 +10,11 @@ class UserList extends Component
     public $users;
     public $selectedUserId;
 
-    protected $listeners = ['userSelected'];
+    protected $listeners = [
+        'userSelected' => 'selectUser',
+        'refreshUserList' => 'refreshUsers'
+    ];
+
 
     public function mount()
     {
@@ -19,8 +23,14 @@ class UserList extends Component
 
     public function selectUser($userId)
     {
+        \Log::info("selectUser");
         $this->selectedUserId = $userId;
-        $this->dispatch('userSelected', userId: $userId);
+        $this->dispatch('ProfileSelected', userId: $userId);
+    }
+
+    public function refreshUsers()
+    {
+        $this->users = User::all();
     }
 
     public function render()

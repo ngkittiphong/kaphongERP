@@ -10,6 +10,7 @@
 	@show
 
 	@livewireScripts
+	{{-- @livewire('livewire-ui-modal')	 --}}
 </body>
 
 @include('includes.global_scripts')
