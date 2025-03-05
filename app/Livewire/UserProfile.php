@@ -7,15 +7,18 @@ use App\Models\User;
 use App\Models\UserType;
 use App\Models\UserStatus;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\UserRequest;
+use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\UserController;
+use Illuminate\Http\Request;
+
 
 class UserProfile extends Component
 {
     public $user;
-    public $showAddUsetForm = false;
+    public $showAddUserForm = false;
     public $showEditProfileForm = false;
     public $username, $email, $password, $password_confirmation, $user_type_id, $user_status_id;
-    public $nickname, $id_no, $fullname_th, $fullname_en, $prefix_en, $prefix_th, $birth_date, $description;
+    public $nickname, $card_id_no, $fullname_th, $fullname_en, $prefix_en, $prefix_th, $birth_date, $description;
     public $avatar;
     public $userTypes = [];
     public $userStatuses = [];
@@ -46,7 +49,7 @@ class UserProfile extends Component
             $this->user->profile = null;
         }else{
             $this->nickname = $this->user->profile->nickname;
-            $this->id_no = $this->user->profile->id_no;
+            $this->card_id_no = $this->user->profile->card_id_no;
             $this->fullname_th = $this->user->profile->fullname_th;
             $this->fullname_en = $this->user->profile->fullname_en;
             $this->prefix_en = $this->user->profile->prefix_en;
@@ -56,13 +59,13 @@ class UserProfile extends Component
         }
 
         //$this->dispatch('refreshComponent');
-        $this->showAddUsetForm = false; // Hide form when selecting an existing user
+        $this->showAddUserForm = false; // Hide form when selecting an existing user
     }
 
     public function displayAddUserForm()
     {
         \Log::info("Livewire Event Received: showUserForm"); // Debugging log
-        $this->showAddUsetForm = true;
+        $this->showAddUserForm = true;
         $this->dispatch('refreshComponent');
         $this->user = null;
     }
@@ -74,72 +77,117 @@ class UserProfile extends Component
         $this->dispatch('refreshComponent');
     }
 
-    public function saveUser()
-    {
-        // Validate using UserRequest rules
-        $validated = $this->validate((new UserRequest())->rules());
+    public function saveUserAndProfile()
+    {   
 
-        User::create([
-            'username' => $this->username,  // Include username
-            'email' => $this->email,
-            'password' => Hash::make($this->password),
-            'user_type_id' => $this->user_type_id,
-            'user_status_id' => $this->user_status_id,
-        ]);
+        // Create a Request instance with the validated data
+        $request = new Request([
+                'username'             => $this->username,
+                'email'                => $this->email,
+                'password'             => $this->password,
+                'password_confirmation'=> $this->password_confirmation,
+                'user_type_id'         => $this->user_type_id,
+                'user_status_id'       => $this->user_status_id,
     
-        session()->flash('message', 'User added successfully!');
-        $this->dispatch('refreshUserList'); // Refresh list
-        $this->showAddUsetForm = false; // Hide form
+                // Profile fields
+                'nickname'             => $this->nickname,
+                'card_id_no'           => $this->card_id_no,
+                'fullname_th'          => $this->fullname_th,
+                'fullname_en'          => $this->fullname_en,
+                'prefix_en'            => $this->prefix_en,
+                'prefix_th'            => $this->prefix_th,
+                'birth_date'           => $this->birth_date,
+                'description'          => $this->description,
+                ]);
+
+        // Instantiate the controller and call its store method
+        $controller = new UserController();
+        $response = $controller->store($request);
+       
+        if ($response->status() === 201) {
+            session()->flash('message', 'User & Profile created successfully!');
+            \Log::info("✅ Profile created/updated successfully!");
+            $this->showAddUserForm = false;
+            $this->dispatch('userCreated', [
+                'message' => 'User create was successful!'
+            ]);
+            // Optionally refresh the user list
+            $this->dispatch('refreshUserList');
+            $this->dispatch('refreshComponent');
+            // Reset form fields
+            $this->resetForm();
+            
+        } else {
+            // Get error message from response
+            $errorData = json_decode($response->getContent(), true);
+            $errorMessage = $errorData['message'] ?? 'Failed to create user & profile.';
+            
+            // Add errors to form validation
+            if (isset($errorData['error'])) {
+                $this->addError('form', $errorMessage);
+                \Log::error("❌ Form validation error: " . $errorMessage);
+            } else {
+                session()->flash('error', $errorMessage);
+                \Log::error("❌ Failed to create user & profile: " . $errorMessage);
+            }
+        }
     }
 
-    public function saveUserProfile()
-    {
-        if (!$this->user) {
-            \Log::error("❌ User is null in saveUserProfile()");
-            session()->flash('error', 'User is not set. Please check and try again.');
-            return;
-        }
-
-        try {
-            // Ensure profile relationship exists before calling create()
-            if (!$this->user->profile) {
-                \Log::error("❌ Profile relationship is null for user ID: " . $this->user->id);
-                // Create profile for the user
-                $this->user->profile()->create([
-                    'nickname' => $this->nickname,
-                    'id_no' => $this->id_no, 
-                    'fullname_th' => $this->fullname_th,
-                    'fullname_en' => $this->fullname_en,
-                    'prefix_en' => $this->prefix_en,
-                    'prefix_th' => $this->prefix_th,
-                    'birth_date' => $this->birth_date,
-                    'description' => $this->description,
-                    'avatar' => $this->avatar,
+    public function updateUserAndProfile()
+    {   
+        // Create a Request instance with the validated data
+        $request = new Request([
+                'username'             => $this->username,
+                'email'                => $this->email,
+                'password'             => $this->password,
+                'password_confirmation'=> $this->password_confirmation,
+                'user_type_id'         => $this->user_type_id,
+                'user_status_id'       => $this->user_status_id,
+    
+                // Profile fields
+                'nickname'             => $this->nickname,
+                'card_id_no'           => $this->card_id_no,
+                'fullname_th'          => $this->fullname_th,
+                'fullname_en'          => $this->fullname_en,
+                'prefix_en'            => $this->prefix_en,
+                'prefix_th'            => $this->prefix_th,
+                'birth_date'           => $this->birth_date,
+                'description'          => $this->description,
                 ]);
+
+        // Instantiate the controller and call its update method
+        $controller = new UserController();
+        $response = $controller->update($request, $this->user->id);
+               
+        if ($response->status() === 200) {
+            session()->flash('message', 'User & Profile updated successfully!');
+            \Log::info("✅ Profile updated successfully!");
+            $this->showEditProfileForm = false;
+            $this->dispatch('refreshComponent');
+        } else {
+            // Get error message from response
+            $errorData = json_decode($response->getContent(), true);
+           //$errorMessage = $errorData['message'] ?? 'Failed to update user & profile.';
+            $errorMessage = $errorData['error'] ?? 'Failed to update user & profile.';
+            // Add errors to form validation
+            if (isset($errorData['error'])) {
+                $this->addError('form', $errorMessage);
+                \Log::error("❌ Form validation error: " . $errorMessage);
             } else {
-                // Update existing profile
-                $this->user->profile->update([
-                    'nickname' => $this->nickname,
-                    'id_no' => $this->id_no,
-                    'fullname_th' => $this->fullname_th, 
-                    'fullname_en' => $this->fullname_en,
-                    'prefix_en' => $this->prefix_en,
-                    'prefix_th' => $this->prefix_th,
-                    'birth_date' => $this->birth_date,
-                    'description' => $this->description,
-                    'avatar' => $this->avatar,
-                ]);
+                session()->flash('error', $errorMessage);
+                \Log::error("❌ Failed to update user & profile: " . $errorMessage);
             }
-        } catch (\Exception $e) {
-            \Log::error("Error creating/updating profile: " . $e->getMessage());
-            session()->flash('error', 'An error occurred while saving the profile. Please try again.');
-            return;
         }
+    }
 
-        session()->flash('message', 'Profile created successfully!');
-        \Log::info("✅ Profile created/updated successfully!");
-        $this->showEditProfileForm = false; // Hide form
-        $this->dispatch('refreshComponent'); // Refresh list
+    private function resetForm()
+    {
+        $this->reset([
+            'username','email','password','password_confirmation',
+            'user_type_id','user_status_id','nickname','card_id_no',
+            'fullname_th','fullname_en','prefix_en','prefix_th',
+            'birth_date','description'
+        ]);
     }
 
     public function deleteUser()

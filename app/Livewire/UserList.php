@@ -3,44 +3,37 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use App\Models\User;
 
 class UserList extends Component
 {
-    public $users;
+    use WithPagination; // 🔹 Required for Livewire pagination
+
+
     public $selectedUserId;
     public $search = ''; // 🔹 Store search input
 
     protected $listeners = [
         'userSelected' => 'selectUser',
-        'refreshUserList' => 'refreshUsers'
     ];
 
 
     public function mount()
     {
         \Log::info("UserList Component Mounted");
-        $this->refreshUsers();
     }
 
-    public function updatedSearch()
-    {
-        $this->refreshUsers(); // 🔹 Trigger filtering when search updates
-    }
+     // If you filter by search, reset to page 1 whenever search changes
+     public function updatingSearch()
+     {
+         $this->resetPage();
+     }
 
     public function searchUsers()
     {
         \Log::info("Search Triggered: " . $this->search);
-        $this->refreshUsers();
-    }
-
-    public function refreshUsers()
-    {
-        \Log::info("Refreshing User List with search: {$this->search}");
-        $this->users = User::where('username', 'like', "%{$this->search}%")
-            ->orWhere('email', 'like', "%{$this->search}%")
-            ->orderBy('username')
-            ->get();
+        $this->resetPage();
     }
 
     public function selectUser($userId)
@@ -52,6 +45,14 @@ class UserList extends Component
 
     public function render()
     {
-        return view('livewire.user-list');
+        // // 🔹 Query your users, 10 per page
+        $users = User::where('username', 'like', "%{$this->search}%")
+        ->orWhere('email', 'like', "%{$this->search}%")
+        ->orderBy('username')
+        ->paginate(10);
+        //$users = User::paginate(10);  
+
+        // Return the Blade view with paginated $users
+        return view('livewire.user-list', compact('users'));
     }
 }

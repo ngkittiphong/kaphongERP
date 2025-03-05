@@ -36,17 +36,38 @@
             </div>
         </li>
         @endforeach
+
+        <div class="pagination-info">
+            Showing {{ $users->firstItem() }} to {{ $users->lastItem() }} of {{ $users->total() }} entries
+            (Page {{ $users->currentPage() }} of {{ $users->lastPage() }})
+        </div>
+        <div class="pagination-links">
+            @if ($users->lastPage() > 1)
+                <div class="pagination">
+                    {{-- Previous Page Link --}}
+                    @if ($users->onFirstPage())
+                        <span class="disabled">&laquo;</span>
+                    @else
+                        <a href="{{ $users->previousPageUrl() }}" wire:click.prevent="previousPage" rel="prev">&laquo;</a>
+                    @endif
+
+                    {{-- Page Numbers --}}
+                    @foreach ($users->getUrlRange(max(1, $users->currentPage() - 3), min($users->lastPage(), $users->currentPage() + 3)) as $page => $url)
+                        @if ($page == $users->currentPage())
+                            <span class="current">{{ $page }}</span>
+                        @else
+                            <a href="{{ $url }}" wire:click.prevent="gotoPage({{ $page }})">{{ $page }}</a>
+                        @endif
+                    @endforeach
+
+                    {{-- Next Page Link --}}
+                    @if ($users->hasMorePages())
+                        <a href="{{ $users->nextPageUrl() }}" wire:click.prevent="nextPage" rel="next">&raquo;</a>
+                    @else
+                        <span class="disabled">&raquo;</span>
+                    @endif
+                </div>
+            @endif
+        </div>
     </ul>
 </div>
-
-{{-- <div class="w-1/4 border-r p-4">
-    <h2 class="text-blue-600 font-bold">Users</h2>
-    <ul>
-        @foreach ($users as $user)
-            <li class="p-2 cursor-pointer hover:bg-blue-100 {{ $selectedUserId == $user->id ? 'bg-blue-200' : '' }}"
-                wire:click="selectUser({{ $user->id }})">
-                {{ $user->email }}
-            </li>
-        @endforeach
-    </ul>
-</div> --}}

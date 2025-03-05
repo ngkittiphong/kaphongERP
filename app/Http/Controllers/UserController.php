@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-
+use App\Http\Requests\UserRequest;    
+use Illuminate\Http\Request;
 class UserController
 {  
     public function LogIn() {
@@ -88,126 +88,132 @@ class UserController
         return redirect('/user/login');
     }
 
-    public function store(UserRequest $request)
+    // public function store(UserRequest $request)
+    // {
+    //     User::create([
+    //         'username' => $request->username,
+    //         'email' => $request->email,
+    //         'password' => Hash::make($request->password),
+    //     ]);
+
+    //     return redirect()->back()->with('success', 'User added successfully!');
+    // }
+    public function store(Request $request)
     {
-        User::create([
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        // 1) Validation automatically runs here
+        //    If validation fails, it redirects back with errors
+        //$validated = $request->validated();
+        //$validated = $request->validate();
+        // $this->validate([
+        //     (new UserRequest())->rules()
+        //     // or just rely fully on the controller
+        // ]);
+        //$validator = Validator::make($request->all(), (new UserRequest())->rules());
 
-        return redirect()->back()->with('success', 'User added successfully!');
-    }
-
-//****************************************************************************************** */
-    public function Register() {
-        return view('user.register');
-    }
-
-    public function createUserProcess(Request $request) {
-
-        
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
+            'username' => 'required',
             'email' => 'required|email',
             'password' => 'required|min:6',
-            'confirm' => 'required|same:password'
+            'password_confirmation' => 'required|same:password'
         ]);
 
         if ($validator->fails()) {
-            return redirect('/user/register')
-                ->withErrors($validator)
-                ->withInput();
-        }
-        $existingUser = DB::table('users')
-            ->where('email', $request->email)
-            ->first();
-            
-        if ($existingUser) {
-            return redirect('/user/register')
-                ->withErrors(['email' => 'email already exists'])
-                ->withInput();
+            \Log::error("Validation failed: " . json_encode($validator->errors()));
+            return response()->json([
+                'message' => 'Validation failed. Please check your input.',
+                'error' => $validator->errors()
+            ], 422);
         }
 
-        DB::table('users')->insert([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $request->password,
-        ]);
-
-        return redirect('/users/list');
-    }
-
-
-
-    public function form() {
-        $id = null;
-        $name = null;
-        $email = null;
-        $password = null;
-
-        return view('users.form', compact('id', 'name', 'email', 'password'));  
-    }
-
-    public function list() {
-        $users = DB::table('users')
-            ->orderBy('id', 'desc')
-            ->get();
-
-        return view('users.list', compact('users'));
-    }    
-
-
-
-
-    public function edit($id) {
-        $user = DB::table('users')->where('id', $id)->first();
-
-        $id = null;
-        $name = null;
-        $email = null;
-        $password = null;
-
-        if (isset($user)) {
-            $id = $user->id;
-            $name = $user->name;
-            $email = $user->email;
-            $password = $user->password;
+        try {
+            // 2) Create the user
+            $user = User::create([
+                'username'       => $request->username,
+                'email'          => $request->email,
+                'password'       => Hash::make($request->password),
+                'user_type_id'   => $request->user_type_id,
+                'user_status_id' => $request->user_status_id,
+            ]);
+        } catch (\Exception $e) {
+            \Log::error("Error creating user: " . $e->getMessage());
+            return response()->json([
+                'message' => 'Error creating user',
+                'error' => $e->getMessage()
+            ], 500);
         }
 
-        return view('users.form', compact('id', 'name', 'email', 'password'));
+        try {
+            // 3) Create the profile
+            $user->profile()->create([
+                'nickname'       => $request->nickname       ?? '',
+                'card_id_no'     => $request->card_id_no     ?? '',
+                'fullname_th'    => $request->fullname_th    ?? '',
+                'fullname_en'    => $request->fullname_en    ?? '',
+                'prefix_en'      => $request->prefix_en      ?? '',
+                'prefix_th'      => $request->prefix_th      ?? '',
+                'birth_date'     => $request->birth_date     ?? null,
+                'description'    => $request->description    ?? '',
+            ]);
+        } catch (\Exception $e) {
+            \Log::error("Error creating user profile: " . $e->getMessage());
+            return response()->json([
+                'message' => 'Error creating user profile',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+        // 4) Return JSON or redirect
+        return response()->json([
+            'message' => 'User and profile created successfully!',
+            'user_id' => $user->id,
+        ], 201);
     }
 
-    public function update(Request $request, $id) {
-        DB::table('users')->where('id', $id)->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $request->password,
-        ]);
+    public function update(Request $request, $id)
+    {
+        // 1) Validation automatically runs here
+        //    If validation fails, it redirects back with errors
+        //$validated = $request->validated();
+        //$validated = $request->validate();
+        // $this->validate([
+        //     (new UserRequest())->rules()
+        //     // or just rely fully on the controller
+        // ]);
+        //$validator = Validator::make($request->all(), (new UserRequest())->rules());
 
-        return redirect('/userss/list');
-    }
+        try {
+            // 2) Find the user
+            $user = User::findOrFail($id);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error finding user',
+                'error' => $e->getMessage()
+            ], 404);
+        }
 
-    public function remove($id) {
-        DB::table('users')->where('id', $id)->delete();
-        return redirect('/users/list');
-    }
+        try {
+            // 3) Update the profile
+            $user->profile()->update([
+                'nickname'       => $request->nickname       ?? '',
+                'card_id_no'     => $request->card_id_no     ?? '',
+                'fullname_th'    => $request->fullname_th    ?? '',
+                'fullname_en'    => $request->fullname_en    ?? '',
+                'prefix_en'      => $request->prefix_en      ?? '',
+                'prefix_th'      => $request->prefix_th      ?? '',
+                'birth_date'     => $request->birth_date     ?? null,
+                'description'    => $request->description    ?? '',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error updating user profile',
+                'error' => $e->getMessage()
+            ], 500);
+        }
 
-
-    // public function signOut() {
-    //     session()->forget('user_id');
-    //     return redirect('/user/login');
-    // }
-
-
-
-    public function info() {
-        $user_id = session('user_id');
-        $user = DB::table('users')
-            ->select('id', 'name', 'email')
-            ->where('id', $user_id)
-            ->first();
-
-        return view('users.info', compact('user'));
+        // 4) Return JSON or redirect
+        return response()->json([
+            'message' => 'User and profile updated successfully!',
+            'user_id' => $user->id,
+        ], 200);
     }
 }

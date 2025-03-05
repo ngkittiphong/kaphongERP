@@ -1,25 +1,45 @@
 <!-- resources/views/livewire/user-profile.blade.php -->
-<div wire:ignore.self>
-    <div class="row p-l-10 p-r-10">
-        <div wire:loading class="text-center p-3">
-            <i class="icon-spinner2 spinner"></i> Loading profile...
+<div class="row p-l-10 p-r-10">
+    <!-- 1) Show Loading Spinner (centered) when busy -->
+    <div wire:loading.flex class="flex items-center justify-center w-full" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999;">
+        <div class="panel-body">
+            <div class="loader">
+                <div class="loader-inner ball-beat">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
+            </div>
         </div>
+    </div>
 
-        @if($showAddUsetForm)
-            <div class="card p-4">
-                <h4>Add New User</h4>
-            <!-- Simple login form -->
-            <form wire:submit.prevent="saveUser">
+    <!-- 2) Hide the Form While Loading -->
+    <div wire:loading.remove>
+        {{-- Show/Hide Add User Form based on showAddUserForm flag --}}
+        @if($showAddUserForm)
+        <div class="card p-4">
+            <h4>Add New User</h4>
+            <!-- Unified form -->
+            <form wire:submit.prevent="saveUserAndProfile">
                 @csrf
-                <div class="panel panel-body login-form border-left border-left-lg border-left-success">							
+                <div class="panel panel-body border-left border-left-lg border-left-success">							
                     <div class="text-center m-b-20">
-                        <div class="icon-object bg-success"><i class="icon-user"></i></div>
-                        <h5>Create new account</h5>
-                        
+                        <div class="icon-object bg-success">
+                            <i class="icon-user"></i>
+                        </div>
+                        <h5>Create new account (User + Profile)</h5>
                     </div>
+                    @if (session()->has('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
 
+                    <!-- User Fields -->
                     <div class="form-group has-feedback has-feedback-left">
-                        <input type="text" class="form-control" wire:model="username" placeholder="username" name="username" required="required">
+                        <input type="text" class="form-control"
+                               wire:model="username"
+                               placeholder="Username" required>
                         <div class="form-control-feedback">
                             <i class="icon-user text-muted"></i>
                         </div>
@@ -27,7 +47,9 @@
                     </div>
                     
                     <div class="form-group has-feedback has-feedback-left">
-                        <input type="email" class="form-control" wire:model="email" placeholder="Email" name="email" required="required">
+                        <input type="email" class="form-control"
+                               wire:model="email"
+                               placeholder="Email" required>
                         <div class="form-control-feedback">
                             <i class="icon-envelope text-muted"></i>
                         </div>
@@ -35,7 +57,9 @@
                     </div>
 
                     <div class="form-group has-feedback has-feedback-left" >
-                        <input type="password" class="form-control" wire:model="password" placeholder="Password" name="password" required="required">
+                        <input type="password" class="form-control"
+                               wire:model="password"
+                               placeholder="Password" required>
                         <div class="form-control-feedback">
                             <i class="icon-lock text-muted"></i>
                         </div>
@@ -43,13 +67,15 @@
                     </div>
                     
                     <div class="form-group has-feedback has-feedback-left">
-                        <input type="password" class="form-control" wire:model="password_confirmation" placeholder="Confirm password" name="confirm" required="required">
+                        <input type="password" class="form-control"
+                               wire:model="password_confirmation"
+                               placeholder="Confirm password" required>
                         <div class="form-control-feedback">
                             <i class="icon-lock text-muted"></i>
                         </div>
                     </div>
 
-                    <!-- User Type Dropdown -->
+                    <!-- User Type -->
                     <div class="form-group">
                         <label>User Type:</label>
                         <select class="form-control" wire:model="user_type_id">
@@ -61,9 +87,9 @@
                         @error('user_type_id') <span class="text-danger">{{ $message }}</span> @enderror
                     </div>
 
-                    <!-- User Type Dropdown -->
+                    <!-- User Status -->
                     <div class="form-group">
-                        <label>User Type:</label>
+                        <label>User Status:</label>
                         <select class="form-control" wire:model="user_status_id">
                             <option value="">-- Select User Status --</option>
                             @foreach($userStatuses as $status)
@@ -73,14 +99,77 @@
                         @error('user_status_id') <span class="text-danger">{{ $message }}</span> @enderror
                     </div>
 
+                    <!-- Profile Fields -->
+                    <hr>
+                    <h5>Profile Information</h5>
+
                     <div class="form-group">
-                        <button type="submit" class="btn btn-success btn-labeled btn-labeled-right btn-block"><b><i class="icon-user-plus"></i></b> Register now</button>								
+                        <label>Nickname</label>
+                        <input type="text" class="form-control"
+                               wire:model="nickname"
+                               placeholder="Nickname">
+                    </div>
+
+                    <div class="form-group">
+                        <label>ID Number</label>
+                        <input type="text" class="form-control"
+                               wire:model="card_id_no"
+                               placeholder="ID No">
+                    </div>
+
+                    <!-- Example: More Profile Fields -->
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Prefix (Thai)</label>
+                                <input type="text" class="form-control"
+                                       wire:model="prefix_th">
+                            </div>
+                        </div>
+                        <div class="col-md-10">
+                            <div class="form-group">
+                                <label>Full Name (Thai)</label>
+                                <input type="text" class="form-control"
+                                       wire:model="fullname_th">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Prefix (English)</label>
+                                <input type="text" class="form-control" wire:model="prefix_en" value="{{ $user->profile->prefix_en ?? '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-10">
+                            <div class="form-group">
+                                <label>Full Name (English)</label>
+                                <input type="text" class="form-control" wire:model="fullname_en" value="{{ $user->profile->fullname_en ?? '' }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Birth Date</label>
+                        <input type="date" class="form-control" wire:model="birth_date" value="{{ $user->profile->birth_date ?? '' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea class="form-control" wire:model="description" rows="3">{{ $user->profile->description ?? '' }}</textarea>
+                    </div>
+
+                    <!-- Additional profile fields... -->
+
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-success btn-labeled btn-block">
+                            <b><i class="icon-user-plus"></i></b> Register now
+                        </button>								
                     </div>
                 </div>
-                
             </form>
-            <!-- /simple login form -->
-            </div>
+        </div>
+        {{-- Show user profile if user exists, has profile and edit form is not shown --}}
         @elseif($user && $user->profile && $showEditProfileForm==false)
         <div class="col-md-4 col-xs-12">
             <div class="text-center">
@@ -104,7 +193,7 @@
                         <div>Full Name (EN): {{ $user->profile->prefix_en }} {{ $user->profile->fullname_en }}</div>
                         <div>Full Name (TH): {{ $user->profile->prefix_th }} {{ $user->profile->fullname_th }}</div>
                         <div>Nickname: {{ $user->profile->nickname }}</div>
-                        <div>ID Number: {{ $user->profile->id_no }}</div>
+                        <div>ID Number: {{ $user->profile->card_id_no }}</div>
 
                     </a>
                     <a href="people.htm#" class="list-group-item p-l-20">
@@ -117,6 +206,7 @@
                 </div>
             </div>
         </div>
+        {{-- Show edit profile form if showEditProfileForm is true and user exists --}}
         @elseif($showEditProfileForm && $user)
             <div class="col-md-12">
                 <div class="panel panel-flat">
@@ -124,7 +214,7 @@
                         <h5 class="panel-title">{{ $user->profile ? 'Edit Profile' : 'Add Profile' }}</h5>
                     </div>
                     <div class="panel-body">
-                        <form wire:submit.prevent="saveUserProfile">
+                        <form wire:submit.prevent="updateUserAndProfile">
                             <!-- Username (Read-only) -->
                             <div class="form-group has-feedback has-feedback-left">
                                 <input type="text" class="form-control" wire:model="username" placeholder="{{ $user->username }}" value="{{ $user->username }}" readonly>
@@ -155,7 +245,7 @@
         
                             <div class="form-group">
                                 <label>ID Number</label>
-                                <input type="text" class="form-control" wire:model="id_no" value="{{ $user->profile->id_no ?? '' }}">
+                                <input type="text" class="form-control" wire:model="card_id_no" value="{{ $user->profile->card_id_no ?? '' }}">
                             </div>
         
                             <div class="row">
@@ -205,6 +295,7 @@
                     </div>
                 </div>
             </div>
+        {{-- Show add profile form if user exists but profile is not created --}}
         @elseif($user && $user->profile==null)
             <div class="form-group has-feedback has-feedback-left">
                 <button type="button" class="btn btn-sm btn-success btn-labeled"
@@ -216,7 +307,6 @@
     </div>
 </div>
 
-<!-- Ensure JavaScript is properly loaded -->
 @push('scripts')
 <script>
     function confirmDelete(userId) {
@@ -235,38 +325,16 @@
         });
     }
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    Livewire.on('userCreated', data => {
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: data.message,
+        });
+    });
+</script>
 @endpush
-
-
-
-
-
-{{-- 
-
-<div class="w-3/4 p-6">
-    @if ($user)
-        <h2 class="text-xl font-bold">{{ $user->email }}</h2>
-        <div class="mt-4">
-            <label class="block">Fullname</label>
-            <input type="text" class="border rounded w-full p-2" value="{{ $user->profile->fullname_en }}" readonly>
-        </div>
-        <div class="mt-4">
-            <label class="block">Nickname</label>
-            <input type="text" class="border rounded w-full p-2" value="{{ $user->profile->nickname }}" readonly>
-        </div>
-        <div class="mt-4">
-            <label class="block">Description</label>
-            <input type="text" class="border rounded w-full p-2" value="{{ $user->profile->description }}" readonly>
-        </div>
-        <div class="mt-4">
-            <label class="block">Card ID No</label>
-            <input type="text" class="border rounded w-full p-2" value="{{ $user->profile->card_id_no }}" readonly>
-        </div>
-        <div class="flex space-x-4 mt-6">
-            <button class="bg-green-500 text-white px-4 py-2 rounded">Edit</button>
-            <button class="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
-        </div>
-    @else
-        <p>Select a user to view details</p>
-    @endif
-</div> --}}
