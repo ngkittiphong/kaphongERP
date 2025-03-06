@@ -66,44 +66,47 @@
             search: '',
             users: data.users || [],
             currentPage: 1,
-            perPage: 10, // Show 10 users per page
+            perPage: 10,
 
-            // 🔹 Filter users based on search
+            // 🔹 Split search text into multiple terms (OR condition)
             filteredUsers() {
-                if (!this.search) return this.users;
-                return this.users.filter(user =>
-                    user.username.toLowerCase().includes(this.search.toLowerCase()) ||
-                    user.email.toLowerCase().includes(this.search.toLowerCase())
-                );
+                let searchTerms = this.search.trim().toLowerCase().split(/\s+/); // Split by spaces
+                if (searchTerms.length === 0 || this.search === '') return this.users;
+
+                return this.users.filter(user => {
+                    let username = user.username.toLowerCase();
+                    let email = user.email.toLowerCase();
+
+                    // 🔹 Match ANY search term (OR logic)
+                    return searchTerms.some(term => 
+                        username.includes(term) || email.includes(term)
+                    );
+                });
             },
 
-            // 🔹 Paginate the filtered users
+            // 🔹 Paginate filtered users
             paginatedUsers() {
                 let start = (this.currentPage - 1) * this.perPage;
                 let end = start + this.perPage;
                 return this.filteredUsers().slice(start, end);
             },
 
-            // 🔹 Total pages calculation
             get totalPages() {
                 return Math.ceil(this.filteredUsers().length / this.perPage) || 1;
             },
 
-            // 🔹 Navigate to a specific page
             goToPage(page) {
                 if (page >= 1 && page <= this.totalPages) {
                     this.currentPage = page;
                 }
             },
 
-            // 🔹 Go to the previous page
             prevPage() {
                 if (this.currentPage > 1) {
                     this.currentPage--;
                 }
             },
 
-            // 🔹 Go to the next page
             nextPage() {
                 if (this.currentPage < this.totalPages) {
                     this.currentPage++;
