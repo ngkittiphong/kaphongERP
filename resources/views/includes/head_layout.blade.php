@@ -37,5 +37,8 @@
 	<link href="{{ asset('assets/icons/weather/weather-icons-wind.min.css') }}" rel="stylesheet" type="text/css">
 	<!-- /page css -->
 
+	@stack('styles')
+
 	@livewireStyles
+
 </head>
