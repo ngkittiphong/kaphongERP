@@ -121,7 +121,7 @@ class UserController
             \Log::error("Validation failed: " . json_encode($validator->errors()));
             return response()->json([
                 'message' => 'Validation failed. Please check your input.',
-                'error' => $validator->errors()
+                'errors' => $validator->errors()
             ], 422);
         }
 

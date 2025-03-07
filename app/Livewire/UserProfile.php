@@ -66,6 +66,12 @@ class UserProfile extends Component
     {
         \Log::info("Livewire Event Received: showUserForm"); // Debugging log
         $this->showAddUserForm = true;
+        $this->reset([
+            'username','email','password','password_confirmation',
+            'user_type_id','user_status_id','nickname','card_id_no',
+            'fullname_th','fullname_en','prefix_en','prefix_th',
+            'birth_date','description'
+        ]);
         $this->dispatch('refreshComponent');
         $this->user = null;
     }
@@ -79,6 +85,7 @@ class UserProfile extends Component
 
     public function saveUserAndProfile()
     {   
+        $this->resetValidation();
 
         // Create a Request instance with the validated data
         $request = new Request([
@@ -119,16 +126,27 @@ class UserProfile extends Component
             
         } else {
             // Get error message from response
-            $errorData = json_decode($response->getContent(), true);
-            $errorMessage = $errorData['message'] ?? 'Failed to create user & profile.';
+            $resultData = json_decode($response->getContent(), true);
+            $resultMessage = $resultData['message'] ?? 'Failed to create user & profile.';
+            $resultError = $resultData['error'] ?? '';
             
             // Add errors to form validation
-            if (isset($errorData['error'])) {
-                $this->addError('form', $errorMessage);
-                \Log::error("❌ Form validation error: " . $errorMessage);
+            if (isset($resultData['errors'])) {
+                // Handle validation errors
+                foreach ($resultData['errors'] as $field => $messages) {
+                    foreach ($messages as $message) {
+                        $this->addError($field, $message);
+                    }
+                }
+                \Log::error("❌ Validation errors: " . json_encode($resultData['errors']));
+            } elseif (isset($errorData['error'])) {
+                // Handle single error message
+                $this->addError('form', $resultMessage);
+                \Log::error("❌ Form error: " . $resultMessage);
             } else {
-                session()->flash('error', $errorMessage);
-                \Log::error("❌ Failed to create user & profile: " . $errorMessage);
+                // Handle generic error
+                session()->flash('error', $resultMessage);
+                \Log::error("❌ Failed to create user & profile: " . $resultMessage);
             }
         }
     }

@@ -17,6 +17,11 @@
     <div wire:loading.remove>
         {{-- Show/Hide Add User Form based on showAddUserForm flag --}}
         @if($showAddUserForm)
+        @error('form')
+        <div class="alert alert-danger">
+            {{ $message }}
+        </div>
+        @enderror
         <div class="card p-4">
             <h4>Add New User</h4>
             <!-- Unified form -->
@@ -27,7 +32,6 @@
                         <div class="icon-object bg-success">
                             <i class="icon-user"></i>
                         </div>
-                        <h5>Create new account (User + Profile)</h5>
                     </div>
                     @if (session()->has('error'))
                         <div class="alert alert-danger">
@@ -73,6 +77,7 @@
                         <div class="form-control-feedback">
                             <i class="icon-lock text-muted"></i>
                         </div>
+                        @error('password_confirmation') <span class="text-danger">{{ $message }}</span> @enderror
                     </div>
 
                     <!-- User Type -->
@@ -307,6 +312,11 @@
     </div>
 </div>
 
+@push('styles')
+<!-- Include Slim CSS -->
+<link rel="stylesheet" href="{{ asset('slim/css/slim.min.css') }}">
+@endpush
+
 @push('scripts')
 <script>
     function confirmDelete(userId) {
@@ -337,4 +347,7 @@
         });
     });
 </script>
+
+<!-- Include Slim JS -->
+<script src="{{ asset('slim/js/slim.kickstart.min.js') }}"></script>
 @endpush
