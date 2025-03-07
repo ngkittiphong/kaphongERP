@@ -28,11 +28,72 @@
             <form wire:submit.prevent="saveUserAndProfile">
                 @csrf
                 <div class="panel panel-body border-left border-left-lg border-left-success">							
-                    <div class="text-center m-b-20">
-                        <div class="icon-object bg-success">
-                            <i class="icon-user"></i>
+                    <div class="container my-4">
+                        <div class="row">
+                            <div class="col-md-4 col-xs-12 mx-auto">
+                                
+                                <!-- Bootstrap card (optional) -->
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        
+                                        <!-- Slim Image Cropper Container -->
+                                        <div
+                                            class="slim"
+                                            data-size="300,300"
+                                            data-ratio="1:1"
+                                            data-shape="circle"
+                                            data-instant-edit="true"
+                                            style="
+                                                width: 150px; 
+                                                height: 150px;
+                                                margin: 0 auto;
+                                                border-radius: 50%;
+                                                overflow: hidden;"
+                                        >
+                                            <!-- Default avatar image -->
+                                            <img 
+                                                src="{{ asset('assets/images/faces/face1.png') }}" 
+                                                alt="Default Icon" 
+                                                class="img-fluid"
+                                            />
+                                            
+                                            <!-- File input for uploading/replacing the image -->
+                                            <input 
+                                                type="file" 
+                                                name="slim" 
+                                                accept="image/jpeg, image/png, image/gif"
+                                            />
+                                        </div>
+                                        
+                                        <!-- Optional: instructions or a button to remove/re-crop -->
+                                        <p class="mt-2 small text-muted">
+                                            Click or drag your image here to crop a circular avatar.
+                                        </p>
+                                        
+                                    </div>
+                                </div>
+                                
+                            </div>
                         </div>
                     </div>
+                    <!-- 2) Hide the Form While Loading -->
+                    @script
+                    <script>
+                        $nextTick(() => {
+                            // Remove old script if exists
+                            const oldScript = document.getElementById('slim-script');
+                            if (oldScript) {
+                                oldScript.remove();
+                            }
+                    
+                            // Create and append new script using Alpine
+                            const script = document.createElement('script');
+                            script.id = 'slim-script';
+                            script.src = "{{ asset('slim/js/slim.kickstart.min.js') }}";
+                            document.body.appendChild(script);
+                        });
+                    </script>
+                    @endscript
                     @if (session()->has('error'))
                         <div class="alert alert-danger">
                             {{ session('error') }}
