@@ -4,7 +4,7 @@
 @include('includes.head_layout')
 
 <body>
-	@stack('body-styles')
+	<!--@stack('body-styles')-->
 
 	@yield('content')
 	@show

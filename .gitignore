@@ -29,3 +29,4 @@ Homestead.json
 .env
 .phpactor.json
 auth.json
+/nbproject/private/

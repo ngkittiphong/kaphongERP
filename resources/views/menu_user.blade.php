@@ -20,7 +20,7 @@
 	
 	@include('layout.user_profile_container')
 
-	@include('includes.theme_switch')
+	<!--@include('includes.theme_switch')-->
 
 	@include('includes.scroll_top')
 

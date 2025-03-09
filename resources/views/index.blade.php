@@ -20,7 +20,7 @@
 	
 	@include('layout.main_container')
 	
-	@include('includes.theme_switch')
+	<!--@include('includes.theme_switch')-->
 
 	@include('includes.scroll_top')
 
