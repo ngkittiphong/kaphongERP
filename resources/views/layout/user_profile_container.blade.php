@@ -21,12 +21,12 @@
 
     <div class="container-fluid page-people">
         <div class="row">
-            <div class="col-md-4 col-sm-4 secondary-sidebar">
+            <div class="col-md-3 col-sm-3 secondary-sidebar">
                 <div class="sidebar-content" style="height: 85vh">
                     @livewire('user-list')
                 </div>
             </div>
-            <div class="col-md-8 col-sm-8">
+            <div class="col-md-9 col-sm-9">
                 <!--<div class="people-container">-->
                     <!--<div id="contact" style="display:inherit">-->
                         <!--<div class="row">-->
