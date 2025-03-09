@@ -77,7 +77,7 @@ $('.datatable-reorder-state-saving').DataTable({
         
         scrollResize: true,
         scrollX: true,
-        scrollY: '65vh',
+        scrollY: '100vh',
         scrollCollapse: true
         
 
