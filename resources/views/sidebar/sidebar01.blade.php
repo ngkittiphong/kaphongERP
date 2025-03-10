@@ -8,6 +8,17 @@
                 <li><a href="index2.htm">Analytical dashboard</a></li>								
             </ul>
         </li>
+        
+        <li class="list-title">Products</li>						
+
+        <li>
+            <a href="index2.htm#"><i class="icon-alignment-unalign"></i> <span>Products</span></a>
+            <ul>							
+                <li><a href="datatable_extension_row_reorder.htm">Products</a></li>
+                <li><a href="datatable_extension_column_reorder.htm">Category</a></li>																				
+            </ul>
+        </li>
+        
         <li class="list-title">User Management</li>	
         <li><a href="/menu/menu_user"><i class="icon-users2"></i> <span>Users list</span></a></li>
 
@@ -18,15 +29,7 @@
         <li class="list-title">Wherehouse</li>	
         <li><a href=""><i class="icon-briefcase"></i> <span>Wherehouse</span></a></li>	
 
-        <li class="list-title">Products</li>						
-
-        <li>
-            <a href="index2.htm#"><i class="icon-alignment-unalign"></i> <span>Products</span></a>
-            <ul>							
-                <li><a href="datatable_extension_row_reorder.htm">Products</a></li>
-                <li><a href="datatable_extension_column_reorder.htm">Category</a></li>																				
-            </ul>
-        </li>													
+        													
     </ul>
 </div>
 
@@ -72,100 +75,81 @@
     <div class="row">
         <div class="col-md-12 col-sm-12">
             <div class="text-center">
-                <img src="{{ asset('assets/images/faces/face7.png') }}" class="img-responsive img-circle user-avatar" alt=""/>
-                <h4 class="no-margin-bottom m-t-10">Hi! Ann Porter</h4>
-                <div class="text-light text-size-small text-white">Company Secretary</div>							
+                <!--<img src="{{ asset('assets/images/faces/face7.png') }}" class="img-responsive img-circle user-avatar" alt=""/>-->
+                <div
+                    class="slim"
+                    data-size="300,300"
+                    data-ratio="1:1"
+                    data-shape="circle"
+                    data-instant-edit="true"
+                    style="
+                        width: 200px; 
+                        height: 200px;
+                        margin: 0 auto;
+                        border-radius: 50%;
+                        overflow: hidden;"
+                >
+                    <!-- Default avatar image -->
+                    <img 
+                        src="{{ asset('assets/images/faces/face1.png') }}" 
+                        alt="Default Icon" 
+                        class="img-fluid"
+                    />
+
+                    <!-- File input for uploading/replacing the image -->
+                    <input 
+                        type="file" 
+                        name="slim" 
+                        accept="image/jpeg, image/png, image/gif"
+                    />
+                </div>
+                
+                
+                
+                
+                <h4 class="no-margin-bottom m-t-10">session.profile.fullname</h4>
+                <div class="text-light text-size-small text-white">session.type.name</div>							
             </div>
         </div>
     </div>
-    <div class="row m-t-10 connect-buttons">
-        <div class="col-xs-6 p-r-5">
-            <button type="button" class="btn btn-block btn-info btn-rounded"><i class="icon-twitter position-left"></i> Follow</button>
-        </div>
-        <div class="col-xs-6 p-l-5">
-            <div class="btn-group dropleft">
-              <button type="button" class="btn btn-block btn-danger btn-rounded dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="icon-share3 position-left"></i>  Connect
-              </button>
-              <ul class="dropdown-menu dropdown-menu-right dropdown-menu-xs">
-                <li><a href="index2.htm#"><i class="icon-comment-discussion"></i> Chat with user</a></li>
-                <li><a href="index2.htm#"><i class="icon-phone-wave"></i> Call user</a></li>
-                <li><a href="index2.htm#"><i class="icon-comments"></i> Send message</a></li>
-              </ul>
-            </div>							
+    <div class="col-md-12 col-sm-12  m-t-5">
+            <button type="button" class="btn btn-block bg-primary mt-33" data-toggle="modal" data-target="#new-email"> change nickname</button>
+    </div>
+    <div class="col-md-12 col-sm-12  m-t-5">
+            <button type="button" class="btn btn-block bg-warning mt-33" data-toggle="modal" data-target="#new-email"> change password</button>
+    </div>
+    
+    
+    <div class="col-md-12 col-sm-12 m-t-40">
+        <label>Sign name</label>
+        <div
+            class="slim"
+            data-size="300,150"
+
+            data-instant-edit="true"
+            style="
+                width: 200px; 
+                height: 100px;
+                margin: 0 auto;
+                border-radius: 5%;
+                overflow: hidden;"
+        >
+            <!-- Default avatar image -->
+            <img 
+                src="{{ asset('assets/images/faces/face1.png') }}" 
+                alt="Default Icon" 
+                class="img-fluid"
+            />
+
+            <!-- File input for uploading/replacing the image -->
+            <input 
+                type="file" 
+                name="slim" 
+                accept="image/jpeg, image/png, image/gif"
+            />
         </div>
     </div>
-    <div class="row m-t-20 followers text-muted">
-        <div class="col-xs-6 text-center">
-            <h3 class="text-semibold no-margin">400+</h3>
-            <div>Connections</div>
-        </div>
-        <div class="col-xs-6 text-center">
-            <h3 class="text-semibold no-margin">1200+</h3>
-            <div>Followers</div>
-        </div>
-    </div>
-    <div class="row m-t-10 users-online">
-        <div class="col-xs-12">
-            <div class="leftbar-heading text-semibold m-b-15">FRIENDS ONLINE</div>
-            <ul class="media-list">
-                <li class="media">
-                    <a href="index2.htm#" class="media-left"><img src="{{ asset('assets/images/faces/face5.png') }}" class="img-sm img-circle" alt=""></a>
-                    <div class="media-body">
-                        <a href="index2.htm#" class="media-heading">Florence Douglas</a>
-                        <span class="text-size-mini text-muted display-block">Online</span>
-                    </div>
-                    <div class="media-right media-middle">
-                        <span class="status-mark bg-success"></span>
-                    </div>
-                </li>
-
-                <li class="media">
-                    <a href="index2.htm#" class="media-left"><img src="{{ asset('assets/images/faces/face6.png') }}" class="img-sm img-circle" alt=""></a>
-                    <div class="media-body">
-                        <a href="index2.htm#" class="media-heading">Eugine Turner</a>
-                        <span class="text-size-mini text-muted display-block">Busy</span>
-                    </div>
-                    <div class="media-right media-middle">
-                        <span class="status-mark bg-danger-light"></span>
-                    </div>
-                </li>
-
-                <li class="media">
-                    <a href="index2.htm#" class="media-left"><img src="{{ asset('assets/images/faces/face7.png') }}" class="img-sm img-circle" alt=""></a>
-                    <div class="media-body">
-                        <a href="index2.htm#" class="media-heading">Jacqueline Howell</a>
-                        <span class="text-size-mini text-muted display-block">Online</span>
-                    </div>
-                    <div class="media-right media-middle">
-                        <span class="status-mark bg-success"></span>
-                    </div>
-                </li>
-
-                <li class="media">
-                    <a href="index2.htm#" class="media-left"><img src="{{ asset('assets/images/faces/face8.png') }}" class="img-sm img-circle" alt=""></a>
-                    <div class="media-body">
-                        <a href="index2.htm#" class="media-heading">Marilyn Romero</a>
-                        <span class="text-size-mini text-muted display-block">Away</span>
-                    </div>
-                    <div class="media-right media-middle">
-                        <span class="status-mark bg-warning-light"></span>
-                    </div>
-                </li>
-
-                <li class="media">
-                    <a href="index2.htm#" class="media-left"><img src="{{ asset('assets/images/faces/face9.png') }}" class="img-sm img-circle" alt=""></a>
-                    <div class="media-body">
-                        <a href="index2.htm#" class="media-heading">Andrew Brewer</a>
-                        <span class="text-size-mini text-muted display-block">Invisible</span>
-                    </div>
-                    <div class="media-right media-middle">
-                        <span class="status-mark bg-grey-light"></span>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
+    
 </div>
 
 

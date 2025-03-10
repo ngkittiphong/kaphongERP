@@ -247,164 +247,383 @@
         
         
         
-        
-        
+{{----------------------------------- view user profile form ------------------------------}}
         
 <div class="panel-body">
-    <!--<div class="col-md-12 col-sm-12">-->
-            <div class="row">
-                <div class="col-md-12">
-                    
-                    
-                    
-                    <div class="row p-l-10 p-r-10 panel panel-flat">
-                        <div class="panel-heading">
-                            <div class="tabbable">
-                                <ul class="nav nav-tabs nav-tabs-highlight">
-                                        <li class="active">
-                                            <a href="#tab-detail" data-toggle="tab" class="panel-title" aria-expanded="true">
-                                                <div class="panel-heading">
-                                                    <h3 class="panel-title">Detail</h3>
+    <div class="row">
+        <div class="col-md-12">
 
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li class="">
-                                            <a href="#tab-access" data-toggle="tab" aria-expanded="false">
-                                                <div class="panel-heading">
-                                                    <h3 class="panel-title">Access</h3>						
-                                                </div>
-                                            </a>
-                                        </li>
+            <div class="row p-l-10 p-r-10 panel panel-flat">
+                <div class="panel-heading">
+                    <div class="tabbable">
+                        <ul class="nav nav-tabs nav-tabs-highlight">
+                                <li class="active">
+                                    <a href="#tab-detail" data-toggle="tab" class="panel-title" aria-expanded="true">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">Detail</h3>
 
-                                </ul>
-                                
-                                
-                            </div>
-                                
-                        </div>
-                        
-                        
-                        <div class="tab-content">
-                                <div class="tab-pane active" id="tab-detail">
-                                    
-                        
-                                    <div class="col-md-4 col-xs-12">
-                                        <div class="text-center">
-                                                <!--<img src="{{ asset('assets/images/faces/face1.png') }}" class="img-responsive img-circle user-avatar" alt="{{$user->status->name}}">-->
-                                                <div
-                                                    class="slim"
-                                                    data-size="300,300"
-                                                    data-ratio="1:1"
-                                                    data-shape="circle"
-                                                    data-instant-edit="true"
-                                                    style="
-                                                        width: 200px; 
-                                                        height: 200px;
-                                                        margin: 0 auto;
-                                                        border-radius: 50%;
-                                                        overflow: hidden;"
-                                                >
-                                                    <!-- Default avatar image -->
-                                                    <img 
-                                                        src="{{ asset('assets/images/faces/face1.png') }}" 
-                                                        alt="Default Icon" 
-                                                        class="img-fluid"
-                                                    />
-
-                                                    <!-- File input for uploading/replacing the image -->
-                                                    <input 
-                                                        type="file" 
-                                                        name="slim" 
-                                                        accept="image/jpeg, image/png, image/gif"
-                                                    />
-                                                </div>
-                                                
-                                                <h4 class="no-margin-bottom m-t-10"><i class="" alt="{{$user->status->name}}"></i>{{$user->profile?->fullname_th}} ({{$user->profile->nickname}})</h4>
-                                                <div>user.status.name</div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-8 col-xs-12">
-                                        <!--<div class="panel panel-flat">-->
-                                            <div class="panel-heading no-padding-bottom">
-                                                    <h4 class="panel-title"><?= __('User details')?></h4>	
-                                                    <div class="elements">
-                                                            <!--<button type="button" class="btn bg-amber btn-sm">Button</button>-->
-                                                            <button class="btn bg-amber-darkest" wire:click="$dispatch('showEditProfileForm')">Edit User</button>
-                                                            <button class="btn btn-danger" onclick="confirmDelete({{ $user->id }})">Delete User</button>
-                                                    </div>
-                                                    <a class="elements-toggle"><i class="icon-more"></i></a>
-                                            </div>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a href="#tab-access" data-toggle="tab" aria-expanded="false">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">Access</h3>						
+                                        </div>
+                                    </a>
+                                </li>
 
-                                            <div class="list-group list-group-lg list-group-borderless">	
-                                                <a href="#" class="list-group-item p-l-20">
-                                                        <i class="icon-user-lock"></i> {{$user->username}}
-                                                </a>
-
-                                                <a href="#" class="list-group-item p-l-20">
-                                                        <i class="icon-lock"></i> change password click for popup(modal)
-                                                </a>
+                        </ul>
 
 
-                                                <a href="#" class="list-group-item p-l-20">
-                                                        <i class="icon-puzzle"></i> user.type.name
-                                                </a>
-                                                <a href="#" class="list-group-item p-l-20">
-                                                        <i class="icon-plus3"></i> user.date_create
-                                                </a>
-
-
-                                            </div>									
-
-                                        <!--<div class="panel panel-flat">-->
-                                            <div class="panel-heading no-padding-bottom">
-                                                    <h4 class="panel-title"><?= __('Contact details')?></h4>	
-                                            </div>
-
-                                            <div class="list-group list-group-lg list-group-borderless">												
-                                                    <a href="#" class="list-group-item p-l-20">
-                                                            <i class="icon-envelop3"></i> 
-                                                    </a>
-                                                    <a href="#" class="list-group-item p-l-20">
-                                                            <i class="icon-phone2"></i>
-                                                    </a>
-                                                    <a href="#" class="list-group-item p-l-20">
-                                                            <i class="icon-location4"></i> 
-                                                    </a>
-                                            </div>									
-                                        <!--</div>-->
-
-
-                                    </div>
-                                    
-                                </div>
-                                <div class="tab-pane" id="tab-access">
-                                    
-                                    s
-                                </div>
-                                
-                                
-                            </div>
-
-                        
-                        
                     </div>
 
                 </div>
+
+
+                <div class="tab-content">
+                        <div class="tab-pane active" id="tab-detail">
+
+
+                            <div class="col-md-4 col-xs-12">
+                                <div class="text-center">
+                                        <!--<img src="{{ asset('assets/images/faces/face1.png') }}" class="img-responsive img-circle user-avatar" alt="{{$user->status->name}}">-->
+                                        <div
+                                            class="slim"
+                                            data-size="300,300"
+                                            data-ratio="1:1"
+                                            data-shape="circle"
+                                            data-instant-edit="true"
+                                            style="
+                                                width: 200px; 
+                                                height: 200px;
+                                                margin: 0 auto;
+                                                border-radius: 50%;
+                                                overflow: hidden;"
+                                        >
+                                            <!-- Default avatar image -->
+                                            <img 
+                                                src="{{ asset('assets/images/faces/face1.png') }}" 
+                                                alt="Default Icon" 
+                                                class="img-fluid"
+                                            />
+
+                                            <!-- File input for uploading/replacing the image -->
+                                            <input 
+                                                type="file" 
+                                                name="slim" 
+                                                accept="image/jpeg, image/png, image/gif"
+                                            />
+                                        </div>
+
+                                        <h4 class="no-margin-bottom m-t-10"><i class="" alt="{{$user->status->name}}"></i>{{$user->profile?->fullname_th}} ({{$user->profile->nickname}})</h4>
+                                        <div>user.status.name</div>
+                                </div>
+                            </div>
+                            <div class="col-md-8 col-xs-12">
+                                <!--<div class="panel panel-flat">-->
+                                    <div class="panel-heading no-padding-bottom">
+                                            <h4 class="panel-title"><?= __('User details')?></h4>	
+                                            <div class="elements">
+                                                    <!--<button type="button" class="btn bg-amber btn-sm">Button</button>-->
+                                                    <button class="btn bg-amber-darkest" wire:click="$dispatch('showEditProfileForm')">Edit User</button>
+                                                    <button class="btn btn-danger" onclick="confirmDelete({{ $user->id }})">Delete User</button>
+                                            </div>
+                                            <a class="elements-toggle"><i class="icon-more"></i></a>
+                                    </div>
+
+                                    <div class="list-group list-group-lg list-group-borderless">	
+                                        <a href="#" class="list-group-item p-l-20">
+                                                <i class="icon-user-lock"></i> {{$user->username}}
+                                        </a>
+
+                                        <a href="#" class="list-group-item p-l-20">
+                                                <i class="icon-lock"></i> change password click for popup(modal)
+                                        </a>
+
+
+                                        <a href="#" class="list-group-item p-l-20">
+                                                <i class="icon-puzzle"></i> user.type.name
+                                        </a>
+                                        <a href="#" class="list-group-item p-l-20">
+                                                <i class="icon-plus3"></i> user.date_create
+                                        </a>
+
+
+                                    </div>									
+
+                                    <div class="panel-heading no-padding-bottom">
+                                            <h4 class="panel-title"><?= __('Contact details')?></h4>	
+                                    </div>
+
+                                    <div class="list-group list-group-lg list-group-borderless">												
+                                            <a href="#" class="list-group-item p-l-20">
+                                                    <i class="icon-envelop3"></i> 
+                                            </a>
+                                            <a href="#" class="list-group-item p-l-20">
+                                                    <i class="icon-phone2"></i>
+                                            </a>
+                                            <a href="#" class="list-group-item p-l-20">
+                                                    <i class="icon-location4"></i> 
+                                            </a>
+                                    </div>									
+
+                            </div>
+
+                        </div>
+                        <div class="tab-pane" id="tab-access">
+
+                            {{-- Access --}}
+                            Access detail statement
+                            
+                        </div>
+
+
+                    </div>
+
+
+
             </div>
-    <!--</div>-->
+
+        </div>
+    </div>
+
 </div>
         
         
         
+{{----------------------------------- end of view user profile form ------------------------------}}        
+        
+        
+        
+
+
+
+
+
+
+  
+
+
+
+{{----------------------------------- edit user profile form ------------------------------}} 
+
+
+{{-- Show edit profile form if showEditProfileForm is true and user exists --}}
+@elseif($showEditProfileForm && $user)
+        
+        
+<div class="panel-body">
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="row p-l-10 p-r-10 panel panel-flat">
+                <div class="panel-heading">
+                    <div class="tabbable">
+                        <ul class="nav nav-tabs nav-tabs-highlight">
+                                <li class="active">
+                                    <a href="#tab-detail" data-toggle="tab" class="panel-title" aria-expanded="true">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">Profile</h3>
+
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a href="#tab-access" data-toggle="tab" aria-expanded="false">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">Contact</h3>						
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a href="#tab-doc" data-toggle="tab" aria-expanded="false">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">Document</h3>						
+                                        </div>
+                                    </a>
+                                </li>
+                        </ul>
+
+
+                    </div>
+
+                </div>
+
+
+                <div class="tab-content">
+                        <div class="tab-pane active" id="tab-detail">
+
+
+                            <div class="col-md-4 col-xs-12">
+                                <div class="text-center">
+                                        <!--<img src="{{ asset('assets/images/faces/face1.png') }}" class="img-responsive img-circle user-avatar" alt="{{$user->status->name}}">-->
+                                        <div
+                                            class="slim"
+                                            data-size="300,300"
+                                            data-ratio="1:1"
+                                            data-shape="circle"
+                                            data-instant-edit="true"
+                                            style="
+                                                width: 200px; 
+                                                height: 200px;
+                                                margin: 0 auto;
+                                                border-radius: 50%;
+                                                overflow: hidden;"
+                                        >
+                                            <!-- Default avatar image -->
+                                            <img 
+                                                src="{{ asset('assets/images/faces/face1.png') }}" 
+                                                alt="Default Icon" 
+                                                class="img-fluid"
+                                            />
+
+                                            <!-- File input for uploading/replacing the image -->
+                                            <input 
+                                                type="file" 
+                                                name="slim" 
+                                                accept="image/jpeg, image/png, image/gif"
+                                            />
+                                        </div>
+
+                                        <h4 class="no-margin-bottom m-t-10"><i class="" alt="{{$user->status->name}}"></i>{{$user->profile?->fullname_th}} ({{$user->profile->nickname}})</h4>
+                                        <div class="form-group col-md-8">
+                                            <select class="form-control" >
+                                                <option>Admin</option>
+                                                <option>User</option>
+                                            </select>
+
+                                        </div>
+
+                                        <div class="form-group col-md-8">
+                                            <select class="form-control" >
+                                                <option>Active</option>
+                                                <option>Hold</option>
+                                            </select>
+
+                                        </div>
+                                </div>
+                            </div>
+                            
+                            
+                            <form wire:submit.prevent="updateUserAndProfile">
+                                <div class="col-md-8 col-xs-12">
+                                        <div class="panel-heading no-padding-bottom">
+                                                <h4 class="panel-title"><?= __('Edit User')?></h4>	
+
+                                        </div>
+
+                                        <div class="list-group list-group-lg list-group-borderless">	
+                                            
+                                            <div class="form-group has-feedback has-feedback-left">
+                                                <input type="text" class="form-control" wire:model="username" placeholder="{{ $user->username }}" value="{{ $user->username }}" readonly>
+                                                <div class="form-control-feedback">
+                                                    <i class="icon-user text-muted"></i>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group has-feedback has-feedback-left">
+                                                <input type="email" class="form-control" wire:model="email" placeholder="{{ $user->email }}" value="{{ $user->email }}" readonly>
+                                                <div class="form-control-feedback">
+                                                    <i class="icon-envelope text-muted"></i>
+                                                </div>
+                                            </div>
+                                            
+
+                                            
+                                            <div class="form-group has-feedback has-feedback-left">
+                                                <input type="email" class="form-control" wire:model="email" placeholder="{{ $user->email }}" value="{{ $user->email }}" readonly>
+                                                <div class="form-control-feedback">
+                                                    <i class="icon-envelope text-muted"></i>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Prefix (Thai)</label>
+                                                        <input type="text" class="form-control" wire:model="prefix_th" value="{{ $user->profile->prefix_th ?? '' }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="form-group">
+                                                        <label>Full Name (Thai)</label>
+                                                        <input type="text" class="form-control" wire:model="fullname_th" value="{{ $user->profile->fullname_th ?? '' }}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Prefix (English)</label>
+                                                        <input type="text" class="form-control" wire:model="prefix_en" value="{{ $user->profile->prefix_en ?? '' }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="form-group">
+                                                        <label>Full Name (English)</label>
+                                                        <input type="text" class="form-control" wire:model="fullname_en" value="{{ $user->profile->fullname_en ?? '' }}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            
+                                            <div class="form-group">
+                                                <label>Nickname</label>
+                                                <input type="text" class="form-control" wire:model="nickname" value="test">
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label>Description</label>
+                                                <textarea class="form-control" wire:model="description" rows="3">{{ $user->profile->description ?? '' }}</textarea>
+                                            </div>
+
+                                            <div class="text-right">
+                                                <button type="submit" class="btn bg-primary-darkest">Save Changes</button>
+                                            </div>
+                                            
+                                            
+
+                                        </div>									
+								
+
+                                </div>
+
+                            </form>
+                                
+                                
+                        </div>
+                    
+                    
+                    
+                        <div class="tab-pane" id="tab-access">
+
+                            s
+                        </div>
+
+
+                    </div>
+
+
+
+            </div>
+
+        </div>
+    </div>
+
+</div>        
+        
+{{----------------------------------- end of edit user profile form ------------------------------}}
         
         
         
         
         
+{{--        Old edit
         
-        {{-- Show edit profile form if showEditProfileForm is true and user exists --}}
-        @elseif($showEditProfileForm && $user)
+        
+        
             <div class="col-md-12">
                 <div class="panel panel-flat">
                     <div class="panel-heading">
@@ -492,6 +711,15 @@
                     </div>
                 </div>
             </div>
+
+
+
+
+--}}
+
+
+
+
         {{-- Show add profile form if user exists but profile is not created --}}
         @elseif($user && $user->profile==null)
             <div class="form-group has-feedback has-feedback-left">
