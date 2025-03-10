@@ -34,17 +34,17 @@
                                 >
                                     <!-- Default avatar image -->
                                     <img 
-                                        src="{{ asset('assets/images/faces/face1.png') }}" 
+                                        src="{{ asset('assets/images/faces/face_default.png') }}" 
                                         alt="Default Icon" 
                                         class="img-fluid"
                                     />
                                     
                                     <!-- File input for uploading/replacing the image -->
-                                    <input 
-                                        type="file" 
+                                        <input 
+                                            type="file" 
                                         name="slim" 
-                                        accept="image/jpeg, image/png"
-                                    />
+                                            accept="image/jpeg, image/png"
+                                        />
                                 </div>
                                 
                                 <!-- Optional: instructions or a button to remove/re-crop -->
@@ -62,18 +62,6 @@
             @script
             <script>
                 $nextTick(() => {
-                    // Remove old script if exists
-                    const oldScript = document.getElementById('slim-script');
-                    if (oldScript) {
-                        oldScript.remove();
-                    }
-            
-                    // Create and append new script using Alpine
-                    const script = document.createElement('script');
-                    script.id = 'slim-script';
-                    script.src = "{{ asset('slim/js/slim.kickstart.min.js') }}";
-                    document.body.appendChild(script);
-
                     // Handle form submission
                     document.getElementById('userForm').addEventListener('submit', function(e) {
                         e.preventDefault();
@@ -183,20 +171,16 @@
                         placeholder="Nickname">
             </div>
 
-            <div class="form-group">
-                <label>ID Number</label>
-                <input type="text" class="form-control"
-                        wire:model="card_id_no"
-                        placeholder="ID No">
-            </div>
-
             <!-- Example: More Profile Fields -->
             <div class="row">
                 <div class="col-md-2">
                     <div class="form-group">
                         <label>Prefix (Thai)</label>
-                        <input type="text" class="form-control"
-                                wire:model="prefix_th">
+                        <select class="form-control" wire:model="prefix_th">
+                            <option value="นาย">นาย</option>
+                            <option value="นาง">นาง</option>
+                            <option value="นางสาว">นางสาว</option>
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-10">
@@ -211,7 +195,11 @@
                 <div class="col-md-2">
                     <div class="form-group">
                         <label>Prefix (English)</label>
-                        <input type="text" class="form-control" wire:model="prefix_en" value="{{ $user->profile->prefix_en ?? '' }}">
+                        <select class="form-control" wire:model="prefix_en">
+                            <option value="Mr.">Mr.</option>
+                            <option value="Mrs.">Mrs.</option>
+                            <option value="Ms.">Ms.</option>
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-10">
@@ -220,11 +208,6 @@
                         <input type="text" class="form-control" wire:model="fullname_en" value="{{ $user->profile->fullname_en ?? '' }}">
                     </div>
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label>Birth Date</label>
-                <input type="date" class="form-control" wire:model="birth_date" value="{{ $user->profile->birth_date ?? '' }}">
             </div>
 
             <div class="form-group">

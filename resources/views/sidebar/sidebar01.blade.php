@@ -91,7 +91,7 @@
                 >
                     <!-- Default avatar image -->
                     <img 
-                        src="{{ asset('assets/images/faces/face1.png') }}" 
+                        src="{{ asset('assets/images/faces/face_default.png') }}" 
                         alt="Default Icon" 
                         class="img-fluid"
                     />
@@ -103,9 +103,6 @@
                         accept="image/jpeg, image/png, image/gif"
                     />
                 </div>
-                
-                
-                
                 
                 <h4 class="no-margin-bottom m-t-10">session.profile.fullname</h4>
                 <div class="text-light text-size-small text-white">session.type.name</div>							
@@ -125,7 +122,6 @@
         <div
             class="slim"
             data-size="300,150"
-
             data-instant-edit="true"
             style="
                 width: 200px; 
@@ -136,7 +132,7 @@
         >
             <!-- Default avatar image -->
             <img 
-                src="{{ asset('assets/images/faces/face1.png') }}" 
+                src="{{ asset('assets/images/faces/face_default.png') }}" 
                 alt="Default Icon" 
                 class="img-fluid"
             />
@@ -149,7 +145,6 @@
             />
         </div>
     </div>
-    
 </div>
 
 

@@ -4,7 +4,7 @@
 			<div class="user-profile-container">
 				<div class="user-profile clearfix">
 					<div class="admin-user-thumb">
-						<img src="{{ asset('assets/images/faces/face1.png') }}" alt="admin" class="img-circle">
+						<img src="{{ asset('assets/images/faces/face_default.png') }}" alt="admin" class="img-circle">
 					</div>
 					<div class="admin-user-info">
 						<ul class="user-info">

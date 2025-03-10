@@ -72,7 +72,8 @@ class UserProfile extends Component
             'fullname_th','fullname_en','prefix_en','prefix_th',
             'birth_date','description'
         ]);
-        $this->dispatch('refreshComponent');
+        $this->resetErrorBag();
+        $this->dispatch('profileUpdated');
         $this->user = null;
     }
 
@@ -80,7 +81,8 @@ class UserProfile extends Component
     {
         \Log::info("Livewire Event Received: showEditProfileForm"); // Debugging log
         $this->showEditProfileForm = true;
-        $this->dispatch('refreshComponent');
+        //$this->dispatch('refreshComponent');
+        $this->dispatch('profileUpdated');
     }
 
     public function saveUserAndProfile()
@@ -172,6 +174,7 @@ class UserProfile extends Component
                 'prefix_th'            => $this->prefix_th,
                 'birth_date'           => $this->birth_date,
                 'description'          => $this->description,
+                'avatar'               => $this->avatar,
                 ]);
 
         // Instantiate the controller and call its update method
@@ -197,6 +200,7 @@ class UserProfile extends Component
                 \Log::error("❌ Failed to update user & profile: " . $errorMessage);
             }
         }
+        $this->dispatch('refreshUserList');
     }
 
     private function resetForm()
@@ -205,7 +209,7 @@ class UserProfile extends Component
             'username','email','password','password_confirmation',
             'user_type_id','user_status_id','nickname','card_id_no',
             'fullname_th','fullname_en','prefix_en','prefix_th',
-            'birth_date','description'
+            'birth_date','description','avatar'
         ]);
     }
 

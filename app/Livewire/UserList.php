@@ -9,33 +9,17 @@ use Illuminate\Support\Facades\Cache;
 
 class UserList extends Component
 {
-    use WithPagination; // 🔹 Required for Livewire pagination
-
-
     public $selectedUserId;
-    public $search = ''; // 🔹 Store search input
 
     protected $listeners = [
         'userSelected' => 'selectUser',
+        'refreshUserList' => 'loadUsers',
     ];
-
 
     public function mount()
     {
         \Log::info("UserList Component Mounted");
         $this->loadUsers();
-    }
-
-     // If you filter by search, reset to page 1 whenever search changes
-     public function updatingSearch()
-     {
-         $this->resetPage();
-     }
-
-    public function searchUsers()
-    {
-        \Log::info("Search Triggered: " . $this->search);
-        $this->resetPage();
     }
 
     public function selectUser($userId)
@@ -50,6 +34,8 @@ class UserList extends Component
         $this->users = User::select(['id', 'email', 'username'])
             ->orderBy('username')
             ->get(); // Load all users at once
+        
+            $this->dispatch('userListUpdated');
     }
 
     public function render()

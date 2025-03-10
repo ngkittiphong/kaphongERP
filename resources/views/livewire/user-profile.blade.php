@@ -18,9 +18,9 @@
         @if($showAddUserForm)
             @include('livewire.user-profile_adduser')
         @elseif($user && $user->profile && $showEditProfileForm==false)
-            @include('livewire.user-profile_show_profile')
+            @include('livewire.user-profile_tab')
         @elseif($showEditProfileForm && $user)
-            @include('livewire.user-profile_edit_userprofile')
+            @include('livewire.user-profile_tab')
         @elseif($user && $user->profile==null)
             {{-- <div class="form-group has-feedback has-feedback-left">
                 <button type="button" class="btn btn-sm btn-success btn-labeled"
@@ -68,6 +68,34 @@
     });
 </script>
 
-<!-- Include Slim JS -->
-<script src="{{ asset('slim/js/slim.kickstart.min.js') }}"></script>
+
+<script>
+    function initSlim() {
+        // Check if DataTable is already initialized and destroy it if exists
+        // This prevents duplicate initialization errors
+        console.log('slim script reload');
+        // Remove old script if exists
+        const oldScript = document.getElementById('slim-script');
+        if (oldScript) {
+            oldScript.remove();
+        }
+
+        // Create and append new script using Alpine
+        const script = document.createElement('script');
+        script.id = 'slim-script';
+        script.src = "{{ asset('slim/js/slim.kickstart.min.js') }}";
+        document.body.appendChild(script);
+    }
+
+    initSlim();
+
+    document.addEventListener('livewire:initialized', () => {
+        @this.on('profileUpdated', () => {
+            console.log('profileUpdated');
+            setTimeout(() => {
+                initSlim();
+            }, 100);
+        });
+    });
+</script>
 @endpush
