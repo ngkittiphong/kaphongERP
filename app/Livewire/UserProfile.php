@@ -105,6 +105,7 @@ class UserProfile extends Component
                 'prefix_th'            => $this->prefix_th,
                 'birth_date'           => $this->birth_date,
                 'description'          => $this->description,
+                'avatar'               => $this->avatar,
                 ]);
 
         // Instantiate the controller and call its store method
