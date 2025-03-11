@@ -99,7 +99,7 @@
 
                 <!-- Thai name fields -->
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Prefix (Thai)</label>
                             <select class="form-control" wire:model="prefix_th">
@@ -109,7 +109,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-9">
                         <div class="form-group">
                             <label>Full Name (Thai)</label>
                             <input type="text" class="form-control" wire:model="fullname_th"
@@ -120,7 +120,7 @@
 
                 <!-- English name fields -->
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Prefix (English)</label>
                             <select class="form-control" wire:model="prefix_en">
@@ -130,7 +130,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-9">
                         <div class="form-group">
                             <label>Full Name (English)</label>
                             <input type="text" class="form-control" wire:model="fullname_en"

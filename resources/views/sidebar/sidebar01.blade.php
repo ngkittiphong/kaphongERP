@@ -122,6 +122,7 @@
         <div
             class="slim"
             data-size="300,150"
+            data-ratio="1:2"
             data-instant-edit="true"
             style="
                 width: 200px; 
