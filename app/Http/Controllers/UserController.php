@@ -153,6 +153,7 @@ class UserController
                 'prefix_th'      => $request->prefix_th      ?? '',
                 'birth_date'     => $request->birth_date     ?? null,
                 'description'    => $request->description    ?? '',
+                'avatar'         => $request->avatar         ?? '',
             ]);
         } catch (\Exception $e) {
             \Log::error("Error creating user profile: " . $e->getMessage());
@@ -202,6 +203,7 @@ class UserController
                 'prefix_th'      => $request->prefix_th      ?? '',
                 'birth_date'     => $request->birth_date     ?? null,
                 'description'    => $request->description    ?? '',
+                'avatar'         => $request->avatar         ?? '',
             ]);
         } catch (\Exception $e) {
             return response()->json([
