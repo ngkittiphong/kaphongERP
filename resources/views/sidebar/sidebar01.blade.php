@@ -12,10 +12,10 @@
         <li class="list-title">Products</li>						
 
         <li>
-            <a href="index2.htm#"><i class="icon-alignment-unalign"></i> <span>Products</span></a>
+            <a href=""><i class="icon-alignment-unalign"></i> <span>Products</span></a>
             <ul>							
-                <li><a href="datatable_extension_row_reorder.htm">Products</a></li>
-                <li><a href="datatable_extension_column_reorder.htm">Category</a></li>																				
+                <li><a href="/menu/menu_product">Products</a></li>
+                <li><a href="/menu/menu_category">Category</a></li>																				
             </ul>
         </li>
         
@@ -26,8 +26,8 @@
         <li class="list-title">Sell</li>	
         <li><a href="https://pos.ultimatefosters.com/pos/create"><i class="icon-versions"></i> <span>POS</span></a></li>	
 
-        <li class="list-title">Wherehouse</li>	
-        <li><a href=""><i class="icon-briefcase"></i> <span>Wherehouse</span></a></li>	
+        <li class="list-title">Werehouse</li>	
+        <li><a href="/menu/menu_warehouse"><i class="icon-briefcase"></i> <span>Wherehouse</span></a></li>	
 
         													
     </ul>

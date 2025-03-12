@@ -218,4 +218,49 @@ class UserController
             'user_id' => $user->id,
         ], 200);
     }
+
+    /**
+     * Change user password
+     * 
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changePassword(Request $request, $id)
+    {
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'new_password' => 'required|min:6',
+            'new_password_confirmation' => 'required|same:new_password',
+        ]);
+
+        if ($validator->fails()) {
+            \Log::error("Password validation failed: " . json_encode($validator->errors()));
+            return response()->json([
+                'message' => 'Validation failed. Please check your input.',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            // Find the user
+            $user = User::findOrFail($id);
+            
+            // Update the password
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+
+            return response()->json([
+                'message' => 'Password changed successfully!',
+                'user_id' => $user->id,
+            ], 200);
+            
+        } catch (\Exception $e) {
+            \Log::error("Error changing password: " . $e->getMessage());
+            return response()->json([
+                'message' => 'Error changing password',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

@@ -17,7 +17,9 @@ class UserProfile extends Component
     public $user;
     public $showAddUserForm = false;
     public $showEditProfileForm = false;
+    public $showChangePasswordModal = false;
     public $username, $email, $password, $password_confirmation, $user_type_id, $user_status_id;
+    public $new_password, $new_password_confirmation;
     public $nickname, $card_id_no, $fullname_th, $fullname_en, $prefix_en, $prefix_th, $birth_date, $description;
     public $avatar;
     public $userTypes = [];
@@ -27,6 +29,7 @@ class UserProfile extends Component
         'ProfileSelected' => 'loadProfile',
         'showAddUserForm' => 'displayAddUserForm',
         'showEditProfileForm' => 'displayEditProfileForm',
+        'showChangePasswordModal' => 'displayChangePasswordModal',
         'refreshComponent' => '$refresh',
         'createUserProfile' => 'createUserProfile',
         'deleteUser' => 'deleteUser'
@@ -75,6 +78,65 @@ class UserProfile extends Component
         $this->resetErrorBag();
         $this->user = null;
         $this->dispatch('addUser');
+    }
+
+    public function displayChangePasswordModal()
+    {
+        \Log::info("Livewire Event Received: showChangePasswordModal");
+        $this->showChangePasswordModal = true;
+        $this->reset(['new_password', 'new_password_confirmation']);
+        $this->resetErrorBag();
+    }
+
+    public function closeChangePasswordModal()
+    {
+        $this->showChangePasswordModal = false;
+        $this->reset(['new_password', 'new_password_confirmation']);
+        $this->resetErrorBag();
+    }
+
+    public function changePassword()
+    {
+
+        if (!$this->user) {
+            throw new \Exception('User not found');
+        }
+
+        // Create a Request instance with the password data
+        $request = new Request([
+            'new_password' => $this->new_password,
+            'new_password_confirmation' => $this->new_password_confirmation,
+        ]);
+
+        // Instantiate the controller and call its changePassword method
+        $controller = new UserController();
+        $response = $controller->changePassword($request, $this->user->id);
+        
+        if ($response->status() === 200) {
+            session()->flash('message', 'Password changed successfully!');
+            \Log::info("✅ Password changed successfully for user ID: {$this->user->id}");
+            $this->showChangePasswordModal = false;
+            $this->reset(['new_password', 'new_password_confirmation']);
+        } else {
+            // Get error message from response
+            $errorData = json_decode($response->getContent(), true);
+            $errorMessage = $errorData['error'] ?? 'Failed to change password.';
+            
+            // Add errors to form validation
+            if (isset($errorData['errors'])) {
+                foreach ($errorData['errors'] as $field => $messages) {
+                    foreach ($messages as $message) {
+                        $this->addError($field, $message);
+                    }
+                }
+                \Log::error("❌ Validation errors: " . json_encode($errorData['errors']));
+            } else {
+                $this->addError('form', $errorMessage);
+                \Log::error("❌ Form error: " . $errorMessage);
+            }
+        }
+            
+
     }
 
     public function displayEditProfileForm()

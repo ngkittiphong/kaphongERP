@@ -40,7 +40,6 @@
                         <div class="col-md-10 col-xs-12">
                             <div class="form-group">
                                 <select class="form-control" wire:model="user_type_id">
-                                    <option value="">-- Select User Type --</option>
                                     @foreach ($userTypes as $type)
                                         <option value="{{ $type->id }}">{{ $type->name }}</option>
                                     @endforeach
@@ -53,7 +52,6 @@
                             <!-- User Status -->
                             <div class="form-group">
                                 <select class="form-control" wire:model="user_status_id">
-                                    <option value="">-- Select User Status --</option>
                                     @foreach ($userStatuses as $status)
                                         <option value="{{ $status->id }}">{{ $status->name }}</option>
                                     @endforeach

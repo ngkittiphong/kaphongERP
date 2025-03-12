@@ -31,8 +31,8 @@
             <a href="#" class="list-group-item p-l-20">
                 <i class="icon-user-lock"></i> {{ $user->username }}
             </a>
-            <a href="#" class="list-group-item p-l-20">
-                <i class="icon-lock"></i> change password click for popup(modal)
+            <a href="#" class="list-group-item p-l-20" wire:click.prevent="$dispatch('showChangePasswordModal')">
+                <i class="icon-lock"></i> Change Password
             </a>
             <a href="#" class="list-group-item p-l-20">
                 <i class="icon-puzzle"></i> user.type.name
@@ -57,3 +57,42 @@
         </div>
     </div>
 </div>
+
+<!-- Password Change Modal -->
+@if($showChangePasswordModal)
+<div class="modal fade in" tabindex="-1" role="dialog" style="display: block; background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" wire:click="closeChangePasswordModal">&times;</button>
+                <h4 class="modal-title">Change Password</h4>
+            </div>
+            <div class="modal-body">
+                <form wire:submit.prevent="changePassword">
+                    <!-- Username field for accessibility - visually hidden but available to screen readers -->
+                    <div class="form-group" style="display: none;">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" autocomplete="username" value="{{ $user->username }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new_password">New Password</label>
+                        <input type="password" class="form-control" id="new_password" name="new_password" wire:model="new_password" autocomplete="new-password">
+                        @error('new_password') <span class="text-danger">{{ $message }}</span> @enderror
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new_password_confirmation">Confirm New Password</label>
+                        <input type="password" class="form-control" id="new_password_confirmation" name="new_password_confirmation" wire:model="new_password_confirmation" autocomplete="new-password">
+                        @error('new_password_confirmation') <span class="text-danger">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" wire:click="closeChangePasswordModal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Change Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
