@@ -64,7 +64,7 @@ class UserProfile extends Component
 
     public function displayAddUserForm()
     {
-        \Log::info("Livewire Event Received: showUserForm"); // Debugging log
+        \Log::info("Livewire Event Received: showAddUserForm"); // Debugging log
         $this->showAddUserForm = true;
         $this->reset([
             'username','email','password','password_confirmation',
@@ -73,8 +73,8 @@ class UserProfile extends Component
             'birth_date','description'
         ]);
         $this->resetErrorBag();
-        $this->dispatch('profileUpdated');
         $this->user = null;
+        $this->dispatch('addUser');
     }
 
     public function displayEditProfileForm()

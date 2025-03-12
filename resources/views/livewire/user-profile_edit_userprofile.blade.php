@@ -10,47 +10,16 @@
                 border-radius: 50%;
                 overflow: hidden;">
                 <!-- Default avatar image -->
-                @if($user->profile && $user->profile->avatar)
+                @if ($user->profile && $user->profile->avatar)
                     <img src="{{ $user->profile->avatar }}" alt="{{ $user->username }}'s Avatar" class="img-fluid" />
                 @else
-                    <img src="{{ asset('assets/images/faces/face_default.png') }}" alt="Default Icon" class="img-fluid" />
+                    <img src="{{ asset('assets/images/faces/face_default.png') }}" alt="Default Icon"
+                        class="img-fluid" />
                 @endif
 
                 <!-- File input for uploading/replacing the image -->
                 <input type="file" name="slim" accept="image/jpeg, image/png" />
             </div>
-            @script
-            <script>
-                $nextTick(() => {
-                    // Handle form submission
-                    document.getElementById('updateUserProfileForm').addEventListener('submit', function(e) {
-                        e.preventDefault();
-
-                        console.log('submit');
-                        
-                        // Get Slim instance
-                        const slim = document.getElementById('slim-avatar');
-
-                        console.log("slim element found");
-                        
-                        // Get base64 data
-                        if (slim) {
-                            console.log("convert to base64");
-                            const base64Data = document.querySelector('#slim-avatar .slim-result img.in').src;
-                            //const base64Data = slim.data.output.image;
-                            console.log("base64Data", base64Data);
-                            // Set avatar value before submitting
-                            @this.set('avatar', base64Data);
-                        }
-                        
-                        // Continue with form submission
-                        @this.saveUserAndProfile();
-                    });
-                });
-            </script>
-            @endscript
-
-
             <h4 class="no-margin-bottom m-t-10"><i class=""
                     alt="{{ $user->status->name }}"></i>{{ $user->profile?->fullname_th }}
                 ({{ $user->profile->nickname }})</h4>
@@ -142,8 +111,7 @@
                 <!-- Nickname field -->
                 <div class="form-group">
                     <label>Nickname</label>
-                    <input type="text" class="form-control" wire:model="nickname"
-                        value="test">
+                    <input type="text" class="form-control" wire:model="nickname" value="test">
                 </div>
 
                 <!-- Description field -->
