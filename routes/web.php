@@ -40,6 +40,10 @@ Route::get('/menu/menu_transfer', function () {
     return view('menu.menu_transfer');
 });
 
+Route::get('/menu/menu_branch', function () {
+    return view('menu.menu_branch');
+});
+
 Route::get('/menu/menu_warehouse', function () {
     return view('menu.menu_warehouse');
 });

@@ -27,8 +27,11 @@
         <li class="list-title">Sell</li>	
         <li><a href="https://pos.ultimatefosters.com/pos/create"><i class="icon-versions"></i> <span>POS</span></a></li>	
 
+        <li class="list-title">Branch</li>	
+        <li><a href="/menu/menu_branch"><i class="icon-briefcase"></i> <span>Branch</span></a></li>
+        
         <li class="list-title">Werehouse</li>	
-        <li><a href="/menu/menu_warehouse"><i class="icon-briefcase"></i> <span>Wherehouse</span></a></li>	
+        <li><a href="/menu/menu_warehouse"><i class="icon-briefcase"></i> <span>Werehouse</span></a></li>	
 
         													
     </ul>
