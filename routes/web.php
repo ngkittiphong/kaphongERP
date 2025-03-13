@@ -36,6 +36,10 @@ Route::get('/menu/menu_category', function () {
     return view('menu.menu_category');
 });
 
+Route::get('/menu/menu_transfer', function () {
+    return view('menu.menu_transfer');
+});
+
 Route::get('/menu/menu_warehouse', function () {
     return view('menu.menu_warehouse');
 });

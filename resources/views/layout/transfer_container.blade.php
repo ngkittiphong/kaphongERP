@@ -6,9 +6,9 @@
     <div class="header no-margin-bottom">
         <div class="header-content">
             <div class="page-title">
-                <i class="icon-user position-left"></i> Category
+                <i class="icon-user position-left"></i> Transfer
             </div>
-            @livewire('category.category-add-category-btn')
+            {{-- @livewire('warehouse.warehouse-add-warehouse-btn') --}}
         </div>
     </div>		
     <!--/Page Header-->

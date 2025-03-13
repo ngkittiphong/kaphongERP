@@ -15,7 +15,8 @@
             <a href=""><i class="icon-alignment-unalign"></i> <span>Products</span></a>
             <ul>							
                 <li><a href="/menu/menu_product">Products</a></li>
-                <li><a href="/menu/menu_category">Category</a></li>																				
+                <li><a href="/menu/menu_category">Category</a></li>
+                <li><a href="/menu/menu_transfer">Transfer</a></li>																			
             </ul>
         </li>
         
