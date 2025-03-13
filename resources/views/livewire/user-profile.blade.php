@@ -57,6 +57,106 @@
                 }
             });
         }
+        
+        // Password change modal functions
+        let currentUserId = null;
+        
+        function openPasswordModal(userId) {
+            currentUserId = userId;
+            // Update the username field in the modal
+            const usernameField = document.querySelector('#passwordChangeModal #username');
+            if (usernameField) {
+                // Try to find the username from the link that was clicked
+                const usernameText = document.querySelector(`a[data-user-id="${userId}"]`).previousElementSibling.textContent.trim();
+                if (usernameText) {
+                    usernameField.value = usernameText;
+                }
+            }
+            $('#passwordChangeModal').modal('show');
+        }
+        
+        function submitPasswordChange() {
+            // Clear previous errors
+            $('#new_password_error').text('');
+            $('#new_password_confirmation_error').text('');
+            
+            // Get form values
+            const newPassword = $('#new_password').val();
+            const newPasswordConfirmation = $('#new_password_confirmation').val();
+            
+            // Validate on client side
+            let hasErrors = false;
+            
+            if (!newPassword) {
+                $('#new_password_error').text('Password is required');
+                hasErrors = true;
+            } else if (newPassword.length < 6) {
+                $('#new_password_error').text('Password must be at least 6 characters');
+                hasErrors = true;
+            }
+            
+            if (!newPasswordConfirmation) {
+                $('#new_password_confirmation_error').text('Please confirm your password');
+                hasErrors = true;
+            } else if (newPassword !== newPasswordConfirmation) {
+                $('#new_password_confirmation_error').text('Passwords do not match');
+                hasErrors = true;
+            }
+            
+            if (hasErrors) {
+                return;
+            }
+            
+            // Use the stored user ID
+            if (!currentUserId) {
+                alert('User ID not found. Please refresh the page and try again.');
+                return;
+            }
+            
+            console.log('Changing password for user ID:', currentUserId);
+            
+            // Send AJAX request to change password
+            $.ajax({
+                url: '/users/' + currentUserId + '/change-password',
+                type: 'POST',
+                data: {
+                    new_password: newPassword,
+                    new_password_confirmation: newPasswordConfirmation,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Password changed successfully!',
+                    });
+                    // Close modal
+                    $('#passwordChangeModal').modal('hide');
+                    // Clear form
+                    $('#passwordChangeForm')[0].reset();
+                },
+                error: function(xhr) {
+                    const response = xhr.responseJSON;
+                    if (response && response.errors) {
+                        // Display validation errors
+                        if (response.errors.new_password) {
+                            $('#new_password_error').text(response.errors.new_password[0]);
+                        }
+                        if (response.errors.new_password_confirmation) {
+                            $('#new_password_confirmation_error').text(response.errors.new_password_confirmation[0]);
+                        }
+                    } else {
+                        // Display general error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to change password. Please try again.',
+                        });
+                    }
+                }
+            });
+        }
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

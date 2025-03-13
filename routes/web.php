@@ -74,3 +74,6 @@ Route::post('/post-message', [MessageController::class, 'store'])->name('post.me
 //Route::get('/user/edit/{id}', [UserController::class, 'edit']);
 //Route::post('/user/update/{id}', [UserController::class, 'update']);
 //Route::get('/user/delete/{id}', [UserController::class, 'delete']);
+
+// Password change route (as a web route)
+Route::post('/users/{id}/change-password', [UserController::class, 'changePassword']);
