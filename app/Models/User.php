@@ -19,6 +19,9 @@ class User extends Authenticatable
         'user_status_id',
         'user_type_id',
         'request_change_pass',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     protected $hidden = [

@@ -11,7 +11,7 @@
             <h4 class="no-margin-bottom m-t-10"><i class=""
                     alt="{{ $user->status->name }}"></i>{{ $user->profile?->fullname_th }}
                 ({{ $user->profile->nickname }})</h4>
-            <div>user.status.name</div>
+            <div>{{ $user->status->name }}</div>
         </div>
     </div>
     <div class="col-md-8 col-xs-12">
@@ -35,10 +35,10 @@
                 <i class="icon-lock"></i> Change Password
             </a>
             <a href="#" class="list-group-item p-l-20">
-                <i class="icon-puzzle"></i> user.type.name
+                <i class="icon-puzzle"></i> {{ $user->type->name }}
             </a>
             <a href="#" class="list-group-item p-l-20">
-                <i class="icon-plus3"></i> user.date_create
+                <i class="icon-plus3"></i> {{ $user->created_at }}
             </a>
         </div>
         <div class="panel-heading no-padding-bottom">
