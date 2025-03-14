@@ -593,7 +593,73 @@
                             
                             
                             <div class="panel panel-flat">
-					
+					<div class="panel-body">
+
+                                            <div class="row">
+
+                                                <div class="col-md-4">
+                                                        <div class="panel panel-flat">
+                                                                <div class="panel-body p-b-10">
+                                                                        <div class="row">
+                                                                                <div class="col-md-8 col-xs-8">
+                                                                                        <h1  class="text-size-huge text-regular text-semibold no-padding no-margin m-t-5 m-b-10">200 ชิ้น</h2>
+                                                                                </div>
+                                                                                <div class="col-md-4 col-xs-4">
+                                                                                        <i class="icon-cube2 icon-4x text-blue-lighter"></i>
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                                <div class="panel-footer bg-blue-lighter">							
+                                                                        <div class="elements">
+                                                                                <span class="text-size-extralarge">สินค้าคงเหลือ</span>
+                                                                                <!--<a href="#" class="pull-right no-padding-right text-white">View all <i class="icon-arrow-right6 position-right"></i></a>-->
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                        <div class="panel panel-flat">
+                                                                <div class="panel-body p-b-10">
+                                                                        <div class="row">
+                                                                                <div class="col-md-8 col-xs-8">
+                                                                                        <h1  class="text-size-huge text-regular text-semibold no-padding no-margin m-t-5 m-b-10">540 ชิ้น</h2>
+                                                                                        <!--<span class="">ชิ้น</span>-->
+                                                                                </div>
+                                                                                <div class="col-md-4 col-xs-4">
+                                                                                        <i class="icon-download4 icon-4x" style="color:#D0F1CF"></i>
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                                <div class="panel-footer"  style="background-color:#D0F1CF">							
+                                                                        <div class="elements">
+                                                                                <span class="text-size-extralarge">จำนวนสินค้าเข้า</span>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                        <div class="panel panel-flat">
+                                                                <div class="panel-body p-b-10">
+                                                                        <div class="row">
+                                                                                <div class="col-md-8 col-xs-8">
+                                                                                        <h1  class="text-size-huge text-regular text-semibold no-padding no-margin m-t-5 m-b-10">340 ชิ้น</h2>
+                                                                                </div>
+                                                                                <div class="col-md-4 col-xs-4">
+                                                                                        <i class="icon-upload4 icon-4x icon-normal" style="color:#F1CFCF"></i>
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                                <div class="panel-footer"  style="background-color:#F1CFCF">							
+                                                                        <div class="elements">
+                                                                                <span class="text-size-extralarge">จำนวนสินค้าออก</span>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                        
+                                        
+                                        </div>
 					
 					<div class="table-responsive">
 						<table class="table datatable-stock-card">
@@ -677,6 +743,32 @@
 									<td>แพค</td>
 									
 								</tr>
+                                                                
+                                                                
+                                                                
+                                                                <tr>
+									<td></td>
+                                                                        <td>จำนวนรวม</td>
+									<td></td>
+									<td></td>
+                                                                        <td></td>
+									<td>540</td>
+                                                                        <td>340</td>
+									<td>ชิ้น</td>
+									
+                                                            </tr>
+                                                            <tr>
+									<td></td>
+                                                                        
+									<td>คงเหลือ</td>
+									<td>200</td>
+                                                                        <td></td>
+                                                                        <td></td>
+									<td></td>
+                                                                        <td></td>
+									<td>ชิ้น</td>
+									
+                                                            </tr>
 							</tbody>
 						</table>
 					</div>
@@ -706,7 +798,7 @@
 		buttons: {
 			dom: {
 				button: {
-					className: 'btn btn-primary'
+					className: 'btn'
 				}
 			},
 			buttons: [
