@@ -25,6 +25,16 @@
 <script src="{{ asset('js/forms/select2.min.js') }}"></script>	
 <script src="{{ asset('js/core.js') }}"></script>
 <script src="{{ asset('js/sweetalert.js') }}"></script>
+
+
+
+<script src="{{ asset('js/moment.min.js') }}"></script>
+<script src="{{ asset('js/forms/daterangepicker.js') }}"></script>
+
+
+
+
+
 <!-- /global scripts -->
 <!-- Page scripts -->
 <!--{{-- <script src="https://www.google.com/jsapi"></script> --}}-->

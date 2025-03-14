@@ -2,7 +2,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
-	<title>Penguin - Responsive admin dashboard template by Followtechnique</title>	
+	<title>Salmon ERP - Simple & Specific </title>	
 	<link href="{{ asset('assets/images/favicon.ico') }}" rel="apple-touch-icon" type="image/png" sizes="144x144">
 	<link href="{{ asset('assets/images/favicon.ico') }}" rel="apple-touch-icon" type="image/png" sizes="114x114">
 	<link href="{{ asset('assets/images/favicon.ico') }}" rel="apple-touch-icon" type="image/png" sizes="72x72">
