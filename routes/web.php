@@ -48,6 +48,14 @@ Route::get('/menu/menu_warehouse', function () {
     return view('menu.menu_warehouse');
 });
 
+Route::get('/menu/menu_warehouse_checkstock', function () {
+    return view('menu.menu_warehouse_checkstock');
+});
+
+Route::get('/menu/menu_warehouse_transfer', function () {
+    return view('menu.menu_warehouse_transfer');
+});
+
 // Route::get('/menu/menu_report', function () {
 //     return view('menu.menu_report');
 // });

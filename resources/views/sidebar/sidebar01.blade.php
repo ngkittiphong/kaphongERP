@@ -31,9 +31,14 @@
         <li><a href="/menu/menu_branch"><i class="icon-briefcase"></i> <span>Branch</span></a></li>
         
         <li class="list-title">Werehouse</li>	
-        <li><a href="/menu/menu_warehouse"><i class="icon-briefcase"></i> <span>Werehouse</span></a></li>	
-
-        													
+        <li>
+            <a href=""><i class="icon-briefcase"></i> <span>Werehouse</span></a>
+            <ul>							
+                <li><a href="/menu/menu_warehouse">Werehouse</a></li>
+                <li><a href="/menu/menu_warehouse_checkstock">Check Stock</a></li>
+                <li><a href="/menu/menu_warehouse_transfer">Transfer</a></li>																			
+            </ul>
+        </li>										
     </ul>
 </div>
 
