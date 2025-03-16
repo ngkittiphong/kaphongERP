@@ -35,32 +35,32 @@
                                     wire:click="$dispatch('ProfileSelected', { userId: {{ 1 }} })">
                                     <td>
                                         <div class="row col-md-12">
-                                        <div class="col-md-3 col-sm-3">
-                                            <div class="thumb">
-                                                    <a href="{{ asset('assets/images/faces/face_default.png') }}" class="venobox">
-                                                            <img src="{{ asset('assets/images/faces/face_default.png') }}" alt="">
-                                                            <span class="zoom-image"><i class="icon-plus2"></i></span>
-                                                    </a>
+                                            <div class="col-md-3 col-sm-3">
+                                                <div class="thumb media-middle">
+                                                        <a href="{{ asset('assets/images/faces/face_default.png') }}" class="venobox">
+                                                                <img src="{{ asset('assets/images/faces/face_default.png') }}" alt="">
+                                                                <span class="zoom-image"><i class="icon-plus2"></i></span>
+                                                        </a>
+                                                </div>
                                             </div>
-                                        </div>
                                             
                                             <div class="col-md-8 col-sm-8">
-                                        <div class="media-body">
-                                            
-                                            <div class="media-heading text-size-extralarge text-dark">
+                                                <div class="media-body">
 
-                                                product_nameeeeeeeeeeeeeee
-                                            </div>
+                                                    <div class="media-heading text-size-extralarge text-dark">
 
-                                            <div class=" text-size-large text-dark">
+                                                        product_nameeeeeeeeeeeeeee
+                                                    </div>
 
-                                                serial_number 
-                                            </div>
-                                            <div class=" text-size-large text-dark">
+                                                    <div class=" text-size-large text-dark">
 
-                                                สินค้านับสต๊อก, กระเป๋าถือ
-                                            </div>
-                                        </div>
+                                                        serial_number 
+                                                    </div>
+                                                    <div class=" text-size-large text-dark">
+
+                                                        สินค้านับสต๊อก, กระเป๋าถือ
+                                                    </div>
+                                                </div>
                                             </div>
                                             
                                             <div class="col-md-1 col-sm-1">
@@ -76,7 +76,7 @@
                                     <td>
                                         <div class="row col-md-12">
                                             <div class="col-md-3 col-sm-3">
-                                                <div class="thumb">
+                                                <div class="thumb media-middle">
                                                         <a href="{{ asset('assets/images/faces/face_default.png') }}" class="venobox">
                                                                 <img src="{{ asset('assets/images/faces/face_default.png') }}" alt="">
                                                                 <span class="zoom-image"><i class="icon-plus2"></i></span>
@@ -85,21 +85,21 @@
                                             </div>
                                             
                                             <div class="col-md-8 col-sm-8">
-                                        <div class="media-body">
-                                            
-                                            <div class="media-heading text-size-extralarge text-dark">
-                                                กระเป๋าสตางค์
-                                            </div>
+                                                <div class="media-body">
 
-                                            <div class=" text-size-large text-dark">
+                                                    <div class="media-heading text-size-extralarge text-dark">
+                                                        กระเป๋าสตางค์
+                                                    </div>
 
-                                                WL330092004 
-                                            </div>
-                                            <div class=" text-size-large text-dark">
+                                                    <div class=" text-size-large text-dark">
 
-                                                สินค้านับสต๊อก, กระเป๋าหนังจระเข้
-                                            </div>
-                                        </div>
+                                                        WL330092004 
+                                                    </div>
+                                                    <div class=" text-size-large text-dark">
+
+                                                        สินค้านับสต๊อก, กระเป๋าหนังจระเข้
+                                                    </div>
+                                                </div>
                                             </div>
                                             
                                             <div class="col-md-1 col-sm-1">
@@ -842,105 +842,105 @@
                             
                     <div class="tab-pane" id="tab-trading">
                         
-                                <div class="row col-md-12 col-xs-12">
-                                    <div class="col-md-6 col-xs-6">
-                                        <div class="panel-heading no-padding-bottom">
-                                            <h4 class="panel-title"><?= __('Product sale details') ?></h4>
-                                        </div>
-                                        <div class="list-group list-group-lg list-group-borderless">
-                                            <div class='row'>
-                                                <span href="#" class="list-group-item p-l-20">
-                                                    <div class="col-md-3 col-xs-3 text-bold">
-                                                        ราคาขาย :
-                                                    </div>
-                                                    <div class="col-md-8 col-xs-8 text-left">
-                                                        {{ 'product.sale_price' }}
-                                                    </div>
-                                                </span>
-                                            </div>
-                                            <div class='row'>
-                                                <span href="#" class="list-group-item p-l-20">
-                                                    <div class="col-md-3 col-xs-3 text-bold">
-                                                        {{ 'product.sale_vat.name' }}
-                                                    </div>
-                                                    <div class="col-md-8 col-xs-8 text-left">
-                                                        {{ 'product.sale_vat.percent' }}
-                                                    </div>
-                                                </span>
-                                            </div>
-                                            <div class='row'>
-                                                <span href="#" class="list-group-item p-l-20">
-                                                    <div class="col-md-3 col-xs-3 text-bold">
-                                                        {{ 'product.sale_vat.name' }}
-                                                    </div>
-                                                    <div class="col-md-8 col-xs-8 text-left">
-                                                        {{ 'product.sale_withholding.percent' }}
-                                                    </div>
-                                                </span>
-                                            </div>
-                                            <div class='row'>
-                                                <span href="#" class="list-group-item p-l-20">
-                                                    <div class="col-md-12 col-xs-12 text-bold">
-                                                        รายละเอียดการขาย :
-                                                    </div>
-                                                    <div class="col-md-12 col-xs-12 text-left">
-                                                        {{ 'product.sale_description' }}
-                                                    </div>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row col-md-6 col-xs-6">
-                                        
-                                        <div class="panel-heading no-padding-bottom">
-                                            <h4 class="panel-title"><?= __('Product buy details') ?></h4>
-                                        </div>
-                                        <div class="list-group list-group-lg list-group-borderless">
-                                            <div class='row'>
-                                                <span href="#" class="list-group-item p-l-20">
-                                                    <div class="col-md-3 col-xs-3 text-bold">
-                                                        ราคาซื้อ :
-                                                    </div>
-                                                    <div class="col-md-8 col-xs-8 text-left">
-                                                        {{ 'product.buy_price' }}
-                                                    </div>
-                                                </span>
-                                            </div>
-                                            <div class='row'>
-                                                <span href="#" class="list-group-item p-l-20">
-                                                    <div class="col-md-3 col-xs-3 text-bold">
-                                                        {{ 'product.buy_vat.name' }} :
-                                                    </div>
-                                                    <div class="col-md-8 col-xs-8 text-left">
-                                                        {{ 'product.buy_vat.percent' }}
-                                                    </div>
-                                                </span>
-                                            </div>
-                                            <div class='row'>
-                                                <span href="#" class="list-group-item p-l-20">
-                                                    <div class="col-md-3 col-xs-3 text-bold">
-                                                        {{ 'product.buy_withholding.name' }} :
-                                                    </div>
-                                                    <div class="col-md-8 col-xs-8 text-left">
-                                                        {{ 'product.buy_withholding.percent' }}
-                                                    </div>
-                                                </span>
-                                            </div>
-                                            <div class='row'>
-                                                <span href="#" class="list-group-item p-l-20">
-                                                    <div class="col-md-12 col-xs-12 text-bold">
-                                                        รายละเอียดการซื้อ :
-                                                    </div>
-                                                    <div class="col-md-12 col-xs-12 text-left">
-                                                        {{ 'product.buy_description' }}
-                                                    </div>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
+                        <div class="row col-md-12 col-xs-12">
+                            <div class="col-md-6 col-xs-6">
+                                <div class="panel-heading no-padding-bottom">
+                                    <h4 class="panel-title"><?= __('Product sale details') ?></h4>
                                 </div>
-                                
+                                <div class="list-group list-group-lg list-group-borderless">
+                                    <div class='row'>
+                                        <span href="#" class="list-group-item p-l-20">
+                                            <div class="col-md-3 col-xs-3 text-bold">
+                                                ราคาขาย :
+                                            </div>
+                                            <div class="col-md-8 col-xs-8 text-left">
+                                                {{ 'product.sale_price' }}
+                                            </div>
+                                        </span>
+                                    </div>
+                                    <div class='row'>
+                                        <span href="#" class="list-group-item p-l-20">
+                                            <div class="col-md-3 col-xs-3 text-bold">
+                                                {{ 'product.sale_vat.name' }}
+                                            </div>
+                                            <div class="col-md-8 col-xs-8 text-left">
+                                                {{ 'product.sale_vat.percent' }}
+                                            </div>
+                                        </span>
+                                    </div>
+                                    <div class='row'>
+                                        <span href="#" class="list-group-item p-l-20">
+                                            <div class="col-md-3 col-xs-3 text-bold">
+                                                {{ 'product.sale_vat.name' }}
+                                            </div>
+                                            <div class="col-md-8 col-xs-8 text-left">
+                                                {{ 'product.sale_withholding.percent' }}
+                                            </div>
+                                        </span>
+                                    </div>
+                                    <div class='row'>
+                                        <span href="#" class="list-group-item p-l-20">
+                                            <div class="col-md-12 col-xs-12 text-bold">
+                                                รายละเอียดการขาย :
+                                            </div>
+                                            <div class="col-md-12 col-xs-12 text-left">
+                                                {{ 'product.sale_description' }}
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row col-md-6 col-xs-6">
+
+                                <div class="panel-heading no-padding-bottom">
+                                    <h4 class="panel-title"><?= __('Product buy details') ?></h4>
+                                </div>
+                                <div class="list-group list-group-lg list-group-borderless">
+                                    <div class='row'>
+                                        <span href="#" class="list-group-item p-l-20">
+                                            <div class="col-md-3 col-xs-3 text-bold">
+                                                ราคาซื้อ :
+                                            </div>
+                                            <div class="col-md-8 col-xs-8 text-left">
+                                                {{ 'product.buy_price' }}
+                                            </div>
+                                        </span>
+                                    </div>
+                                    <div class='row'>
+                                        <span href="#" class="list-group-item p-l-20">
+                                            <div class="col-md-3 col-xs-3 text-bold">
+                                                {{ 'product.buy_vat.name' }} :
+                                            </div>
+                                            <div class="col-md-8 col-xs-8 text-left">
+                                                {{ 'product.buy_vat.percent' }}
+                                            </div>
+                                        </span>
+                                    </div>
+                                    <div class='row'>
+                                        <span href="#" class="list-group-item p-l-20">
+                                            <div class="col-md-3 col-xs-3 text-bold">
+                                                {{ 'product.buy_withholding.name' }} :
+                                            </div>
+                                            <div class="col-md-8 col-xs-8 text-left">
+                                                {{ 'product.buy_withholding.percent' }}
+                                            </div>
+                                        </span>
+                                    </div>
+                                    <div class='row'>
+                                        <span href="#" class="list-group-item p-l-20">
+                                            <div class="col-md-12 col-xs-12 text-bold">
+                                                รายละเอียดการซื้อ :
+                                            </div>
+                                            <div class="col-md-12 col-xs-12 text-left">
+                                                {{ 'product.buy_description' }}
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
             </div>
