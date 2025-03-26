@@ -56,6 +56,16 @@ Route::get('/menu/menu_warehouse_transfer', function () {
     return view('menu.menu_warehouse_transfer');
 });
 
+//------------------Setting Route--------------------------------
+Route::get('/setting/company_profile', function () {
+    return view('setting.setting_company_profile');
+});
+
+Route::get('/setting/delivery_note', function () {
+    return view('setting.setting_delivery_note');
+});
+
+
 // Route::get('/menu/menu_report', function () {
 //     return view('menu.menu_report');
 // });
