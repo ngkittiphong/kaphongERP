@@ -9,6 +9,7 @@
                 <i class="icon-user position-left"></i> Transfer
             </div>
             {{-- @livewire('warehouse.warehouse-add-warehouse-btn') --}}
+            
         </div>
     </div>		
     <!--/Page Header-->
