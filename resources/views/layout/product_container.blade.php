@@ -665,82 +665,90 @@
 						<table class="table datatable-stock-card">
 							<thead>
 								<tr>
-									<th>Move</th>
                                                                         <th>วันที่</th>
 									<th>Document No.</th>
 									<th>Detail</th>
 									<th>Warehouse</th>
 									<th>จำนวนเข้า</th>
 									<th>จำนวนออก</th>
+                                                                        <th>คงเหลือ</th>
 									<th>หน่วย</th>
 								</tr>
 							</thead>
 							
 							<tbody>
                                                             <tr class="" style="background-color:#D0F1CF">
-									<td>เข้า</td>
+									
                                                                         <td>3/12/2024</td>
                                                                         <td><a href="#">TF092904022</a></td>
 									<td>ซื้อสินค้าเข้า</td>
                                                                         <td>คลังหลัก</td>
 									<td>120</td>
                                                                         <td> - </td>
-									<td>แพค</td>
+									
+                                                                        <td>600</td>
+                                                                        <td>ชิ้น</td>
 									
 								</tr>
 								<tr style="background-color:#F1CFCF">
-									<td>ออก</td>
+									
                                                                         <td>5/12/2024</td>
 									<td><a href="#">TF092904023</a></td>
 									<td>ซื้อสินค้าออก</td>
                                                                         <td>คลังภูเก็ต</td>
 									<td> - </td>
-                                                                        <td> 12 </td>
-									<td>กล่อง</td>
+                                                                        <td> 120 </td>
+									
+                                                                        <td>480</td>
+                                                                        <td>ชิ้น</td>
 									
 								</tr>
 								<tr style="background-color:#D0F1CF">
-									<td>เข้า</td>
+									
                                                                         <td>20/12/2024</td>
 									<td><a href="#">TF092904032</a></td>
 									<td>ซื้อสินค้าเข้า</td>
                                                                         <td>คลังหลัก</td>
 									<td>500</td>
                                                                         <td> - </td>
-									<td> ชิ้น </td>
+									<td> 980 </td>
+                                                                        <td>ชิ้น</td>
 									
 								</tr>
 								<tr style="background-color:#D0F1CF">
-									<td>เข้า</td>
+									
                                                                         <td>3/12/2024</td>
 									<td><a href="#">TF092904122</a></td>
 									<td>ซื้อสินค้าเข้า</td>
                                                                         <td>คลังหลัก</td>
 									<td>120</td>
                                                                         <td> - </td>
-									<td>แพค</td>
+									<td>1100</td>
+                                                                        <td>ชิ้น</td>
 									
 								</tr>
 								<tr style="background-color:#F1CFCF">
-									<td>ออก</td>
+									
                                                                         <td>3/12/2024</td>
 									<td><a href="#">TF092904222</a></td>
 									<td>เบิกขาย</td>
                                                                         <td>คลังหลัก</td>
 									<td> - </td>
-                                                                        <td> 35 </td>
-									<td>แพค</td>
+                                                                        <td> 350 </td>
+									<td>850</td>
+                                                                        <td>ชิ้น</td>
 									
 								</tr>
 								<tr style="background-color:#D0F1CF">
-									<td>เข้า</td>
+									
                                                                         <td>3/12/2024</td>
 									<td><a href="#">TF092904022</a></td>
 									<td>ซื้อสินค้าเข้า</td>
                                                                         <td>คลังหลัก</td>
-									<td>12</td>
+									<td>120</td>
                                                                         <td> - </td>
-									<td>แพค</td>
+                                                                        <td>970</td>
+                                                                        <td>ชิ้น</td>
 									
 								</tr>
                                                                 
