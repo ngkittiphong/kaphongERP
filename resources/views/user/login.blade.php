@@ -46,9 +46,9 @@ body {
 					</div>
 
 					<div class="form-group has-feedback has-feedback-left">
-						<input type="text" class="form-control" placeholder="email" name="email" required="required">
+						<input type="text" class="form-control" placeholder="username" name="username" required="required">
 						<div class="form-control-feedback">
-							<i class="icon-envelope text-muted"></i>
+							<i class="icon-user text-muted"></i>
 						</div>
 					</div>
 
@@ -80,9 +80,9 @@ body {
 						<button type="submit" class="btn btn-info btn-labeled btn-labeled-right btn-block"><b><i class="icon-enter"></i></b> Sign in</button>								
 					</div>
 
-					<div class="form-group">
+					{{-- <div class="form-group">
 						<button type="button" onclick="window.location.href='/user/register'" class="btn btn-success btn-labeled btn-labeled-right btn-block"><b><i class="icon-user-plus"></i></b> Create an account</button>								
-					</div>
+					</div> --}}
 				</div>
 				
 			</form>

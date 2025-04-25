@@ -72,7 +72,6 @@
                                 
                 <!----------------------  Start Company Detail  ------------------------->                
                         
-                                
                                 <div class="tab-pane active" id="tab-detail">
 
                                     <div class="row col-md-12 col-xs-12">
@@ -83,106 +82,357 @@
                                                 <h4 class="panel-title"><?= __('Branch details') ?></h4>
                                                 <div class="elements">
                                                     <!--<button type="button" class="btn bg-amber btn-sm">Button</button>-->
-                                                    <button class="btn bg-amber-darkest"
+                                                    {{-- <button class="btn bg-amber-darkest"
                                                         wire:click="$dispatch('showEditProfileForm')">Edit Branch</button>
-                                                    <button class="btn btn-danger" onclick="confirmDelete({{ 1}})">Delete Branch</button>
+                                                    <button class="btn btn-danger" onclick="confirmDelete({{ 1}})">Delete Branch</button> --}}
                                                 </div>
                                                 <a class="elements-toggle"><i class="icon-more"></i></a>
                                             </div>
                                             <div class="list-group list-group-lg list-group-borderless">
-                                                <div class='row'>
-                                                    <span href="#" class="list-group-item p-l-20">
-                                                        <div class="col-md-3 col-xs-3 text-bold">
-                                                            ชื่อสาขา :
+                                                <!-- Head Office Section -->
+                                                @if($headOffice)
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title"><?= __('Head Office') ?></h4>
+                                                        <div class="elements">
+                                                            <button class="btn bg-amber-darkest edit-branch-btn" data-branch-id="{{ $headOffice->id }}">Edit</button>
+                                                            <button class="btn btn-danger delete-branch-btn" data-branch-id="{{ $headOffice->id }}">Delete</button>
                                                         </div>
-                                                        <div class="col-md-8 col-xs-8 text-left">
-                                                            {{ 'branch_name_th' }} ({{'branch_name_en'}})
-                                                        </div>
-                                                    </span>
-                                                </div>
-                                                <div class='row'>
-                                                    <span href="#" class="list-group-item p-l-20">
-                                                        <div class="col-md-3 col-xs-3 text-bold">
-                                                            เลขที่สาขา :
-                                                        </div>
-                                                        <div class="col-md-8 col-xs-8 text-left">
-                                                            {{ 'branch_no'}} (สาขาหลัก)
-                                                        </div>
-                                                    </span>
-                                                </div>
-                                                <div class='row'>
-                                                    <span href="#" class="list-group-item p-l-20">
-                                                        <div class="col-md-3 col-xs-3 text-bold">
-                                                            ที่อยู่ :
-                                                        </div>
-                                                        <div class="col-md-4 col-xs-4 text-left">
-                                                            158/9 หมู่ 1 ถ. ท่าตะโก - นครสวรรค์ ต.นครสวรรค์ออก อ.เมือง รหัสไปรษณีย์ 60000
-                                                        </div>
-                                                        <div class="col-md-4 col-xs-4 text-left">
-                                                            address_en 85/255, Village No. 5,
-                                                                        Na Kluea Sub-district,
-                                                                        Bang Lamung District, 
-                                                                        Chonburi Province, 
-                                                                        Postal Code 20150
-                                                        </div>
-                                                    </span>
-                                                </div>
-                                                <div class='row'>
-                                                    <span href="#" class="list-group-item p-l-20">
-                                                        <div class="col-md-3 col-xs-3 text-bold">
-                                                            ที่อยู่ออกใบเสร็จ :
-                                                        </div>
-                                                        <div class="col-md-4 col-xs-4 text-left">
-                                                            เหมือนที่อยู่สาขา
-                                                        </div>
-                                                        <div class="col-md-4 col-xs-4 text-left">
-                                                            bill_address_en 85/255, Village No. 5,
-                                                                        Na Kluea Sub-district,
-                                                                        Bang Lamung District, 
-                                                                        Chonburi Province, 
-                                                                        Postal Code 20150
-                                                        </div>
-                                                    </span>
-                                                </div>
-
-
-                                                <div class='row'>
-                                                    <div class="col-md-4 col-xs-4 text-bold">
-
-                                                        <span href="#" class="list-group-item p-l-20">
-                                                            <i class="icon-phone2"></i>093-443-9949
-                                                        </span>
                                                     </div>
-                                                    <div class="col-md-8 col-xs-8 text-bold">
+                                                    <div class="branch-details" id="branch-details-{{ $headOffice->id }}">
+                                                        <div class='row'>
+                                                            <span href="#" class="list-group-item p-l-20">
+                                                                <div class="col-md-3 col-xs-3 text-bold">
+                                                                    Branch Name :
+                                                                </div>
+                                                                <div class="col-md-8 col-xs-8 text-left">
+                                                                    {{ $headOffice->name_th }} ({{ $headOffice->name_en }})
+                                                                </div>
+                                                            </span>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <span href="#" class="list-group-item p-l-20">
+                                                                <div class="col-md-3 col-xs-3 text-bold">
+                                                                    Branch No. :
+                                                                </div>
+                                                                <div class="col-md-8 col-xs-8 text-left">
+                                                                    {{ $headOffice->branch_code }} (สาขาหลัก)
+                                                                </div>
+                                                            </span>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <span href="#" class="list-group-item p-l-20">
+                                                                <div class="col-md-3 col-xs-3 text-bold">
+                                                                    Address :
+                                                                </div>
+                                                                <div class="col-md-4 col-xs-4 text-left">
+                                                                    {{ $headOffice->address_th }}
+                                                                </div>
+                                                                <div class="col-md-4 col-xs-4 text-left">
+                                                                    {{ $headOffice->address_en }}
+                                                                </div>
+                                                            </span>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <span href="#" class="list-group-item p-l-20">
+                                                                <div class="col-md-3 col-xs-3 text-bold">
+                                                                    Billing Address :
+                                                                </div>
+                                                                <div class="col-md-4 col-xs-4 text-left">
+                                                                    {{ $headOffice->bill_address_th ?? 'เหมือนที่อยู่สาขา' }}
+                                                                </div>
+                                                                <div class="col-md-4 col-xs-4 text-left">
+                                                                    {{ $headOffice->bill_address_en }}
+                                                                </div>
+                                                            </span>
+                                                        </div>
 
-                                                        <span href="#" class="list-group-item p-l-20">
-                                                        <i class="icon-mobile"></i>093-443-9949
-                                                    </span>
+                                                        <div class='row'>
+                                                            <div class="col-md-4 col-xs-4 text-bold">
+                                                                <span href="#" class="list-group-item p-l-20">
+                                                                    <i class="icon-phone2"></i>{{ $headOffice->phone }}
+                                                                </span>
+                                                            </div>
+                                                            <div class="col-md-8 col-xs-8 text-bold">
+                                                                <span href="#" class="list-group-item p-l-20">
+                                                                    <i class="icon-mobile"></i>{{ $headOffice->mobile }}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class='row'>
+                                                            <div class="col-md-4 col-xs-4 text-bold">
+                                                                <span href="#" class="list-group-item p-l-20">
+                                                                    <i class="icon-printer"></i>{{ $headOffice->fax }}
+                                                                </span>
+                                                            </div>
+                                                            <div class="col-md-4 col-xs-4 text-bold">
+                                                                <span href="#" class="list-group-item p-l-20">
+                                                                    <i class="icon-envelop3"></i>{{ $headOffice->email }}
+                                                                </span>
+                                                            </div>
+                                                            <div class="col-md-4 col-xs-4 text-bold">
+                                                                <span href="#" class="list-group-item p-l-20">
+                                                                    <i class="icon-earth"></i>{{ $headOffice->website }}
+                                                                </span>
+                                                            </div>
+                                                        </div>
                                                     </div>
-
-
-
-                                                </div>
-                                                <div class='row'>
-                                                    <div class="col-md-4 col-xs-4 text-bold">
-
-                                                        <span href="#" class="list-group-item p-l-20">
-                                                            <i class="icon-printer"></i>02-443-7482
-                                                        </span>
+                                                    <div class="branch-edit-form" id="branch-edit-form-{{ $headOffice->id }}" style="display: none;">
+                                                        <form action="{{ route('branches.update', $headOffice->id) }}" method="POST">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>Branch Code *</label>
+                                                                        <input type="text" name="branch_code" class="form-control" value="{{ $headOffice->branch_code }}" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>Branch Name (TH) *</label>
+                                                                        <input type="text" name="name_th" class="form-control" value="{{ $headOffice->name_th }}" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>Branch Name (EN) *</label>
+                                                                        <input type="text" name="name_en" class="form-control" value="{{ $headOffice->name_en }}" required>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>Address (TH)</label>
+                                                                        <textarea name="address_th" class="form-control">{{ $headOffice->address_th }}</textarea>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>Address (EN)</label>
+                                                                        <textarea name="address_en" class="form-control">{{ $headOffice->address_en }}</textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>Phone</label>
+                                                                        <input type="text" name="phone" class="form-control" value="{{ $headOffice->phone }}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>Mobile</label>
+                                                                        <input type="text" name="mobile" class="form-control" value="{{ $headOffice->mobile }}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>Fax</label>
+                                                                        <input type="text" name="fax" class="form-control" value="{{ $headOffice->fax }}">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>Email</label>
+                                                                        <input type="email" name="email" class="form-control" value="{{ $headOffice->email }}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>Website</label>
+                                                                        <input type="url" name="website" class="form-control" value="{{ $headOffice->website }}">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group text-right">
+                                                                <button type="button" class="btn btn-default cancel-edit-btn">Cancel</button>
+                                                                <button type="submit" class="btn btn-primary">Save</button>
+                                                            </div>
+                                                        </form>
                                                     </div>
-                                                    <div class="col-md-4 col-xs-4 text-bold">
-                                                        <span href="#" class="list-group-item p-l-20">
-                                                            <i class="icon-envelop3"></i>maxpower2@gmaol.co
-                                                        </span>
+                                                @else
+                                                    <div class="alert alert-warning">
+                                                        No active head office found.
                                                     </div>
-                                                    <div class="col-md-4 col-xs-4 text-bold">
+                                                @endif
 
-                                                        <span href="#" class="list-group-item p-l-20">
-                                                            <i class="icon-earth"></i>www.aaaa.com
-                                                        </span>
+                                                <!-- Other Branches Section -->
+                                                @if($otherBranches->count() > 0)
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title"><?= __('Other Branches') ?></h4>
                                                     </div>
+                                                    @foreach($otherBranches as $branch)
+                                                        <div class="branch-section">
+                                                            <div class="panel-heading">
+                                                                <h4 class="panel-title">{{ $branch->name_th }}</h4>
+                                                                <div class="elements">
+                                                                    <button class="btn bg-amber-darkest edit-branch-btn" data-branch-id="{{ $branch->id }}">Edit</button>
+                                                                    <button class="btn btn-danger delete-branch-btn" data-branch-id="{{ $branch->id }}">Delete</button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="branch-details" id="branch-details-{{ $branch->id }}">
+                                                                <div class='row'>
+                                                                    <span href="#" class="list-group-item p-l-20">
+                                                                        <div class="col-md-3 col-xs-3 text-bold">
+                                                                            Branch Name :
+                                                                        </div>
+                                                                        <div class="col-md-8 col-xs-8 text-left">
+                                                                            {{ $branch->name_th }} ({{ $branch->name_en }})
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                <div class='row'>
+                                                                    <span href="#" class="list-group-item p-l-20">
+                                                                        <div class="col-md-3 col-xs-3 text-bold">
+                                                                            Branch No. :
+                                                                        </div>
+                                                                        <div class="col-md-8 col-xs-8 text-left">
+                                                                            {{ $branch->branch_code }}
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                <div class='row'>
+                                                                    <span href="#" class="list-group-item p-l-20">
+                                                                        <div class="col-md-3 col-xs-3 text-bold">
+                                                                            Address :
+                                                                        </div>
+                                                                        <div class="col-md-4 col-xs-4 text-left">
+                                                                            {{ $branch->address_th }}
+                                                                        </div>
+                                                                        <div class="col-md-4 col-xs-4 text-left">
+                                                                            {{ $branch->address_en }}
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                <div class='row'>
+                                                                    <span href="#" class="list-group-item p-l-20">
+                                                                        <div class="col-md-3 col-xs-3 text-bold">
+                                                                            Billing Address :
+                                                                        </div>
+                                                                        <div class="col-md-4 col-xs-4 text-left">
+                                                                            {{ $branch->bill_address_th ?? 'เหมือนที่อยู่สาขา' }}
+                                                                        </div>
+                                                                        <div class="col-md-4 col-xs-4 text-left">
+                                                                            {{ $branch->bill_address_en }}
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
 
-                                                </div>
+                                                                <div class='row'>
+                                                                    <div class="col-md-4 col-xs-4 text-bold">
+                                                                        <span href="#" class="list-group-item p-l-20">
+                                                                            <i class="icon-phone2"></i>{{ $branch->phone }}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="col-md-8 col-xs-8 text-bold">
+                                                                        <span href="#" class="list-group-item p-l-20">
+                                                                            <i class="icon-mobile"></i>{{ $branch->mobile }}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class='row'>
+                                                                    <div class="col-md-4 col-xs-4 text-bold">
+                                                                        <span href="#" class="list-group-item p-l-20">
+                                                                            <i class="icon-printer"></i>{{ $branch->fax }}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="col-md-4 col-xs-4 text-bold">
+                                                                        <span href="#" class="list-group-item p-l-20">
+                                                                            <i class="icon-envelop3"></i>{{ $branch->email }}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="col-md-4 col-xs-4 text-bold">
+                                                                        <span href="#" class="list-group-item p-l-20">
+                                                                            <i class="icon-earth"></i>{{ $branch->website }}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="branch-edit-form" id="branch-edit-form-{{ $branch->id }}" style="display: none;">
+                                                                <form action="{{ route('branches.update', $branch->id) }}" method="POST">
+                                                                    @csrf
+                                                                    @method('PUT')
+                                                                    <div class="row">
+                                                                        <div class="col-md-4">
+                                                                            <div class="form-group">
+                                                                                <label>Branch Code *</label>
+                                                                                <input type="text" name="branch_code" class="form-control" value="{{ $branch->branch_code }}" required>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="form-group">
+                                                                                <label>Branch Name (TH) *</label>
+                                                                                <input type="text" name="name_th" class="form-control" value="{{ $branch->name_th }}" required>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="form-group">
+                                                                                <label>Branch Name (EN) *</label>
+                                                                                <input type="text" name="name_en" class="form-control" value="{{ $branch->name_en }}" required>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label>Address (TH)</label>
+                                                                                <textarea name="address_th" class="form-control">{{ $branch->address_th }}</textarea>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label>Address (EN)</label>
+                                                                                <textarea name="address_en" class="form-control">{{ $branch->address_en }}</textarea>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-4">
+                                                                            <div class="form-group">
+                                                                                <label>Phone</label>
+                                                                                <input type="text" name="phone" class="form-control" value="{{ $branch->phone }}">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="form-group">
+                                                                                <label>Mobile</label>
+                                                                                <input type="text" name="mobile" class="form-control" value="{{ $branch->mobile }}">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="form-group">
+                                                                                <label>Fax</label>
+                                                                                <input type="text" name="fax" class="form-control" value="{{ $branch->fax }}">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label>Email</label>
+                                                                                <input type="email" name="email" class="form-control" value="{{ $branch->email }}">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label>Website</label>
+                                                                                <input type="url" name="website" class="form-control" value="{{ $branch->website }}">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group text-right">
+                                                                        <button type="button" class="btn btn-default cancel-edit-btn">Cancel</button>
+                                                                        <button type="submit" class="btn btn-primary">Save</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                @endif
                                             </div>
 
                                         <!--</div>-->
@@ -437,3 +687,92 @@
         </div>
     </section>
     <!--/Page Container-->
+
+    @push('scripts')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script>
+        $(document).ready(function() {
+            // Edit button click handler
+            $('.edit-branch-btn').click(function() {
+                const branchId = $(this).data('branch-id');
+                $(`#branch-details-${branchId}`).hide();
+                $(`#branch-edit-form-${branchId}`).show();
+            });
+
+            // Cancel button click handler
+            $('.cancel-edit-btn').click(function() {
+                const branchId = $(this).closest('.branch-edit-form').attr('id').split('-').pop();
+                $(`#branch-details-${branchId}`).show();
+                $(`#branch-edit-form-${branchId}`).hide();
+            });
+
+            // Form submission handler
+            $('.branch-edit-form form').submit(function(e) {
+                e.preventDefault();
+                const form = $(this);
+                const branchId = form.closest('.branch-edit-form').attr('id').split('-').pop();
+                
+                $.ajax({
+                    url: form.attr('action'),
+                    method: 'POST',
+                    data: form.serialize(),
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Update the displayed data
+                            const branch = response.branch;
+                            $(`#branch-details-${branchId} .branch-name`).text(`${branch.name_th} (${branch.name_en})`);
+                            $(`#branch-details-${branchId} .branch-address-th`).text(branch.address_th);
+                            $(`#branch-details-${branchId} .branch-address-en`).text(branch.address_en);
+                            $(`#branch-details-${branchId} .branch-phone`).text(branch.phone);
+                            $(`#branch-details-${branchId} .branch-mobile`).text(branch.mobile);
+                            $(`#branch-details-${branchId} .branch-fax`).text(branch.fax);
+                            $(`#branch-details-${branchId} .branch-email`).text(branch.email);
+                            $(`#branch-details-${branchId} .branch-website`).text(branch.website);
+
+                            // Show success message
+                            alert('Branch updated successfully');
+                            
+                            // Switch back to view mode
+                            $(`#branch-details-${branchId}`).show();
+                            $(`#branch-edit-form-${branchId}`).hide();
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error updating branch: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                    }
+                });
+            });
+
+            // Delete button click handler
+            $('.delete-branch-btn').click(function() {
+                const branchId = $(this).data('branch-id');
+                if (confirm('Are you sure you want to delete this branch?')) {
+                    $.ajax({
+                        url: `/branches/${branchId}`,
+                        method: 'POST',
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content'),
+                            _method: 'DELETE'
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                // Remove the branch section from the DOM
+                                $(`#branch-details-${branchId}`).closest('.branch-section').remove();
+                                alert('Branch deleted successfully');
+                            } else {
+                                alert(response.message || 'Error deleting branch');
+                            }
+                        },
+                        error: function(xhr) {
+                            const response = xhr.responseJSON;
+                            alert(response?.message || 'Error deleting branch');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    @endpush

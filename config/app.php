@@ -123,4 +123,6 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'auto_login_user' => env('AUTO_LOGIN_USER', 'admin1'),
+
 ];

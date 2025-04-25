@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->unique(); // Now just a normal column
             $table->string('profile_no', 20)->nullable();
-            $table->binary('avatar')->nullable();
+            $table->mediumText('avatar')->nullable();
             $table->string('nickname', 30)->nullable();
             $table->string('card_id_no', 13)->nullable();
             $table->string('prefix_th', 30)->nullable();

@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Http\Requests\UserRequest;    
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
 class UserController
 {  
     public function LogIn() {
@@ -50,34 +52,54 @@ class UserController
      */
     public function signinProcess(Request $request)
     {
-        // Validate the input data
         $request->validate([
-            'email' => 'required|email',
+            'username' => 'required|string|max:255',
             'password' => 'required|min:6',
         ]);
 
-        // Attempt to log in the user
-        $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {
-            // Authentication passed
-            $request->session()->regenerate();
-
-            return redirect('/');
-            
-            // return response()->json([
-            //     'message' => 'Login successful',
-            //     'user' => Auth::user(),
-            // ], 200);
+        $user = User::where('username', $request->username)->first();
+        
+        if (!$user) {
+            \Log::warning('Login failed - User not found:', ['username' => $request->username]);
+            return redirect('/user/login')
+                ->withErrors(['username' => 'Invalid username'])
+                ->withInput();
         }
 
-        // Authentication failed
+        // Get fresh user data to ensure we have the latest password hash
+        $user = $user->fresh();
+        
+        // Detailed debug logging
+        \Log::debug('Login attempt details:', [
+            'username' => $user->username,
+            'provided_password' => $request->password,
+            'stored_hash' => $user->password,
+            'hash_check' => Hash::check($request->password, $user->password),
+            'password_length' => strlen($request->password),
+            'hash_length' => strlen($user->password)
+        ]);
+
+        // Try manual password verification
+        if (Hash::check($request->password, $user->password)) {
+            Auth::login($user);
+            $request->session()->regenerate();
+            
+            \Log::info('Login successful:', [
+                'username' => $user->username,
+                'user_id' => $user->id
+            ]);
+
+            return redirect('/');
+        }
+
+        \Log::warning('Login failed - Invalid password:', [
+            'username' => $request->username,
+            'password_verification_failed' => true
+        ]);
+
         return redirect('/user/login')
-            ->withErrors(['search' => 'Invalid email or password'])
+            ->withErrors(['password' => 'Invalid password'])
             ->withInput();
-        // return response()->json([
-        //     'message' => 'Invalid email or password',
-        // ], 401);
     }
 
     public function signOut(Request $request)
@@ -117,6 +139,10 @@ class UserController
             'password_confirmation' => 'required|same:password'
         ]);
 
+        \Log::debug("Request details:", [
+            'request' => $request->all()
+        ]);
+
         if ($validator->fails()) {
             \Log::error("Validation failed: " . json_encode($validator->errors()));
             return response()->json([
@@ -134,6 +160,8 @@ class UserController
                 'user_type_id'   => $request->user_type_id,
                 'user_status_id' => $request->user_status_id,
             ]);
+            \Log::debug("Creating user with username: " . $request->username);
+            \Log::debug("Hashed password: " . Hash::make($request->password));
         } catch (\Exception $e) {
             \Log::error("Error creating user: " . $e->getMessage());
             return response()->json([
@@ -228,7 +256,6 @@ class UserController
      */
     public function changePassword(Request $request, $id)
     {
-        // Validate the request
         $validator = Validator::make($request->all(), [
             'new_password' => 'required|min:6',
             'new_password_confirmation' => 'required|same:new_password',
@@ -243,12 +270,30 @@ class UserController
         }
 
         try {
-            // Find the user
             $user = User::findOrFail($id);
             
-            // Update the password
-            $user->password = Hash::make($request->new_password);
+            // Store the raw password for verification
+            $rawPassword = $request->new_password;
+            
+            // Update the password using Hash directly
+            $hashedPassword = Hash::make($rawPassword);
+            $user->password = $hashedPassword;
             $user->save();
+
+            // Verify the password was stored correctly
+            $verificationCheck = Hash::check($rawPassword, $user->fresh()->password);
+            
+            \Log::debug("Password change details:", [
+                'user' => $user->username,
+                'raw_password' => $rawPassword,
+                'new_hash' => $hashedPassword,
+                'stored_hash' => $user->fresh()->password,
+                'verification_check' => $verificationCheck
+            ]);
+
+            if (!$verificationCheck) {
+                throw new \Exception('Password verification failed after change');
+            }
 
             return response()->json([
                 'message' => 'Password changed successfully!',
@@ -260,6 +305,94 @@ class UserController
             return response()->json([
                 'message' => 'Error changing password',
                 'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function uploadAvatar(Request $request)
+    {
+        try {
+            // Get the authenticated user
+            $user = Auth::user();
+            
+            // Get the image data from Slim
+            $imageData = $request->input('output');
+            if (empty($imageData)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No image data provided'
+                ], 400);
+            }
+
+            // Decode the JSON data from Slim
+            $decoded = json_decode($imageData, true);
+            if (!isset($decoded['output']['image'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid image data format'
+                ], 400);
+            }
+
+            // Get the base64 image data
+            $base64Image = $decoded['output']['image'];
+
+            // Update user's profile with base64 image data
+            $user->profile()->update([
+                'avatar' => $base64Image
+            ]);
+
+            \Log::debug('Avatar updated successfully for user: ' . $user->id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Avatar updated successfully',
+                'path' => $base64Image
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Avatar upload error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error uploading avatar: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updateNickname(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'nickname' => 'required|string|max:255'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid nickname',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $user = Auth::user();
+            
+            // Update the nickname in the profile
+            $user->profile()->update([
+                'nickname' => $request->nickname
+            ]);
+
+            \Log::debug('Nickname updated successfully for user: ' . $user->id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Nickname updated successfully',
+                'nickname' => $request->nickname
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Nickname update error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating nickname: ' . $e->getMessage()
             ], 500);
         }
     }

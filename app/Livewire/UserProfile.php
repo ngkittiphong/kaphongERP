@@ -77,6 +77,8 @@ class UserProfile extends Component
         ]);
         $this->resetErrorBag();
         $this->user = null;
+        $this->user_type_id = 1;
+        $this->user_status_id = 1;
         $this->dispatch('addUser');
     }
 

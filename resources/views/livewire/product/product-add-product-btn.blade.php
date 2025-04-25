@@ -1,6 +1,6 @@
 <div class="elements">
-    <button type="button" class="btn btn-sm btn-success btn-labeled"
-        wire:click="$dispatch('showAddUserForm')">
-        <b><i class="icon-cube2"></i></b> Add new product
+    <button class="btn bg-primary-600" wire:click="$dispatch('showAddProductForm')">
+        <i class="icon-plus2 position-left"></i>
+        Add Product
     </button>
 </div>

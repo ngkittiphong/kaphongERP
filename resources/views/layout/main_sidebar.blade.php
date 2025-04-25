@@ -4,14 +4,14 @@
 			<div class="user-profile-container">
 				<div class="user-profile clearfix">
 					<div class="admin-user-thumb">
-						<img src="{{ asset('assets/images/faces/face_default.png') }}" alt="admin" class="img-circle">
+						<img src="{{ Auth::user()->profile && Auth::user()->profile->avatar ? Auth::user()->profile->avatar : asset('assets/images/faces/face_default.png') }}" alt="admin" class="img-circle">
 					</div>
 					<div class="admin-user-info">
 						<ul class="user-info">
-							<li><a href="index.htm#" class="text-semibold text-size-large">Jane Elliott</a></li>
-							<li><a href="index.htm#"><small>Business Analyst</small></a></li>
+							<li><a href="#" class="text-semibold text-size-large">{{ Auth::user()->profile->fullname_th ?? Auth::user()->username }}</a></li>
+							<li><a href="#"><small>{{ Auth::user()->type->name ?? 'User' }}</small></a></li>
 						</ul>
-						<div class="logout-icon"><a href="login_simple.htm"><i class="icon-exit2"></i></a></div>
+						<div class="logout-icon"><a href="{{ url('/user/signOut') }}"><i class="icon-exit2"></i></a></div>
 					</div>
 					
 				</div>				
