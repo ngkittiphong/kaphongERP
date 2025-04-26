@@ -18,20 +18,20 @@
                 <div class='row'>
                     <span href="#" class="list-group-item p-l-20">
                         <div class="col-md-3 col-xs-3 text-bold">
-                            {{ $product->saleVat->name }}
+                            {{ $product->saleVat ? $product->saleVat->name : 'No VAT' }}
                         </div>
                         <div class="col-md-8 col-xs-8 text-left">
-                            {{ $product->saleVat->price_percent }}
+                            {{ $product->saleVat ? $product->saleVat->price_percent : '0' }}
                         </div>
                     </span>
                 </div>
                 <div class='row'>
                     <span href="#" class="list-group-item p-l-20">
                         <div class="col-md-3 col-xs-3 text-bold">
-                            {{ $product->saleWithholding->name }}
+                            {{ $product->saleWithholding ? $product->saleWithholding->name : 'No Withholding' }}
                         </div>
                         <div class="col-md-8 col-xs-8 text-left">
-                            {{ $product->saleWithholding->price_percent }}
+                            {{ $product->saleWithholding ? $product->saleWithholding->price_percent : '0' }}
                         </div>
                     </span>
                 </div>
@@ -66,20 +66,20 @@
                 <div class='row'>
                     <span href="#" class="list-group-item p-l-20">
                         <div class="col-md-3 col-xs-3 text-bold">
-                            {{ $product->buyVat->name }} :
+                            {{ $product->buyVat ? $product->buyVat->name : 'No VAT' }} :
                         </div>
                         <div class="col-md-8 col-xs-8 text-left">
-                            {{ $product->buyVat->price_percent }}
+                            {{ $product->buyVat ? $product->buyVat->price_percent : '0' }}
                         </div>
                     </span>
                 </div>
                 <div class='row'>
                     <span href="#" class="list-group-item p-l-20">
                         <div class="col-md-3 col-xs-3 text-bold">
-                            {{ $product->buyWithholding->name }} :
+                            {{ $product->buyWithholding ? $product->buyWithholding->name : 'No Withholding' }} :
                         </div>
                         <div class="col-md-8 col-xs-8 text-left">
-                            {{ $product->buyWithholding->price_percent }}
+                            {{ $product->buyWithholding ? $product->buyWithholding->price_percent : '0' }}
                         </div>
                     </span>
                 </div>

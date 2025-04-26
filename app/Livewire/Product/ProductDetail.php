@@ -4,28 +4,70 @@ namespace App\Livewire\Product;
 
 use Livewire\Component;
 use App\Models\Product;
+use App\Models\ProductType;
+use App\Models\ProductGroup;
+use App\Models\ProductStatus;
+use App\Models\Vat;
+use App\Models\Withholding;
+
 
 class ProductDetail extends Component
 {
     public $product;
     public $productId;
+    public $showAddEditProductForm = false;
+    public $productTypes = [];
+    public $productGroups = [];
+    public $productStatuses = [];
+    public $vats = [];
+    public $withholdings = [];
+
+    // Form fields
+    public $name;
+    public $sku_number;
+    public $serial_number;
+    public $product_type_id;
+    public $product_group_id;
+    public $product_status_id;
+    public $unit_name;
+    public $buy_price;
+    public $buy_vat_id;
+    public $buy_withholding_id;
+    public $buy_description;
+    public $sale_price;
+    public $sale_vat_id;
+    public $sale_withholding_id;
+    public $sale_description;
+    public $minimum_quantity;
+    public $maximum_quantity;
 
     protected $listeners = [
         'ProductSelected' => 'loadProduct',
+        'showAddProductForm' => 'displayAddProductForm',
+        'showEditProductForm' => 'displayEditProductForm',
         'refreshComponent' => '$refresh',
         'createProduct' => 'createProduct',
+        'updateProduct' => 'updateProduct',
         'deleteProduct' => 'deleteProduct'
     ];
 
     public function mount($productId = null)
     {
+        \Log::info("ProductDetail Component Mounted");
         if ($productId) {
             $this->loadProduct($productId);
         }
+        $this->productTypes = ProductType::all();
+        $this->productGroups = ProductGroup::all();
+        $this->productStatuses = ProductStatus::all();
+        $this->vats = Vat::all();
+        $this->withholdings = Withholding::all();
     }
 
     public function loadProduct($productId)
     {
+        \Log::info("ProductDetail Component Mounted");
+        $this->showAddEditProductForm = false;
         $this->productId = $productId;
         $this->product = Product::with([
             'type',
@@ -40,4 +82,148 @@ class ProductDetail extends Component
     {
         return view('livewire.product.product-detail');
     }
+
+    public function displayAddProductForm()
+    {
+        \Log::info("Livewire Event Received: showAddProductForm");
+        $this->showAddEditProductForm = true;
+        $this->resetErrorBag();
+        $this->reset([
+            'name', 'sku_number', 'serial_number', 'product_type_id', 
+            'product_group_id', 'product_status_id', 'unit_name', 
+            'buy_price', 'buy_vat_id', 'buy_withholding_id', 'buy_description',
+            'sale_price', 'sale_vat_id', 'sale_withholding_id', 'sale_description',
+            'minimum_quantity', 'maximum_quantity'
+        ]);
+        
+        // Set default values
+        $this->buy_price = 0.00;
+        $this->sale_price = 0.00;
+        
+        $this->product = null;
+        $this->dispatch('addProduct');
+    }
+
+    public function displayEditProductForm()
+    {
+        \Log::info("Livewire Event Received: showEditProductForm");
+        $this->showAddEditProductForm = true;
+        $this->resetErrorBag();
+        \Log::info("Product ID: " . $this->productId);
+        \Log::info("Product: " . json_encode($this->product));
+        $this->name = $this->product->name;
+        $this->sku_number = $this->product->sku_number;
+        $this->serial_number = $this->product->serial_number;
+        $this->product_type_id = $this->product->product_type_id;
+        $this->product_group_id = $this->product->product_group_id;
+        $this->product_status_id = $this->product->product_status_id;
+        $this->unit_name = $this->product->unit_name;
+        $this->buy_price = $this->product->buy_price;
+        $this->buy_vat_id = $this->product->buy_vat_id;
+        $this->buy_withholding_id = $this->product->buy_withholding_id;
+        $this->buy_description = $this->product->buy_description;
+        $this->sale_price = $this->product->sale_price;
+        $this->sale_vat_id = $this->product->sale_vat_id;
+        $this->sale_withholding_id = $this->product->sale_withholding_id;
+        $this->sale_description = $this->product->sale_description;
+        $this->minimum_quantity = $this->product->minimum_quantity;
+        $this->maximum_quantity = $this->product->maximum_quantity;
+        $this->dispatch('addProduct');
+    }
+
+    public function createProduct()
+    {
+        \Log::info("createProduct method called");
+        try {
+            // Create a new request instance with all form data
+            $request = new \Illuminate\Http\Request();
+            $request->merge([
+                'name' => $this->name,
+                'sku_number' => $this->sku_number,
+                'serial_number' => $this->serial_number,
+                'product_type_id' => $this->product_type_id,
+                'product_group_id' => $this->product_group_id,
+                'product_status_id' => $this->product_status_id,
+                'unit_name' => $this->unit_name,
+                'buy_price' => $this->buy_price,
+                'buy_vat_id' => $this->buy_vat_id,
+                'buy_withholding_id' => $this->buy_withholding_id,
+                'buy_description' => $this->buy_description,
+                'sale_price' => $this->sale_price,
+                'sale_vat_id' => $this->sale_vat_id,
+                'sale_withholding_id' => $this->sale_withholding_id,
+                'sale_description' => $this->sale_description,
+                'minimum_quantity' => $this->minimum_quantity,
+                'maximum_quantity' => $this->maximum_quantity,
+            ]);
+
+            // Call the ProductController's store method
+            $controller = new \App\Http\Controllers\ProductController();
+            $response = $controller->store($request);
+            $responseData = json_decode($response->getContent());
+
+            if ($responseData->success) {
+                \Log::info("Product created successfully");
+                $this->showAddProductForm = false;
+                $this->dispatch('refreshComponent');
+                $this->dispatch('showSuccessMessage', message: $responseData->message);
+                return redirect()->route('menu_product');
+            } else {
+                \Log::info("Error creating product: " . $responseData->message);
+                $this->dispatch('showErrorMessage', message: $responseData->message);
+            }
+        } catch (\Exception $e) {
+            \Log::info("Error creating product: " . $e->getMessage());
+            $this->dispatch('showErrorMessage', message: 'Error creating product: ' . $e->getMessage());
+        }
+    }
+
+    public function updateProduct()
+    {
+        \Log::info("updateProduct method called");
+        try {
+            // Create a new request instance with all form data
+            $request = new \Illuminate\Http\Request();
+            $request->merge([
+                'name' => $this->name,
+                'sku_number' => $this->sku_number,
+                'serial_number' => $this->serial_number,
+                'product_type_id' => $this->product_type_id,
+                'product_group_id' => $this->product_group_id,
+                'product_status_id' => $this->product_status_id,
+                'unit_name' => $this->unit_name,
+                'buy_price' => $this->buy_price,
+                'buy_vat_id' => $this->buy_vat_id,
+                'buy_withholding_id' => $this->buy_withholding_id,
+                'buy_description' => $this->buy_description,
+                'sale_price' => $this->sale_price,
+                'sale_vat_id' => $this->sale_vat_id,
+                'sale_withholding_id' => $this->sale_withholding_id,
+                'sale_description' => $this->sale_description,
+                'minimum_quantity' => $this->minimum_quantity,
+                'maximum_quantity' => $this->maximum_quantity,
+            ]);
+
+            // Call the ProductController's update method
+            $controller = new \App\Http\Controllers\ProductController();
+            $response = $controller->update($request, $this->product);
+            $responseData = json_decode($response->getContent());
+
+            if ($responseData->success) {
+                \Log::info("Product updated successfully");
+                $this->showAddEditProductForm = false;
+                $this->dispatch('refreshComponent');
+                $this->dispatch('showSuccessMessage', message: $responseData->message);
+                return redirect()->route('menu_product');
+            } else {
+                \Log::info("Error updating product: " . $responseData->message);
+                $this->dispatch('showErrorMessage', message: $responseData->message);
+            }
+        } catch (\Exception $e) {
+            \Log::info("Error updating product: " . $e->getMessage());
+            $this->dispatch('showErrorMessage', message: 'Error updating product: ' . $e->getMessage());
+        }
+    }
+
+    
 } 

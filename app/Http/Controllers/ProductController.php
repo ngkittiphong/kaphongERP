@@ -46,15 +46,14 @@ class ProductController
             DB::beginTransaction();
 
             $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'sku_number' => 'nullable|string|max:255',
+                'serial_number' => 'nullable|string|max:255',
                 'product_type_id' => 'required|exists:product_types,id',
                 'product_group_id' => 'required|exists:product_groups,id',
                 'product_status_id' => 'required|exists:product_statuses,id',
-                'sku_number' => 'nullable|string|max:50',
-                'serial_number' => 'nullable|string|max:150',
-                'name' => 'required|string|max:150',
-                'product_cover_img' => 'nullable|string',
-                'unit_name' => 'required|string|max:80',
-                'buy_price' => 'required|numeric|min:0',
+                'unit_name' => 'required|string|max:255',
+                'buy_price' => 'nullable|numeric|min:0',
                 'buy_vat_id' => 'nullable|exists:vats,id',
                 'buy_withholding_id' => 'nullable|exists:withholdings,id',
                 'buy_description' => 'nullable|string',
@@ -85,29 +84,20 @@ class ProductController
 
             DB::commit();
 
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Product created successfully.',
-                    'product' => $product->load(['type', 'group', 'status', 'subUnits'])
-                ]);
-            }
+            // Always return JSON response for Livewire
+            return response()->json([
+                'success' => true,
+                'message' => 'Product created successfully.',
+                'product' => $product->load(['type', 'group', 'status', 'subUnits'])
+            ]);
 
-            return redirect()->route('products.index')
-                ->with('success', 'Product created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Error creating product: ' . $e->getMessage()
-                ], 500);
-            }
-
-            return redirect()->back()
-                ->with('error', 'Error creating product: ' . $e->getMessage())
-                ->withInput();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error creating product: ' . $e->getMessage()
+            ], 500);
         }
     }
 

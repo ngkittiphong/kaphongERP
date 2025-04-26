@@ -3,12 +3,12 @@
     <div class="row col-md-12 col-xs-12">
         <div class="col-md-4 col-xs-12">
             <div class="text-center">
-                        <div class="thumb">
-                                <a href="{{ asset('assets/images/default_product.png') }}" class="venobox">
-                                        <img src="{{ asset('assets/images/default_product.png') }}" alt="">
-                                        <span class="zoom-image"><i class="icon-plus2"></i></span>
-                                </a>
-                        </div>
+                <div class="thumb">
+                    <a href="{{ asset('assets/images/default_product.png') }}" class="venobox">
+                        <img src="{{ asset('assets/images/default_product.png') }}" alt="">
+                        <span class="zoom-image"><i class="icon-plus2"></i></span>
+                    </a>
+                </div>
 
                 <h4 class="no-margin-bottom m-t-10">
                     {{ $product->name }}
@@ -22,9 +22,9 @@
                 <h4 class="panel-title"><?= __('Product details') ?></h4>
                 <div class="elements">
                     <!--<button type="button" class="btn bg-amber btn-sm">Button</button>-->
-                    <button class="btn bg-amber-darkest"
-                        wire:click="$dispatch('showEditProfileForm')">Edit Product</button>
-                    <button class="btn btn-danger" onclick="confirmDelete({{ 1}})">Delete User</button>
+                    <button class="btn bg-amber-darkest" wire:click="$dispatch('showEditProductForm')">Edit
+                        Product</button>
+                    <button class="btn btn-danger" onclick="confirmDelete({{ 1 }})">Delete Product</button>
                 </div>
                 <a class="elements-toggle"><i class="icon-more"></i></a>
             </div>
@@ -70,7 +70,7 @@
                     </span>
                 </div>
 
-                <div class='row'>
+                {{-- <div class='row'>
                     <span href="#" class="list-group-item p-l-20">
                         <div class="col-md-3 col-xs-3 text-bold">
                             จำนวนคงเหลือ :
@@ -98,19 +98,19 @@
                     </span>
                     
                     
-                </div>
-                
+                </div> --}}
+
             </div>
-            
+
         </div>
 
     </div>
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     <div class="row col-md-12 col-xs-12">
         <div class="row col-md-12 col-xs-12">
             <div class="panel-heading no-padding-bottom">
@@ -118,146 +118,146 @@
             </div>
             <div class="row">
                 <div class="col-md-4">
-                        <div class="panel panel-flat bg-light-light">
-                                <div class="panel-heading text-dark">
-                                        <h4 class="text-default panel-title">จำนวนรวมทุกคลัง</h4>
-                                </div>
-                                <div>
-                                    <div class="list-group text-default list-group-lg list-group-borderless">
-                                        <div class='row'>
-                                            <span href="#" class="list-group-item p-l-20">
-                                                <div class="col-md-7 col-xs-7 text-bold">
-                                                    จำนวนคงเหลือ :
-                                                </div>
-                                                <div class="col-md-5 col-xs-5 text-left">
-                                                    1050 ชิ้น
-                                                </div>
-                                            </span>
-                                        </div>
-                                        <div class='row'>
-                                            <span href="#" class="list-group-item p-l-20">
-                                                <div class="col-md-7 col-xs-7 text-bold">
-                                                    ราคาขายเฉลี่ย :
-                                                </div>
-                                                <div class="col-md-5 col-xs-5 text-left">
-                                                    150 บาท
-                                                </div>
-                                            </span>
-                                        </div>
-                                        <div class='row'>
-                                            <span href="#" class="list-group-item p-l-20">
-                                                <div class="col-md-7 col-xs-7 text-bold">
-                                                    ราคาซื้อเฉลี่ย :
-                                                </div>
-                                                <div class="col-md-5 col-xs-5 text-left">
-                                                    130 บาท
-                                                </div>
-                                            </span>
-                                        </div>
-
-                                    </div>
-                                </div>
+                    <div class="panel panel-flat bg-light-light">
+                        <div class="panel-heading text-dark">
+                            <h4 class="text-default panel-title">จำนวนรวมทุกคลัง</h4>
                         </div>
+                        <div>
+                            <div class="list-group text-default list-group-lg list-group-borderless">
+                                <div class='row'>
+                                    <span href="#" class="list-group-item p-l-20">
+                                        <div class="col-md-7 col-xs-7 text-bold">
+                                            จำนวนคงเหลือ :
+                                        </div>
+                                        <div class="col-md-5 col-xs-5 text-left">
+                                            1050 ชิ้น
+                                        </div>
+                                    </span>
+                                </div>
+                                <div class='row'>
+                                    <span href="#" class="list-group-item p-l-20">
+                                        <div class="col-md-7 col-xs-7 text-bold">
+                                            ราคาขายเฉลี่ย :
+                                        </div>
+                                        <div class="col-md-5 col-xs-5 text-left">
+                                            150 บาท
+                                        </div>
+                                    </span>
+                                </div>
+                                <div class='row'>
+                                    <span href="#" class="list-group-item p-l-20">
+                                        <div class="col-md-7 col-xs-7 text-bold">
+                                            ราคาซื้อเฉลี่ย :
+                                        </div>
+                                        <div class="col-md-5 col-xs-5 text-left">
+                                            130 บาท
+                                        </div>
+                                    </span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="col-md-4">
-                        <div class="panel panel-flat bg-light-lighter">
-                                <div class="panel-heading text-dark">
-                                        <h3 class="text-default panel-title">คลังสินค้าหลัก</h3>
-                                </div>
-                                <div class="list-group text-default list-group-lg list-group-borderless">
-                                        <div class='row'>
-                                            <span href="#" class="list-group-item p-l-20">
-                                                <div class="col-md-7 col-xs-7 text-bold">
-                                                    จำนวนคงเหลือ :
-                                                </div>
-                                                <div class="col-md-5 col-xs-5 text-left">
-                                                    400 ชิ้น
-                                                </div>
-                                            </span>
-                                        </div>
-                                        <div class='row'>
-                                            <span href="#" class="list-group-item p-l-20">
-                                                <div class="col-md-7 col-xs-7 text-bold">
-                                                    ราคาขายเฉลี่ย :
-                                                </div>
-                                                <div class="col-md-5 col-xs-5 text-left">
-                                                    150 บาท
-                                                </div>
-                                            </span>
-                                        </div>
-                                        <div class='row'>
-                                            <span href="#" class="list-group-item p-l-20">
-                                                <div class="col-md-7 col-xs-7 text-bold">
-                                                    ราคาซื้อเฉลี่ย :
-                                                </div>
-                                                <div class="col-md-5 col-xs-5 text-left">
-                                                    120 บาท
-                                                </div>
-                                            </span>
-                                        </div>
-
-                                    </div>
+                    <div class="panel panel-flat bg-light-lighter">
+                        <div class="panel-heading text-dark">
+                            <h3 class="text-default panel-title">คลังสินค้าหลัก</h3>
                         </div>
+                        <div class="list-group text-default list-group-lg list-group-borderless">
+                            <div class='row'>
+                                <span href="#" class="list-group-item p-l-20">
+                                    <div class="col-md-7 col-xs-7 text-bold">
+                                        จำนวนคงเหลือ :
+                                    </div>
+                                    <div class="col-md-5 col-xs-5 text-left">
+                                        400 ชิ้น
+                                    </div>
+                                </span>
+                            </div>
+                            <div class='row'>
+                                <span href="#" class="list-group-item p-l-20">
+                                    <div class="col-md-7 col-xs-7 text-bold">
+                                        ราคาขายเฉลี่ย :
+                                    </div>
+                                    <div class="col-md-5 col-xs-5 text-left">
+                                        150 บาท
+                                    </div>
+                                </span>
+                            </div>
+                            <div class='row'>
+                                <span href="#" class="list-group-item p-l-20">
+                                    <div class="col-md-7 col-xs-7 text-bold">
+                                        ราคาซื้อเฉลี่ย :
+                                    </div>
+                                    <div class="col-md-5 col-xs-5 text-left">
+                                        120 บาท
+                                    </div>
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-4">
                     <div class="panel panel-flat bg-light-lighter">
-                            <div class="panel-heading text-dark">
-                                    <h3 class="text-default panel-title">Warehouse.name</h3>
+                        <div class="panel-heading text-dark">
+                            <h3 class="text-default panel-title">Warehouse.name</h3>
+                        </div>
+                        <div class="list-group text-default list-group-lg list-group-borderless">
+                            <div class='row'>
+                                <span href="#" class="list-group-item p-l-20">
+                                    <div class="col-md-7 col-xs-7 text-bold">
+                                        จำนวนคงเหลือ :
+                                    </div>
+                                    <div class="col-md-5 col-xs-5 text-left">
+                                        <i class="icon-warning2 position-left text-warning"></i>
+                                        650 ชิ้น
+                                    </div>
+                                </span>
                             </div>
-                            <div class="list-group text-default list-group-lg list-group-borderless">
-                                    <div class='row'>
-                                        <span href="#" class="list-group-item p-l-20">
-                                            <div class="col-md-7 col-xs-7 text-bold">
-                                                จำนวนคงเหลือ :
-                                            </div>
-                                            <div class="col-md-5 col-xs-5 text-left">
-                                                <i class="icon-warning2 position-left text-warning"></i>
-                                                650 ชิ้น
-                                            </div>
-                                        </span>
+                            <div class='row'>
+                                <span href="#" class="list-group-item p-l-20">
+                                    <div class="col-md-7 col-xs-7 text-bold">
+                                        ราคาขายเฉลี่ย :
                                     </div>
-                                    <div class='row'>
-                                        <span href="#" class="list-group-item p-l-20">
-                                            <div class="col-md-7 col-xs-7 text-bold">
-                                                ราคาขายเฉลี่ย :
-                                            </div>
-                                            <div class="col-md-5 col-xs-5 text-left">
-                                                150 บาท
-                                            </div>
-                                        </span>
+                                    <div class="col-md-5 col-xs-5 text-left">
+                                        150 บาท
                                     </div>
-                                    <div class='row'>
-                                        <span href="#" class="list-group-item p-l-20">
-                                            <div class="col-md-7 col-xs-7 text-bold">
-                                                ราคาซื้อเฉลี่ย :
-                                            </div>
-                                            <div class="col-md-5 col-xs-5 text-left">
-                                                130 บาท
-                                            </div>
-                                        </span>
+                                </span>
+                            </div>
+                            <div class='row'>
+                                <span href="#" class="list-group-item p-l-20">
+                                    <div class="col-md-7 col-xs-7 text-bold">
+                                        ราคาซื้อเฉลี่ย :
                                     </div>
+                                    <div class="col-md-5 col-xs-5 text-left">
+                                        130 บาท
+                                    </div>
+                                </span>
+                            </div>
 
-                                </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    
-    
+
+
     <div class="row col-md-12 col-xs-12">
         <div class="panel-heading no-padding-bottom">
             <h4 class="panel-title">หน่วยสินค้าหลัก : {{ 'product.unit_name' }}</h4>
         </div>
-        
-        
+
+
         <div class="row">
             <div class="col-md-4">
                 <div class="panel panel-flat bg-slate-lighter">
                     <div class="panel-heading text-dark">
-                            <h3 class="text-default panel-title">โหล = 12 กล่อง</h3>
+                        <h3 class="text-default panel-title">โหล = 12 กล่อง</h3>
                     </div>
                     <div class="list-group text-default list-group-lg list-group-borderless">
 
@@ -299,7 +299,7 @@
             <div class="col-md-4">
                 <div class="panel panel-flat bg-teal-light">
                     <div class="panel-heading text-dark">
-                            <h3 class="text-default panel-title">แพค = 120 กล่อง</h3>
+                        <h3 class="text-default panel-title">แพค = 120 กล่อง</h3>
                     </div>
                     <div class="list-group text-default list-group-lg list-group-borderless">
 
@@ -338,12 +338,5 @@
                 </div>
             </div>
         </div>
-
-
     </div>
-    
-    
-    
-    
-    
 </div>

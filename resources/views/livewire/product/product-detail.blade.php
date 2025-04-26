@@ -17,7 +17,9 @@
 
     <!-- 2) Hide the Form While Loading -->
     <div wire:loading.remove>
-        @if($product)
+        @if($showAddEditProductForm)
+            @include('livewire.product.product-add-product')
+        @elseif($product)
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-12">
