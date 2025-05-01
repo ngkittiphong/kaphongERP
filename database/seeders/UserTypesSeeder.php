@@ -14,6 +14,7 @@ class UserTypesSeeder extends Seeder
     public function run()
     {
         DB::table('user_types')->insert([
+            ['name' => 'Super Admin', 'sign' => 'S', 'color' => 'gold', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Admin', 'sign' => 'A', 'color' => 'red', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'User', 'sign' => 'U', 'color' => 'blue', 'created_at' => now(), 'updated_at' => now()],
         ]);

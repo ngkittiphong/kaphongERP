@@ -10,6 +10,7 @@ class WithholdingSeeder extends Seeder
     public function run()
     {
         $withholdings = [
+            ['name' => 'WH 1%', 'price_percent' => 1.00],
             ['name' => 'WH 3%', 'price_percent' => 3.00],
             ['name' => 'WH 5%', 'price_percent' => 5.00],
         ];

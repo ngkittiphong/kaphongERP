@@ -10,9 +10,9 @@ class ProductGroupSeeder extends Seeder
     public function run()
     {
         $groups = [
-            ['name' => 'Group A', 'sign' => 'A', 'color' => 'teal'],
-            ['name' => 'Group B', 'sign' => 'B', 'color' => 'orange'],
-            ['name' => 'Group C', 'sign' => 'C', 'color' => 'purple'],
+            ['name' => 'กระเป๋าสตางค์', 'sign' => 'A', 'color' => 'teal'],
+            ['name' => 'กระเป๋าถือ', 'sign' => 'B', 'color' => 'orange'],
+            ['name' => 'เครื่องแต่งกาย', 'sign' => 'C', 'color' => 'purple'],
         ];
 
         DB::table('product_groups')->insert($groups);

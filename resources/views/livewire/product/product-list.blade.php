@@ -89,7 +89,7 @@
 
                  scrollResize: true,
                  scrollX: true,
-                 scrollY: '100vh',
+//                 scrollY: '100vh',
                  scrollCollapse: true
              });
 
