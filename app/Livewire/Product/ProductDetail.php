@@ -76,6 +76,7 @@ class ProductDetail extends Component
             'subUnits',
             'inventories'
         ])->find($productId);
+        $this->dispatch('productSelected', product: $this->product);
     }
 
     public function render()

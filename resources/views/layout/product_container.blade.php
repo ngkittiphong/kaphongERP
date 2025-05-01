@@ -26,5 +26,27 @@
         </div> 
     </div>
 </section>
+
+
+@push('scripts')
+<script>
+    document.addEventListener('livewire:initialized', () => {
+        // Initial Venobox initialization
+        console.log('venobox:initialized');
+        if (typeof $.fn.venobox === 'function') {
+            $('.venobox').venobox();
+        }
+
+        // Listen for product selection event
+        Livewire.on('productSelected', (data) => {
+            // Reinitialize Venobox after product details are loaded
+            console.log('venobox:productSelected');
+            $('.venobox').venobox();
+        });
+    });
+</script>
+<script src="{{ asset('js/venobox.js') }}"></script>
+@endpush
+
 <!--/Page Container-->
 

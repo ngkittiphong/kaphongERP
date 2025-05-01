@@ -251,20 +251,21 @@
 
         document.addEventListener('livewire:initialized', () => {
             console.log('livewire:initialized');
-            @this.on('profileUpdated', () => {
-                console.log('profileUpdated');
+            @this.on('productSelected', () => {
+                console.log('productSelected');
                 setTimeout(() => {
                     initSlim();
+                    $('.venobox').venobox();
                     document.getElementById('updateUserProfileForm').addEventListener('submit',
                         handleSlimSubmitForm);
                 }, 100);
             });
 
-            @this.on('addUser', () => {
-                console.log('addUser');
+            @this.on('addProduct', () => {
+                console.log('addProduct');
                 setTimeout(() => {
                     initSlim();
-                    document.getElementById('addUserForm').addEventListener('submit',
+                    document.getElementById('addProductForm').addEventListener('submit',
                         handleSlimSubmitForm);
                 }, 100);
             });

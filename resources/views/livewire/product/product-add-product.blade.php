@@ -8,6 +8,30 @@
                 <form wire:submit.prevent="{{ $product ? 'updateProduct' : 'createProduct' }}" id="addProductForm">
                     <div class="row">
                         <!-- Basic Information -->
+                        <div class="text-center">
+                            <div class="col-md-4 col-xs-12">
+                                <div class="text-center">
+                                    <div id="slim-avatar" class="slim" data-size="300,300" data-ratio="1:1"
+                                        data-instant-edit="true"
+                                        style="
+                                            width: 300px; 
+                                            height: 300px;
+                                            margin: 0 auto;
+                                            border-radius: 0;
+                                            overflow: hidden;">
+
+                                            @if($product && $product->image)
+                                                <img src="{{ $product->image }}" alt="{{ $product->name }}" class="img-fluid" />
+                                            @else
+                                                <img src="{{ asset('assets/images/default_product.png') }}" alt="Default Icon" class="img-fluid" />
+                                            @endif
+
+                                        <!-- File input for uploading/replacing the image -->
+                                        <input type="file" name="slim" accept="image/jpeg, image/png" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="name">Product Name *</label>
