@@ -3,15 +3,15 @@
         <div class="col-md-12">
             <div class="row p-l-10 p-r-10 panel panel-flat">
                 <div class="panel-heading">
-                    <h4 class="panel-title">{{ 'Add New Product' }}</h4>
+                    <h4 class="panel-title">{{ $product ? 'Edit Product' : 'Add New Product' }}</h4>
                 </div>
-                <form wire:submit.prevent="{{ 'createProduct' }}" id="addProductForm">
+                <form wire:submit.prevent="{{ $product ? 'updateProduct' : 'createProduct' }}" id="addProductForm">
                     <div class="row">
                         <!-- Basic Information -->
                         <div class="text-center">
                             <div class="col-md-4 col-xs-12">
                                 <div class="text-center">
-                                    <div id="slim-image" class="slim" data-size="300,300" data-ratio="1:1"
+                                    <div id="slim-avatar" class="slim" data-size="300,300" data-ratio="1:1"
                                         data-instant-edit="true"
                                         style="
                                             width: 300px; 
@@ -65,15 +65,16 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="product_group_name">Product Group *</label>
-                                <input
-                                type="text"
-                                id="product_group_name"
-                                class="form-control"
-                                wire:model="product_group_name"
-                                required
-                              />
-                                @error('product_group_name') <span class="text-danger">{{ $message }}</span> @enderror
+                                <label for="product_group_id">Product Group *</label>
+                                <select class="form-control" id="product_group_id" wire:model="product_group_id" required>
+                                    <option value="">Select Group</option>
+                                    @foreach($productGroups as $group)
+                                        <option value="{{ $group->id }}" {{ $product && $product->product_group_id == $group->id ? 'selected' : '' }}>
+                                            {{ $group->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('product_group_id') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="form-group">
@@ -204,9 +205,7 @@
 </div>
 
 @push('scripts')
-
 <script>
-
     document.addEventListener('livewire:initialized', () => {
         Livewire.on('showAddProductForm', () => {
             $('#addProductModal').modal('show');
@@ -240,8 +239,6 @@
         });
     });
 </script>
-
-
 @endpush
 
 

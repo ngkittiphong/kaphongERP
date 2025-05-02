@@ -45,12 +45,14 @@ class ProductController
         try {
             DB::beginTransaction();
 
+            \Log::info("Request data: " . $request->product_group_name);
+
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'sku_number' => 'nullable|string|max:255',
                 'serial_number' => 'nullable|string|max:255',
                 'product_type_id' => 'required|exists:product_types,id',
-                'product_group_id' => 'required|exists:product_groups,id',
+                'product_group_name' => 'required|string|max:255', // Changed from product_groups_name to match request field
                 'product_status_id' => 'required|exists:product_statuses,id',
                 'unit_name' => 'required|string|max:255',
                 'buy_price' => 'nullable|numeric|min:0',
@@ -63,7 +65,21 @@ class ProductController
                 'sale_description' => 'nullable|string',
                 'minimum_quantity' => 'nullable|integer|min:0',
                 'maximum_quantity' => 'nullable|integer|min:0',
+                'product_cover_img' => 'nullable|string',
             ]);
+
+            \Log::info("Product Group Name: " . $validated['product_group_name']);
+
+            // Find or create product group
+            $productGroup = ProductGroup::firstOrCreate(
+                ['name' => $validated['product_group_name']],
+                ['name' => $validated['product_group_name']]
+            );
+
+            // Replace product_groups_name with product_group_id in validated data
+            $validated['product_group_id'] = $productGroup->id;
+            \Log::info("Product Group ID: " . $validated['product_group_id']);
+            unset($validated['product_group_name']);
 
             $validated['date_create'] = now();
 
@@ -96,7 +112,7 @@ class ProductController
             
             return response()->json([
                 'success' => false,
-                'message' => 'Error creating product: ' . $e->getMessage()
+                'message' => 'Error creating product store: ' . $e->getMessage()
             ], 500);
         }
     }

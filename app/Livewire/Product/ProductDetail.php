@@ -28,6 +28,7 @@ class ProductDetail extends Component
     public $serial_number;
     public $product_type_id;
     public $product_group_id;
+    public $product_group_name;
     public $product_status_id;
     public $unit_name;
     public $buy_price;
@@ -40,6 +41,7 @@ class ProductDetail extends Component
     public $sale_description;
     public $minimum_quantity;
     public $maximum_quantity;
+    public $product_cover_img;
 
     protected $listeners = [
         'ProductSelected' => 'loadProduct',
@@ -91,10 +93,10 @@ class ProductDetail extends Component
         $this->resetErrorBag();
         $this->reset([
             'name', 'sku_number', 'serial_number', 'product_type_id', 
-            'product_group_id', 'product_status_id', 'unit_name', 
+            'product_group_id', 'product_group_name', 'product_status_id', 'unit_name', 
             'buy_price', 'buy_vat_id', 'buy_withholding_id', 'buy_description',
             'sale_price', 'sale_vat_id', 'sale_withholding_id', 'sale_description',
-            'minimum_quantity', 'maximum_quantity'
+            'minimum_quantity', 'maximum_quantity', 'product_cover_img'
         ]);
         
         // Set default values
@@ -129,6 +131,7 @@ class ProductDetail extends Component
         $this->sale_description = $this->product->sale_description;
         $this->minimum_quantity = $this->product->minimum_quantity;
         $this->maximum_quantity = $this->product->maximum_quantity;
+        $this->product_cover_img = $this->product->product_cover_img;
         $this->dispatch('addProduct');
     }
 
@@ -143,7 +146,7 @@ class ProductDetail extends Component
                 'sku_number' => $this->sku_number,
                 'serial_number' => $this->serial_number,
                 'product_type_id' => $this->product_type_id,
-                'product_group_id' => $this->product_group_id,
+                'product_group_name' => $this->product_group_name,
                 'product_status_id' => $this->product_status_id,
                 'unit_name' => $this->unit_name,
                 'buy_price' => $this->buy_price,
@@ -156,7 +159,11 @@ class ProductDetail extends Component
                 'sale_description' => $this->sale_description,
                 'minimum_quantity' => $this->minimum_quantity,
                 'maximum_quantity' => $this->maximum_quantity,
+                'product_cover_img' => $this->product_cover_img,
             ]);
+
+            // Log the request data
+            \Log::info("Request data: " . $request->product_group_name);
 
             // Call the ProductController's store method
             $controller = new \App\Http\Controllers\ProductController();
@@ -170,11 +177,11 @@ class ProductDetail extends Component
                 $this->dispatch('showSuccessMessage', message: $responseData->message);
                 return redirect()->route('menu_product');
             } else {
-                \Log::info("Error creating product: " . $responseData->message);
+                \Log::info("Error creating product createProduct: " . $responseData->message);
                 $this->dispatch('showErrorMessage', message: $responseData->message);
             }
         } catch (\Exception $e) {
-            \Log::info("Error creating product: " . $e->getMessage());
+            \Log::info("Error creating product Exception: " . $e->getMessage());
             $this->dispatch('showErrorMessage', message: 'Error creating product: ' . $e->getMessage());
         }
     }
@@ -203,6 +210,7 @@ class ProductDetail extends Component
                 'sale_description' => $this->sale_description,
                 'minimum_quantity' => $this->minimum_quantity,
                 'maximum_quantity' => $this->maximum_quantity,
+                'product_cover_img' => $this->product_cover_img,
             ]);
 
             // Call the ProductController's update method

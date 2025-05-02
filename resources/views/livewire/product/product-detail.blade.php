@@ -202,6 +202,7 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
 
     <script>
         Livewire.on('userCreated', data => {
@@ -232,12 +233,51 @@
             document.body.appendChild(script);
         }
 
+        function initTypeahead() {
+            console.log('initTypeahead');
+
+            if (typeof $.fn.typeahead !== 'function') {
+                console.warn('Typeahead plugin not found!');
+                return;
+            }
+
+            const list = @json($productGroups->pluck('name'));
+            console.log(list);
+
+            $('.typeahead')
+            // remove any old instance/data
+            // .each(function() {
+            //     const $input = $("#product_group_name");
+            //     $input.data('typeahead', null);
+            // })
+            // re-init
+
+            $("#product_group_name").typeahead({
+                    source: list,
+                    minLength: 1,
+                    autoSelect: true,
+                    items: list.length,
+                    
+                    afterSelect(item) {
+                        console.log('Selected:', item);
+                    }
+                });
+
+                $("#product_group_name").on('focus keyup', function(e) {
+                    if ($("#product_group_name").val().length === 0) {
+                        // direct lookup on the underlying instance
+                        $("#product_group_name").data('typeahead').lookup();
+                    }
+                });
+            
+        }
+
         function setAvatarFromSlim() {
-            const slim = document.getElementById('slim-avatar');
+            const slim = document.getElementById('slim-image');
             if (slim) {
-                const resultImage = document.querySelector('#slim-avatar .slim-result img.in');
+                const resultImage = document.querySelector('#slim-image .slim-result img.in');
                 const base64Data = resultImage.src;
-                @this.set('avatar', base64Data);
+                @this.set('product_cover_img', base64Data);
             }
         }
 
@@ -255,6 +295,7 @@
                 console.log('productSelected');
                 setTimeout(() => {
                     initSlim();
+                    initTypeahead();
                     $('.venobox').venobox();
                     document.getElementById('updateUserProfileForm').addEventListener('submit',
                         handleSlimSubmitForm);
@@ -265,6 +306,7 @@
                 console.log('addProduct');
                 setTimeout(() => {
                     initSlim();
+                    initTypeahead();
                     document.getElementById('addProductForm').addEventListener('submit',
                         handleSlimSubmitForm);
                 }, 100);
