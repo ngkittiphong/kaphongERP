@@ -24,7 +24,7 @@
                     </div>
                 </div>
                 <div class="tab-content">
-                    @include('livewire.user-profile_tab_detail')
+                    @include('livewire.user.user-profile_tab_detail')
                     <div class="tab-pane" id="tab-access">
                         {{-- Access --}}
                         Access detail statement

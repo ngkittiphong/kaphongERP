@@ -8,37 +8,28 @@
              </tr>
          </thead>
          <tbody>
-             @foreach ($items as $product)
+             @foreach ($items as $branch)
                  <tr class="lease-order-row hover:bg-gray-100 cursor-pointer"
-                     wire:click="$dispatch('ProductSelected', { productId: {{ $product->id }} })">
+                     wire:click="$dispatch('BranchSelected', { branchId: {{ $branch->id }} })">
                      <td>
                          <div class="row col-md-12">
-                             <div class="col-md-3 col-sm-3">
-                                 <div class="thumb media-middle">
-                                     <a href="{{ asset('assets/images/default_product.png') }}" class="venobox">
-                                         <img src="{{ asset('assets/images/default_product.png') }}" alt="">
-                                         <span class="zoom-image"><i class="icon-plus2"></i></span>
-                                     </a>
-                                 </div>
-                             </div>
-
-                             <div class="col-md-8 col-sm-8">
+                             <div class="col-md-11 col-sm-11">
                                  <div class="media-body">
                                      <div class="media-heading text-size-extralarge text-dark">
-                                         {{ $product->name }}
+                                         {{ $branch->name_th }}
                                      </div>
                                      <div class=" text-size-large text-dark">
-                                         {{ $product->sku_number }}
+                                         {{ $branch->branch_code }}
                                      </div>
                                      <div class=" text-size-large text-dark">
-                                         {{ $product->type->name }}
+                                         {{ $branch->address_th }}, {{ $branch->phone_number }}
                                      </div>
                                  </div>
                              </div>
 
                              <div class="col-md-1 col-sm-1">
                                  <div class="media-right media-middle">
-                                     <span class="status-mark bg-{{ 'green' }}" placeholder=""></span>
+                                     <span class="status-mark bg-{{ $branch->is_active ? 'success' : 'danger' }}" placeholder=""></span>
                                  </div>
                              </div>
                          </div>
@@ -49,4 +40,4 @@
      </table>
  </div>
 
-<x-datatable-scripts listUpdatedEvent="productListUpdated" />
+<x-datatable-scripts listUpdatedEvent="branchListUpdated" />

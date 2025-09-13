@@ -8,147 +8,20 @@
             <div class="page-title">
                 <i class="icon-home position-left"></i> Branch
             </div>
-            @livewire('product.product-add-product-btn')
+            @livewire('branch.branch-add-branch-btn')
         </div>
     </div>		
     <!--/Page Header-->
 
     <div class="container-fluid page-people">
         <div class="row">
-            <div class="col-lg-3 col-md-3 col-sm-3 secondary-sidebar">
+            <div class="col-lg-4 col-md-4 col-sm-4 secondary-sidebar">
                 <div class="sidebar-content" style="height: 100vh">
-                    
-                    
-                    
- <!------------- Start Branch List ---->    
-                    
-                    <div class="table-responsive">
-                        <table class="table table-hover datatable-reorder-state-saving datatable-fixed-left">
-                            <thead>
-                                <tr>
-                                    <th scope="col"><?= __('Branch') ?></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php // foreach ($users as $l_user): ?>
-                                <tr class="lease-order-row hover:bg-gray-100 cursor-pointer"
-                                    wire:click="$dispatch('ProfileSelected', { userId: {{ 1 }} })">
-                                    <td>
-                                        <div class="row col-md-12">
-                                        
-                                            
-                                            <div class="col-md-11 col-sm-11">
-                                                <div class="media-body">
-
-                                                    <div class="media-heading text-size-extralarge text-dark">
-
-                                                        branch_name_th
-                                                    </div>
-
-                                                    <div class=" text-size-large text-dark">
-
-                                                        branch_no 
-                                                    </div>
-                                                    <div class=" text-size-large text-dark">
-
-                                                        address_th, tel
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="col-md-1 col-sm-1">
-                                                <div class="media-right media-middle">
-                                                    <span class="status-mark bg-{{ 'green' }}" placeholder=""></span>
-                                                </div>
-                                            </div>
-                                            </div>
-                                    </td>
-                                </tr>
-                                <tr class="lease-order-row hover:bg-gray-100 cursor-pointer"
-                                    wire:click="$dispatch('ProfileSelected', { userId: {{ 1 }} })">
-                                    <td>
-                                        <div class="row col-md-12">
-                                            
-                                            
-                                            <div class="col-md-11 col-sm-11">
-                                                <div class="media-body">
-
-                                                    <div class="media-heading text-size-extralarge text-dark">
-
-                                                        สาขากรุงเทพ
-                                                    </div>
-
-                                                    <div class=" text-size-large text-dark">
-
-                                                        000001 
-                                                    </div>
-                                                    <div class=" text-size-large text-dark">
-
-                                                        รามอินทรา, 098-223-2211
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="col-md-1 col-sm-1">
-                                                <div class="media-right media-middle">
-                                                    <span class="status-mark bg-{{ 'success-light' }}" placeholder=""></span>
-                                                </div>
-                                            </div>
-                                            </div>
-                                    </td>
-                                </tr>
-                                
-                                <tr class="lease-order-row hover:bg-gray-100 cursor-pointer"
-                                    wire:click="$dispatch('ProfileSelected', { userId: {{ 1 }} })">
-                                    <td>
-                                        <div class="row col-md-12">
-                                            
-                                            
-                                            <div class="col-md-11 col-sm-11">
-                                                <div class="media-body">
-
-                                                    <div class="media-heading text-size-extralarge text-dark">
-
-                                                        สาขาภูเก็ต
-                                                    </div>
-
-                                                    <div class=" text-size-large text-dark">
-
-                                                        000002
-                                                    </div>
-                                                    <div class=" text-size-large text-dark">
-
-                                                        ภูเก็ต, 092-133-2491
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="col-md-1 col-sm-1">
-                                                <div class="media-right media-middle">
-                                                    <span class="status-mark bg-{{ 'success-light' }}" placeholder=""></span>
-                                                </div>
-                                            </div>
-                                            </div>
-                                    </td>
-                                </tr>
-                                
-                                <?php // endforeach; ?>
-
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    
-<!------------- End Branch List ---->                    
+                    @livewire('branch.branch-list')
                 </div>
             </div>
             <div class="col-lg-9 col-md-9 col-sm-9">
-                    
-                
-                
- 
-                
-                
+                   
                 
 <!-----------------------------  Start Product Detail    -------------------------->
                 
@@ -663,8 +536,7 @@
 
 
 <!------------------------------------  End Product Detail ------------------------->
-                
-                
+
                 
             </div>
         </div> 

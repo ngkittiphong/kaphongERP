@@ -14,7 +14,7 @@ class BranchController
     public function index()
     {
         $branches = Branch::all();
-        return view('branch.index', compact('branches'));
+        return $branches; //view('branch.index', compact('branches'));
     }
 
     /**

@@ -18,6 +18,14 @@ class UserController
         return view('user.login');
     }
 
+    public function index()
+    {
+        return User::select(['id', 'email', 'username'])
+            ->with(['profile', 'status'])
+            ->orderBy('username')
+            ->get();
+    }
+
     // public function signInProcess(Request $request) {
     //     $validator = Validator::make($request->all(), [
     //         'email' => 'required|email',

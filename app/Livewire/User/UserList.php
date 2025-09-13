@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\User;
 
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -40,7 +40,7 @@ class UserList extends Component
 
     public function render()
     {
-        return view('livewire.user-list', [
+        return view('livewire.user.user-list', [
             'users' => $this->users, // 🔹 Pass $users to the Blade view
         ]);
     }

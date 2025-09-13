@@ -2,53 +2,60 @@
 
 namespace App\Livewire\Product;
 
-use Livewire\Component;
+use App\Livewire\BaseListComponent;
 use App\Models\Product;
 use App\Http\Controllers\ProductController;
 
-class ProductList extends Component
+class ProductList extends BaseListComponent
 {
-    public $products;
-    public $selectedProduct;
-    protected $productController;
-
-    public function mount()
+    protected function getController()
     {
-        $this->productController = new ProductController();
-        $this->loadProducts();
+        return new ProductController();
     }
 
-    public function loadProducts()
+    protected function getModel()
     {
-        //$this->products = $this->productController->index()->getData()['products'];
-        $this->products = $this->productController->index();
+        return Product::class;
+    }
+
+    protected function getItemName()
+    {
+        return 'products';
+    }
+
+    protected function getEventPrefix()
+    {
+        return 'product';
+    }
+
+    protected function getViewName()
+    {
+        return 'livewire.product.product-list';
+    }
+
+    // Alias methods for backward compatibility
+    public function getProductsProperty()
+    {
+        return $this->items;
+    }
+
+    public function getSelectedProductProperty()
+    {
+        return $this->selectedItem;
     }
 
     public function selectProduct($productId)
     {
-        $product = Product::with(['type', 'group', 'status', 'subUnits', 'inventories'])
-            ->find($productId);
-            
-        if ($product) {
-            $this->selectedProduct = $product;
-            $this->dispatch('productSelected', $this->selectedProduct);
-        }
+        $this->selectItem($productId);
     }
 
     public function deleteProduct($productId)
     {
-        $product = Product::find($productId);
-        if ($product) {
-            $response = $this->productController->destroy($product);
-            if ($response->getData()->success) {
-                $this->loadProducts();
-                $this->dispatch('productDeleted');
-            }
-        }
+        $this->deleteItem($productId);
     }
 
-    public function render()
+    public function loadProducts()
     {
-        return view('livewire.product.product-list');
+        $this->loadItems();
     }
 }

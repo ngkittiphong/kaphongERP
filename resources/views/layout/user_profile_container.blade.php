@@ -8,7 +8,7 @@
             <div class="page-title">
                 <i class="icon-user position-left"></i> User
             </div>
-            @livewire('user-add-user-btn')
+            @livewire('user.user-add-user-btn')
         </div>
     </div>		
     <!--/Page Header-->
@@ -17,11 +17,11 @@
         <div class="row">
             <div class="col-lg-4 col-md-4 col-sm-4 secondary-sidebar">
                 <div class="sidebar-content" style="height: 100vh">
-                    @livewire('user-list')
+                    @livewire('user.user-list')
                 </div>
             </div>
             <div class="col-lg-8 col-md-8 col-sm-8">
-                @livewire('user-profile')
+                @livewire('user.user-profile')
             </div>
         </div> 
     </div>
