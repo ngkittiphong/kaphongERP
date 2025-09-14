@@ -60,9 +60,9 @@ abstract class BaseListComponent extends Component
 
     public function selectItem($itemId)
     {
-        \Log::info("selectItem called with itemId: {$itemId}");
-        \Log::info("Model class: " . $this->model);
-        \Log::info("Model type: " . gettype($this->model));
+        \Log::info("🔥 BaseListComponent::selectItem called with itemId: {$itemId}");
+        \Log::info("🔥 Model class: " . $this->model);
+        \Log::info("🔥 Model type: " . gettype($this->model));
         
         // Define relationships based on model type
         $relationships = [];
@@ -78,21 +78,23 @@ abstract class BaseListComponent extends Component
             $relationships = [];
         }
         
-        \Log::info("Relationships to load: " . json_encode($relationships));
+        \Log::info("🔥 Relationships to load: " . json_encode($relationships));
         
         try {
             // Use the model class directly
             $modelClass = $this->model;
             $item = $modelClass::with($relationships)->find($itemId);
-            \Log::info("Item found: " . ($item ? 'Yes' : 'No'));
+            \Log::info("🔥 Item found: " . ($item ? 'Yes' : 'No'));
                 
             if ($item) {
                 $this->selectedItem = $item;
+                \Log::info("🔥 About to dispatch {$this->eventPrefix}Selected event");
                 $this->dispatch($this->eventPrefix . 'Selected', $this->selectedItem);
+                \Log::info("🔥 {$this->eventPrefix}Selected event dispatched");
             }
         } catch (\Exception $e) {
-            \Log::error("Error in selectItem: " . $e->getMessage());
-            \Log::error("Stack trace: " . $e->getTraceAsString());
+            \Log::error("🔥 Error in selectItem: " . $e->getMessage());
+            \Log::error("🔥 Stack trace: " . $e->getTraceAsString());
         }
     }
 

@@ -25,7 +25,7 @@ class WarehouseDetail extends Component
         'warehouseSelected' => 'loadWarehouse',
         'showAddWarehouseForm' => 'displayAddWarehouseForm',
         'showEditWarehouseForm' => 'displayEditWarehouseForm',
-        'refreshComponent' => '$refresh',
+        'refreshComponent' => 'handleRefreshComponent',
         'createWarehouse' => 'createWarehouse',
         'deleteWarehouse' => 'deleteWarehouse',
         'reactivateWarehouse' => 'reactivateWarehouse',
@@ -68,17 +68,17 @@ class WarehouseDetail extends Component
 
     public function mount()
     {
-        \Log::info("WarehouseDetail mounted");
+        \Log::info("🔥 WarehouseDetail::mount called");
         $this->branches = Branch::all();
-        \Log::info("Branches loaded: " . $this->branches->count());
+        \Log::info("🔥 Branches loaded: " . $this->branches->count());
         
         // Check if there's a previously selected warehouse
         $selectedWarehouseId = session('selected_warehouse_id');
         if ($selectedWarehouseId) {
-            \Log::info("Restoring warehouse from session: {$selectedWarehouseId}");
+            \Log::info("🔥 Restoring warehouse from session: {$selectedWarehouseId}");
             $this->warehouse = Warehouse::with(['branch'])->find($selectedWarehouseId);
             if ($this->warehouse) {
-                \Log::info("Warehouse restored: " . $this->warehouse->name_th);
+                \Log::info("🔥 Warehouse restored: " . $this->warehouse->name_th);
                 // Populate form fields
                 $this->branch_id = $this->warehouse->branch_id;
                 $this->warehouse_code = $this->warehouse->warehouse_code;
@@ -98,35 +98,36 @@ class WarehouseDetail extends Component
         }
     }
 
-    public function loadWarehouse($data)
+    public function loadWarehouse($data = null)
     {
-        \Log::info("loadWarehouse called with: " . json_encode($data));
+        \Log::info("🔥 WarehouseDetail::loadWarehouse called with: " . json_encode($data));
         
         // Handle different data formats
-        if (is_numeric($data)) {
-            // If it's just an ID number
+        if (is_array($data) && isset($data['warehouseId'])) {
+            // Event data format: { warehouseId: 123 }
+            $warehouseId = $data['warehouseId'];
+        } elseif (is_numeric($data)) {
+            // Direct ID format
             $warehouseId = $data;
-        } elseif (isset($data['warehouse'])) {
-            // If it's the new event format with warehouse object
-            $warehouse = $data['warehouse'];
-            $warehouseId = is_array($warehouse) ? $warehouse['id'] : $warehouse->id;
         } else {
-            // If it's the old format or direct warehouse object
-            $warehouse = $data;
-            $warehouseId = is_array($warehouse) ? $warehouse['id'] : $warehouse->id;
+            \Log::error("🔥 Invalid data format for loadWarehouse: " . json_encode($data));
+            return;
         }
         
-        \Log::info("loadWarehouse: {$warehouseId}");
+        \Log::info("🔥 Extracted warehouseId: {$warehouseId}");
+        
         $this->showEditWarehouseForm = false;
-        $this->warehouse = Warehouse::with(['branch'])->find($warehouseId) ?? null;
-        \Log::info("Warehouse loaded: " . ($this->warehouse ? $this->warehouse->name_th : 'null'));
+        $this->showAddWarehouseForm = false;
+        
+        // Load warehouse with relationships (matching branch pattern)
+        $this->warehouse = Warehouse::with(['branch', 'inventories'])->find($warehouseId) ?? null;
+        \Log::info("🔥 Warehouse loaded: " . ($this->warehouse ? $this->warehouse->name_th : 'null'));
         
         // Store in session to persist across component remounts
         if ($this->warehouse) {
-            session(['selected_warehouse_id' => $warehouseId]);
-        }
-        
-        if ($this->warehouse) {
+            session(['selected_warehouse_id' => $this->warehouse->id]);
+            \Log::info("🔥 Stored warehouse ID in session: {$this->warehouse->id}");
+            
             // Populate form fields
             $this->branch_id = $this->warehouse->branch_id;
             $this->warehouse_code = $this->warehouse->warehouse_code;
@@ -142,9 +143,8 @@ class WarehouseDetail extends Component
             $this->contact_name = $this->warehouse->contact_name;
             $this->contact_email = $this->warehouse->contact_email;
             $this->contact_mobile = $this->warehouse->contact_mobile;
+            \Log::info("🔥 Form fields populated successfully");
         }
-        
-        $this->showAddWarehouseForm = false;
     }
 
     public function displayAddWarehouseForm()
@@ -196,6 +196,13 @@ class WarehouseDetail extends Component
         ]);
     }
 
+    public function handleRefreshComponent()
+    {
+        \Log::info("🔥 WarehouseDetail::handleRefreshComponent called - NOT refreshing to prevent double calls");
+        // Don't call $this->$refresh() to prevent component remounting
+        // The component will update naturally when properties change
+    }
+
     public function saveWarehouse()
     {
         $this->validate();
@@ -230,7 +237,6 @@ class WarehouseDetail extends Component
                 'warehouse' => $warehouse
             ]);
             $this->dispatch('warehouseListUpdated');
-            $this->dispatch('refreshComponent');
             
             \Log::info("📡 Dispatching warehouseCreated and warehouseListUpdated events");
             
@@ -282,7 +288,6 @@ class WarehouseDetail extends Component
                 'warehouse' => $this->warehouse
             ]);
             $this->dispatch('warehouseListUpdated');
-            $this->dispatch('refreshComponent');
             
             \Log::info("📡 Dispatching warehouseUpdated and warehouseListUpdated events");
             
@@ -312,7 +317,6 @@ class WarehouseDetail extends Component
                     'message' => 'Warehouse deactivated successfully!'
                 ]);
                 $this->dispatch('warehouseListUpdated');
-                $this->dispatch('refreshComponent');
                 
                 \Log::info("📡 Dispatching warehouseDeleted and warehouseListUpdated events");
             } else {
@@ -337,7 +341,6 @@ class WarehouseDetail extends Component
                 'message' => 'Warehouse reactivated successfully!'
             ]);
             $this->dispatch('warehouseListUpdated');
-            $this->dispatch('refreshComponent');
             
             \Log::info("📡 Dispatching warehouseReactivated and warehouseListUpdated events");
         }

@@ -51,23 +51,8 @@ class WarehouseList extends BaseListComponent
         return $this->selectedItem;
     }
 
-    public function selectWarehouse($warehouseId)
-    {
-        \Log::info("selectWarehouse called with ID: {$warehouseId}");
-        
-        // Load warehouse with relationships directly
-        $warehouse = Warehouse::with(['branch', 'inventories'])->find($warehouseId);
-        
-        if ($warehouse) {
-            \Log::info("Warehouse found: " . $warehouse->name_th);
-            $this->selectedItem = $warehouse;
-            \Log::info("Dispatching warehouseSelected event");
-            $this->dispatch('warehouseSelected', ['warehouse' => $warehouse]);
-            \Log::info("Event dispatched successfully");
-        } else {
-            \Log::warning("Warehouse not found with ID: {$warehouseId}");
-        }
-    }
+    // Removed selectWarehouse method - now using direct event dispatch from view like BranchList
+    // This should eliminate the double network call issue
 
     public function deleteWarehouse($warehouseId)
     {

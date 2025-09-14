@@ -29,7 +29,7 @@
             <tbody>
                 @foreach ($items as $warehouse)
                     <tr class="lease-order-row hover:bg-gray-100 cursor-pointer {{ !$warehouse->is_active ? 'opacity-60' : '' }}"
-                        wire:click="selectWarehouse({{ $warehouse->id }})">
+                        wire:click="$dispatch('warehouseSelected', { warehouseId: {{ $warehouse->id }} })">
                         <td>
                             <div class="row col-md-12">
                                 <div class="col-md-11 col-sm-11">

@@ -116,14 +116,6 @@
         document.addEventListener('livewire:initialized', () => {
             console.log('WarehouseDetail livewire:initialized');
             
-            @this.on('warehouseSelected', () => {
-                console.log('warehouseSelected');
-                setTimeout(() => {
-                    // Initialize any warehouse-specific functionality here
-                    $('.venobox').venobox();
-                }, 100);
-            });
-
             @this.on('addWarehouse', () => {
                 console.log('addWarehouse');
                 setTimeout(() => {
