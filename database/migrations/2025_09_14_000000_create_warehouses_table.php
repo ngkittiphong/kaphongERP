@@ -12,25 +12,19 @@ return new class extends Migration
     public function up()
     {
         Schema::create('warehouses', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedInteger('branch_id');
-            $table->string('warehouse_code', 50)->unique();
-            $table->string('name_th', 255);
-            $table->string('name_en', 255)->nullable();
-            $table->text('address_th')->nullable();
-            $table->text('address_en')->nullable();
-            $table->string('phone_number', 20)->nullable();
-            $table->string('email', 100)->nullable();
-            $table->boolean('is_active')->default(true);
-            $table->boolean('is_main_warehouse')->default(false);
-            $table->text('description')->nullable();
-            $table->string('contact_name', 100)->nullable();
-            $table->string('contact_email', 100)->nullable();
-            $table->string('contact_mobile', 20)->nullable();
-            $table->timestamps();
-            $table->softDeletes();
+            $table->id(); // INTEGER PK
+            $table->unsignedInteger('branch_id'); // INTEGER FK
+            $table->unsignedBigInteger('user_create_id'); // BIGINT FK (matches users.id)
+            $table->boolean('main_warehouse'); // BOOLEAN
+            $table->string('name', 150); // VARCHAR(150)
+            $table->datetime('date_create'); // DATETIME
+            $table->unsignedTinyInteger('warehouse_status_id'); // TINYINT FK
+            $table->decimal('avr_remain_price', 10, 2)->nullable(); // DOUBLE(10,2)
+            $table->timestamps(); // Laravel timestamps
 
             $table->foreign('branch_id')->references('id')->on('branches');
+            $table->foreign('user_create_id')->references('id')->on('users');
+            $table->foreign('warehouse_status_id')->references('id')->on('warehouse_statuses');
         });
     }
 

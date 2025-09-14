@@ -36,7 +36,7 @@
                             <div class="panel-heading no-padding-bottom">
                                 <h4 class="panel-title"><?= __('Warehouse details') ?></h4>
                                 <div class="elements">
-                                    @if($warehouse->is_active)
+                                    @if($warehouse->status->name === 'Active')
                                         <button class="btn bg-amber-darkest"
                                             wire:click="$dispatch('showEditWarehouseForm')">
                                             <i class="icon-pencil6"></i> Edit Warehouse
@@ -59,20 +59,22 @@
                                             ชื่อคลังสินค้า :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
-                                            {{ $warehouse->name_th ?? 'N/A' }} ({{ $warehouse->name_en ?? 'N/A' }})
+                                            {{ $warehouse->name ?? 'N/A' }}
+                                            @if($warehouse && $warehouse->main_warehouse)
+                                                (คลังหลัก)
+                                            @endif
                                         </div>
                                     </span>
                                 </div>
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            รหัสคลังสินค้า :
+                                            สถานะ :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
-                                            {{ $warehouse->warehouse_code ?? 'N/A' }} 
-                                            @if($warehouse && $warehouse->is_main_warehouse)
-                                                (คลังหลัก)
-                                            @endif
+                                            <span class="badge bg-{{ $warehouse->status->name === 'Active' ? 'success' : 'danger' }}">
+                                                {{ $warehouse->status->name ?? 'N/A' }}
+                                            </span>
                                         </div>
                                     </span>
                                 </div>
@@ -82,66 +84,37 @@
                                             สาขา :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
-                                            {{ $warehouse->branch->name_th ?? 'N/A' }}
+                                            {{ $warehouse->branch->name_en ?? 'N/A' }}
                                         </div>
                                     </span>
                                 </div>
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            ที่อยู่ :
-                                        </div>
-                                        <div class="col-md-4 col-xs-4 text-left">
-                                            {{ $warehouse->address_th ?? 'N/A' }}
-                                        </div>
-                                        <div class="col-md-4 col-xs-4 text-left">
-                                            {{ $warehouse->address_en ?? 'N/A' }}
-                                        </div>
-                                    </span>
-                                </div>
-                                <div class='row'>
-                                    <span href="#" class="list-group-item p-l-20">
-                                        <div class="col-md-3 col-xs-3 text-bold">
-                                            คำอธิบาย :
+                                            วันที่สร้าง :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
-                                            {{ $warehouse->description ?? 'N/A' }}
+                                            {{ $warehouse->date_create ? $warehouse->date_create->format('Y-m-d H:i') : 'N/A' }}
                                         </div>
                                     </span>
                                 </div>
                                 <div class='row'>
-                                    <div class="col-md-4 col-xs-4 text-bold">
-                                        <span href="#" class="list-group-item p-l-20">
-                                            <i class="icon-phone2"></i>{{ $warehouse->phone_number ?? 'N/A' }}
-                                        </span>
-                                    </div>
-                                    <div class="col-md-8 col-xs-8 text-bold">
-                                        <span href="#" class="list-group-item p-l-20">
-                                            <i class="icon-mobile"></i>{{ $warehouse->contact_mobile ?? 'N/A' }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class='row'>
-                                    <div class="col-md-6 col-xs-6 text-bold">
-                                        <span href="#" class="list-group-item p-l-20">
-                                            <i class="icon-envelop3"></i>{{ $warehouse->email ?? 'N/A' }}
-                                        </span>
-                                    </div>
-                                    <div class="col-md-6 col-xs-6 text-bold">
-                                        <span href="#" class="list-group-item p-l-20">
-                                            <i class="icon-user"></i>{{ $warehouse->contact_name ?? 'N/A' }}
-                                        </span>
-                                    </div>
+                                    <span href="#" class="list-group-item p-l-20">
+                                        <div class="col-md-3 col-xs-3 text-bold">
+                                            ผู้สร้าง :
+                                        </div>
+                                        <div class="col-md-8 col-xs-8 text-left">
+                                            {{ $warehouse->userCreate->username ?? 'N/A' }}
+                                        </div>
+                                    </span>
                                 </div>
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            สถานะ :
+                                            ราคาเฉลี่ยคงเหลือ :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
-                                            <span class="badge bg-{{ $warehouse->is_active ? 'success' : 'danger' }}">
-                                                {{ $warehouse->is_active ? 'Active' : 'Inactive' }}
-                                            </span>
+                                            {{ number_format($warehouse->avr_remain_price ?? 0, 2) }} บาท
                                         </div>
                                     </span>
                                 </div>

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Branch;
 use App\Models\Warehouse;
+use App\Models\WarehouseStatus;
 
 class WarehouseTestSeeder extends Seeder
 {
@@ -21,6 +22,13 @@ class WarehouseTestSeeder extends Seeder
             return;
         }
 
+        // Get Active status ID
+        $activeStatus = WarehouseStatus::where('name', 'Active')->first();
+        if (!$activeStatus) {
+            $this->command->error('Active warehouse status not found. Please run WarehouseStatusesSeeder first.');
+            return;
+        }
+
         foreach ($branches as $branch) {
             // Create 2 warehouses for each branch
             $warehouses = [
@@ -32,7 +40,7 @@ class WarehouseTestSeeder extends Seeder
                     'address_en' => $branch->address_en,
                     'phone_number' => $branch->phone_number,
                     'email' => 'warehouse1@' . explode('@', $branch->email)[1],
-                    'is_active' => true,
+                    'status_id' => $activeStatus->id,
                     'is_main_warehouse' => true,
                     'description' => 'คลังหลักของสาขา ' . $branch->name_th,
                     'contact_name' => $branch->contact_name,
@@ -47,7 +55,7 @@ class WarehouseTestSeeder extends Seeder
                     'address_en' => $branch->address_en . ' (Building 2)',
                     'phone_number' => $branch->phone_number,
                     'email' => 'warehouse2@' . explode('@', $branch->email)[1],
-                    'is_active' => true,
+                    'status_id' => $activeStatus->id,
                     'is_main_warehouse' => false,
                     'description' => 'คลังสำรองของสาขา ' . $branch->name_th,
                     'contact_name' => $branch->contact_name,
@@ -70,13 +78,13 @@ class WarehouseTestSeeder extends Seeder
         // Display created warehouses
         $this->command->table(
             ['ID', 'Code', 'Name (TH)', 'Branch', 'Status'],
-            Warehouse::with('branch')->get()->map(function ($warehouse) {
+            Warehouse::with(['branch', 'status'])->get()->map(function ($warehouse) {
                 return [
                     $warehouse->id,
                     $warehouse->warehouse_code,
                     $warehouse->name_th,
                     $warehouse->branch->name_th ?? 'N/A',
-                    $warehouse->is_active ? 'Active' : 'Inactive'
+                    $warehouse->status->name ?? 'N/A'
                 ];
             })
         );

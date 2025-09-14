@@ -9,23 +9,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Warehouse extends Model
 {
-    use SoftDeletes;
-
     protected $fillable = [
         'branch_id',
-        'warehouse_code',
-        'name_th',
-        'name_en',
-        'address_th',
-        'address_en',
-        'phone_number',
-        'email',
-        'is_active',
-        'is_main_warehouse',
-        'description',
-        'contact_name',
-        'contact_email',
-        'contact_mobile',
+        'user_create_id',
+        'main_warehouse',
+        'name',
+        'date_create',
+        'warehouse_status_id',
+        'avr_remain_price',
+    ];
+
+    protected $casts = [
+        'date_create' => 'datetime',
+        'main_warehouse' => 'boolean',
+        'avr_remain_price' => 'decimal:2',
     ];
 
     public function branch(): BelongsTo
@@ -36,5 +33,15 @@ class Warehouse extends Model
     public function inventories(): HasMany
     {
         return $this->hasMany(Inventory::class);
+    }
+
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(WarehouseStatus::class, 'warehouse_status_id');
+    }
+
+    public function userCreate(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_create_id');
     }
 }

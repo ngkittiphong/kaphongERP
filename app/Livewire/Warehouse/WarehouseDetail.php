@@ -5,6 +5,7 @@ namespace App\Livewire\Warehouse;
 use Livewire\Component;
 use App\Models\Warehouse;
 use App\Models\Branch;
+use App\Models\WarehouseStatus;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Http\Request;
 
@@ -14,12 +15,11 @@ class WarehouseDetail extends Component
     public $showAddWarehouseForm = false;
     public $showEditWarehouseForm = false;
     
-    // Warehouse form fields
-    public $branch_id, $warehouse_code, $name_th, $name_en, $address_th, $address_en;
-    public $phone_number, $email, $is_active, $is_main_warehouse, $description;
-    public $contact_name, $contact_email, $contact_mobile;
+    // Warehouse form fields (matching ER diagram)
+    public $branch_id, $user_create_id, $main_warehouse, $name, $date_create, $warehouse_status_id, $avr_remain_price;
     
     public $branches = [];
+    public $warehouse_statuses = [];
 
     protected $listeners = [
         'warehouseSelected' => 'loadWarehouse',
@@ -32,68 +32,74 @@ class WarehouseDetail extends Component
         'cancelForm' => 'cancelForm'
     ];
 
+    protected function getListeners()
+    {
+        return [
+            'warehouseSelected' => 'loadWarehouse',
+            'showAddWarehouseForm' => 'displayAddWarehouseForm',
+            'showEditWarehouseForm' => 'displayEditWarehouseForm',
+            'refreshComponent' => 'handleRefreshComponent',
+            'createWarehouse' => 'createWarehouse',
+            'deleteWarehouse' => 'deleteWarehouse',
+            'reactivateWarehouse' => 'reactivateWarehouse',
+            'cancelForm' => 'cancelForm'
+        ];
+    }
+
     protected $rules = [
         'branch_id' => 'required|exists:branches,id',
-        'warehouse_code' => 'required|string|max:50',
-        'name_th' => 'required|string|max:255',
-        'name_en' => 'nullable|string|max:255',
-        'address_th' => 'nullable|string',
-        'address_en' => 'nullable|string',
-        'phone_number' => 'nullable|string|max:20',
-        'email' => 'nullable|email|max:100',
-        'is_active' => 'boolean',
-        'is_main_warehouse' => 'boolean',
-        'description' => 'nullable|string',
-        'contact_name' => 'nullable|string|max:100',
-        'contact_email' => 'nullable|email|max:100',
-        'contact_mobile' => 'nullable|string|max:20',
+        'user_create_id' => 'required|exists:users,id',
+        'main_warehouse' => 'boolean',
+        'name' => 'required|string|max:150',
+        'date_create' => 'required|date',
+        'warehouse_status_id' => 'required|exists:warehouse_statuses,id',
+        'avr_remain_price' => 'nullable|numeric|min:0',
     ];
 
     protected $messages = [
         'branch_id.required' => 'Please select a branch.',
         'branch_id.exists' => 'The selected branch does not exist.',
-        'warehouse_code.required' => 'Warehouse code is required.',
-        'warehouse_code.max' => 'Warehouse code must not exceed 50 characters.',
-        'name_th.required' => 'Thai name is required.',
-        'name_th.max' => 'Thai name must not exceed 255 characters.',
-        'name_en.max' => 'English name must not exceed 255 characters.',
-        'phone_number.max' => 'Phone number must not exceed 20 characters.',
-        'email.email' => 'Please enter a valid email address.',
-        'email.max' => 'Email must not exceed 100 characters.',
-        'contact_name.max' => 'Contact name must not exceed 100 characters.',
-        'contact_email.email' => 'Please enter a valid contact email address.',
-        'contact_email.max' => 'Contact email must not exceed 100 characters.',
-        'contact_mobile.max' => 'Contact mobile must not exceed 20 characters.',
+        'user_create_id.required' => 'Please select a user.',
+        'user_create_id.exists' => 'The selected user does not exist.',
+        'name.required' => 'Warehouse name is required.',
+        'name.max' => 'Warehouse name must not exceed 150 characters.',
+        'date_create.required' => 'Creation date is required.',
+        'date_create.date' => 'Please enter a valid date.',
+        'warehouse_status_id.required' => 'Please select a status.',
+        'warehouse_status_id.exists' => 'The selected status does not exist.',
+        'avr_remain_price.numeric' => 'Average remain price must be a number.',
+        'avr_remain_price.min' => 'Average remain price cannot be negative.',
     ];
 
     public function mount()
     {
         \Log::info("🔥 WarehouseDetail::mount called");
         $this->branches = Branch::all();
+        $this->warehouse_statuses = WarehouseStatus::all();
         \Log::info("🔥 Branches loaded: " . $this->branches->count());
+        \Log::info("🔥 Warehouse statuses loaded: " . $this->warehouse_statuses->count());
+        
+        // Set default values
+        $this->user_create_id = auth()->id() ?? 1; // Default to current user or first user
+        $this->date_create = now()->format('Y-m-d\TH:i');
+        $this->main_warehouse = false;
+        $this->avr_remain_price = 0.00;
         
         // Check if there's a previously selected warehouse
         $selectedWarehouseId = session('selected_warehouse_id');
         if ($selectedWarehouseId) {
             \Log::info("🔥 Restoring warehouse from session: {$selectedWarehouseId}");
-            $this->warehouse = Warehouse::with(['branch'])->find($selectedWarehouseId);
+            $this->warehouse = Warehouse::with(['branch', 'status', 'userCreate'])->find($selectedWarehouseId);
             if ($this->warehouse) {
-                \Log::info("🔥 Warehouse restored: " . $this->warehouse->name_th);
+                \Log::info("🔥 Warehouse restored: " . $this->warehouse->name);
                 // Populate form fields
                 $this->branch_id = $this->warehouse->branch_id;
-                $this->warehouse_code = $this->warehouse->warehouse_code;
-                $this->name_th = $this->warehouse->name_th;
-                $this->name_en = $this->warehouse->name_en;
-                $this->address_th = $this->warehouse->address_th;
-                $this->address_en = $this->warehouse->address_en;
-                $this->phone_number = $this->warehouse->phone_number;
-                $this->email = $this->warehouse->email;
-                $this->is_active = $this->warehouse->is_active;
-                $this->is_main_warehouse = $this->warehouse->is_main_warehouse;
-                $this->description = $this->warehouse->description;
-                $this->contact_name = $this->warehouse->contact_name;
-                $this->contact_email = $this->warehouse->contact_email;
-                $this->contact_mobile = $this->warehouse->contact_mobile;
+                $this->user_create_id = $this->warehouse->user_create_id;
+                $this->main_warehouse = $this->warehouse->main_warehouse;
+                $this->name = $this->warehouse->name;
+                $this->date_create = $this->warehouse->date_create->format('Y-m-d\TH:i');
+                $this->warehouse_status_id = $this->warehouse->warehouse_status_id;
+                $this->avr_remain_price = $this->warehouse->avr_remain_price;
             }
         }
     }
@@ -101,6 +107,7 @@ class WarehouseDetail extends Component
     public function loadWarehouse($data = null)
     {
         \Log::info("🔥 WarehouseDetail::loadWarehouse called with: " . json_encode($data));
+        \Log::info("🔥 WarehouseDetail::loadWarehouse - Current warehouse: " . ($this->warehouse ? $this->warehouse->id : 'null'));
         
         // Handle different data formats
         if (is_array($data) && isset($data['warehouseId'])) {
@@ -120,8 +127,8 @@ class WarehouseDetail extends Component
         $this->showAddWarehouseForm = false;
         
         // Load warehouse with relationships (matching branch pattern)
-        $this->warehouse = Warehouse::with(['branch', 'inventories'])->find($warehouseId) ?? null;
-        \Log::info("🔥 Warehouse loaded: " . ($this->warehouse ? $this->warehouse->name_th : 'null'));
+        $this->warehouse = Warehouse::with(['branch', 'status', 'userCreate', 'inventories'])->find($warehouseId) ?? null;
+        \Log::info("🔥 Warehouse loaded: " . ($this->warehouse ? $this->warehouse->name : 'null'));
         
         // Store in session to persist across component remounts
         if ($this->warehouse) {
@@ -130,19 +137,12 @@ class WarehouseDetail extends Component
             
             // Populate form fields
             $this->branch_id = $this->warehouse->branch_id;
-            $this->warehouse_code = $this->warehouse->warehouse_code;
-            $this->name_th = $this->warehouse->name_th;
-            $this->name_en = $this->warehouse->name_en;
-            $this->address_th = $this->warehouse->address_th;
-            $this->address_en = $this->warehouse->address_en;
-            $this->phone_number = $this->warehouse->phone_number;
-            $this->email = $this->warehouse->email;
-            $this->is_active = $this->warehouse->is_active;
-            $this->is_main_warehouse = $this->warehouse->is_main_warehouse;
-            $this->description = $this->warehouse->description;
-            $this->contact_name = $this->warehouse->contact_name;
-            $this->contact_email = $this->warehouse->contact_email;
-            $this->contact_mobile = $this->warehouse->contact_mobile;
+            $this->user_create_id = $this->warehouse->user_create_id;
+            $this->main_warehouse = $this->warehouse->main_warehouse;
+            $this->name = $this->warehouse->name;
+            $this->date_create = $this->warehouse->date_create->format('Y-m-d\TH:i');
+            $this->warehouse_status_id = $this->warehouse->warehouse_status_id;
+            $this->avr_remain_price = $this->warehouse->avr_remain_price;
             \Log::info("🔥 Form fields populated successfully");
         }
     }
@@ -153,10 +153,14 @@ class WarehouseDetail extends Component
         $this->showEditWarehouseForm = false;
         $this->resetErrorBag();
         $this->reset([
-            'branch_id', 'warehouse_code', 'name_th', 'name_en', 'address_th', 'address_en',
-            'phone_number', 'email', 'is_active', 'is_main_warehouse', 'description',
-            'contact_name', 'contact_email', 'contact_mobile'
+            'branch_id', 'user_create_id', 'main_warehouse', 'name', 'date_create', 'warehouse_status_id', 'avr_remain_price'
         ]);
+        
+        // Set default values
+        $this->user_create_id = auth()->id() ?? 1;
+        $this->date_create = now()->format('Y-m-d\TH:i');
+        $this->main_warehouse = false;
+        $this->avr_remain_price = 0.00;
     }
 
     public function displayEditWarehouseForm()
@@ -168,19 +172,12 @@ class WarehouseDetail extends Component
             
             // Populate form fields with current warehouse data
             $this->branch_id = $this->warehouse->branch_id;
-            $this->warehouse_code = $this->warehouse->warehouse_code;
-            $this->name_th = $this->warehouse->name_th;
-            $this->name_en = $this->warehouse->name_en;
-            $this->address_th = $this->warehouse->address_th;
-            $this->address_en = $this->warehouse->address_en;
-            $this->phone_number = $this->warehouse->phone_number;
-            $this->email = $this->warehouse->email;
-            $this->is_active = $this->warehouse->is_active;
-            $this->is_main_warehouse = $this->warehouse->is_main_warehouse;
-            $this->description = $this->warehouse->description;
-            $this->contact_name = $this->warehouse->contact_name;
-            $this->contact_email = $this->warehouse->contact_email;
-            $this->contact_mobile = $this->warehouse->contact_mobile;
+            $this->user_create_id = $this->warehouse->user_create_id;
+            $this->main_warehouse = $this->warehouse->main_warehouse;
+            $this->name = $this->warehouse->name;
+            $this->date_create = $this->warehouse->date_create->format('Y-m-d\TH:i');
+            $this->warehouse_status_id = $this->warehouse->warehouse_status_id;
+            $this->avr_remain_price = $this->warehouse->avr_remain_price;
         }
     }
 
@@ -190,9 +187,7 @@ class WarehouseDetail extends Component
         $this->showEditWarehouseForm = false;
         $this->resetErrorBag();
         $this->reset([
-            'branch_id', 'warehouse_code', 'name_th', 'name_en', 'address_th', 'address_en',
-            'phone_number', 'email', 'is_active', 'is_main_warehouse', 'description',
-            'contact_name', 'contact_email', 'contact_mobile'
+            'branch_id', 'user_create_id', 'main_warehouse', 'name', 'date_create', 'warehouse_status_id', 'avr_remain_price'
         ]);
     }
 
@@ -211,19 +206,12 @@ class WarehouseDetail extends Component
             // Create the warehouse directly
             $warehouse = Warehouse::create([
                 'branch_id' => $this->branch_id,
-                'warehouse_code' => $this->warehouse_code,
-                'name_th' => $this->name_th,
-                'name_en' => $this->name_en,
-                'address_th' => $this->address_th,
-                'address_en' => $this->address_en,
-                'phone_number' => $this->phone_number,
-                'email' => $this->email,
-                'is_active' => $this->is_active ?? false,
-                'is_main_warehouse' => $this->is_main_warehouse ?? false,
-                'description' => $this->description,
-                'contact_name' => $this->contact_name,
-                'contact_email' => $this->contact_email,
-                'contact_mobile' => $this->contact_mobile,
+                'user_create_id' => $this->user_create_id,
+                'main_warehouse' => $this->main_warehouse ?? false,
+                'name' => $this->name,
+                'date_create' => $this->date_create,
+                'warehouse_status_id' => $this->warehouse_status_id,
+                'avr_remain_price' => $this->avr_remain_price ?? 0.00,
             ]);
 
             // Success - show message and refresh
@@ -259,19 +247,12 @@ class WarehouseDetail extends Component
             // Update the warehouse directly
             $this->warehouse->update([
                 'branch_id' => $this->branch_id,
-                'warehouse_code' => $this->warehouse_code,
-                'name_th' => $this->name_th,
-                'name_en' => $this->name_en,
-                'address_th' => $this->address_th,
-                'address_en' => $this->address_en,
-                'phone_number' => $this->phone_number,
-                'email' => $this->email,
-                'is_active' => $this->is_active ?? false,
-                'is_main_warehouse' => $this->is_main_warehouse ?? false,
-                'description' => $this->description,
-                'contact_name' => $this->contact_name,
-                'contact_email' => $this->contact_email,
-                'contact_mobile' => $this->contact_mobile,
+                'user_create_id' => $this->user_create_id,
+                'main_warehouse' => $this->main_warehouse ?? false,
+                'name' => $this->name,
+                'date_create' => $this->date_create,
+                'warehouse_status_id' => $this->warehouse_status_id,
+                'avr_remain_price' => $this->avr_remain_price ?? 0.00,
             ]);
 
             // Success - show message and refresh
@@ -302,15 +283,15 @@ class WarehouseDetail extends Component
     {
         $warehouse = Warehouse::find($warehouseId);
         if ($warehouse) {
-            $controller = new WarehouseController();
-            $response = $controller->destroy($warehouse);
-            
-            if ($response->getData()->success) {
-                session()->flash('message', 'Warehouse deactivated successfully!');
-                $this->warehouse = null;
+            // Set status to Inactive (assuming status_id 2 is Inactive)
+            $inactiveStatus = WarehouseStatus::where('name', 'Inactive')->first();
+            if ($inactiveStatus) {
+                $warehouse->update(['warehouse_status_id' => $inactiveStatus->id]);
                 
-                // Clear the selected warehouse from session
-                session()->forget('selected_warehouse_id');
+                session()->flash('message', 'Warehouse deactivated successfully!');
+                
+                // Reload the warehouse data to reflect changes
+                $this->loadWarehouse($warehouseId);
                 
                 // Dispatch events for success dialog and list update
                 $this->dispatch('warehouseDeleted', [
@@ -320,7 +301,7 @@ class WarehouseDetail extends Component
                 
                 \Log::info("📡 Dispatching warehouseDeleted and warehouseListUpdated events");
             } else {
-                $this->addError('general', 'Failed to deactivate warehouse. Please try again.');
+                $this->addError('general', 'Failed to deactivate warehouse. Inactive status not found.');
             }
         }
     }
@@ -329,7 +310,11 @@ class WarehouseDetail extends Component
     {
         $warehouse = Warehouse::find($warehouseId);
         if ($warehouse) {
-            $warehouse->update(['is_active' => true]);
+            // Set status to Active (assuming status_id 1 is Active)
+            $activeStatus = WarehouseStatus::where('name', 'Active')->first();
+            if ($activeStatus) {
+                $warehouse->update(['warehouse_status_id' => $activeStatus->id]);
+            }
             
             session()->flash('message', 'Warehouse reactivated successfully!');
             

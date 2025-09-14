@@ -34,7 +34,7 @@
                                     <select class="form-control" wire:model="branch_id" required>
                                         <option value="">Select Branch</option>
                                         @foreach($branches as $branch)
-                                            <option value="{{ $branch->id }}">{{ $branch->name_th }} ({{ $branch->name_en }})</option>
+                                            <option value="{{ $branch->id }}">{{ $branch->name_en }}</option>
                                         @endforeach
                                     </select>
                                     @error('branch_id') <span class="text-danger">{{ $message }}</span> @enderror
@@ -42,9 +42,14 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label"><?= __('Warehouse Code') ?> <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" wire:model="warehouse_code" placeholder="Enter warehouse code" required>
-                                    @error('warehouse_code') <span class="text-danger">{{ $message }}</span> @enderror
+                                    <label class="control-label"><?= __('User Creator') ?> <span class="text-danger">*</span></label>
+                                    <select class="form-control" wire:model="user_create_id" required>
+                                        <option value="">Select User</option>
+                                        @foreach(\App\Models\User::all() as $user)
+                                            <option value="{{ $user->id }}">{{ $user->username }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('user_create_id') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                         </div>
@@ -52,33 +57,16 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label"><?= __('Thai Name') ?> <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" wire:model="name_th" placeholder="Enter Thai name" required>
-                                    @error('name_th') <span class="text-danger">{{ $message }}</span> @enderror
+                                    <label class="control-label"><?= __('Warehouse Name') ?> <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" wire:model="name" placeholder="Enter warehouse name" required>
+                                    @error('name') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label"><?= __('English Name') ?></label>
-                                    <input type="text" class="form-control" wire:model="name_en" placeholder="Enter English name">
-                                    @error('name_en') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="control-label"><?= __('Thai Address') ?></label>
-                                    <textarea class="form-control" wire:model="address_th" rows="3" placeholder="Enter Thai address"></textarea>
-                                    @error('address_th') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="control-label"><?= __('English Address') ?></label>
-                                    <textarea class="form-control" wire:model="address_en" rows="3" placeholder="Enter English address"></textarea>
-                                    @error('address_en') <span class="text-danger">{{ $message }}</span> @enderror
+                                    <label class="control-label"><?= __('Creation Date') ?> <span class="text-danger">*</span></label>
+                                    <input type="datetime-local" class="form-control" wire:model="date_create" required>
+                                    @error('date_create') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                         </div>
@@ -86,50 +74,21 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label"><?= __('Phone Number') ?></label>
-                                    <input type="text" class="form-control" wire:model="phone_number" placeholder="Enter phone number">
-                                    @error('phone_number') <span class="text-danger">{{ $message }}</span> @enderror
+                                    <label class="control-label"><?= __('Status') ?> <span class="text-danger">*</span></label>
+                                    <select class="form-control" wire:model="warehouse_status_id" required>
+                                        <option value="">Select Status</option>
+                                        @foreach($warehouse_statuses as $status)
+                                            <option value="{{ $status->id }}">{{ $status->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('warehouse_status_id') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label"><?= __('Email') ?></label>
-                                    <input type="email" class="form-control" wire:model="email" placeholder="Enter email address">
-                                    @error('email') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="control-label"><?= __('Contact Name') ?></label>
-                                    <input type="text" class="form-control" wire:model="contact_name" placeholder="Enter contact name">
-                                    @error('contact_name') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="control-label"><?= __('Contact Mobile') ?></label>
-                                    <input type="text" class="form-control" wire:model="contact_mobile" placeholder="Enter contact mobile">
-                                    @error('contact_mobile') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="control-label"><?= __('Contact Email') ?></label>
-                                    <input type="email" class="form-control" wire:model="contact_email" placeholder="Enter contact email">
-                                    @error('contact_email') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="control-label"><?= __('Description') ?></label>
-                                    <textarea class="form-control" wire:model="description" rows="3" placeholder="Enter description"></textarea>
-                                    @error('description') <span class="text-danger">{{ $message }}</span> @enderror
+                                    <label class="control-label"><?= __('Average Remain Price') ?></label>
+                                    <input type="number" class="form-control" wire:model="avr_remain_price" placeholder="0.00" step="0.01" min="0">
+                                    @error('avr_remain_price') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                         </div>
@@ -139,17 +98,7 @@
                                 <div class="form-group">
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox" wire:model="is_active" value="1">
-                                            <?= __('Active') ?>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" wire:model="is_main_warehouse" value="1">
+                                            <input type="checkbox" wire:model="main_warehouse" value="1">
                                             <?= __('Main Warehouse') ?>
                                         </label>
                                     </div>

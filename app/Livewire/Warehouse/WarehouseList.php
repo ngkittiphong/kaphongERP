@@ -51,8 +51,11 @@ class WarehouseList extends BaseListComponent
         return $this->selectedItem;
     }
 
-    // Removed selectWarehouse method - now using direct event dispatch from view like BranchList
-    // This should eliminate the double network call issue
+    public function selectWarehouse($warehouseId)
+    {
+        \Log::info("🔥 WarehouseList::selectWarehouse called with: {$warehouseId}");
+        $this->dispatch('warehouseSelected', ['warehouseId' => $warehouseId]);
+    }
 
     public function deleteWarehouse($warehouseId)
     {
@@ -72,17 +75,21 @@ class WarehouseList extends BaseListComponent
         }
         
         // Load warehouses with filtering
-        $query = Warehouse::with(['branch']);
+        $query = Warehouse::with(['branch', 'status', 'userCreate']);
         
         if ($this->filter === 'active') {
-            $query->where('is_active', true);
+            $query->whereHas('status', function($q) {
+                $q->where('name', 'Active');
+            });
         } elseif ($this->filter === 'inactive') {
-            $query->where('is_active', false);
+            $query->whereHas('status', function($q) {
+                $q->where('name', 'Inactive');
+            });
         }
         // If filter is 'all', don't add any where clause
         
-        $this->items = $query->orderBy('is_active', 'desc')
-                            ->orderBy('name_th')
+        $this->items = $query->orderBy('warehouse_status_id', 'asc')
+                            ->orderBy('name')
                             ->get();
         
         $this->dispatch($this->eventPrefix . 'ListUpdated');

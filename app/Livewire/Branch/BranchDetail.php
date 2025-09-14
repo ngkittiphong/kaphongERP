@@ -68,7 +68,7 @@ class BranchDetail extends Component
     {
         \Log::info("loadBranch: {$branchId}");
         $this->showEditBranchForm = false;
-        $this->branch = Branch::with(['company', 'warehouses'])->find($branchId) ?? null;
+        $this->branch = Branch::with(['company', 'warehouses.status'])->find($branchId) ?? null;
         
         if ($this->branch) {
             // Load warehouses for this branch

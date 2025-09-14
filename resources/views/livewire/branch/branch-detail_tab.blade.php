@@ -166,7 +166,7 @@
                                         <tr>
                                             <th>#</th>
                                             <th>Warehouse Name</th>
-                                            <th>Warehouse Code</th>
+                                            <th>Average Remaining Price</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -175,11 +175,11 @@
                                         @forelse($warehouses as $index => $warehouse)
                                             <tr class="text-default">
                                                 <td class="col-md-1">{{ $index + 1 }}.</td>
-                                                <td class="col-md-5">{{ $warehouse->name_th }} ({{ $warehouse->name_en }})</td>
-                                                <td class="col-md-3">{{ $warehouse->warehouse_code }}</td>
+                                                <td class="col-md-5">{{ $warehouse->name }}</td>
+                                                <td class="col-md-3">{{ number_format($warehouse->avr_remain_price ?? 0, 2) }} บาท</td>
                                                 <td>
-                                                    <span class="badge bg-{{ $warehouse->is_active ? 'success' : 'danger' }}">
-                                                        {{ $warehouse->is_active ? 'Active' : 'Inactive' }}
+                                                    <span class="badge bg-{{ $warehouse->status->name === 'Active' ? 'success' : 'danger' }}">
+                                                        {{ $warehouse->status->name }}
                                                     </span>
                                                 </td>
                                                 <td class="col-md-2">
