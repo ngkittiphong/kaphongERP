@@ -10,6 +10,7 @@ class WarehouseController
     public function index()
     {
         return Warehouse::with(['branch'])
+            ->orderBy('is_active', 'desc')
             ->orderBy('name_th')
             ->get();
     }
@@ -80,11 +81,12 @@ class WarehouseController
 
     public function destroy(Warehouse $warehouse)
     {
-        $warehouse->delete();
+        // Soft delete by setting is_active to false instead of actually deleting
+        $warehouse->update(['is_active' => false]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Warehouse deleted successfully!'
+            'message' => 'Warehouse deactivated successfully!'
         ]);
     }
 }

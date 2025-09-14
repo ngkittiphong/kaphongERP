@@ -30,10 +30,10 @@ abstract class BaseListComponent extends Component
     {
         \Log::info("🔄 Refreshing list for: " . $this->eventPrefix);
         
-        // Check if controller is initialized
+        // Ensure controller is initialized
         if (!$this->controller) {
-            \Log::warning("⚠️ Controller not initialized, skipping refresh");
-            return;
+            \Log::info("🔄 Controller not initialized, reinitializing...");
+            $this->controller = $this->getController();
         }
         
         $this->loadItems();
@@ -48,9 +48,10 @@ abstract class BaseListComponent extends Component
 
     public function loadItems()
     {
+        // Ensure controller is initialized
         if (!$this->controller) {
-            \Log::warning("⚠️ Controller not initialized in loadItems");
-            return;
+            \Log::info("🔄 Controller not initialized in loadItems, reinitializing...");
+            $this->controller = $this->getController();
         }
         
         $this->items = $this->controller->index();
@@ -59,12 +60,39 @@ abstract class BaseListComponent extends Component
 
     public function selectItem($itemId)
     {
-        $item = $this->model::with(['type', 'group', 'status', 'subUnits', 'inventories'])
-            ->find($itemId);
-            
-        if ($item) {
-            $this->selectedItem = $item;
-            $this->dispatch($this->eventPrefix . 'Selected', $this->selectedItem);
+        \Log::info("selectItem called with itemId: {$itemId}");
+        \Log::info("Model class: " . $this->model);
+        \Log::info("Model type: " . gettype($this->model));
+        
+        // Define relationships based on model type
+        $relationships = [];
+        
+        if ($this->model === \App\Models\Product::class) {
+            $relationships = ['type', 'group', 'status', 'subUnits', 'inventories'];
+        } elseif ($this->model === \App\Models\Warehouse::class) {
+            $relationships = ['branch', 'inventories'];
+        } elseif ($this->model === \App\Models\Branch::class) {
+            $relationships = ['company', 'warehouses'];
+        } else {
+            // Default relationships for other models
+            $relationships = [];
+        }
+        
+        \Log::info("Relationships to load: " . json_encode($relationships));
+        
+        try {
+            // Use the model class directly
+            $modelClass = $this->model;
+            $item = $modelClass::with($relationships)->find($itemId);
+            \Log::info("Item found: " . ($item ? 'Yes' : 'No'));
+                
+            if ($item) {
+                $this->selectedItem = $item;
+                $this->dispatch($this->eventPrefix . 'Selected', $this->selectedItem);
+            }
+        } catch (\Exception $e) {
+            \Log::error("Error in selectItem: " . $e->getMessage());
+            \Log::error("Stack trace: " . $e->getTraceAsString());
         }
     }
 
