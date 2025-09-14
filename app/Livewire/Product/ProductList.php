@@ -8,6 +8,11 @@ use App\Http\Controllers\ProductController;
 
 class ProductList extends BaseListComponent
 {
+    protected $listeners = [
+        'refreshComponent' => '$refresh',
+        'productListUpdated' => 'refreshList',
+    ];
+
     protected function getController()
     {
         return new ProductController();

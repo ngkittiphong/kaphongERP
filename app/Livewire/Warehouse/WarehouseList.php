@@ -8,6 +8,11 @@ use App\Http\Controllers\WarehouseController;
 
 class WarehouseList extends BaseListComponent
 {
+    protected $listeners = [
+        'refreshComponent' => '$refresh',
+        'warehouseListUpdated' => 'refreshList',
+    ];
+
     protected function getController()
     {
         return new WarehouseController();

@@ -31,7 +31,6 @@
 <script src="{{ asset('js/pages/pickers.js') }}"></script>
 <script src="{{ asset('js/tables/datatables/extensions/buttons.min.js') }}"></script>
 <script>
-
         $.extend( $.fn.dataTable.defaults, {
                 autoWidth: true,
                 dom: '<"datatable-header"l B><"datatable-scroll-wrap"t><"datatable-footer"ip>',
@@ -40,7 +39,6 @@
                         lengthMenu: ' _MENU_',
                         paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
                 }
-
         });
 
         // Basic initialization

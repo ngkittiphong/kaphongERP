@@ -13,11 +13,9 @@ abstract class BaseListComponent extends Component
     protected $itemName;
     protected $eventPrefix;
 
-    abstract protected function getController();
-    abstract protected function getModel();
-    abstract protected function getItemName();
-    abstract protected function getEventPrefix();
-    abstract protected function getViewName();
+    protected $listeners = [
+        'refreshComponent' => '$refresh',
+    ];
 
     public function mount()
     {
@@ -28,8 +26,33 @@ abstract class BaseListComponent extends Component
         $this->loadItems();
     }
 
+    public function refreshList()
+    {
+        \Log::info("🔄 Refreshing list for: " . $this->eventPrefix);
+        
+        // Check if controller is initialized
+        if (!$this->controller) {
+            \Log::warning("⚠️ Controller not initialized, skipping refresh");
+            return;
+        }
+        
+        $this->loadItems();
+    }
+
+    abstract protected function getController();
+    abstract protected function getModel();
+    abstract protected function getItemName();
+    abstract protected function getEventPrefix();
+    abstract protected function getViewName();
+
+
     public function loadItems()
     {
+        if (!$this->controller) {
+            \Log::warning("⚠️ Controller not initialized in loadItems");
+            return;
+        }
+        
         $this->items = $this->controller->index();
         $this->dispatch($this->eventPrefix . 'ListUpdated');
     }

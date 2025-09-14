@@ -8,6 +8,11 @@ use App\Http\Controllers\BranchController;
 
 class BranchList extends BaseListComponent
 {
+    protected $listeners = [
+        'refreshComponent' => '$refresh',
+        'branchListUpdated' => 'refreshList',
+    ];
+
     protected function getController()
     {
         return new BranchController();
@@ -47,6 +52,7 @@ class BranchList extends BaseListComponent
     public function selectBranch($branchId)
     {
         $this->selectItem($branchId);
+        $this->dispatch('BranchSelected', branchId: $branchId);
     }
 
     public function deleteBranch($branchId)
