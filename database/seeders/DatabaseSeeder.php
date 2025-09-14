@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             ProductSubUnitSeeder::class,
             InventorySeeder::class,
             CompanyBranchSeeder::class,
+            WarehouseSeeder::class,
         ]);
     }
 }
