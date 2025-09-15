@@ -76,8 +76,8 @@ class WarehouseDetail extends Component
         \Log::info("🔥 WarehouseDetail::mount called");
         $this->branches = Branch::all();
         $this->warehouse_statuses = WarehouseStatus::all();
-        \Log::info("🔥 Branches loaded: " . $this->branches->count());
-        \Log::info("🔥 Warehouse statuses loaded: " . $this->warehouse_statuses->count());
+        \Log::info("🔥 Branches loaded:", ['count' => $this->branches->count()]);
+        \Log::info("🔥 Warehouse statuses loaded:", ['count' => $this->warehouse_statuses->count()]);
         
         // Set default values
         $this->user_create_id = auth()->id() ?? 1; // Default to current user or first user
@@ -91,7 +91,7 @@ class WarehouseDetail extends Component
             \Log::info("🔥 Restoring warehouse from session: {$selectedWarehouseId}");
             $this->warehouse = Warehouse::with(['branch', 'status', 'userCreate'])->find($selectedWarehouseId);
             if ($this->warehouse) {
-                \Log::info("🔥 Warehouse restored: " . $this->warehouse->name);
+                \Log::info("🔥 Warehouse restored:", ['name' => $this->warehouse->name]);
                 // Populate form fields
                 $this->branch_id = $this->warehouse->branch_id;
                 $this->user_create_id = $this->warehouse->user_create_id;
@@ -106,8 +106,8 @@ class WarehouseDetail extends Component
 
     public function loadWarehouse($data = null)
     {
-        \Log::info("🔥 WarehouseDetail::loadWarehouse called with: " . json_encode($data));
-        \Log::info("🔥 WarehouseDetail::loadWarehouse - Current warehouse: " . ($this->warehouse ? $this->warehouse->id : 'null'));
+        \Log::info("🔥 WarehouseDetail::loadWarehouse called with:", ['data' => $data]);
+        \Log::info("🔥 WarehouseDetail::loadWarehouse - Current warehouse:", ['id' => $this->warehouse ? $this->warehouse->id : 'null']);
         
         // Handle different data formats
         if (is_array($data) && isset($data['warehouseId'])) {
@@ -128,7 +128,7 @@ class WarehouseDetail extends Component
         
         // Load warehouse with relationships (matching branch pattern)
         $this->warehouse = Warehouse::with(['branch', 'status', 'userCreate', 'inventories'])->find($warehouseId) ?? null;
-        \Log::info("🔥 Warehouse loaded: " . ($this->warehouse ? $this->warehouse->name : 'null'));
+        \Log::info("🔥 Warehouse loaded:", ['name' => $this->warehouse ? $this->warehouse->name : 'null']);
         
         // Store in session to persist across component remounts
         if ($this->warehouse) {

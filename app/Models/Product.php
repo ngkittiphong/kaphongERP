@@ -36,8 +36,7 @@ class Product extends Model
         'sale_description',
         'minimum_quantity',
         'maximum_quantity',
-        'date_create',
-        'is_active'
+        'date_create'
     ];
 
     // Casts for special data types
@@ -46,7 +45,6 @@ class Product extends Model
         'sale_price' => 'float',
         'minimum_quantity' => 'integer',
         'maximum_quantity' => 'integer',
-        'is_active' => 'boolean',
         'date_create' => 'datetime'
     ];
 

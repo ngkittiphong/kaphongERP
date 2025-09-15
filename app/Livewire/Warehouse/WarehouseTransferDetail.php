@@ -9,10 +9,13 @@ class WarehouseTransferDetail extends Component
 {
     public $transferSlip = null;
     public $transferSlipId = null;
+    public $showAddForm = false;
     
     protected $listeners = [
         'transferSlipSelected' => 'loadTransferSlip',
         'refreshComponent' => '$refresh',
+        'showAddForm' => 'showAddForm',
+        'hideAddForm' => 'hideAddForm',
     ];
 
     public function mount()
@@ -24,7 +27,7 @@ class WarehouseTransferDetail extends Component
     public function loadTransferSlip($transferSlip)
     {
         \Log::info("🔥 WarehouseTransferDetail::loadTransferSlip called");
-        \Log::info("🔥 Transfer slip data: " . json_encode($transferSlip));
+        \Log::info("🔥 Transfer slip data:", ['data' => $transferSlip]);
         
         if (is_array($transferSlip)) {
             $this->transferSlipId = $transferSlip['id'] ?? null;
@@ -43,7 +46,7 @@ class WarehouseTransferDetail extends Component
             ])->find($this->transferSlipId);
         }
         
-        \Log::info("🔥 Transfer slip loaded: " . ($this->transferSlip ? 'Yes' : 'No'));
+        \Log::info("🔥 Transfer slip loaded:", ['loaded' => $this->transferSlip ? 'Yes' : 'No']);
     }
 
     public function updateStatus($statusId)
@@ -95,6 +98,18 @@ class WarehouseTransferDetail extends Component
             'Returned' => 'undo',
             default => 'help'
         };
+    }
+
+    public function showAddForm()
+    {
+        $this->showAddForm = true;
+        $this->transferSlip = null;
+        $this->transferSlipId = null;
+    }
+
+    public function hideAddForm()
+    {
+        $this->showAddForm = false;
     }
 
     public function render()

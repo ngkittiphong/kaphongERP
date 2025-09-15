@@ -120,7 +120,7 @@ class WarehouseTransferList extends BaseListComponent
     public function handleProfileSelected($data)
     {
         // Handle profile selection if needed
-        \Log::info("🔥 ProfileSelected event received: " . json_encode($data));
+        \Log::info("🔥 ProfileSelected event received:", ['data' => $data]);
     }
 
     public function getStatusColor($statusName)

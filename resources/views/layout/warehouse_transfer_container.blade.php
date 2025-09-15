@@ -22,7 +22,7 @@
             </div>
             <div class="col-lg-8 col-md-7 col-sm-7">
                 @livewire('warehouse.warehouse-transfer-detail')
-                                                            </div>
+            </div>
                                                         </div>
                                                     </div>
                                                     
@@ -127,6 +127,34 @@
     .lease-order-row:hover {
         background-color: #f8f9fa !important;
     }
+    
+    /* Modal styling for transfer form */
+    .modal.show {
+        display: block !important;
+    }
+    
+    .modal-xl {
+        max-width: 95%;
+    }
+    
+    .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+    
+    .table-responsive {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .spinner {
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
 </style>
 @endpush
     
@@ -197,6 +225,17 @@
             // Add selected class to the row with matching transfer ID
             var transferId = event.detail.id;
             $('.transfer-row[data-transfer-id="' + transferId + '"]').addClass('selected');
+        });
+
+        // Listen for show add transfer form event
+        window.addEventListener('showAddNewTransferForm', event => {
+            console.log('Show add transfer form');
+            Livewire.dispatch('showAddForm', {}, 'warehouse.warehouse-transfer-detail');
+        });
+
+        // Listen for success message
+        window.addEventListener('showSuccessMessage', event => {
+            alert(event.detail);
         });
 
 </script>

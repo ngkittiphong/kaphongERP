@@ -1,5 +1,7 @@
 <div>
-    @if($transferSlip)
+    @if($showAddForm)
+        @livewire('warehouse.warehouse-add-transfer-form')
+    @elseif($transferSlip)
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-12">
