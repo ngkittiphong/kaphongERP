@@ -15,12 +15,12 @@
 
     <div class="container-fluid page-people">
         <div class="row">
-            <div class="col-lg-4 col-md-5 col-sm-5 secondary-sidebar">
-                <div class="sidebar-content" style="height: 100vh">
+            <div class="col-lg-3 col-md-4 col-sm-4 secondary-sidebar">
+                <div class="sidebar-content" style="height: calc(100vh - 120px); overflow-y: auto;">
                     @livewire('warehouse.warehouse-transfer-list')
                 </div>
             </div>
-            <div class="col-lg-8 col-md-7 col-sm-7">
+            <div class="col-lg-9 col-md-8 col-sm-8">
                 @livewire('warehouse.warehouse-transfer-detail')
             </div>
                                                         </div>
@@ -104,28 +104,49 @@
     
     /* Compact list styling */
     .transfer-row td {
-        padding: 8px 12px;
+        padding: 4px 6px;
     }
     
     .media-body {
-        line-height: 1.3;
+        line-height: 1.2;
     }
     
     .media-heading {
-        margin-bottom: 4px;
+        margin-bottom: 2px;
     }
     
     .text-size-large {
-        margin-bottom: 2px;
+        margin-bottom: 1px;
     }
     
     /* Reduce spacing in list items */
     .lease-order-row {
         border-bottom: 1px solid #f0f0f0;
+        min-height: 60px;
     }
     
     .lease-order-row:hover {
         background-color: #f8f9fa !important;
+    }
+    
+    /* Optimize sidebar content */
+    .sidebar-content {
+        padding: 0;
+    }
+    
+    /* Compact table styling */
+    .table-condensed > thead > tr > th,
+    .table-condensed > tbody > tr > td {
+        padding: 4px 6px;
+    }
+    
+    /* Sticky header for better scrolling */
+    .table thead th {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 10;
+        border-bottom: 2px solid #ddd;
     }
     
     /* Modal styling for transfer form */

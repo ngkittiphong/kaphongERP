@@ -2,32 +2,32 @@
     <!------------- Start Warehouse Transfer List ---->
 
     <!-- Filter Buttons -->
-    <div class="panel-body">
-        <div class="btn-group" role="group">
-            <button type="button" class="btn btn-sm {{ $filter === 'all' ? 'btn-primary' : 'btn-default' }}" 
+    <div class="panel-body" style="padding: 8px 12px;">
+        <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn {{ $filter === 'all' ? 'btn-primary' : 'btn-default' }}" 
                     wire:click="setFilter('all')">
-                All Transfers
+                All
             </button>
-            <button type="button" class="btn btn-sm {{ $filter === 'pending' ? 'btn-warning' : 'btn-default' }}" 
+            <button type="button" class="btn {{ $filter === 'pending' ? 'btn-warning' : 'btn-default' }}" 
                     wire:click="setFilter('pending')">
                 Pending
             </button>
-            <button type="button" class="btn btn-sm {{ $filter === 'completed' ? 'btn-success' : 'btn-default' }}" 
+            <button type="button" class="btn {{ $filter === 'completed' ? 'btn-success' : 'btn-default' }}" 
                     wire:click="setFilter('completed')">
-                Completed
+                Done
             </button>
-            <button type="button" class="btn btn-sm {{ $filter === 'cancelled' ? 'btn-danger' : 'btn-default' }}" 
+            <button type="button" class="btn {{ $filter === 'cancelled' ? 'btn-danger' : 'btn-default' }}" 
                     wire:click="setFilter('cancelled')">
-                Cancelled
+                Cancel
             </button>
         </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-hover datatable-reorder-state-saving datatable-fixed-left">
-            <thead>
+    <div class="table-responsive" style="max-height: calc(100vh - 200px); overflow-y: auto;">
+        <table class="table table-hover table-condensed" style="margin-bottom: 0;">
+            <thead style="position: sticky; top: 0; background: white; z-index: 10;">
                 <tr>
-                    <th scope="col"><?= __('Work list') ?></th>
+                    <th scope="col" style="padding: 8px 12px;"><?= __('Work list') ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -35,50 +35,49 @@
                     <tr class="lease-order-row hover:bg-gray-100 cursor-pointer transfer-row"
                         wire:click="selectTransferSlip({{ $transferSlip->id }})"
                         onclick="console.log('Transfer Slip clicked: {{ $transferSlip->id }}')"
-                        data-transfer-id="{{ $transferSlip->id }}">
-                        <td>
-                            <div class="row col-md-12">
-                                <div class="col-md-11 col-sm-11">
+                        data-transfer-id="{{ $transferSlip->id }}"
+                        style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 6px 8px;">
+                            <div class="row" style="margin: 0;">
+                                <div class="col-xs-10 col-sm-10" style="padding: 0 4px;">
                                     <div class="media-body">
-                                        <div class="media-heading text-size-extralarge text-dark">
-                                            <i class="icon-warehouse position-left text-primary" style="font-size: 14px;"></i>
-                                            {{ $transferSlip->warehouse_origin_name ?? $transferSlip->warehouseOrigin->name ?? 'N/A' }} 
-                                            <i class="icon-arrow-right13 position-left text-muted" style="font-size: 12px;"></i> 
-                                            <i class="icon-warehouse position-left text-success" style="font-size: 14px;"></i>
-                                            {{ $transferSlip->warehouse_destination_name ?? $transferSlip->warehouseDestination->name ?? 'N/A' }}
+                                        <div class="media-heading text-dark" style="font-size: 13px; margin-bottom: 2px; line-height: 1.2;">
+                                            <i class="icon-warehouse position-left text-primary" style="font-size: 11px;"></i>
+                                            {{ Str::limit($transferSlip->warehouse_origin_name ?? $transferSlip->warehouseOrigin->name ?? 'N/A', 15) }} 
+                                            <i class="icon-arrow-right13 position-left text-muted" style="font-size: 10px;"></i> 
+                                            <i class="icon-warehouse position-left text-success" style="font-size: 11px;"></i>
+                                            {{ Str::limit($transferSlip->warehouse_destination_name ?? $transferSlip->warehouseDestination->name ?? 'N/A', 15) }}
                                         </div>
 
-                                        <div class="text-size-large text-dark">
-                                            <i class="icon-user position-left text-info" style="font-size: 12px;"></i>
+                                        <div class="text-dark" style="font-size: 11px; margin-bottom: 1px;">
+                                            <i class="icon-user position-left text-info" style="font-size: 10px;"></i>
                                             {{ $transferSlip->user_request_name ?? $transferSlip->userRequest->username ?? 'N/A' }}
                                         </div>
                                         
-                                        <div class="text-size-large text-dark">
-                                            <i class="icon-file-text position-left text-warning" style="font-size: 12px;"></i>
+                                        <div class="text-dark" style="font-size: 11px; margin-bottom: 1px;">
+                                            <i class="icon-file-text position-left text-warning" style="font-size: 10px;"></i>
                                             {{ $transferSlip->transfer_slip_number }}
                                         </div>
                                         
-                                        <div class="text-size-large text-dark">
-                                            <i class="icon-calendar position-left text-muted" style="font-size: 12px;"></i>
+                                        <div class="text-dark" style="font-size: 11px; margin-bottom: 1px;">
+                                            <i class="icon-calendar position-left text-muted" style="font-size: 10px;"></i>
                                             {{ $transferSlip->date_request ? $transferSlip->date_request->format('d M Y') : 'N/A' }}
                                         </div>
                                         
-                                        <div class="text-size-large text-bold {{ $this->getStatusTextColor($transferSlip->status->name ?? '') }}">
-                                            <i class="icon-{{ $this->getStatusIcon($transferSlip->status->name ?? '') }} position-left" style="font-size: 12px;"></i>
+                                        <div class="text-bold {{ $this->getStatusTextColor($transferSlip->status->name ?? '') }}" style="font-size: 11px;">
+                                            <i class="icon-{{ $this->getStatusIcon($transferSlip->status->name ?? '') }} position-left" style="font-size: 10px;"></i>
                                             {{ $transferSlip->status->name ?? 'N/A' }}
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="col-md-1 col-sm-1">
-                                    <div class="media-right media-middle">
-                                        <div class="transfer-status-indicator">
-                                            <div class="status-circle bg-{{ $this->getStatusBadgeColor($transferSlip->status->name ?? '') }}">
-                                                <i class="icon-{{ $this->getStatusIcon($transferSlip->status->name ?? '') }}"></i>
-                                            </div>
-                                            <div class="selection-indicator">
-                                                <i class="icon-checkmark3"></i>
-                                            </div>
+                                <div class="col-xs-2 col-sm-2" style="padding: 0 4px; text-align: right;">
+                                    <div class="transfer-status-indicator">
+                                        <div class="status-circle bg-{{ $this->getStatusBadgeColor($transferSlip->status->name ?? '') }}" style="width: 20px; height: 20px; font-size: 10px;">
+                                            <i class="icon-{{ $this->getStatusIcon($transferSlip->status->name ?? '') }}"></i>
+                                        </div>
+                                        <div class="selection-indicator" style="width: 10px; height: 10px; font-size: 6px;">
+                                            <i class="icon-checkmark3"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -87,10 +86,10 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="1" class="text-center text-muted">
-                            <div class="py-4">
-                                <i class="icon-inbox text-muted" style="font-size: 2rem;"></i>
-                                <p class="mt-2">No transfer slips found</p>
+                        <td colspan="1" class="text-center text-muted" style="padding: 20px;">
+                            <div>
+                                <i class="icon-inbox text-muted" style="font-size: 1.5rem;"></i>
+                                <p class="mt-2" style="margin: 8px 0;">No transfer slips found</p>
                             </div>
                         </td>
                     </tr>
