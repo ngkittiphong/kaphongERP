@@ -26,9 +26,12 @@ class DatabaseSeeder extends Seeder
             MoveTypeSeeder::class,
             ProductSeeder::class,
             ProductSubUnitSeeder::class,
-            InventorySeeder::class,
             CompanyBranchSeeder::class,
             WarehouseSeeder::class,
+            InventorySeeder::class,
+            TransferSlipStatusSeeder::class,
+            TransferSlipSeeder::class,
+            StockCheckerSeeder::class,
         ]);
     }
 }

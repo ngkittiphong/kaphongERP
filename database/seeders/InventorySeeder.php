@@ -13,11 +13,33 @@ class InventorySeeder extends Seeder
         $faker       = Faker::create();
         $moveTypes   = \App\Models\MoveType::pluck('id')->all();
         $products    = \App\Models\Product::all();
+        $warehouses  = \App\Models\Warehouse::pluck('id')->all();
+
+        // Check if we have the required data
+        if (empty($warehouses)) {
+            $this->command->error('No warehouses found. Please run WarehouseSeeder first.');
+            return;
+        }
+
+        if (empty($moveTypes)) {
+            $this->command->error('No move types found. Please run MoveTypeSeeder first.');
+            return;
+        }
+
+        if (empty($products)) {
+            $this->command->error('No products found. Please run ProductSeeder first.');
+            return;
+        }
+
+        $inventoryEntriesCreated = 0;
 
         foreach ($products as $product) {
+            // Use actual warehouse IDs from the database
+            $warehouseId = $faker->randomElement($warehouses);
+            
             Inventory::create([
                 'product_id'      => $product->id,
-                'warehouse_id'    => $faker->numberBetween(1, 3),
+                'warehouse_id'    => $warehouseId,
                 'sale_order_id'   => null,
                 'transfer_slip_id'=> null,
                 'contact_id'      => null,
@@ -31,6 +53,10 @@ class InventorySeeder extends Seeder
                 'avr_sale_price'  => $product->sale_price,
                 'avr_remain_price'=> $product->sale_price * ($qty / ($qty + 1)),
             ]);
+            
+            $inventoryEntriesCreated++;
         }
+
+        $this->command->info("Created {$inventoryEntriesCreated} inventory entries.");
     }
 }
