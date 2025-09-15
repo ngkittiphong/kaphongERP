@@ -8,7 +8,7 @@
             <div class="page-title">
                 <i class="icon-file-check position-left"></i> Check stock work list
             </div>
-            @livewire('warehouse.warehouse-add-checkstock-btn')
+            @livewire('warehouse.warehouse-add-check-stock-btn')
         </div>
     </div>		
     <!--/Page Header-->
@@ -17,11 +17,11 @@
         <div class="row">
             <div class="col-lg-3 col-md-4 col-sm-4 secondary-sidebar">
                 <div class="sidebar-content" style="height: 100vh">
-                    @livewire('warehouse.warehouse-checkstock-list')
+                    @livewire('warehouse.warehouse-check-stock-list')
                 </div>
             </div>
             <div class="col-lg-9 col-md-8 col-sm-8">
-                @livewire('warehouse.warehouse-checkstock-detail')
+                @livewire('warehouse.warehouse-check-stock-detail')
                         </div>
                     </div>
                 </div>                

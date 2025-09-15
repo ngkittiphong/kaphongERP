@@ -166,6 +166,6 @@ class WarehouseAddCheckStockForm extends Component
 
     public function render()
     {
-        return view('livewire.warehouse.warehouse-add-checkstock-form');
+        return view('livewire.warehouse.warehouse-add-check-stock-form');
     }
 }

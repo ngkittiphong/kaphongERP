@@ -39,7 +39,7 @@ class WarehouseCheckStockList extends BaseListComponent
 
     protected function getViewName()
     {
-        return 'livewire.warehouse.warehouse-checkstock-list';
+        return 'livewire.warehouse.warehouse-check-stock-list';
     }
 
     public function mount()

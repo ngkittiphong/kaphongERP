@@ -276,7 +276,7 @@
     // Listen for form events
     window.addEventListener('showAddNewCheckStockForm', event => {
         console.log('Show add check stock form');
-        Livewire.dispatch('showAddForm', {}, 'warehouse.warehouse-checkstock-detail');
+        Livewire.dispatch('showAddForm', {}, 'warehouse.warehouse-check-stock-detail');
     });
 
     // Listen for success message

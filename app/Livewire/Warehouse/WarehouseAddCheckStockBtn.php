@@ -8,6 +8,6 @@ class WarehouseAddCheckStockBtn extends Component
 {
     public function render()
     {
-        return view('livewire.warehouse.warehouse-add-checkstock-btn');
+        return view('livewire.warehouse.warehouse-add-check-stock-btn');
     }
 }

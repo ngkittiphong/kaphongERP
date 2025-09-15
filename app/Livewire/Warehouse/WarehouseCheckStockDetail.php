@@ -183,6 +183,6 @@ class WarehouseCheckStockDetail extends Component
 
     public function render()
     {
-        return view('livewire.warehouse.warehouse-checkstock-detail');
+        return view('livewire.warehouse.warehouse-check-stock-detail');
     }
 }

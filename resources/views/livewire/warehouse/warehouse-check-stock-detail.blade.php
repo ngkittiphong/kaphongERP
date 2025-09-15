@@ -1,6 +1,6 @@
 <div>
     @if($showAddForm)
-        @livewire('warehouse.warehouse-add-checkstock-form')
+        @livewire('warehouse.warehouse-add-check-stock-form')
     @elseif($checkStockReport)
         <div class="panel-body">
             <div class="row">
