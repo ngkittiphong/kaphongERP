@@ -87,8 +87,12 @@ Route::match(['get','post'],'/test', function() {
     dd("Got request!");
 })->middleware('auth');
 
+Route::get('/test-transfer', function() {
+    return view('menu.menu_warehouse_transfer');
+})->middleware('auth');
+
 //------------------Message Route--------------------------------
-Route::post('/post-message', [MessageController::class, 'store'])->name('post.message')->middleware('auth');
+// Route::post('/post-message', [MessageController::class, 'store'])->name('post.message')->middleware('auth');
 //Route::get('/user/info', [UserController::class, 'info'])->middleware(EnsureTokenIsValid::class);
 
 //Route::get('/user/list', [UserController::class, 'list']);
