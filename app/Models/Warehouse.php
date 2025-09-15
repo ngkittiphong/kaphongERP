@@ -44,4 +44,12 @@ class Warehouse extends Model
     {
         return $this->belongsTo(User::class, 'user_create_id');
     }
+
+    /**
+     * Get the check stock reports for this warehouse.
+     */
+    public function checkStockReports(): HasMany
+    {
+        return $this->hasMany(CheckStockReport::class);
+    }
 }

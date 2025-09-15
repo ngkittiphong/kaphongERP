@@ -32,6 +32,8 @@ class DatabaseSeeder extends Seeder
             TransferSlipStatusSeeder::class,
             TransferSlipSeeder::class,
             StockCheckerSeeder::class,
+            CheckStockReportSeeder::class,
+            CheckStockDetailSeeder::class,
         ]);
     }
 }

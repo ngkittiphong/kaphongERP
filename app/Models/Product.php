@@ -98,6 +98,14 @@ class Product extends Model
     {
         return $this->hasMany(Inventory::class);
     }
+
+    /**
+     * Get the check stock details for this product.
+     */
+    public function checkStockDetails(): HasMany
+    {
+        return $this->hasMany(CheckStockDetail::class);
+    }
 }
 
 

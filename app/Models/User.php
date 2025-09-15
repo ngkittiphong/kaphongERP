@@ -70,6 +70,18 @@ class User extends Authenticatable
         });
     }
 
+    // 🔹 Relationship: One User can create many Check Stock Reports
+    public function checkStockReportsCreated()
+    {
+        return $this->hasMany(CheckStockReport::class, 'user_create_id');
+    }
+
+    // 🔹 Relationship: One User can perform many Check Stock Details
+    public function checkStockDetails()
+    {
+        return $this->hasMany(CheckStockDetail::class, 'user_check_id');
+    }
+
     // 🔹 Mutator for Password Hashing
     public function setPasswordAttribute($value)
     {
