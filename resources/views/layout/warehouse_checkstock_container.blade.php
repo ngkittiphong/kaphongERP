@@ -8,7 +8,7 @@
             <div class="page-title">
                 <i class="icon-file-check position-left"></i> Check stock work list
             </div>
-            @livewire('warehouse.warehouse-add-warehouse-btn')
+            @livewire('warehouse.warehouse-add-checkstock-btn')
         </div>
     </div>		
     <!--/Page Header-->
@@ -22,10 +22,10 @@
             </div>
             <div class="col-lg-9 col-md-8 col-sm-8">
                 @livewire('warehouse.warehouse-checkstock-detail')
-            </div>
-        </div> 
-    </div>
-    
+                        </div>
+                    </div>
+                </div>                
+
     @push('styles')
     <style>
         .checkstock-status-indicator {
@@ -130,35 +130,35 @@
     </style>
     @endpush
     
-    @push('scripts')
-    <script src="{{ asset('js/tables/datatables/extensions/buttons.min.js') }}"></script>
-    <script>
+@push('scripts')
+<script src="{{ asset('js/tables/datatables/extensions/buttons.min.js') }}"></script>
+<script>
         $.extend( $.fn.dataTable.defaults, {
-            autoWidth: true,
-            dom: '<"datatable-header"fl B><"datatable-scroll-wrap"t><"datatable-footer"ip>',
-            language: {
-                search: '_INPUT_',
-                lengthMenu: ' _MENU_',
-                paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
-            }
+                autoWidth: true,
+                dom: '<"datatable-header"fl B><"datatable-scroll-wrap"t><"datatable-footer"ip>',
+                language: {
+                        search: '_INPUT_',
+                        lengthMenu: ' _MENU_',
+                        paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+                }
         });
 
         // Basic initialization
         $('.datatable-check-stock-detail').DataTable({
             ordering: false,
-            colReorder: true,
-            buttons: {
-                dom: {
-                    button: {
-                        className: 'btn'
-                    }
-                },
-                buttons: [
-                    {extend: 'copy', className: 'copyButton' },
-                    {extend: 'csv', className: 'csvButton' },
-                    {extend: 'print', className: 'printButton' }
-                ]
-            }
+                colReorder: true,
+                buttons: {
+                        dom: {
+                                button: {
+                                        className: 'btn'
+                                }
+                        },
+                        buttons: [
+                                {extend: 'copy', className: 'copyButton' },
+                                {extend: 'csv', className: 'csvButton' },
+                                {extend: 'print', className: 'printButton' }
+                        ]
+                }
         });
 
         // Add placeholder to the datatable filter option
@@ -166,8 +166,8 @@
 
         // Enable Select2 select for the length option
         $('.dataTables_length select').select2({
-            minimumResultsForSearch: Infinity,
-            width: 'auto'
+                minimumResultsForSearch: Infinity,
+                width: 'auto'
         });
 
         // Handle checkstock row selection
@@ -205,7 +205,7 @@
         window.addEventListener('showSuccessMessage', event => {
             alert(event.detail);
         });
-    </script>
-    @endpush
+</script>
+@endpush
 </section>
 <!--/Page Container-->

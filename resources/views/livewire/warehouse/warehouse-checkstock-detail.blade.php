@@ -1,13 +1,6 @@
 <div>
     @if($showAddForm)
-        {{-- @livewire('warehouse.warehouse-add-checkstock-form') --}}
-        <div class="panel-body">
-            <div class="text-center text-muted py-5">
-                <i class="icon-plus text-muted" style="font-size: 3rem;"></i>
-                <h4 class="mt-3">Add New Check Stock Report</h4>
-                <p>Add new check stock form will be implemented here</p>
-            </div>
-        </div>
+        @livewire('warehouse.warehouse-add-checkstock-form')
     @elseif($checkStockReport)
         <div class="panel-body">
             <div class="row">
