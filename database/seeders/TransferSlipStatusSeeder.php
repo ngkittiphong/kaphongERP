@@ -35,6 +35,11 @@ class TransferSlipStatusSeeder extends Seeder
                 'sign' => 'COMPLETED',
                 'color' => 'success',
             ],
+            [
+                'name' => 'Cancelled',
+                'sign' => 'CANCELLED',
+                'color' => 'danger',
+            ],
         ];
 
         foreach ($statuses as $status) {

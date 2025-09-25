@@ -51,8 +51,8 @@
                                                 </h4>
                                             </div>
                                             <div class="col-md-4 col-xs-4 col-lg-4 text-right">
-                                                @if($this->canChangeStatus())
-                                                    <div class="btn-group">
+                                                <div class="btn-group">
+                                                    @if($this->canChangeStatus())
                                                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <i class="icon-cog position-left"></i>
                                                             Change Status
@@ -65,13 +65,22 @@
                                                                 </a>
                                                             @endforeach
                                                         </div>
-                                                    </div>
-                                                @else
-                                                    <div class="text-muted">
-                                                        <i class="icon-lock position-left"></i>
-                                                        Status Locked
-                                                    </div>
-                                                @endif
+                                                    @endif
+                                                    
+                                                    @if($this->canCancelTransfer())
+                                                        <button type="button" class="btn btn-danger" wire:click="showCancelModal">
+                                                            <i class="icon-cross position-left"></i>
+                                                            Cancel Transfer
+                                                        </button>
+                                                    @endif
+                                                    
+                                                    @if(!$this->canChangeStatus() && !$this->canCancelTransfer())
+                                                        <div class="text-muted">
+                                                            <i class="icon-lock position-left"></i>
+                                                            Status Locked
+                                                        </div>
+                                                    @endif
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -237,6 +246,55 @@
                         <button type="button" class="btn btn-primary" wire:click="confirmStatusUpdate">
                             <i class="icon-check position-left"></i>
                             Confirm Change
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- Cancellation Modal -->
+    @if($showCancelModal)
+        <div class="modal fade in" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="icon-warning text-danger position-left"></i>
+                            Cancel Transfer
+                        </h5>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to cancel transfer slip <strong>{{ $transferSlip->transfer_slip_number }}</strong>?</p>
+                        
+                        <div class="form-group">
+                            <label for="cancellationReason" class="control-label">Cancellation Reason <span class="text-danger">*</span></label>
+                            <textarea 
+                                class="form-control" 
+                                id="cancellationReason" 
+                                wire:model="cancellationReason" 
+                                rows="3" 
+                                placeholder="Please provide a reason for cancelling this transfer..."
+                                required
+                            ></textarea>
+                            @error('cancellationReason') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        
+                        @if($transferSlip->status->name === 'In Transit')
+                            <div class="alert alert-warning">
+                                <i class="icon-warning position-left"></i>
+                                <strong>Note:</strong> This transfer is currently in transit. Cancelling will restore the inventory to the sender warehouse.
+                            </div>
+                        @endif
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" wire:click="hideCancelModal">
+                            <i class="icon-cross position-left"></i>
+                            Cancel
+                        </button>
+                        <button type="button" class="btn btn-danger" wire:click="cancelTransfer">
+                            <i class="icon-cross position-left"></i>
+                            Cancel Transfer
                         </button>
                     </div>
                 </div>

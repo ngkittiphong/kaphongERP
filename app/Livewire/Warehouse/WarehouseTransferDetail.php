@@ -16,6 +16,8 @@ class WarehouseTransferDetail extends Component
     public $showStatusChangeModal = false;
     public $selectedStatusId = null;
     public $selectedStatusName = null;
+    public $showCancelModal = false;
+    public $cancellationReason = '';
     
     protected $listeners = [
         'transferSlipSelected' => 'loadTransferSlip',
@@ -127,6 +129,79 @@ class WarehouseTransferDetail extends Component
         $this->selectedStatusName = null;
     }
 
+    public function showCancelModal()
+    {
+        if ($this->canCancelTransfer()) {
+            $this->showCancelModal = true;
+            $this->cancellationReason = '';
+        }
+    }
+
+    public function cancelTransfer()
+    {
+        if (!$this->canCancelTransfer()) {
+            session()->flash('error', 'Transfer cannot be cancelled');
+            return;
+        }
+
+        if (empty($this->cancellationReason)) {
+            session()->flash('error', 'Cancellation reason is required');
+            return;
+        }
+
+        try {
+            DB::beginTransaction();
+            
+            $oldStatus = $this->transferSlip->status->name;
+            $cancelledStatus = \App\Models\TransferSlipStatus::where('name', 'Cancelled')->first();
+            
+            if (!$cancelledStatus) {
+                throw new \Exception('Cancelled status not found');
+            }
+
+            // Handle inventory restoration if needed
+            if ($oldStatus === 'In Transit') {
+                $this->restoreSenderWarehouseStock();
+            }
+
+            // Update transfer slip to cancelled
+            $this->transferSlip->update([
+                'transfer_slip_status_id' => $cancelledStatus->id,
+                'note' => $this->transferSlip->note . "\n\nCANCELLED: " . $this->cancellationReason,
+            ]);
+
+            DB::commit();
+            
+            $this->transferSlip->refresh();
+            $this->hideCancelModal();
+            $this->dispatch('transferSlipListUpdated');
+            
+            session()->flash('message', 'Transfer cancelled successfully');
+            
+            Log::info("Transfer cancelled", [
+                'transfer_slip_id' => $this->transferSlip->id,
+                'old_status' => $oldStatus,
+                'reason' => $this->cancellationReason,
+                'user_id' => auth()->id()
+            ]);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Failed to cancel transfer", [
+                'transfer_slip_id' => $this->transferSlip->id,
+                'error' => $e->getMessage()
+            ]);
+            
+            session()->flash('error', 'Failed to cancel transfer: ' . $e->getMessage());
+        }
+    }
+
+    public function hideCancelModal()
+    {
+        $this->showCancelModal = false;
+        $this->cancellationReason = '';
+    }
+
     public function getAllowedStatusChanges()
     {
         if (!$this->transferSlip || !$this->transferSlip->status) {
@@ -136,11 +211,12 @@ class WarehouseTransferDetail extends Component
         $currentStatus = $this->transferSlip->status->name;
         
         return match($currentStatus) {
-            'Pending' => \App\Models\TransferSlipStatus::whereIn('name', ['Approved'])->get(),
-            'Approved' => \App\Models\TransferSlipStatus::whereIn('name', ['In Transit'])->get(),
-            'In Transit' => \App\Models\TransferSlipStatus::whereIn('name', ['Delivered'])->get(),
+            'Pending' => \App\Models\TransferSlipStatus::whereIn('name', ['Approved', 'Cancelled'])->get(),
+            'Approved' => \App\Models\TransferSlipStatus::whereIn('name', ['In Transit', 'Cancelled'])->get(),
+            'In Transit' => \App\Models\TransferSlipStatus::whereIn('name', ['Delivered', 'Cancelled'])->get(),
             'Delivered' => \App\Models\TransferSlipStatus::whereIn('name', ['Completed'])->get(),
             'Completed' => collect(), // No status changes allowed - final status
+            'Cancelled' => collect(), // No status changes allowed - final status
             default => collect()
         };
     }
@@ -152,7 +228,17 @@ class WarehouseTransferDetail extends Component
         }
 
         $currentStatus = $this->transferSlip->status->name;
-        return !in_array($currentStatus, ['Completed']);
+        return !in_array($currentStatus, ['Completed', 'Cancelled']);
+    }
+
+    public function canCancelTransfer()
+    {
+        if (!$this->transferSlip || !$this->transferSlip->status) {
+            return false;
+        }
+
+        $currentStatus = $this->transferSlip->status->name;
+        return in_array($currentStatus, ['Pending', 'Approved', 'In Transit']);
     }
 
     /**
@@ -254,6 +340,52 @@ class WarehouseTransferDetail extends Component
         }
     }
 
+    /**
+     * Restore stock to sender warehouse when cancelling In Transit transfer
+     */
+    private function restoreSenderWarehouseStock()
+    {
+        if (!$this->transferSlip->transferSlipDetails) {
+            return;
+        }
+
+        $senderWarehouseId = $this->transferSlip->warehouse_origin_id;
+        
+        foreach ($this->transferSlip->transferSlipDetails as $detail) {
+            $warehouseProduct = WarehouseProduct::where('warehouse_id', $senderWarehouseId)
+                ->where('product_id', $detail->product_id)
+                ->first();
+
+            if ($warehouseProduct) {
+                // Restore the balance
+                $warehouseProduct->adjustBalance($detail->quantity);
+                
+                Log::info("Restored sender warehouse stock due to cancellation", [
+                    'warehouse_id' => $senderWarehouseId,
+                    'product_id' => $detail->product_id,
+                    'quantity_restored' => $detail->quantity,
+                    'new_balance' => $warehouseProduct->balance
+                ]);
+            } else {
+                // Create new warehouse product entry if it doesn't exist
+                WarehouseProduct::create([
+                    'warehouse_id' => $senderWarehouseId,
+                    'product_id' => $detail->product_id,
+                    'balance' => $detail->quantity,
+                    'avr_buy_price' => $detail->cost_per_unit ?? 0,
+                    'avr_sale_price' => $detail->cost_per_unit ?? 0,
+                    'avr_remain_price' => $detail->cost_per_unit ?? 0,
+                ]);
+                
+                Log::info("Created warehouse product entry due to cancellation", [
+                    'warehouse_id' => $senderWarehouseId,
+                    'product_id' => $detail->product_id,
+                    'quantity' => $detail->quantity
+                ]);
+            }
+        }
+    }
+
     public function getStatusColor($statusName)
     {
         return match($statusName) {
@@ -262,6 +394,7 @@ class WarehouseTransferDetail extends Component
             'In Transit' => 'info', 
             'Delivered' => 'success',
             'Completed' => 'success',
+            'Cancelled' => 'danger',
             default => 'secondary'
         };
     }
@@ -274,6 +407,7 @@ class WarehouseTransferDetail extends Component
             'In Transit' => 'text-info',
             'Delivered' => 'text-success', 
             'Completed' => 'text-success',
+            'Cancelled' => 'text-danger',
             default => 'text-secondary'
         };
     }
@@ -286,6 +420,7 @@ class WarehouseTransferDetail extends Component
             'In Transit' => 'truck',
             'Delivered' => 'checkmark-circle',
             'Completed' => 'checkmark-circle2',
+            'Cancelled' => 'cross',
             default => 'help'
         };
     }
