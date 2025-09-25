@@ -8,7 +8,8 @@
              </tr>
          </thead>
          <tbody>
-             @foreach ($items as $product)
+             @if(isset($items) && count($items) > 0)
+                 @foreach ($items as $product)
                  <tr class="lease-order-row hover:bg-gray-100 cursor-pointer"
                      wire:click="$dispatch('ProductSelected', { productId: {{ $product->id }} })">
                      <td>
@@ -44,9 +45,18 @@
                          </div>
                      </td>
                  </tr>
-             @endforeach
+                 @endforeach
+             @else
+                 <tr>
+                     <td colspan="1" class="text-center">
+                         <div class="alert alert-info">
+                             <i class="icon-info22"></i> No products found. 
+                             <br><small>Products count: {{ isset($items) ? count($items) : 'undefined' }}</small>
+                         </div>
+                     </td>
+                 </tr>
+             @endif
          </tbody>
      </table>
  </div>
 
-<x-datatable-scripts listUpdatedEvent="productListUpdated" />
