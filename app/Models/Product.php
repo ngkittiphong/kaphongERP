@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 
 class Product extends Model
@@ -103,6 +104,24 @@ class Product extends Model
     public function checkStockDetails(): HasMany
     {
         return $this->hasMany(CheckStockDetail::class);
+    }
+
+    /**
+     * Get the warehouse products for this product.
+     */
+    public function warehouseProducts(): HasMany
+    {
+        return $this->hasMany(WarehouseProduct::class);
+    }
+
+    /**
+     * Get the warehouses that contain this product through the pivot table.
+     */
+    public function warehouses(): BelongsToMany
+    {
+        return $this->belongsToMany(Warehouse::class, 'warehouses_products')
+                    ->withPivot(['balance', 'avr_buy_price', 'avr_sale_price', 'avr_remain_price'])
+                    ->withTimestamps();
     }
 }
 

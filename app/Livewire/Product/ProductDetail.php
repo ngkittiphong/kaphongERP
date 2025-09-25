@@ -9,6 +9,7 @@ use App\Models\ProductGroup;
 use App\Models\ProductStatus;
 use App\Models\Vat;
 use App\Models\Withholding;
+use App\Models\WarehouseProduct;
 
 
 class ProductDetail extends Component
@@ -21,6 +22,13 @@ class ProductDetail extends Component
     public $productStatuses = [];
     public $vats = [];
     public $withholdings = [];
+    
+    // Warehouse product data
+    public $warehouseProducts = [];
+    public $totalQuantity = 0;
+    public $totalValue = 0;
+    public $averageBuyPrice = 0;
+    public $averageSalePrice = 0;
 
     // Form fields
     public $name;
@@ -76,9 +84,47 @@ class ProductDetail extends Component
             'group',
             'status',
             'subUnits',
-            'inventories'
+            'inventories',
+            'warehouseProducts.warehouse.branch'
         ])->find($productId);
+        
+        // Load warehouse product data
+        $this->loadWarehouseProductData();
+        
         $this->dispatch('productSelected', product: $this->product);
+    }
+    
+    /**
+     * Load warehouse product data for the current product
+     */
+    public function loadWarehouseProductData()
+    {
+        if (!$this->product) {
+            return;
+        }
+        
+        // Get all warehouse products for this product
+        $this->warehouseProducts = WarehouseProduct::with(['warehouse.branch'])
+            ->where('product_id', $this->product->id)
+            ->where('balance', '>', 0) // Only show warehouses with stock
+            ->get();
+        
+        // Calculate totals
+        $this->totalQuantity = $this->warehouseProducts->sum('balance');
+        $this->totalValue = $this->warehouseProducts->sum(function ($wp) {
+            return $wp->balance * $wp->avr_remain_price;
+        });
+        
+        // Calculate weighted average prices
+        if ($this->totalQuantity > 0) {
+            $this->averageBuyPrice = $this->warehouseProducts->sum(function ($wp) {
+                return $wp->balance * $wp->avr_buy_price;
+            }) / $this->totalQuantity;
+            
+            $this->averageSalePrice = $this->warehouseProducts->sum(function ($wp) {
+                return $wp->balance * $wp->avr_sale_price;
+            }) / $this->totalQuantity;
+        }
     }
 
     public function render()
