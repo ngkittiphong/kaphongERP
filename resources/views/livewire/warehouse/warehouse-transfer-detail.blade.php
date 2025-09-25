@@ -1,4 +1,20 @@
 <div>
+    @if (session()->has('message'))
+        <div class="alert alert-success alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <i class="icon-check position-left"></i>
+            {{ session('message') }}
+        </div>
+    @endif
+
+    @if (session()->has('error'))
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <i class="icon-cross position-left"></i>
+            {{ session('error') }}
+        </div>
+    @endif
+
     @if($showAddForm)
         @livewire('warehouse.warehouse-add-transfer-form')
     @elseif($transferSlip)
@@ -23,14 +39,41 @@
                             <div class="tab-pane active" id="tab-detail">
                                 <div class="row col-md-12 col-xs-12">
                                     <div class="panel-heading no-padding-bottom">
-                                        <h4 class="col-md-12 col-xs-12 col-lg-12">
-                                            <i class="icon-file-text position-left text-warning"></i>
-                                            {{ $transferSlip->transfer_slip_number }} 
-                                            <span class="text-primary">
-                                                <i class="icon-{{ $this->getStatusIcon($transferSlip->status->name ?? '') }} position-left"></i>
-                                                ({{ $transferSlip->status->name ?? 'N/A' }})
-                                            </span>
-                                        </h4>
+                                        <div class="row">
+                                            <div class="col-md-8 col-xs-8 col-lg-8">
+                                                <h4>
+                                                    <i class="icon-file-text position-left text-warning"></i>
+                                                    {{ $transferSlip->transfer_slip_number }} 
+                                                    <span class="text-primary">
+                                                        <i class="icon-{{ $this->getStatusIcon($transferSlip->status->name ?? '') }} position-left"></i>
+                                                        ({{ $transferSlip->status->name ?? 'N/A' }})
+                                                    </span>
+                                                </h4>
+                                            </div>
+                                            <div class="col-md-4 col-xs-4 col-lg-4 text-right">
+                                                @if($this->canChangeStatus())
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="icon-cog position-left"></i>
+                                                            Change Status
+                                                        </button>
+                                                        <div class="dropdown-menu dropdown-menu-right" style="min-width: 200px;">
+                                                            @foreach($this->getAllowedStatusChanges() as $status)
+                                                                <a class="dropdown-item" href="#" wire:click="confirmStatusChange({{ $status->id }})" style="display: block; width: 100%; padding: 10px 16px; border-bottom: 1px solid #f0f0f0; clear: both;">
+                                                                    <i class="icon-{{ $this->getStatusIcon($status->name) }} position-left text-{{ $this->getStatusColor($status->name) }}" style="margin-right: 8px;"></i>
+                                                                    <span style="display: inline-block; vertical-align: middle;">{{ $status->name }}</span>
+                                                                </a>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <div class="text-muted">
+                                                        <i class="icon-lock position-left"></i>
+                                                        Status Locked
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </div>
                                     
                                     <div class="panel-body">
@@ -160,6 +203,41 @@
                         <i class="icon-inbox text-muted" style="font-size: 3rem;"></i>
                         <h4 class="mt-3">No Transfer Selected</h4>
                         <p>Please select a transfer slip from the list to view details</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- Status Change Confirmation Modal -->
+    @if($showStatusChangeModal)
+        <div class="modal fade in" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="icon-warning text-warning position-left"></i>
+                            Confirm Status Change
+                        </h5>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to change the status of transfer slip <strong>{{ $transferSlip->transfer_slip_number }}</strong> to <strong>{{ $selectedStatusName }}</strong>?</p>
+                        @if($selectedStatusName === 'Delivered')
+                            <div class="alert alert-info">
+                                <i class="icon-info position-left"></i>
+                                This will also set the receive date to today and assign you as the receiver.
+                            </div>
+                        @endif
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" wire:click="cancelStatusChange">
+                            <i class="icon-cross position-left"></i>
+                            Cancel
+                        </button>
+                        <button type="button" class="btn btn-primary" wire:click="confirmStatusUpdate">
+                            <i class="icon-check position-left"></i>
+                            Confirm Change
+                        </button>
                     </div>
                 </div>
             </div>

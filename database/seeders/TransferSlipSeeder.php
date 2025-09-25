@@ -48,13 +48,36 @@ class TransferSlipSeeder extends Seeder
 
         $transferSlipsCreated = 0;
 
+        // Define status distribution for realistic scenarios
+        $statusDistribution = [
+            'Pending' => 5,      // 25% - New requests
+            'Approved' => 4,     // 20% - Approved but not yet shipped
+            'In Transit' => 3,   // 15% - Currently being transported
+            'Delivered' => 3,    // 15% - Arrived but not yet completed
+            'Completed' => 5,    // 25% - Fully processed
+        ];
+
         // Create transfer slips
         for ($i = 0; $i < 20; $i++) {
             $originWarehouse = $warehouses->random();
             $destinationWarehouse = $warehouses->where('id', '!=', $originWarehouse->id)->random();
             $requestUser = $users->random();
             $receiveUser = $users->random();
-            $status = $statuses->random();
+            
+            // Select status based on distribution
+            $statusName = $this->selectStatusByDistribution($statusDistribution);
+            $status = $statuses->where('name', $statusName)->first();
+
+            // Calculate dates based on status for realistic workflow
+            $dateRequest = now()->subDays(rand(1, 30));
+            $dateReceive = null;
+            $userReceiveName = null;
+            
+            // Set receive date and user based on status
+            if (in_array($statusName, ['Delivered', 'Completed'])) {
+                $dateReceive = $dateRequest->copy()->addDays(rand(1, 7)); // 1-7 days after request
+                $userReceiveName = $receiveUser->name ?? 'User ' . $receiveUser->id;
+            }
 
             $transferSlip = TransferSlip::create([
                 'user_request_id' => $requestUser->id,
@@ -64,11 +87,11 @@ class TransferSlipSeeder extends Seeder
                 'company_address' => 'Address ' . ($i + 1) . ', City, Country',
                 'tax_id' => '1234567890' . str_pad($i, 3, '0', STR_PAD_LEFT),
                 'tel' => '0' . rand(100000000, 999999999),
-                'date_request' => now()->subDays(rand(1, 30)),
+                'date_request' => $dateRequest,
                 'user_request_name' => $requestUser->name ?? 'User ' . $requestUser->id,
                 'deliver_name' => 'Delivery Person ' . ($i + 1),
-                'date_receive' => $status->name === 'Delivered' ? now()->subDays(rand(1, 15)) : null,
-                'user_receive_name' => $status->name === 'Delivered' ? ($receiveUser->name ?? 'User ' . $receiveUser->id) : null,
+                'date_receive' => $dateReceive,
+                'user_receive_name' => $userReceiveName,
                 'warehouse_origin_id' => $originWarehouse->id,
                 'warehouse_origin_name' => $originWarehouse->name,
                 'warehouse_destination_id' => $destinationWarehouse->id,
@@ -101,40 +124,43 @@ class TransferSlipSeeder extends Seeder
 
                 $totalQuantity += $quantity;
 
-                // Create inventory entries for this transfer
-                $moveType = $moveTypes->random();
-                
-                // Outbound inventory entry (from origin warehouse)
-                \App\Models\Inventory::create([
-                    'product_id' => $product->id,
-                    'warehouse_id' => $originWarehouse->id,
-                    'transfer_slip_id' => $transferSlip->id,
-                    'date_activity' => $transferSlip->date_request,
-                    'move_type_id' => $moveType->id,
-                    'detail' => 'Transfer out - ' . $transferSlip->transfer_slip_number,
-                    'quantity_move' => -$quantity, // Negative for outbound
-                    'unit_name' => $product->unit_name ?? 'pcs',
-                    'remaining' => rand(0, 100), // Random remaining stock
-                    'avr_buy_price' => $costPerUnit,
-                    'avr_sale_price' => $costPerUnit * 1.2, // 20% markup
-                    'avr_remain_price' => $costPerUnit,
-                ]);
+                // Only create inventory entries for completed transfers
+                // This follows the new workflow where inventory is updated via status changes
+                if ($statusName === 'Completed') {
+                    $moveType = $moveTypes->random();
+                    
+                    // Outbound inventory entry (from origin warehouse) - when status was "In Transit"
+                    \App\Models\Inventory::create([
+                        'product_id' => $product->id,
+                        'warehouse_id' => $originWarehouse->id,
+                        'transfer_slip_id' => $transferSlip->id,
+                        'date_activity' => $transferSlip->date_request->addDays(rand(1, 3)), // When it went to In Transit
+                        'move_type_id' => $moveType->id,
+                        'detail' => 'Transfer out - ' . $transferSlip->transfer_slip_number,
+                        'quantity_move' => -$quantity, // Negative for outbound
+                        'unit_name' => $product->unit_name ?? 'pcs',
+                        'remaining' => rand(0, 100), // Random remaining stock
+                        'avr_buy_price' => $costPerUnit,
+                        'avr_sale_price' => $costPerUnit * 1.2, // 20% markup
+                        'avr_remain_price' => $costPerUnit,
+                    ]);
 
-                // Inbound inventory entry (to destination warehouse)
-                \App\Models\Inventory::create([
-                    'product_id' => $product->id,
-                    'warehouse_id' => $destinationWarehouse->id,
-                    'transfer_slip_id' => $transferSlip->id,
-                    'date_activity' => $transferSlip->date_receive ?? $transferSlip->date_request->addDays(rand(1, 5)),
-                    'move_type_id' => $moveType->id,
-                    'detail' => 'Transfer in - ' . $transferSlip->transfer_slip_number,
-                    'quantity_move' => $quantity, // Positive for inbound
-                    'unit_name' => $product->unit_name ?? 'pcs',
-                    'remaining' => rand(0, 100), // Random remaining stock
-                    'avr_buy_price' => $costPerUnit,
-                    'avr_sale_price' => $costPerUnit * 1.2, // 20% markup
-                    'avr_remain_price' => $costPerUnit,
-                ]);
+                    // Inbound inventory entry (to destination warehouse) - when status was "Delivered"
+                    \App\Models\Inventory::create([
+                        'product_id' => $product->id,
+                        'warehouse_id' => $destinationWarehouse->id,
+                        'transfer_slip_id' => $transferSlip->id,
+                        'date_activity' => $transferSlip->date_receive ?? $transferSlip->date_request->addDays(rand(4, 7)),
+                        'move_type_id' => $moveType->id,
+                        'detail' => 'Transfer in - ' . $transferSlip->transfer_slip_number,
+                        'quantity_move' => $quantity, // Positive for inbound
+                        'unit_name' => $product->unit_name ?? 'pcs',
+                        'remaining' => rand(0, 100), // Random remaining stock
+                        'avr_buy_price' => $costPerUnit,
+                        'avr_sale_price' => $costPerUnit * 1.2, // 20% markup
+                        'avr_remain_price' => $costPerUnit,
+                    ]);
+                }
             }
 
             // Update total quantity
@@ -144,5 +170,24 @@ class TransferSlipSeeder extends Seeder
         }
 
         $this->command->info("Created {$transferSlipsCreated} transfer slips with details and inventory entries.");
+    }
+
+    /**
+     * Select a status based on the distribution array
+     */
+    private function selectStatusByDistribution(array $distribution): string
+    {
+        $total = array_sum($distribution);
+        $random = rand(1, $total);
+        
+        $current = 0;
+        foreach ($distribution as $status => $count) {
+            $current += $count;
+            if ($random <= $current) {
+                return $status;
+            }
+        }
+        
+        return 'Pending'; // Fallback
     }
 }

@@ -16,6 +16,11 @@ class TransferSlipStatusSeeder extends Seeder
                 'color' => 'warning',
             ],
             [
+                'name' => 'Approved',
+                'sign' => 'APPROVED',
+                'color' => 'primary',
+            ],
+            [
                 'name' => 'In Transit',
                 'sign' => 'IN_TRANSIT',
                 'color' => 'info',
@@ -26,14 +31,9 @@ class TransferSlipStatusSeeder extends Seeder
                 'color' => 'success',
             ],
             [
-                'name' => 'Cancelled',
-                'sign' => 'CANCELLED',
-                'color' => 'danger',
-            ],
-            [
-                'name' => 'Returned',
-                'sign' => 'RETURNED',
-                'color' => 'secondary',
+                'name' => 'Completed',
+                'sign' => 'COMPLETED',
+                'color' => 'success',
             ],
         ];
 
