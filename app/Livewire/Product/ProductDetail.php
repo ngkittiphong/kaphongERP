@@ -10,6 +10,7 @@ use App\Models\ProductStatus;
 use App\Models\Vat;
 use App\Models\Withholding;
 use App\Models\WarehouseProduct;
+use App\Livewire\Product\ProductStockCard;
 
 
 class ProductDetail extends Component

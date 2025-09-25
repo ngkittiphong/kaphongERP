@@ -51,4 +51,12 @@ class Inventory extends Model
     {
         return $this->belongsTo(MoveType::class);
     }
+
+    /**
+     * The warehouse for this inventory entry.
+     */
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
 }

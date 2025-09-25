@@ -53,7 +53,19 @@
                             </div>
                             <div class="tab-content">
                                 @include('livewire.product.product-detail_detail-tab')
-                                @include('livewire.product.product-detail_stock-card-tab')
+                                <div class="tab-pane" id="tab-stock-card">
+                                    @if($product)
+                                        @livewire('product.product-stock-card', ['productId' => $product->id], key('stock-card-' . $product->id))
+                                    @else
+                                        <div class="panel panel-flat">
+                                            <div class="panel-body text-center">
+                                                <div class="alert alert-info">
+                                                    <i class="icon-info22"></i> Please select a product to view stock card details.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
                                 @include('livewire.product.product-detail_trading-tab')
                             </div>
                         </div>

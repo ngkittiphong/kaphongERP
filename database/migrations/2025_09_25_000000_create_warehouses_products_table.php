@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('warehouses_products', function (Blueprint $table) {
             $table->id(); // INTEGER PK
-            $table->unsignedInteger('warehouse_id'); // INTEGER FK
-            $table->unsignedInteger('product_id'); // INTEGER FK
+            $table->unsignedBigInteger('warehouse_id'); // BIGINT FK
+            $table->unsignedBigInteger('product_id'); // BIGINT FK
             $table->integer('balance')->default(0); // INTEGER - Current quantity of the product in the warehouse
             $table->decimal('avr_buy_price', 10, 2)->default(0); // DOUBLE(10,2) - Average buying price
             $table->decimal('avr_sale_price', 10, 2)->default(0); // DOUBLE(10,2) - Average selling price
