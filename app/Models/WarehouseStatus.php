@@ -18,6 +18,6 @@ class WarehouseStatus extends Model
     // 🔹 Relationship: One Status has Many Warehouses
     public function warehouses()
     {
-        return $this->hasMany(Warehouse::class, 'status_id');
+        return $this->hasMany(Warehouse::class, 'warehouse_status_id');
     }
 }

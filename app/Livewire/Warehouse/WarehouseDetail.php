@@ -10,6 +10,7 @@ use App\Models\WarehouseProduct;
 use App\Models\Inventory;
 use App\Models\TransferSlip;
 use App\Http\Controllers\WarehouseController;
+use App\Services\InventoryService;
 use Illuminate\Http\Request;
 
 class WarehouseDetail extends Component
@@ -363,6 +364,48 @@ class WarehouseDetail extends Component
 
         // Return weighted average price (total value / total quantity)
         return $totalQuantity > 0 ? $totalValue / $totalQuantity : 0;
+    }
+
+    /**
+     * Handle stock operation events from the stock operation component
+     */
+    public function handleStockOperation($operation, $data)
+    {
+        try {
+            $inventoryService = app(InventoryService::class);
+            
+            switch ($operation) {
+                case 'stock_in':
+                    $result = $inventoryService->stockIn($data);
+                    break;
+                case 'stock_out':
+                    $result = $inventoryService->stockOut($data);
+                    break;
+                case 'adjustment':
+                    $result = $inventoryService->stockAdjustment($data);
+                    break;
+                case 'transfer':
+                    $result = $inventoryService->transferStock($data);
+                    break;
+                default:
+                    throw new \Exception("Unknown operation: {$operation}");
+            }
+
+            // Refresh warehouse data
+            $this->loadWarehouse($this->warehouse->id);
+            
+            // Dispatch success event
+            $this->dispatch('stockOperationCompleted', [
+                'operation' => $operation,
+                'result' => $result
+            ]);
+
+        } catch (\Exception $e) {
+            $this->dispatch('stockOperationFailed', [
+                'operation' => $operation,
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     public function loadWarehouseMovements()

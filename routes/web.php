@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureTokenIsValid;
 use App\Http\Middleware\AutoLogin;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\InventoryController;
 
 //------------------Root Route--------------------------------
 Route::get('/', function () {
@@ -110,4 +111,16 @@ Route::post('/users/update-nickname', [UserController::class, 'updateNickname'])
 
 //------------------Branch Route--------------------------------
 Route::resource('branches', BranchController::class);
+
+//------------------Inventory Route--------------------------------
+Route::prefix('inventory')->middleware('auth')->group(function () {
+    Route::post('/stock-in', [InventoryController::class, 'stockIn'])->name('inventory.stock-in');
+    Route::post('/stock-out', [InventoryController::class, 'stockOut'])->name('inventory.stock-out');
+    Route::post('/stock-adjustment', [InventoryController::class, 'stockAdjustment'])->name('inventory.stock-adjustment');
+    Route::post('/transfer-stock', [InventoryController::class, 'transferStock'])->name('inventory.transfer-stock');
+    Route::get('/stock-balance', [InventoryController::class, 'getStockBalance'])->name('inventory.stock-balance');
+    Route::get('/stock-history', [InventoryController::class, 'getStockHistory'])->name('inventory.stock-history');
+    Route::get('/validate-integrity', [InventoryController::class, 'validateStockIntegrity'])->name('inventory.validate-integrity');
+    Route::post('/reconcile-stock', [InventoryController::class, 'reconcileStock'])->name('inventory.reconcile-stock');
+});
 

@@ -27,6 +27,13 @@
                                     </div>
                                 </a>
                             </li>
+                            {{-- <li class="">
+                                <a href="#tab-stock-operations" data-toggle="tab" aria-expanded="false">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Stock Operations</h3>
+                                    </div>
+                                </a>
+                            </li> --}}
                         </ul>
                     </div>
                 </div>
@@ -113,10 +120,9 @@
                                         <div class="col-md-3 col-xs-3 text-bold">
                                             Average Remaining Price :
                                         </div>
-                                        <div class="col-md-8 col-xs-8 text-left">
-                                            {{ number_format($warehouse->avr_remain_price ?? 0, 2) }} THB
-                                            {{-- {{ number_format($this->getCalculatedAverageRemainingPrice(), 2) }} THB --}}
-                                        </div>
+                            <div class="col-md-8 col-xs-8 text-left">
+                                {{ number_format($this->getCalculatedAverageRemainingPrice(), 2) }} THB
+                            </div>
                                     </span>
                                 </div>
                             </div>
@@ -333,6 +339,15 @@
                                         @endforelse
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Stock Operations Tab -->
+                    <div class="tab-pane" id="tab-stock-operations">
+                        <div class="row col-md-12 col-xs-12">
+                            <div class="panel-body">
+                                @livewire('warehouse.warehouse-stock-operation', ['warehouseId' => $warehouse->id ?? null])
                             </div>
                         </div>
                     </div>
