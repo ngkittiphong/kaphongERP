@@ -6,6 +6,9 @@ use Livewire\Component;
 use App\Models\Warehouse;
 use App\Models\Branch;
 use App\Models\WarehouseStatus;
+use App\Models\WarehouseProduct;
+use App\Models\Inventory;
+use App\Models\TransferSlip;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Http\Request;
 
@@ -20,6 +23,13 @@ class WarehouseDetail extends Component
     
     public $branches = [];
     public $warehouse_statuses = [];
+    
+    // Inventory and movement data
+    public $warehouseInventory = [];
+    public $warehouseMovements = [];
+    
+    // Branch selection for viewing warehouse details
+    public $selectedBranchId = null;
 
     protected $listeners = [
         'warehouseSelected' => 'loadWarehouse',
@@ -85,23 +95,9 @@ class WarehouseDetail extends Component
         $this->main_warehouse = false;
         $this->avr_remain_price = 0.00;
         
-        // Check if there's a previously selected warehouse
-        $selectedWarehouseId = session('selected_warehouse_id');
-        if ($selectedWarehouseId) {
-            \Log::info("🔥 Restoring warehouse from session: {$selectedWarehouseId}");
-            $this->warehouse = Warehouse::with(['branch', 'status', 'userCreate'])->find($selectedWarehouseId);
-            if ($this->warehouse) {
-                \Log::info("🔥 Warehouse restored:", ['name' => $this->warehouse->name]);
-                // Populate form fields
-                $this->branch_id = $this->warehouse->branch_id;
-                $this->user_create_id = $this->warehouse->user_create_id;
-                $this->main_warehouse = $this->warehouse->main_warehouse;
-                $this->name = $this->warehouse->name;
-                $this->date_create = $this->warehouse->date_create->format('Y-m-d\TH:i');
-                $this->warehouse_status_id = $this->warehouse->warehouse_status_id;
-                $this->avr_remain_price = $this->warehouse->avr_remain_price;
-            }
-        }
+        // Do NOT preselect any warehouse on load; show empty detail until user selects
+        $this->warehouse = null;
+        $this->selectedBranchId = null;
     }
 
     public function loadWarehouse($data = null)
@@ -127,23 +123,26 @@ class WarehouseDetail extends Component
         $this->showAddWarehouseForm = false;
         
         // Load warehouse with relationships (matching branch pattern)
-        $this->warehouse = Warehouse::with(['branch', 'status', 'userCreate', 'inventories'])->find($warehouseId) ?? null;
+        $this->warehouse = Warehouse::with(['branch', 'status', 'userCreate', 'inventories', 'warehouseProducts.product'])->find($warehouseId) ?? null;
         \Log::info("🔥 Warehouse loaded:", ['name' => $this->warehouse ? $this->warehouse->name : 'null']);
         
-        // Store in session to persist across component remounts
+        // Load inventory and movement data
         if ($this->warehouse) {
-            session(['selected_warehouse_id' => $this->warehouse->id]);
-            \Log::info("🔥 Stored warehouse ID in session: {$this->warehouse->id}");
-            
-            // Populate form fields
-            $this->branch_id = $this->warehouse->branch_id;
-            $this->user_create_id = $this->warehouse->user_create_id;
-            $this->main_warehouse = $this->warehouse->main_warehouse;
-            $this->name = $this->warehouse->name;
-            $this->date_create = $this->warehouse->date_create->format('Y-m-d\TH:i');
-            $this->warehouse_status_id = $this->warehouse->warehouse_status_id;
-            $this->avr_remain_price = $this->warehouse->avr_remain_price;
-            \Log::info("🔥 Form fields populated successfully");
+            $this->loadWarehouseInventory();
+            $this->loadWarehouseMovements();
+        }
+        
+        // Do NOT persist selected warehouse in session and do NOT preselect branch
+        // Reset branch dropdown so user must choose explicitly
+        $this->selectedBranchId = null;
+        
+        // Dispatch event to notify frontend that warehouse data has been loaded
+        if ($this->warehouse) {
+            $this->dispatch('warehouseLoaded', [
+                'warehouseId' => $this->warehouse->id,
+                'warehouseName' => $this->warehouse->name
+            ]);
+            \Log::info("📡 Dispatching warehouseLoaded event for warehouse: {$this->warehouse->name}");
         }
     }
 
@@ -328,6 +327,136 @@ class WarehouseDetail extends Component
             $this->dispatch('warehouseListUpdated');
             
             \Log::info("📡 Dispatching warehouseReactivated and warehouseListUpdated events");
+        }
+    }
+
+    public function loadWarehouseInventory()
+    {
+        if (!$this->warehouse) {
+            $this->warehouseInventory = [];
+            return;
+        }
+
+        $this->warehouseInventory = WarehouseProduct::with(['product'])
+            ->where('warehouse_id', $this->warehouse->id)
+            ->orderBy('balance', 'desc')
+            ->get();
+    }
+
+    public function getCalculatedAverageRemainingPrice()
+    {
+        if (!$this->warehouseInventory || $this->warehouseInventory->isEmpty()) {
+            return 0;
+        }
+
+        $totalValue = 0;
+        $totalQuantity = 0;
+
+        foreach ($this->warehouseInventory as $inventory) {
+            if ($inventory->balance > 0) {
+                // Use average buy price * balance to get total value for this item
+                $itemValue = $inventory->avr_buy_price * $inventory->balance;
+                $totalValue += $itemValue;
+                $totalQuantity += $inventory->balance;
+            }
+        }
+
+        // Return weighted average price (total value / total quantity)
+        return $totalQuantity > 0 ? $totalValue / $totalQuantity : 0;
+    }
+
+    public function loadWarehouseMovements()
+    {
+        if (!$this->warehouse) {
+            $this->warehouseMovements = [];
+            return;
+        }
+
+        $movements = [];
+
+        // Load transfer slip movements
+        $transferSlips = TransferSlip::with(['transferSlipDetails.product', 'warehouseOrigin', 'warehouseDestination'])
+            ->where(function($q) {
+                $q->where('warehouse_origin_id', $this->warehouse->id)
+                  ->orWhere('warehouse_destination_id', $this->warehouse->id);
+            })
+            ->orderBy('date_request', 'desc')
+            ->get();
+
+        foreach ($transferSlips as $transferSlip) {
+            foreach ($transferSlip->transferSlipDetails as $detail) {
+                $isIncoming = $transferSlip->warehouse_destination_id == $this->warehouse->id;
+                $quantity = $isIncoming ? $detail->quantity : -$detail->quantity;
+                
+                $movements[] = [
+                    'id' => 'ts_' . $transferSlip->id . '_' . $detail->id,
+                    'date' => $transferSlip->date_request,
+                    'type' => 'Transfer',
+                    'type_class' => $isIncoming ? 'success' : 'warning',
+                    'product_name' => $detail->product_name,
+                    'product_code' => $detail->product ? $detail->product->sku_number : 'N/A',
+                    'quantity' => $quantity,
+                    'unit' => $detail->unit_name,
+                    'reference' => $transferSlip->transfer_slip_number,
+                    'warehouse_from' => $transferSlip->warehouseOrigin ? $transferSlip->warehouseOrigin->name : 'N/A',
+                    'warehouse_to' => $transferSlip->warehouseDestination ? $transferSlip->warehouseDestination->name : 'N/A',
+                    'description' => $transferSlip->description,
+                    'status' => $transferSlip->status ? $transferSlip->status->name : 'Unknown'
+                ];
+            }
+        }
+
+        // Load inventory movements
+        $inventories = Inventory::with(['product', 'moveType'])
+            ->where('warehouse_id', $this->warehouse->id)
+            ->orderBy('date_activity', 'desc')
+            ->get();
+
+        foreach ($inventories as $inventory) {
+            $isIncoming = $inventory->quantity_move > 0;
+            $quantity = $inventory->quantity_move;
+            
+            $movements[] = [
+                'id' => 'inv_' . $inventory->id,
+                'date' => $inventory->date_activity,
+                'type' => $inventory->moveType ? $inventory->moveType->name : 'Inventory',
+                'type_class' => $isIncoming ? 'success' : 'danger',
+                'product_name' => $inventory->product ? $inventory->product->name : 'N/A',
+                'product_code' => $inventory->product ? $inventory->product->sku_number : 'N/A',
+                'quantity' => $quantity,
+                'unit' => $inventory->unit_name ?: ($inventory->product ? $inventory->product->unit_name : 'N/A'),
+                'reference' => $inventory->transfer_slip_id ? 'TS' . $inventory->transfer_slip_id : 'INV' . $inventory->id,
+                'warehouse_from' => $this->warehouse->name,
+                'warehouse_to' => $this->warehouse->name,
+                'description' => $inventory->detail,
+                'status' => 'Completed'
+            ];
+        }
+
+        // Sort by date descending
+        usort($movements, function($a, $b) {
+            return strtotime($b['date']) - strtotime($a['date']);
+        });
+
+        $this->warehouseMovements = $movements;
+    }
+
+    public function updatedSelectedBranchId()
+    {
+        // When user selects a different branch, reload warehouse data for that branch
+        if ($this->selectedBranchId && $this->warehouse) {
+            // Find warehouses for the selected branch
+            $warehouses = Warehouse::where('branch_id', $this->selectedBranchId)->get();
+            
+            if ($warehouses->count() > 0) {
+                // Load the first warehouse for the selected branch
+                $this->loadWarehouse(['warehouseId' => $warehouses->first()->id]);
+            } else {
+                // No warehouses found for selected branch, clear the data
+                $this->warehouse = null;
+                $this->warehouseInventory = [];
+                $this->warehouseMovements = [];
+            }
         }
     }
 

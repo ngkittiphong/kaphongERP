@@ -69,5 +69,5 @@
         </table>
     </div>
 
-    <x-datatable-scripts listUpdatedEvent="warehouseListUpdated" />
+    
 </div>

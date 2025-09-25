@@ -34,7 +34,7 @@
                     <div class="tab-pane active" id="tab-detail">
                         <div class="row col-md-12 col-xs-12">
                             <div class="panel-heading no-padding-bottom">
-                                <h4 class="panel-title"><?= __('Warehouse details') ?></h4>
+                                <h4 class="panel-title">Warehouse details</h4>
                                 <div class="elements">
                                     @if($warehouse->status->name === 'Active')
                                         <button class="btn bg-amber-darkest"
@@ -56,12 +56,12 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            ชื่อคลังสินค้า :
+                                            Warehouse Name :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
                                             {{ $warehouse->name ?? 'N/A' }}
                                             @if($warehouse && $warehouse->main_warehouse)
-                                                (คลังหลัก)
+                                                (Main Warehouse)
                                             @endif
                                         </div>
                                     </span>
@@ -69,7 +69,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            สถานะ :
+                                            Status :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
                                             <span class="badge bg-{{ $warehouse->status->name === 'Active' ? 'success' : 'danger' }}">
@@ -81,7 +81,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            สาขา :
+                                            Branch :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
                                             {{ $warehouse->branch->name_en ?? 'N/A' }}
@@ -91,7 +91,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            วันที่สร้าง :
+                                            Created Date :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
                                             {{ $warehouse->date_create ? $warehouse->date_create->format('Y-m-d H:i') : 'N/A' }}
@@ -101,7 +101,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            ผู้สร้าง :
+                                            Created By :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
                                             {{ $warehouse->userCreate->username ?? 'N/A' }}
@@ -111,10 +111,11 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            ราคาเฉลี่ยคงเหลือ :
+                                            Average Remaining Price :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
-                                            {{ number_format($warehouse->avr_remain_price ?? 0, 2) }} บาท
+                                            {{ number_format($warehouse->avr_remain_price ?? 0, 2) }} THB
+                                            {{-- {{ number_format($this->getCalculatedAverageRemainingPrice(), 2) }} THB --}}
                                         </div>
                                     </span>
                                 </div>
@@ -124,43 +125,90 @@
 
                     <div class="tab-pane" id="tab-inventory">
                         <div class="row col-md-12 col-xs-12">
+                            <!-- Search and Filter Section -->
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="inventorySearchInput"
+                                                   placeholder="Search products...">
+                                            <div class="input-group-btn">
+                                                <button type="button" class="btn btn-default" onclick="clearInventorySearch()">
+                                                    <i class="icon-cross2"></i> Clear
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 text-right">
+                                        <span class="text-muted">
+                                            Total Products: {{ count($warehouseInventory) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Inventory Table -->
                             <div class="table-responsive">
-                                <table class="table datatable-inventory table-striped">
+                                <table class="table datatable-inventory table-striped" id="inventoryTable">
                                     <thead>
                                         <tr>
                                             <th>#</th>
                                             <th>Product Name</th>
                                             <th>Product Code</th>
-                                            <th>Quantity</th>
+                                            <th>Balance</th>
                                             <th>Unit</th>
+                                            <th>Avg Buy Price</th>
+                                            <th>Avg Sale Price</th>
+                                            <th>Total Value</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse($warehouse->inventories ?? [] as $index => $inventory)
+                                        @forelse($warehouseInventory as $index => $inventory)
                                             <tr class="text-default">
                                                 <td class="col-md-1">{{ $index + 1 }}.</td>
-                                                <td class="col-md-3">{{ $inventory->product->name_th ?? 'N/A' }}</td>
-                                                <td class="col-md-2">{{ $inventory->product->product_code ?? 'N/A' }}</td>
-                                                <td class="col-md-2">{{ $inventory->quantity ?? 0 }}</td>
-                                                <td class="col-md-2">{{ $inventory->product->unit ?? 'N/A' }}</td>
-                                                <td>
-                                                    <span class="badge bg-{{ $inventory->quantity > 0 ? 'success' : 'danger' }}">
-                                                        {{ $inventory->quantity > 0 ? 'In Stock' : 'Out of Stock' }}
+                                                <td class="col-md-2">
+                                                    <strong>{{ $inventory->product->name ?? 'N/A' }}</strong>
+                                                    @if($inventory->product->sku_number)
+                                                        <br><small class="text-muted">SKU: {{ $inventory->product->sku_number }}</small>
+                                                    @endif
+                                                </td>
+                                                <td class="col-md-1">{{ $inventory->product->sku_number ?? 'N/A' }}</td>
+                                                <td class="col-md-1">
+                                                    <span class="badge badge-{{ $inventory->balance > 0 ? 'success' : 'danger' }}">
+                                                        {{ number_format($inventory->balance) }}
+                                                    </span>
+                                                </td>
+                                                <td class="col-md-1">{{ $inventory->product->unit ?? 'N/A' }}</td>
+                                                <td class="col-md-1">{{ number_format($inventory->avr_buy_price, 2) }}</td>
+                                                <td class="col-md-1">{{ number_format($inventory->avr_sale_price, 2) }}</td>
+                                                <td class="col-md-1">
+                                                    <strong>{{ number_format($inventory->total_value, 2) }}</strong>
+                                                </td>
+                                                <td class="col-md-1">
+                                                    <span class="badge bg-{{ $inventory->balance > 0 ? 'success' : 'danger' }}">
+                                                        {{ $inventory->balance > 0 ? 'In Stock' : 'Out of Stock' }}
                                                     </span>
                                                 </td>
                                                 <td class="col-md-2">
                                                     <ul class="icons-list">
-                                                        <li><a href="#" data-toggle="modal"><i class="icon-eye2"></i></a></li>
-                                                        <li><a href="#"><i class="icon-pencil6"></i></a></li>
-                                                        <li><a href="#"><i class="icon-trash text-danger"></i></a></li>
+                                                        <li><a href="#" data-toggle="modal" title="View Details"><i class="icon-eye2"></i></a></li>
+                                                        <li><a href="#" title="Edit"><i class="icon-pencil6"></i></a></li>
+                                                        <li><a href="#" title="Stock Movement"><i class="icon-arrow-right8"></i></a></li>
                                                     </ul>
                                                 </td>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="7" class="text-center">No inventory found for this warehouse</td>
+                                                <td colspan="10" class="text-center">
+                                                    <div class="text-muted">
+                                                        <i class="icon-package" style="font-size: 48px; color: #ddd;"></i>
+                                                        <br>No inventory found for this warehouse
+                                                    </div>
+                                                </td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -171,8 +219,45 @@
 
                     <div class="tab-pane" id="tab-movements">
                         <div class="row col-md-12 col-xs-12">
+                            <!-- Search and Filter Section -->
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="input-group">
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="movementSearchInput"
+                                                   placeholder="Search movements...">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="date" 
+                                               class="form-control" 
+                                               id="movementDateFrom"
+                                               placeholder="From Date">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="date" 
+                                               class="form-control" 
+                                               id="movementDateTo"
+                                               placeholder="To Date">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-default" onclick="clearMovementFilters()">
+                                            <i class="icon-cross2"></i> Clear Filters
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 text-right">
+                                        <span class="text-muted">
+                                            Total Movements: {{ count($warehouseMovements) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Movements Table -->
                             <div class="table-responsive">
-                                <table class="table datatable-movements table-striped">
+                                <table class="table datatable-movements table-striped" id="movementsTable">
                                     <thead>
                                         <tr>
                                             <th>#</th>
@@ -180,14 +265,72 @@
                                             <th>Type</th>
                                             <th>Product</th>
                                             <th>Quantity</th>
+                                            <th>Unit</th>
                                             <th>Reference</th>
+                                            <th>From/To</th>
+                                            <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td colspan="7" class="text-center">Movement history for this warehouse - Coming soon</td>
+                                        @forelse($warehouseMovements as $index => $movement)
+                                            <tr class="text-default">
+                                                <td class="col-md-1">{{ $index + 1 }}.</td>
+                                                <td class="col-md-1">
+                                                    {{ \Carbon\Carbon::parse($movement['date'])->format('Y-m-d H:i') }}
+                                                </td>
+                                                <td class="col-md-1">
+                                                    <span class="badge bg-{{ $movement['type_class'] }}">
+                                                        {{ $movement['type'] }}
+                                                    </span>
+                                                </td>
+                                                <td class="col-md-2">
+                                                    <strong>{{ $movement['product_name'] }}</strong>
+                                                    <br><small class="text-muted">{{ $movement['product_code'] }}</small>
+                                                </td>
+                                                <td class="col-md-1">
+                                                    <span class="badge badge-{{ $movement['quantity'] > 0 ? 'success' : 'danger' }}">
+                                                        {{ $movement['quantity'] > 0 ? '+' : '' }}{{ number_format($movement['quantity']) }}
+                                                    </span>
+                                                </td>
+                                                <td class="col-md-1">{{ $movement['unit'] }}</td>
+                                                <td class="col-md-1">
+                                                    <code>{{ $movement['reference'] }}</code>
+                                                </td>
+                                                <td class="col-md-2">
+                                                    @if($movement['type'] === 'Transfer')
+                                                        <small>
+                                                            <strong>From:</strong> {{ $movement['warehouse_from'] }}<br>
+                                                            <strong>To:</strong> {{ $movement['warehouse_to'] }}
+                                                        </small>
+                                                    @else
+                                                        <small>{{ $movement['warehouse_from'] }}</small>
+                                                    @endif
+                                                </td>
+                                                <td class="col-md-1">
+                                                    <span class="badge bg-{{ $movement['status'] === 'Completed' ? 'success' : 'warning' }}">
+                                                        {{ $movement['status'] }}
+                                                    </span>
+                                                </td>
+                                                <td class="col-md-1">
+                                                    <ul class="icons-list">
+                                                        <li><a href="#" data-toggle="modal" title="View Details"><i class="icon-eye2"></i></a></li>
+                                                        @if($movement['type'] === 'Transfer')
+                                                            <li><a href="#" title="View Transfer"><i class="icon-arrow-right8"></i></a></li>
+                                                        @endif
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="10" class="text-center">
+                                                    <div class="text-muted">
+                                                        <i class="icon-arrow-right8" style="font-size: 48px; color: #ddd;"></i>
+                                                        <br>No movements found for this warehouse
+                                                    </div>
+                                                </td>
                                         </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
@@ -198,4 +341,6 @@
         </div>
     </div>
 </div>
+
+
 <!------------------------------------  End Warehouse Detail ------------------------->
