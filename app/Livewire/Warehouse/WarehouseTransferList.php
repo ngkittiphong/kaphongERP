@@ -68,11 +68,11 @@ class WarehouseTransferList extends BaseListComponent
         // Apply status filter
         if ($this->filter === 'pending') {
             $query->whereHas('status', function($q) {
-                $q->whereIn('name', ['Pending', 'In Transit']);
+                $q->whereIn('name', ['Pending', 'Approved', 'In Transit']);
             });
         } elseif ($this->filter === 'completed') {
             $query->whereHas('status', function($q) {
-                $q->where('name', 'Delivered');
+                $q->whereIn('name', ['Delivered', 'Completed']);
             });
         } elseif ($this->filter === 'cancelled') {
             $query->whereHas('status', function($q) {
@@ -127,8 +127,10 @@ class WarehouseTransferList extends BaseListComponent
     {
         return match($statusName) {
             'Pending' => 'warning',
+            'Approved' => 'primary',
             'In Transit' => 'info', 
             'Delivered' => 'success',
+            'Completed' => 'success',
             'Cancelled' => 'danger',
             'Returned' => 'secondary',
             default => 'secondary'
@@ -139,23 +141,13 @@ class WarehouseTransferList extends BaseListComponent
     {
         return match($statusName) {
             'Pending' => 'text-warning',
+            'Approved' => 'text-primary',
             'In Transit' => 'text-info',
             'Delivered' => 'text-success', 
+            'Completed' => 'text-success',
             'Cancelled' => 'text-danger',
             'Returned' => 'text-secondary',
             default => 'text-secondary'
-        };
-    }
-
-    public function getStatusBadgeColor($statusName)
-    {
-        return match($statusName) {
-            'Pending' => 'warning',
-            'In Transit' => 'info',
-            'Delivered' => 'success',
-            'Cancelled' => 'danger',
-            'Returned' => 'secondary',
-            default => 'secondary'
         };
     }
 
@@ -163,11 +155,27 @@ class WarehouseTransferList extends BaseListComponent
     {
         return match($statusName) {
             'Pending' => 'clock',
+            'Approved' => 'checkmark2',
             'In Transit' => 'truck',
             'Delivered' => 'checkmark-circle',
+            'Completed' => 'checkmark-circle2',
             'Cancelled' => 'cross',
             'Returned' => 'undo',
             default => 'help'
+        };
+    }
+
+    public function getStatusBadgeColor($statusName)
+    {
+        return match($statusName) {
+            'Pending' => 'warning',
+            'Approved' => 'primary',
+            'In Transit' => 'info',
+            'Delivered' => 'success',
+            'Completed' => 'success',
+            'Cancelled' => 'danger',
+            'Returned' => 'secondary',
+            default => 'secondary'
         };
     }
 }

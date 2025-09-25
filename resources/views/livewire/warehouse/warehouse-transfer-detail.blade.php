@@ -113,13 +113,13 @@
                                             <div class="col-md-6 col-xs-6 col-lg-6 text-left text-size-extralarge panel panel-white">
                                                 <div class="panel-heading">
                                                     <h4 class="panel-title">
-                                                        <span class="text-primary">{{ $transferSlip->warehouse_origin_name ?? $transferSlip->warehouseOrigin->name ?? 'N/A' }}</span> สินค้าออก
+                                                        <span class="text-primary">{{ $transferSlip->warehouse_origin_name ?? $transferSlip->warehouseOrigin->name ?? 'N/A' }}</span> - Outbound
                                                     </h4>
                                                 </div>
                                                 <div class="panel-body">
                                                     <div class="row">
                                                         <div class="col-md-4 col-xs-6 col-lg-4 text-left text-size-extralarge">
-                                                            วันที่จัดของ :
+                                                            Pick Date:
                                                         </div>
                                                         <div class="col-md-8 col-xs-6 col-lg-8 text-left text-size-extralarge">
                                                             {{ $transferSlip->date_request ? $transferSlip->date_request->format('d M Y') : '-' }}
@@ -127,7 +127,7 @@
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-4 col-xs-6 col-lg-4 text-left text-size-extralarge">
-                                                            ผู้จัดสินค้า :
+                                                            Picker:
                                                         </div>
                                                         <div class="col-md-8 col-xs-6 col-lg-8 text-left text-size-extralarge">
                                                             {{ $transferSlip->user_request_name ?? $transferSlip->userRequest->username ?? 'N/A' }}
@@ -139,13 +139,13 @@
                                             <div class="col-md-6 col-xs-6 col-lg-6 text-left text-size-extralarge panel panel-white">
                                                 <div class="panel-heading">
                                                     <h4 class="panel-title">
-                                                        <span class="text-primary">{{ $transferSlip->warehouse_destination_name ?? $transferSlip->warehouseDestination->name ?? 'N/A' }}</span> รับสินค้า
+                                                        <span class="text-primary">{{ $transferSlip->warehouse_destination_name ?? $transferSlip->warehouseDestination->name ?? 'N/A' }}</span> - Inbound
                                                     </h4>
                                                 </div>
                                                 <div class="panel-body">
                                                     <div class="row">
                                                         <div class="col-md-4 col-xs-6 col-lg-4 text-left text-size-extralarge">
-                                                            วันที่รับของ :
+                                                            Receive Date:
                                                         </div>
                                                         <div class="col-md-8 col-xs-6 col-lg-8 text-left text-size-extralarge">
                                                             {{ $transferSlip->date_receive ? $transferSlip->date_receive->format('d M Y') : '-' }}
@@ -153,7 +153,7 @@
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-4 col-xs-6 col-lg-4 text-left text-size-extralarge">
-                                                            ผู้รับสินค้า :
+                                                            Receiver:
                                                         </div>
                                                         <div class="col-md-8 col-xs-6 col-lg-8 text-left text-size-extralarge">
                                                             {{ $transferSlip->user_receive_name ?? $transferSlip->userReceive->username ?? '-' }}
@@ -170,10 +170,10 @@
                                                 <thead>
                                                     <tr>
                                                         <th>#</th>
-                                                        <th>รหัสสินค้า</th>
-                                                        <th>ชื่อสินค้า</th>
-                                                        <th>จำนวนนับ</th>
-                                                        <th>หน่วย</th>
+                                                        <th>Product Code</th>
+                                                        <th>Product Name</th>
+                                                        <th>Quantity</th>
+                                                        <th>Unit</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
