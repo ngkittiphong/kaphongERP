@@ -216,6 +216,17 @@
                                             </div>
                                         </span>
                                     </div>
+                                    <div class='row'>
+                                        <span href="#" class="list-group-item p-l-20">
+                                            <div class="col-md-7 col-xs-7 text-bold">
+                                                Total Value :
+                                            </div>
+                                            <div class="col-md-5 col-xs-5 text-left">
+                                                ${{ number_format($warehouseProduct->balance * $warehouseProduct->avr_remain_price, 2) }}
+                                                <!-- Debug: Balance={{ $warehouseProduct->balance }}, Price={{ $warehouseProduct->avr_remain_price }} -->
+                                            </div>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -287,6 +298,17 @@
                                                             </div>
                                                             <div class="col-md-5 col-xs-5 text-left">
                                                                 ${{ number_format($warehouseProduct->avr_buy_price, 2) }}
+                                                            </div>
+                                                        </span>
+                                                    </div>
+                                                    <div class='row'>
+                                                        <span href="#" class="list-group-item p-l-20">
+                                                            <div class="col-md-7 col-xs-7 text-bold">
+                                                                Total Value :
+                                                            </div>
+                                                            <div class="col-md-5 col-xs-5 text-left">
+                                                                ${{ number_format($warehouseProduct->balance * $warehouseProduct->avr_remain_price, 2) }}
+                                                                <!-- Debug: Balance={{ $warehouseProduct->balance }}, Price={{ $warehouseProduct->avr_remain_price }} -->
                                                             </div>
                                                         </span>
                                                     </div>

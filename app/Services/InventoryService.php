@@ -132,8 +132,20 @@ class InventoryService
                     'avr_remain_price' => $warehouseProduct->avr_remain_price,
                 ]);
 
-                // Update warehouse product balance
+                // Update warehouse product balance and prices
                 $warehouseProduct->balance = $newBalance;
+                
+                // Update prices if provided (for stock out, we might want to update prices)
+                if (isset($data['unit_price']) && $data['unit_price'] > 0) {
+                    $warehouseProduct->avr_buy_price = $data['unit_price'];
+                }
+                if (isset($data['sale_price']) && $data['sale_price'] > 0) {
+                    $warehouseProduct->avr_sale_price = $data['sale_price'];
+                }
+                if (isset($data['unit_price']) && $data['unit_price'] > 0) {
+                    $warehouseProduct->avr_remain_price = $data['unit_price'];
+                }
+                
                 $warehouseProduct->save();
 
                 Log::info("Stock Out completed", [
@@ -201,8 +213,20 @@ class InventoryService
                     'avr_remain_price' => $warehouseProduct->avr_remain_price,
                 ]);
 
-                // Update warehouse product balance
+                // Update warehouse product balance and prices
                 $warehouseProduct->balance = $newBalance;
+                
+                // Update prices if provided (for adjustment, we might want to update prices)
+                if (isset($data['unit_price']) && $data['unit_price'] > 0) {
+                    $warehouseProduct->avr_buy_price = $data['unit_price'];
+                }
+                if (isset($data['sale_price']) && $data['sale_price'] > 0) {
+                    $warehouseProduct->avr_sale_price = $data['sale_price'];
+                }
+                if (isset($data['unit_price']) && $data['unit_price'] > 0) {
+                    $warehouseProduct->avr_remain_price = $data['unit_price'];
+                }
+                
                 $warehouseProduct->save();
 
                 Log::info("Stock Adjustment completed", [

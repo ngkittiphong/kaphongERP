@@ -130,6 +130,10 @@ class ProductDetail extends Component
 
     public function render()
     {
+        // Force refresh warehouse data on every render
+        if ($this->product) {
+            $this->loadWarehouseProductData();
+        }
         return view('livewire.product.product-detail');
     }
 

@@ -3,7 +3,10 @@
 namespace App\Livewire\Warehouse;
 
 use App\Models\TransferSlip;
+use App\Models\TransferSlipDetail;
+use App\Models\TransferSlipStatus;
 use App\Models\WarehouseProduct;
+use App\Services\InventoryService;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -13,6 +16,8 @@ class WarehouseTransferDetail extends Component
     public $transferSlip = null;
     public $transferSlipId = null;
     public $showAddForm = false;
+    
+    protected $inventoryService;
     public $showStatusChangeModal = false;
     public $selectedStatusId = null;
     public $selectedStatusName = null;
@@ -30,6 +35,7 @@ class WarehouseTransferDetail extends Component
     {
         // Initialize with empty state
         $this->transferSlip = null;
+        $this->inventoryService = app(InventoryService::class);
     }
 
     public function loadTransferSlip($transferSlip)
@@ -269,27 +275,34 @@ class WarehouseTransferDetail extends Component
         $senderWarehouseId = $this->transferSlip->warehouse_origin_id;
         
         foreach ($this->transferSlip->transferSlipDetails as $detail) {
-            $warehouseProduct = WarehouseProduct::where('warehouse_id', $senderWarehouseId)
-                ->where('product_id', $detail->product_id)
-                ->first();
-
-            if ($warehouseProduct) {
-                // Check if sufficient stock is available
-                if ($warehouseProduct->balance < $detail->quantity) {
-                    throw new \Exception("Insufficient stock for product {$detail->product->name}. Available: {$warehouseProduct->balance}, Required: {$detail->quantity}");
-                }
-
-                // Reduce the balance
-                $warehouseProduct->adjustBalance(-$detail->quantity);
+            try {
+                // Use InventoryService for stock out operation
+                $result = $this->inventoryService->stockOut([
+                    'warehouse_id' => $senderWarehouseId,
+                    'product_id' => $detail->product_id,
+                    'quantity' => $detail->quantity,
+                    'unit_price' => $detail->cost_per_unit ?? 0,
+                    'sale_price' => $detail->cost_per_unit ?? 0,
+                    'detail' => "Transfer to Warehouse #{$this->transferSlip->warehouse_destination_id} - Transfer Slip #{$this->transferSlip->transfer_slip_number}",
+                    'transfer_slip_id' => $this->transferSlip->id,
+                    'date_activity' => now(),
+                ]);
                 
-                Log::info("Reduced sender warehouse stock", [
+                Log::info("Reduced sender warehouse stock using InventoryService", [
                     'warehouse_id' => $senderWarehouseId,
                     'product_id' => $detail->product_id,
                     'quantity_reduced' => $detail->quantity,
-                    'new_balance' => $warehouseProduct->balance
+                    'new_balance' => $result['new_balance'],
+                    'inventory_id' => $result['inventory_id']
                 ]);
-            } else {
-                throw new \Exception("Product {$detail->product->name} not found in sender warehouse");
+                
+            } catch (\Exception $e) {
+                Log::error("Failed to reduce sender warehouse stock", [
+                    'warehouse_id' => $senderWarehouseId,
+                    'product_id' => $detail->product_id,
+                    'error' => $e->getMessage()
+                ]);
+                throw $e;
             }
         }
     }
@@ -306,36 +319,34 @@ class WarehouseTransferDetail extends Component
         $receiverWarehouseId = $this->transferSlip->warehouse_destination_id;
         
         foreach ($this->transferSlip->transferSlipDetails as $detail) {
-            $warehouseProduct = WarehouseProduct::where('warehouse_id', $receiverWarehouseId)
-                ->where('product_id', $detail->product_id)
-                ->first();
-
-            if ($warehouseProduct) {
-                // Add to existing warehouse product
-                $warehouseProduct->adjustBalance($detail->quantity);
+            try {
+                // Use InventoryService for stock in operation
+                $result = $this->inventoryService->stockIn([
+                    'warehouse_id' => $receiverWarehouseId,
+                    'product_id' => $detail->product_id,
+                    'quantity' => $detail->quantity,
+                    'unit_price' => $detail->cost_per_unit ?? 0,
+                    'sale_price' => $detail->cost_per_unit ?? 0,
+                    'detail' => "Transfer from Warehouse #{$this->transferSlip->warehouse_origin_id} - Transfer Slip #{$this->transferSlip->transfer_slip_number}",
+                    'transfer_slip_id' => $this->transferSlip->id,
+                    'date_activity' => now(),
+                ]);
                 
-                Log::info("Added stock to receiver warehouse", [
+                Log::info("Added stock to receiver warehouse using InventoryService", [
                     'warehouse_id' => $receiverWarehouseId,
                     'product_id' => $detail->product_id,
                     'quantity_added' => $detail->quantity,
-                    'new_balance' => $warehouseProduct->balance
-                ]);
-            } else {
-                // Create new warehouse product entry
-                WarehouseProduct::create([
-                    'warehouse_id' => $receiverWarehouseId,
-                    'product_id' => $detail->product_id,
-                    'balance' => $detail->quantity,
-                    'avr_buy_price' => $detail->cost_per_unit ?? 0,
-                    'avr_sale_price' => $detail->cost_per_unit ?? 0,
-                    'avr_remain_price' => $detail->cost_per_unit ?? 0,
+                    'new_balance' => $result['new_balance'],
+                    'inventory_id' => $result['inventory_id']
                 ]);
                 
-                Log::info("Created new warehouse product entry", [
+            } catch (\Exception $e) {
+                Log::error("Failed to add stock to receiver warehouse", [
                     'warehouse_id' => $receiverWarehouseId,
                     'product_id' => $detail->product_id,
-                    'quantity' => $detail->quantity
+                    'error' => $e->getMessage()
                 ]);
+                throw $e;
             }
         }
     }
@@ -352,36 +363,34 @@ class WarehouseTransferDetail extends Component
         $senderWarehouseId = $this->transferSlip->warehouse_origin_id;
         
         foreach ($this->transferSlip->transferSlipDetails as $detail) {
-            $warehouseProduct = WarehouseProduct::where('warehouse_id', $senderWarehouseId)
-                ->where('product_id', $detail->product_id)
-                ->first();
-
-            if ($warehouseProduct) {
-                // Restore the balance
-                $warehouseProduct->adjustBalance($detail->quantity);
+            try {
+                // Use InventoryService for stock in operation (restoration)
+                $result = $this->inventoryService->stockIn([
+                    'warehouse_id' => $senderWarehouseId,
+                    'product_id' => $detail->product_id,
+                    'quantity' => $detail->quantity,
+                    'unit_price' => $detail->cost_per_unit ?? 0,
+                    'sale_price' => $detail->cost_per_unit ?? 0,
+                    'detail' => "Transfer Cancellation - Restore to Warehouse #{$senderWarehouseId} - Transfer Slip #{$this->transferSlip->transfer_slip_number}",
+                    'transfer_slip_id' => $this->transferSlip->id,
+                    'date_activity' => now(),
+                ]);
                 
-                Log::info("Restored sender warehouse stock due to cancellation", [
+                Log::info("Restored sender warehouse stock using InventoryService", [
                     'warehouse_id' => $senderWarehouseId,
                     'product_id' => $detail->product_id,
                     'quantity_restored' => $detail->quantity,
-                    'new_balance' => $warehouseProduct->balance
-                ]);
-            } else {
-                // Create new warehouse product entry if it doesn't exist
-                WarehouseProduct::create([
-                    'warehouse_id' => $senderWarehouseId,
-                    'product_id' => $detail->product_id,
-                    'balance' => $detail->quantity,
-                    'avr_buy_price' => $detail->cost_per_unit ?? 0,
-                    'avr_sale_price' => $detail->cost_per_unit ?? 0,
-                    'avr_remain_price' => $detail->cost_per_unit ?? 0,
+                    'new_balance' => $result['new_balance'],
+                    'inventory_id' => $result['inventory_id']
                 ]);
                 
-                Log::info("Created warehouse product entry due to cancellation", [
+            } catch (\Exception $e) {
+                Log::error("Failed to restore sender warehouse stock", [
                     'warehouse_id' => $senderWarehouseId,
                     'product_id' => $detail->product_id,
-                    'quantity' => $detail->quantity
+                    'error' => $e->getMessage()
                 ]);
+                throw $e;
             }
         }
     }

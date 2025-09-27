@@ -13,6 +13,8 @@ class WarehouseStockAdjustmentForm extends Component
     public $warehouseId;
     public $productId;
     public $newQuantity;
+    public $unitPrice;
+    public $salePrice;
     public $detail;
     public $dateActivity;
 
@@ -27,6 +29,8 @@ class WarehouseStockAdjustmentForm extends Component
         'warehouseId' => 'required|exists:warehouses,id',
         'productId' => 'required|exists:products,id',
         'newQuantity' => 'required|numeric|min:0',
+        'unitPrice' => 'nullable|numeric|min:0',
+        'salePrice' => 'nullable|numeric|min:0',
         'detail' => 'nullable|string|max:255',
         'dateActivity' => 'nullable|date',
     ];
@@ -36,6 +40,8 @@ class WarehouseStockAdjustmentForm extends Component
         'productId.required' => 'Please select a product.',
         'newQuantity.required' => 'New quantity is required.',
         'newQuantity.min' => 'New quantity cannot be negative.',
+        'unitPrice.min' => 'Unit price cannot be negative.',
+        'salePrice.min' => 'Sale price cannot be negative.',
     ];
 
     public function mount()
@@ -92,6 +98,8 @@ class WarehouseStockAdjustmentForm extends Component
                 'warehouse_id' => $this->warehouseId,
                 'product_id' => $this->productId,
                 'new_quantity' => $this->newQuantity,
+                'unit_price' => $this->unitPrice ?? 0,
+                'sale_price' => $this->salePrice ?? 0,
                 'detail' => $this->detail ?? 'Stock Adjustment via Form',
                 'date_activity' => $this->dateActivity ? \Carbon\Carbon::parse($this->dateActivity) : now(),
             ]);
@@ -111,7 +119,7 @@ class WarehouseStockAdjustmentForm extends Component
 
     public function resetForm()
     {
-        $this->reset(['productId', 'newQuantity', 'detail']);
+        $this->reset(['productId', 'newQuantity', 'unitPrice', 'salePrice', 'detail']);
         $this->selectedProduct = null;
         $this->currentStockBalance = 0;
         $this->adjustmentDifference = 0;

@@ -62,7 +62,7 @@
 
         <div class="row">
             <!-- New Quantity -->
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="form-group">
                     <label class="control-label">New Quantity <span class="text-danger">*</span></label>
                     <input type="number" wire:model="newQuantity" class="form-control" placeholder="Enter new quantity" min="0" step="1">
@@ -71,6 +71,28 @@
                 </div>
             </div>
 
+            <!-- Unit Price -->
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="control-label">Unit Price</label>
+                    <input type="number" wire:model="unitPrice" class="form-control" placeholder="Enter unit price" min="0" step="0.01">
+                    @error('unitPrice') <span class="text-danger">{{ $message }}</span> @enderror
+                    <span class="help-block">Optional: Update average buy price</span>
+                </div>
+            </div>
+
+            <!-- Sale Price -->
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="control-label">Sale Price</label>
+                    <input type="number" wire:model="salePrice" class="form-control" placeholder="Enter sale price" min="0" step="0.01">
+                    @error('salePrice') <span class="text-danger">{{ $message }}</span> @enderror
+                    <span class="help-block">Optional: Update average sale price</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
             <!-- Date -->
             <div class="col-md-6">
                 <div class="form-group">
