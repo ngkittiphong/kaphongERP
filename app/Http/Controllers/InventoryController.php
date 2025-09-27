@@ -6,7 +6,7 @@ use App\Services\InventoryService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
-class InventoryController extends Controller
+class InventoryController
 {
     protected $inventoryService;
 

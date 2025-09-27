@@ -63,6 +63,10 @@ Route::get('/menu/menu_warehouse_transfer', function () {
     return view('menu.menu_warehouse_transfer');
 })->middleware('auth');
 
+Route::get('/menu/menu_warehouse_stock', function () {
+    return view('menu.menu_warehouse_stock');
+})->middleware('auth');
+
 //------------------Setting Route--------------------------------
 Route::get('/setting/company_profile', [BranchController::class, 'getHeadOffice'])->name('setting.company_profile');
 

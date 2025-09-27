@@ -36,7 +36,8 @@
             <ul>							
                 <li><a href="/menu/menu_warehouse">Werehouse</a></li>
                 <li><a href="/menu/menu_warehouse_checkstock">Check Stock</a></li>
-                <li><a href="/menu/menu_warehouse_transfer">Transfer</a></li>																			
+                <li><a href="/menu/menu_warehouse_transfer">Transfer</a></li>
+                <li><a href="/menu/menu_warehouse_stock">Stock Operations</a></li>																			
             </ul>
         </li>										
     </ul>
