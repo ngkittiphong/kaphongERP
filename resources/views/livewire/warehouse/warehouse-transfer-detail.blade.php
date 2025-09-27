@@ -15,7 +15,7 @@
         </div>
     @endif
 
-    @if($showAddForm)
+    @if ($showAddForm)
         @livewire('warehouse.warehouse-add-transfer-form')
     @elseif($transferSlip)
         <div class="panel-body">
@@ -26,7 +26,8 @@
                             <div class="tabbable">
                                 <ul class="nav nav-tabs nav-tabs-highlight">
                                     <li class="active">
-                                        <a href="#tab-detail" data-toggle="tab" class="panel-title" aria-expanded="true">
+                                        <a href="#tab-detail" data-toggle="tab" class="panel-title"
+                                            aria-expanded="true">
                                             <div class="panel-heading">
                                                 <h3 class="panel-title">Detail</h3>
                                             </div>
@@ -45,36 +46,45 @@
                                                     <i class="icon-file-text position-left text-warning"></i>
                                                     {{ $transferSlip->transfer_slip_number }} 
                                                     <span class="text-primary">
-                                                        <i class="icon-{{ $this->getStatusIcon($transferSlip->status->name ?? '') }} position-left"></i>
+                                                        <i
+                                                            class="icon-{{ $this->getStatusIcon($transferSlip->status->name ?? '') }} position-left"></i>
                                                         ({{ $transferSlip->status->name ?? 'N/A' }})
                                                     </span>
                                                 </h4>
                                             </div>
                                             <div class="col-md-4 col-xs-4 col-lg-4 text-right">
                                                 <div class="btn-group">
-                                                    @if($this->canChangeStatus())
-                                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    @if ($this->canChangeStatus())
+                                                        <button type="button" class="btn btn-primary dropdown-toggle"
+                                                            data-toggle="dropdown" aria-haspopup="true"
+                                                            aria-expanded="false">
                                                             <i class="icon-cog position-left"></i>
                                                             Change Status
                                                         </button>
-                                                        <div class="dropdown-menu dropdown-menu-right" style="min-width: 200px;">
-                                                            @foreach($this->getAllowedStatusChanges() as $status)
-                                                                <a class="dropdown-item" href="#" wire:click="confirmStatusChange({{ $status->id }})" style="display: block; width: 100%; padding: 10px 16px; border-bottom: 1px solid #f0f0f0; clear: both;">
-                                                                    <i class="icon-{{ $this->getStatusIcon($status->name) }} position-left text-{{ $this->getStatusColor($status->name) }}" style="margin-right: 8px;"></i>
-                                                                    <span style="display: inline-block; vertical-align: middle;">{{ $status->name }}</span>
+                                                        <div class="dropdown-menu dropdown-menu-right"
+                                                            style="min-width: 200px;">
+                                                            @foreach ($this->getAllowedStatusChanges() as $status)
+                                                                <a class="dropdown-item" href="#"
+                                                                    wire:click="confirmStatusChange({{ $status->id }})"
+                                                                    style="display: block; width: 100%; padding: 10px 16px; border-bottom: 1px solid #f0f0f0; clear: both;">
+                                                                    <i class="icon-{{ $this->getStatusIcon($status->name) }} position-left text-{{ $this->getStatusColor($status->name) }}"
+                                                                        style="margin-right: 8px;"></i>
+                                                                    <span
+                                                                        style="display: inline-block; vertical-align: middle;">{{ $status->name }}</span>
                                                                 </a>
                                                             @endforeach
                                                         </div>
                                                     @endif
                                                     
-                                                    @if($this->canCancelTransfer())
-                                                        <button type="button" class="btn btn-danger" wire:click="showCancelModal">
+                                                    @if ($this->canCancelTransfer())
+                                                        <button type="button" class="btn btn-danger"
+                                                            wire:click="showCancelModal">
                                                             <i class="icon-cross position-left"></i>
                                                             Cancel Transfer
                                                         </button>
                                                     @endif
                                                     
-                                                    @if(!$this->canChangeStatus() && !$this->canCancelTransfer())
+                                                    @if (!$this->canChangeStatus() && !$this->canCancelTransfer())
                                                         <div class="text-muted">
                                                             <i class="icon-lock position-left"></i>
                                                             Status Locked
@@ -97,66 +107,80 @@
                                             </div>
                                         </div>
                                         
-                                        @if($transferSlip->description)
+                                        @if ($transferSlip->description)
                                             <div class="col-md-12 col-xs-12 col-lg-12 text-left text-size-extralarge">
                                                 Description: {{ $transferSlip->description }}
                                             </div>
                                         @endif
                                         
-                                        @if($transferSlip->note)
+                                        @if ($transferSlip->note)
                                             <div class="col-md-12 col-xs-12 col-lg-12 text-left text-size-extralarge">
                                                 Remark: {{ $transferSlip->note }}
                                             </div>
                                         @endif
                                         
                                         <div class="row">
-                                            <div class="col-md-6 col-xs-6 col-lg-6 text-left text-size-extralarge panel panel-white">
+                                            <div
+                                                class="col-md-6 col-xs-6 col-lg-6 text-left text-size-extralarge panel panel-white">
                                                 <div class="panel-heading">
                                                     <h4 class="panel-title">
-                                                        <span class="text-primary">{{ $transferSlip->warehouse_origin_name ?? $transferSlip->warehouseOrigin->name ?? 'N/A' }}</span> - Outbound
+                                                        <span
+                                                            class="text-primary">{{ $transferSlip->warehouse_origin_name ?? ($transferSlip->warehouseOrigin->name ?? 'N/A') }}</span>
+                                                        - Outbound
                                                     </h4>
                                                 </div>
                                                 <div class="panel-body">
                                                     <div class="row">
-                                                        <div class="col-md-4 col-xs-6 col-lg-4 text-left text-size-extralarge">
+                                                        <div
+                                                            class="col-md-4 col-xs-6 col-lg-4 text-left text-size-extralarge">
                                                             Pick Date:
                                                         </div>
-                                                        <div class="col-md-8 col-xs-6 col-lg-8 text-left text-size-extralarge">
+                                                        <div
+                                                            class="col-md-8 col-xs-6 col-lg-8 text-left text-size-extralarge">
                                                             {{ $transferSlip->date_request ? $transferSlip->date_request->format('d M Y') : '-' }}
                                                         </div>
                                                     </div>
                                                     <div class="row">
-                                                        <div class="col-md-4 col-xs-6 col-lg-4 text-left text-size-extralarge">
+                                                        <div
+                                                            class="col-md-4 col-xs-6 col-lg-4 text-left text-size-extralarge">
                                                             Picker:
                                                         </div>
-                                                        <div class="col-md-8 col-xs-6 col-lg-8 text-left text-size-extralarge">
-                                                            {{ $transferSlip->user_request_name ?? $transferSlip->userRequest->username ?? 'N/A' }}
+                                                        <div
+                                                            class="col-md-8 col-xs-6 col-lg-8 text-left text-size-extralarge">
+                                                            {{ $transferSlip->user_request_name ?? ($transferSlip->userRequest->username ?? 'N/A') }}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             
-                                            <div class="col-md-6 col-xs-6 col-lg-6 text-left text-size-extralarge panel panel-white">
+                                            <div
+                                                class="col-md-6 col-xs-6 col-lg-6 text-left text-size-extralarge panel panel-white">
                                                 <div class="panel-heading">
                                                     <h4 class="panel-title">
-                                                        <span class="text-primary">{{ $transferSlip->warehouse_destination_name ?? $transferSlip->warehouseDestination->name ?? 'N/A' }}</span> - Inbound
+                                                        <span
+                                                            class="text-primary">{{ $transferSlip->warehouse_destination_name ?? ($transferSlip->warehouseDestination->name ?? 'N/A') }}</span>
+                                                        - Inbound
                                                     </h4>
                                                 </div>
                                                 <div class="panel-body">
                                                     <div class="row">
-                                                        <div class="col-md-4 col-xs-6 col-lg-4 text-left text-size-extralarge">
+                                                        <div
+                                                            class="col-md-4 col-xs-6 col-lg-4 text-left text-size-extralarge">
                                                             Receive Date:
                                                         </div>
-                                                        <div class="col-md-8 col-xs-6 col-lg-8 text-left text-size-extralarge">
+                                                        <div
+                                                            class="col-md-8 col-xs-6 col-lg-8 text-left text-size-extralarge">
                                                             {{ $transferSlip->date_receive ? $transferSlip->date_receive->format('d M Y') : '-' }}
                                                         </div>
                                                     </div>
                                                     <div class="row">
-                                                        <div class="col-md-4 col-xs-6 col-lg-4 text-left text-size-extralarge">
+                                                        <div
+                                                            class="col-md-4 col-xs-6 col-lg-4 text-left text-size-extralarge">
                                                             Receiver:
                                                         </div>
-                                                        <div class="col-md-8 col-xs-6 col-lg-8 text-left text-size-extralarge">
-                                                            {{ $transferSlip->user_receive_name ?? $transferSlip->userReceive->username ?? '-' }}
+                                                        <div
+                                                            class="col-md-8 col-xs-6 col-lg-8 text-left text-size-extralarge">
+                                                            {{ $transferSlip->user_receive_name ?? ($transferSlip->userReceive->username ?? '-') }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -164,7 +188,7 @@
                                         </div>
                                     </div>
 
-                                    @if($transferSlip->transferSlipDetails && $transferSlip->transferSlipDetails->count() > 0)
+                                    @if ($transferSlip->transferSlipDetails && $transferSlip->transferSlipDetails->count() > 0)
                                         <div class="table-responsive">
                                             <table class="table datatable-transfer-detail table-striped">
                                                 <thead>
@@ -177,13 +201,15 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach($transferSlip->transferSlipDetails as $index => $detail)
+                                                    @foreach ($transferSlip->transferSlipDetails as $index => $detail)
                                                         <tr class="text-default">
                                                             <td class="col-md-1">{{ $index + 1 }}.</td>
                                                             <td class="col-md-1">
-                                                                <a href="#">{{ $detail->product->sku_number ?? 'N/A' }}</a>
+                                                                <a
+                                                                    href="#">{{ $detail->product->sku_number ?? 'N/A' }}</a>
                                                             </td>
-                                                            <td class="col-md-5">{{ $detail->product->name ?? 'N/A' }}</td>
+                                                            <td class="col-md-5">{{ $detail->product->name ?? 'N/A' }}
+                                                            </td>
                                                             <td class="col-md-3">{{ $detail->quantity ?? 0 }}</td>
                                                             <td>{{ $detail->product->unit_name ?? 'N/A' }}</td>
                                                         </tr>
@@ -219,8 +245,9 @@
     @endif
 
     <!-- Status Change Confirmation Modal -->
-    @if($showStatusChangeModal)
-        <div class="modal fade in" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1" role="dialog">
+    @if ($showStatusChangeModal)
+        <div class="modal fade in" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1"
+            role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -230,8 +257,11 @@
                         </h5>
                     </div>
                     <div class="modal-body">
-                        <p>Are you sure you want to change the status of transfer slip <strong>{{ $transferSlip->transfer_slip_number }}</strong> to <strong>{{ $selectedStatusName }}</strong>?</p>
-                        @if($selectedStatusName === 'Delivered')
+                        <p>Are you sure you want to change the status of transfer slip
+                            <strong>{{ $transferSlip->transfer_slip_number }}</strong> to
+                            <strong>{{ $selectedStatusName }}</strong>?
+                        </p>
+                        @if ($selectedStatusName === 'Delivered')
                             <div class="alert alert-info">
                                 <i class="icon-info position-left"></i>
                                 This will also set the receive date to today and assign you as the receiver.
@@ -254,8 +284,9 @@
     @endif
 
     <!-- Cancellation Modal -->
-    @if($showCancelModal)
-        <div class="modal fade in" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1" role="dialog">
+    @if ($showCancelModal)
+        <div class="modal fade in" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1"
+            role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -265,25 +296,25 @@
                         </h5>
                     </div>
                     <div class="modal-body">
-                        <p>Are you sure you want to cancel transfer slip <strong>{{ $transferSlip->transfer_slip_number }}</strong>?</p>
+                        <p>Are you sure you want to cancel transfer slip
+                            <strong>{{ $transferSlip->transfer_slip_number }}</strong>?
+                        </p>
                         
                         <div class="form-group">
-                            <label for="cancellationReason" class="control-label">Cancellation Reason <span class="text-danger">*</span></label>
-                            <textarea 
-                                class="form-control" 
-                                id="cancellationReason" 
-                                wire:model="cancellationReason" 
-                                rows="3" 
-                                placeholder="Please provide a reason for cancelling this transfer..."
-                                required
-                            ></textarea>
-                            @error('cancellationReason') <span class="text-danger">{{ $message }}</span> @enderror
+                            <label for="cancellationReason" class="control-label">Cancellation Reason <span
+                                    class="text-danger">*</span></label>
+                            <textarea class="form-control" id="cancellationReason" wire:model="cancellationReason" rows="3"
+                                placeholder="Please provide a reason for cancelling this transfer..." required></textarea>
+                            @error('cancellationReason')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
                         
-                        @if($transferSlip->status->name === 'In Transit')
+                        @if ($transferSlip->status->name === 'In Transit')
                             <div class="alert alert-warning">
                                 <i class="icon-warning position-left"></i>
-                                <strong>Note:</strong> This transfer is currently in transit. Cancelling will restore the inventory to the sender warehouse.
+                                <strong>Note:</strong> This transfer is currently in transit. Cancelling will restore
+                                the inventory to the sender warehouse.
                             </div>
                         @endif
                     </div>
@@ -302,3 +333,164 @@
         </div>
     @endif
 </div>
+
+@push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.3.1/typeahead.bundle.min.js"></script>
+<script>
+    
+    console.log('TransferDetail: Script initialized');
+
+    let bloodhoundEngine = null;
+    let productDataset = [];
+
+    const suggestionTemplate = (item) => {
+        const unit = item.unit || 'N/A';
+        const price = (parseFloat(item.price) || 0).toFixed(2);
+        return `
+            <div>
+                <strong>${item.name}</strong><br>
+                <small class="text-muted">SKU: ${item.sku} | Unit: ${unit} | Price: $${price}</small>
+            </div>
+        `;
+    };
+
+    const initTypeahead = (data = null) => {
+        if (!window.jQuery) {
+            console.error('Typeahead: jQuery missing');
+            return false;
+        }
+
+        // Use provided data or fallback to stored dataset
+        if (data && data.length > 0) {
+            productDataset = data;
+        }
+        
+        if (productDataset.length === 0) {
+            console.warn('Typeahead: No products found, dataset length:', productDataset.length);
+            return false;
+        }
+
+        console.log('Typeahead: Initializing with', productDataset.length, 'products');
+
+        // Initialize Bloodhound with product data
+        bloodhoundEngine = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('search'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            local: productDataset,
+            identify: obj => obj.id,
+            sufficient: 5
+        });
+
+        bloodhoundEngine.initialize();
+
+        const inputs = document.querySelectorAll('input.product-typeahead');
+        if (inputs.length === 0) {
+            console.log('Typeahead: No input fields found');
+            return false;
+        }
+
+        console.log('Typeahead: Found', inputs.length, 'input fields');
+
+        inputs.forEach((input, idx) => {
+            const $input = window.jQuery(input);
+
+            if ($input.data('tt-initialized')) {
+                $input.typeahead('destroy');
+                $input.removeData('tt-initialized');
+            }
+
+            $input.typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                name: 'products',
+                display: 'display',
+                limit: 10,
+                source: bloodhoundEngine.ttAdapter(),
+                templates: {
+                    notFound: '<div class="tt-suggestion">No products found</div>',
+                    suggestion: suggestionTemplate
+                }
+            }).on('typeahead:select typeahead:autocomplete', function (e, datum) {
+                console.log('Typeahead: Product selected:', datum);
+                const index = this.dataset.index;
+                if (index !== undefined) {
+                    Livewire.dispatch('selectProductFromSearch', {
+                        id: datum.id,
+                        index: parseInt(index, 10)
+                    });
+                }
+            }).on('typeahead:close', function () {
+                if (!this.value) {
+                    Livewire.dispatch('clearProductSearch');
+                }
+            });
+
+            $input.data('tt-initialized', true);
+        });
+
+        console.log('Typeahead: Initialization complete');
+        return true;
+    };
+
+    // Try initialization with retry mechanism
+    const tryInit = (attempt = 1, maxAttempts = 10) => {
+        setTimeout(() => {
+            const success = initTypeahead();
+            
+            if (!success && attempt < maxAttempts) {
+                console.log(`Typeahead: Attempt ${attempt}/${maxAttempts} failed, retrying...`);
+                tryInit(attempt + 1, maxAttempts);
+            } else if (!success) {
+                console.error('Typeahead: Failed after', maxAttempts, 'attempts');
+            } else {
+                console.log('Typeahead: Successfully initialized on attempt', attempt);
+            }
+        }, attempt * 100); // 100ms, 200ms, 300ms, etc.
+    };
+
+    document.addEventListener('livewire:initialized', () => {
+
+    // Listen for when the transfer form is ready
+    Livewire.on('transferFormReady', (event) => {
+        console.log('Typeahead: transferFormReady event received with data:', event);
+        const productData = event[0]?.productData || event.productData || [];
+        console.log('Typeahead: Received', productData.length, 'products from event');
+        
+        // Initialize immediately with the received data
+        const success = initTypeahead(productData);
+        if (!success) {
+            console.log('Typeahead: Direct initialization failed, trying with retry mechanism');
+            tryInit();
+        }
+    });
+    
+    // // Also listen for the custom event as fallback
+    // window.addEventListener("showAddNewTransferForm", () => {
+    //     console.log('Typeahead: showAddNewTransferForm event received');
+    //     tryInit();
+    // });
+
+    // @this.on('transferFormReady', () => {
+    //             console.log('transferFormReady: message.processed event received');
+                                    
+    // });
+
+    // // Re-initialize after Livewire updates
+    // Livewire.hook('message.processed', () => {
+    //     console.log('Typeahead: message.processed event received');
+    //     setTimeout(() => {
+    //         // Only try to init if we have data stored
+    //         if (productDataset.length > 0) {
+    //             initTypeahead();
+    //         }
+    //     }, 100);
+    // });
+
+
+
+});
+</script>
+@endpush
+

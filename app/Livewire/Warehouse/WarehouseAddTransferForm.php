@@ -8,6 +8,8 @@ use App\Models\Product;
 use App\Models\Warehouse;
 use App\Models\User;
 use App\Models\TransferSlipStatus;
+use App\Models\Company;
+use App\Models\Branch;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\DB;
@@ -40,6 +42,18 @@ class WarehouseAddTransferForm extends Component
     public $products = [];
     public $users = [];
     
+    // Typeahead dataset for JavaScript
+    public $productTypeaheadDataset = [];
+    
+    // Company profile data
+    public $companyProfile = null;
+    public $mainBranch = null;
+    
+    // Product search functionality (legacy server-side search - kept for fallback)
+    public $productSearchResults = [];
+    public $showProductSearch = false;
+    public $searchingProduct = false;
+    
     // Form state
     public $showForm = false;
     public $isSubmitting = false;
@@ -47,6 +61,8 @@ class WarehouseAddTransferForm extends Component
     protected $listeners = [
         'showAddForm' => 'showAddForm',
         'transferSlipCreated' => 'handleTransferSlipCreated',
+        'selectProductFromSearch' => 'selectProductFromSearch',
+        'clearProductSearch' => 'clearProductSearch',
     ];
     
     protected $rules = [
@@ -79,12 +95,41 @@ class WarehouseAddTransferForm extends Component
 
     public function mount()
     {
-        Log::info('🔥 WarehouseAddTransferForm: mount() called');
         $this->dateRequest = now()->format('Y-m-d');
-        $this->userRequestName = auth()->user()->username ?? '';
+        $this->loadCompanyProfile();
         $this->loadDropdownData();
         $this->addEmptyProduct();
-        Log::info('🔥 WarehouseAddTransferForm: mount() completed');
+        
+        // Dispatch event with product data for typeahead initialization
+        $this->dispatch('transferFormReady', [
+            'productData' => $this->productTypeaheadDataset
+        ]);
+    }
+
+    public function loadCompanyProfile()
+    {
+        // Load company profile (assuming there's only one company)
+        $this->companyProfile = Company::first();
+        
+        if ($this->companyProfile) {
+            // Load main branch (head office)
+            $this->mainBranch = Branch::where('company_id', $this->companyProfile->id)
+                ->where('is_head_office', true)
+                ->first();
+            
+            // Prefill company data
+            $this->companyName = $this->companyProfile->company_name_en ?? $this->companyProfile->company_name_th ?? '';
+            $this->taxId = $this->companyProfile->tax_no ?? '';
+            
+            // Prefill company address from main branch
+            if ($this->mainBranch) {
+                $this->companyAddress = $this->mainBranch->address_en ?? $this->mainBranch->address_th ?? '';
+                $this->tel = $this->mainBranch->phone_number ?? '';
+            }
+        }
+        
+        // Prefill user request name
+        $this->userRequestName = auth()->user()->username ?? '';
     }
 
     public function loadDropdownData()
@@ -99,6 +144,26 @@ class WarehouseAddTransferForm extends Component
             ->get();
             
         $this->users = User::all();
+        
+        // Build typeahead dataset
+        if ($this->products->count() > 0) {
+            $this->productTypeaheadDataset = $this->products->map(function ($product) {
+                $name = $product->name ?? '';
+                $sku = $product->sku_number ?? '';
+
+                return [
+                    'id'      => $product->id,
+                    'name'    => $name,
+                    'sku'     => $sku,
+                    'unit'    => $product->unit_name ?? '',
+                    'price'   => $product->buy_price ?? 0,
+                    'search'  => strtolower(trim($name . ' ' . $sku)),
+                    'display' => trim($name . ' (' . $sku . ')'),
+                ];
+            })->values()->toArray();
+        } else {
+            $this->productTypeaheadDataset = [];
+        }
     }
 
     public function addEmptyProduct()
@@ -113,6 +178,8 @@ class WarehouseAddTransferForm extends Component
                 'cost_per_unit' => 0,
                 'cost_total' => 0,
             ];
+            
+            $this->dispatch('transferProductAdded');
         }
     }
 
@@ -131,6 +198,65 @@ class WarehouseAddTransferForm extends Component
         } elseif (str_contains($index, '.quantity') || str_contains($index, '.cost_per_unit')) {
             $this->calculateProductTotal($index);
         }
+    }
+
+    public function searchProducts($searchTerm, $productIndex)
+    {
+        // Kept for backward compatibility; not used when client-side typeahead is active.
+        if (strlen($searchTerm) < 2) {
+            $this->productSearchResults = [];
+            $this->showProductSearch = false;
+            return;
+        }
+
+        $this->searchingProduct = true;
+        $this->productSearchResults = Product::where(function($query) use ($searchTerm) {
+                $query->where('name', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('sku_number', 'like', '%' . $searchTerm . '%');
+            })
+            ->with(['type', 'group', 'status'])
+            ->limit(10)
+            ->get()
+            ->map(function($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'sku' => $product->sku_number,
+                    'unit' => $product->unit_name,
+                    'buy_price' => $product->buy_price ?? 0,
+                    'type' => $product->type->name ?? 'N/A',
+                    'display_text' => $product->name . ' (' . $product->sku_number . ')'
+                ];
+            })
+            ->toArray();
+
+        $this->showProductSearch = true;
+        $this->searchingProduct = false;
+    }
+
+
+    public function selectProductFromSearch($productId, $productIndex)
+    {
+        $product = Product::find($productId);
+        if ($product) {
+            $this->transferProducts[$productIndex]['product_id'] = $product->id;
+            $this->transferProducts[$productIndex]['product_name'] = $product->name;
+            $this->transferProducts[$productIndex]['product_description'] = $product->buy_description ?? '';
+            $this->transferProducts[$productIndex]['product_search'] = $product->name . ' (' . $product->sku_number . ')';
+            $this->transferProducts[$productIndex]['unit_name'] = $product->unit_name;
+            $this->transferProducts[$productIndex]['cost_per_unit'] = $product->buy_price ?? 0;
+            $this->calculateProductTotal($productIndex . '.quantity');
+        }
+        
+        // Clear search results
+        $this->productSearchResults = [];
+        $this->showProductSearch = false;
+    }
+
+    public function clearProductSearch()
+    {
+        $this->productSearchResults = [];
+        $this->showProductSearch = false;
     }
 
     public function selectProduct($index)
@@ -175,11 +301,6 @@ class WarehouseAddTransferForm extends Component
         $this->resetForm();
     }
 
-    public function testMethod()
-    {
-        Log::info('🔥 WarehouseAddTransferForm: testMethod() called - component is working!');
-        $this->dispatch('showSuccessMessage', 'Test method called successfully!');
-    }
 
     public function hideForm()
     {
@@ -197,12 +318,8 @@ class WarehouseAddTransferForm extends Component
 
     public function resetForm()
     {
-        $this->companyName = '';
-        $this->companyAddress = '';
-        $this->taxId = '';
-        $this->tel = '';
         $this->dateRequest = now()->format('Y-m-d');
-        $this->userRequestName = auth()->user()->username ?? '';
+        $this->loadCompanyProfile(); // Reload company profile data
         $this->deliverName = '';
         $this->warehouseOriginId = '';
         $this->warehouseDestinationId = '';

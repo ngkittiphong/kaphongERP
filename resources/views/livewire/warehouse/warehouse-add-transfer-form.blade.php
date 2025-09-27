@@ -9,9 +9,6 @@
                             Add New Product Transfer
                         </h3>
                         <div class="heading-elements">
-                            <button type="button" class="btn btn-sm btn-info" wire:click="testMethod">
-                                <i class="icon-bug"></i> Test
-                            </button>
                             <button type="button" class="btn btn-sm btn-default" wire:click="hideForm">
                                 <i class="icon-cross2"></i> Cancel
                             </button>
@@ -19,7 +16,7 @@
                     </div>
                 
                 <form wire:submit.prevent="submit" onsubmit="console.log('🔥 Form submit event triggered');">
-                    <div class="panel-body">
+                    <div class="panel-body" style="overflow: visible;">
                         <!-- Transfer Information -->
                         <div class="row">
                             <div class="col-md-12">
@@ -32,7 +29,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Company Name <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" wire:model="companyName" placeholder="Enter company name">
+                                    <input type="text" class="form-control" wire:model="companyName" readonly>
                                     @error('companyName') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
@@ -49,7 +46,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Requested By <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" wire:model="userRequestName" placeholder="Enter requester name">
+                                    <input type="text" class="form-control" wire:model="userRequestName" readonly>
                                     @error('userRequestName') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
@@ -144,9 +141,9 @@
                             </div>
                         </div>
                         
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="table-responsive">
+                        <div class="row" style="overflow: visible;">
+                            <div class="col-md-12" style="overflow: visible;">
+                                <div class="table-responsive" style="overflow: visible;">
                                     <table class="table table-bordered">
                                         <thead>
                                             <tr>
@@ -162,12 +159,15 @@
                                             @foreach($transferProducts as $index => $product)
                                             <tr>
                                                 <td>
-                                                    <select class="form-control" wire:model="transferProducts.{{ $index }}.product_id">
-                                                        <option value="">Select Product</option>
-                                                        @foreach($products as $prod)
-                                                            <option value="{{ $prod->id }}">{{ $prod->name }} ({{ $prod->sku_number }})</option>
-                                                        @endforeach
-                                                    </select>
+                                                   <div class="position-relative">
+                                                       <input type="text"
+                                                              class="form-control product-typeahead"
+                                                              data-index="{{ $index }}"
+                                                              placeholder="Search product by name or SKU..."
+                                                              wire:model.defer="transferProducts.{{ $index }}.product_search"
+                                                              autocomplete="off">
+                                                   </div>
+                                                    
                                                     @error('transferProducts.'.$index.'.product_id') 
                                                         <span class="text-danger small">{{ $message }}</span> 
                                                     @enderror
@@ -209,14 +209,19 @@
                                             </tr>
                                             @endforeach
                                         </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="6" class="text-right">
+                                                    @if(count($transferProducts) < $maxProducts)
+                                                        <button type="button" class="btn btn-sm btn-success" wire:click="addEmptyProduct">
+                                                            <i class="icon-plus"></i> Add
+                                                        </button>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
-                                
-                                @if(count($transferProducts) < $maxProducts)
-                                    <button type="button" class="btn btn-sm btn-success" wire:click="addEmptyProduct">
-                                        <i class="icon-plus"></i> Add Product
-                                    </button>
-                                @endif
                                 
                                 @error('transferProducts') 
                                     <span class="text-danger">{{ $message }}</span> 
@@ -264,3 +269,81 @@
         </div>
     </div>
 </div>
+
+<!-- Product dataset will be passed via Livewire event -->
+
+@push('styles')
+<style>
+    /* Typeahead dropdown styles */
+    .tt-menu {
+        position: absolute !important;
+        top: auto !important;
+        bottom: calc(100% + 6px) !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 99999 !important;
+        width: 100% !important;
+        max-height: 260px !important;
+        overflow-y: auto !important;
+        background: #ffffff !important;
+        border: 1px solid #ddd !important;
+        border-radius: 4px !important;
+        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .tt-menu::-webkit-scrollbar {
+        width: 8px !important;
+    }
+
+    .tt-menu::-webkit-scrollbar-track {
+        background: #f1f1f1 !important;
+        border-radius: 4px !important;
+    }
+
+    .tt-menu::-webkit-scrollbar-thumb {
+        background: #888 !important;
+        border-radius: 4px !important;
+    }
+
+    .tt-menu::-webkit-scrollbar-thumb:hover {
+        background: #555 !important;
+    }
+
+    .tt-suggestion {
+        padding: 8px 12px !important;
+        cursor: pointer !important;
+        color: #333 !important;
+        line-height: 1.4 !important;
+        border-bottom: 1px solid #f0f0f0 !important;
+        background: #fff !important;
+    }
+
+    .tt-suggestion:last-child {
+        border-bottom: none !important;
+    }
+
+    .tt-suggestion:hover,
+    .tt-suggestion.tt-cursor {
+        background-color: #f5f5f5 !important;
+    }
+
+    .tt-highlight {
+        font-weight: 600 !important;
+        color: #2c3e50 !important;
+    }
+
+    .product-typeahead.tt-input {
+        background-color: #fff !important;
+    }
+
+    .table-responsive {
+        overflow: visible !important;
+    }
+
+    .panel-body {
+        overflow: visible !important;
+    }
+</style>
+@endpush
+
+
