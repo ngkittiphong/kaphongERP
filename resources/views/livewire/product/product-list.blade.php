@@ -1,12 +1,12 @@
- <!------------- Start Product List ---->
+<!------------- Start Product List ---->
 
- <div class="table-responsive">
-     <table class="table table-hover datatable-reorder-state-saving datatable-fixed-left">
-         <thead>
-             <tr>
-                 <th scope="col"><?= __('Products') ?></th>
-             </tr>
-         </thead>
+<div class="table-responsive">
+    <table class="table table-hover datatable-reorder-state-saving datatable-fixed-left">
+        <thead>
+            <tr>
+                <th scope="col"><?= __('Products') ?></th>
+            </tr>
+        </thead>
          <tbody>
              @if(isset($items) && count($items) > 0)
                  @foreach ($items as $product)
@@ -23,25 +23,39 @@
                                  </div>
                              </div>
 
-                             <div class="col-md-8 col-sm-8">
-                                 <div class="media-body">
-                                     <div class="media-heading text-size-extralarge text-dark">
-                                         {{ $product->name }}
-                                     </div>
-                                     <div class=" text-size-large text-dark">
-                                         {{ $product->sku_number }}
-                                     </div>
-                                     <div class=" text-size-large text-dark">
-                                         {{ $product->type->name }}
-                                     </div>
-                                 </div>
-                             </div>
+                            <div class="col-md-8 col-sm-8">
+                                <div class="media-body">
+                                    <div class="media-heading text-size-extralarge text-dark">
+                                        {{ $product->name }}
+                                    </div>
+                                    <div class="text-size-large text-dark">
+                                        {{ $product->sku_number }}
+                                    </div>
+                                    <div class="text-size-large text-dark">
+                                        {{ $product->type->name }}
+                                    </div>
+                                    @if($product->status)
+                                        <div class="text-size-small text-muted">
+                                            <span class="badge bg-{{ $this->getStatusColor($product->status->name) }}">
+                                                {{ $product->status->name }}
+                                            </span>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
 
-                             <div class="col-md-1 col-sm-1">
-                                 <div class="media-right media-middle">
-                                     <span class="status-mark bg-{{ 'green' }}" placeholder=""></span>
-                                 </div>
-                             </div>
+                            <div class="col-md-1 col-sm-1">
+                                <div class="media-right media-middle">
+                                    @if($product->status)
+                                        <div class="status-circle bg-{{ $this->getStatusColor($product->status->name) }}" 
+                                             style="width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px;">
+                                            <i class="icon-{{ $this->getStatusIcon($product->status->name) }} text-white"></i>
+                                        </div>
+                                    @else
+                                        <span class="status-mark bg-secondary" placeholder=""></span>
+                                    @endif
+                                </div>
+                            </div>
                          </div>
                      </td>
                  </tr>

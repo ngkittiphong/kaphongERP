@@ -63,4 +63,26 @@ class ProductList extends BaseListComponent
     {
         $this->loadItems();
     }
+
+    public function getStatusColor($statusName)
+    {
+        return match($statusName) {
+            'Active' => 'success',
+            'Inactive' => 'warning',
+            'Discontinued' => 'danger',
+            'Draft' => 'secondary',
+            default => 'secondary'
+        };
+    }
+
+    public function getStatusIcon($statusName)
+    {
+        return match($statusName) {
+            'Active' => 'checkmark3',
+            'Inactive' => 'pause2',
+            'Discontinued' => 'cross2',
+            'Draft' => 'pencil3',
+            default => 'question'
+        };
+    }
 }
