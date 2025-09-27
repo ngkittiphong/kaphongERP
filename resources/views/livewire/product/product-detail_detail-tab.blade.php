@@ -477,7 +477,30 @@
                 </button>
                 <h4 class="modal-title" id="stockAdjustmentModalLabel">Adjust Stock - {{ $selectedWarehouseName ?? '' }}</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding-top: 10px;">
+                <!-- Product Information Section -->
+                <div class="row" style="margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <img src="{{ asset('assets/images/default_product.png') }}" alt="Product Image" 
+                                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd;">
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <h5 class="text-primary" style="margin-top: 0;">{{ $product->name ?? 'N/A' }}</h5>
+                        <p class="text-muted" style="margin-bottom: 5px;">
+                            <strong>SKU:</strong> {{ $product->sku_number ?? 'N/A' }}
+                        </p>
+                        <p class="text-muted" style="margin-bottom: 5px;">
+                            <strong>Type:</strong> {{ $product->type->name ?? 'N/A' }}
+                        </p>
+                        <p class="text-muted" style="margin-bottom: 0;">
+                            <strong>Unit:</strong> {{ $product->unit_name ?? 'pcs' }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Operation Form Section -->
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -543,6 +566,35 @@
                     </div>
 
                 @endif
+
+                <!-- Current Stock Information Section -->
+                <div class="row" style="margin-top: 20px; padding: 15px; background-color: #e8f4fd; border-radius: 5px; border-left: 4px solid #2196F3;">
+                    <div class="col-md-6">
+                        <h6 class="text-primary" style="margin-top: 0; margin-bottom: 10px;">
+                            <i class="icon-info22"></i> Current Stock Information
+                        </h6>
+                        <p class="text-muted" style="margin-bottom: 5px;">
+                            <strong>Warehouse:</strong> {{ $selectedWarehouseName ?? 'N/A' }}
+                        </p>
+                        <p class="text-muted" style="margin-bottom: 5px;">
+                            <strong>Current Remaining:</strong> 
+                            <span class="text-primary" style="font-weight: bold; font-size: 16px;">
+                                {{ number_format($currentStock ?? 0) }} {{ $product->unit_name ?? 'pcs' }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-primary" style="margin-top: 0; margin-bottom: 10px;">
+                            <i class="icon-calendar"></i> Operation Date
+                        </h6>
+                        <p class="text-muted" style="margin-bottom: 5px;">
+                            <strong>Date:</strong> {{ now()->format('d/m/Y') }}
+                        </p>
+                        <p class="text-muted" style="margin-bottom: 0;">
+                            <strong>Time:</strong> {{ now()->format('H:i:s') }}
+                        </p>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal" wire:click="closeStockModal">Cancel</button>

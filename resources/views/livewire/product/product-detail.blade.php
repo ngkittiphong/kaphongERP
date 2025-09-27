@@ -372,18 +372,60 @@
                 Swal.fire({
                     title: 'Confirm Stock Operation',
                     html: `
-                        <div class="text-left">
-                            <p><strong>Operation:</strong> ${operationLabel.toUpperCase()}</p>
-                            <p><strong>Current Stock:</strong> <span id="stock-confirm-current">${data.currentStock ?? 0}</span> ${'{{ $product->unit_name ?? "pcs" }}'}</p>
-                            <p><strong>New Stock:</strong> <span id="stock-confirm-new">${data.newStock ?? 0}</span> ${'{{ $product->unit_name ?? "pcs" }}'}</p>
+                        <div style="text-align: left;">
+                            <!-- Product Information -->
+                            <div style="display: flex; align-items: center; margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #007bff;">
+                                <div style="margin-right: 15px;">
+                                    <img src="${data.productImage || '{{ asset('assets/images/default_product.png') }}'}" 
+                                         alt="Product Image" 
+                                         style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;">
+                                </div>
+                                <div>
+                                    <h6 style="margin: 0 0 5px 0; color: #007bff; font-weight: bold;">${data.productName || 'N/A'}</h6>
+                                    <p style="margin: 0; color: #6c757d; font-size: 14px;"><strong>SKU:</strong> ${data.productSku || 'N/A'}</p>
+                                    <p style="margin: 0; color: #6c757d; font-size: 14px;"><strong>Warehouse:</strong> ${data.warehouseName || 'N/A'}</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Operation Details -->
+                            <div style="margin-bottom: 15px;">
+                                <h6 style="color: #495057; margin-bottom: 10px; font-weight: bold;">
+                                    <i class="icon-cog" style="margin-right: 5px;"></i>Operation Details
+                                </h6>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <div>
+                                        <p style="margin: 5px 0;"><strong>Operation:</strong> <span style="color: #dc3545; font-weight: bold;">${operationLabel.toUpperCase()}</span></p>
+                                        <p style="margin: 5px 0;"><strong>Current Stock:</strong> <span style="color: #007bff; font-weight: bold;">${data.currentStock ?? 0} ${data.unitName || 'pcs'}</span></p>
+                                        <p style="margin: 5px 0;"><strong>New Stock:</strong> <span style="color: #28a745; font-weight: bold;">${data.newStock ?? 0} ${data.unitName || 'pcs'}</span></p>
+                                    </div>
+                                    <div>
+                                        <p style="margin: 5px 0;"><strong>Document No:</strong> <span style="color: #6c757d;">${data.documentNumber || 'N/A'}</span></p>
+                                        <p style="margin: 5px 0;"><strong>Date:</strong> <span style="color: #6c757d;">${data.operationDate || 'N/A'}</span></p>
+                                        <p style="margin: 5px 0;"><strong>Time:</strong> <span style="color: #6c757d;">${data.operationTime || 'N/A'}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Quantity Change Summary -->
+                            <div style="background-color: #e8f4fd; padding: 10px; border-radius: 6px; text-align: center; margin-bottom: 15px;">
+                                <p style="margin: 0; font-weight: bold; color: #495057;">
+                                    Quantity Change: 
+                                    <span style="color: ${(data.newStock - data.currentStock) >= 0 ? '#28a745' : '#dc3545'};">
+                                        ${(data.newStock - data.currentStock) >= 0 ? '+' : ''}${(data.newStock - data.currentStock)} ${data.unitName || 'pcs'}
+                                    </span>
+                                </p>
+                            </div>
                         </div>
                     `,
                     icon: 'question',
                     showCancelButton: true,
-                    confirmButtonText: 'Confirm',
+                    confirmButtonText: 'Confirm Operation',
                     cancelButtonText: 'Cancel',
+                    confirmButtonColor: '#007bff',
+                    cancelButtonColor: '#6c757d',
                     allowOutsideClick: false,
                     allowEscapeKey: false,
+                    width: '600px',
                     didOpen: () => {
                         console.log('🚀 [JS] SweetAlert opened', Swal.getPopup());
                     }

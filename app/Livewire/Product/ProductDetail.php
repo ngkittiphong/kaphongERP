@@ -324,7 +324,12 @@ class ProductDetail extends Component
         
         $this->unitName = $this->product->unit_name ?? 'pcs';
         
+        // Pre-fill prices with product's current prices
+        $this->unitPrice = $this->product->buy_price ?? 0;
+        $this->salePrice = $this->product->sale_price ?? 0;
+        
         \Log::info("🚀 [STOCK MODAL] Modal state set - showModal: {$this->showStockModal}, operationType: '{$this->operationType}', currentStock: {$this->currentStock}");
+        \Log::info("🚀 [STOCK MODAL] Pre-filled prices - unitPrice: {$this->unitPrice}, salePrice: {$this->salePrice}");
         
         $this->dispatch('showStockModal');
     }
@@ -336,8 +341,9 @@ class ProductDetail extends Component
     {
         $this->operationType = '';
         $this->quantity = 0;
-        $this->unitPrice = 0;
-        $this->salePrice = 0;
+        // Keep the pre-filled prices from product data
+        $this->unitPrice = $this->product->buy_price ?? 0;
+        $this->salePrice = $this->product->sale_price ?? 0;
         $this->detail = '';
         $this->resetErrorBag();
     }
@@ -421,7 +427,15 @@ class ProductDetail extends Component
             $this->dispatch('confirmStockOperation',
                 operationType: $this->operationType,
                 currentStock: $resolvedCurrentStock,
-                newStock: $newStock
+                newStock: $newStock,
+                productName: $this->product->name,
+                productSku: $this->product->sku_number,
+                productImage: asset('assets/images/default_product.png'),
+                warehouseName: $this->selectedWarehouseName,
+                operationDate: now()->format('d/m/Y'),
+                operationTime: now()->format('H:i:s'),
+                documentNumber: 'STK-' . now()->format('YmdHis'),
+                unitName: $this->product->unit_name ?? 'pcs'
             );
 
             return;
