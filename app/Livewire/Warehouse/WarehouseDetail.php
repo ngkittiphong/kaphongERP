@@ -96,9 +96,16 @@ class WarehouseDetail extends Component
         $this->main_warehouse = false;
         $this->avr_remain_price = 0.00;
         
-        // Do NOT preselect any warehouse on load; show empty detail until user selects
-        $this->warehouse = null;
-        $this->selectedBranchId = null;
+        // Check for warehouse_id in query parameters
+        if (request()->has('warehouse_id')) {
+            $warehouseId = request()->get('warehouse_id');
+            \Log::info("🔥 Warehouse ID from URL parameter: {$warehouseId}");
+            $this->loadWarehouse($warehouseId);
+        } else {
+            // Do NOT preselect any warehouse on load; show empty detail until user selects
+            $this->warehouse = null;
+            $this->selectedBranchId = null;
+        }
     }
 
     public function loadWarehouse($data = null)

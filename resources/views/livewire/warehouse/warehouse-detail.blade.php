@@ -133,7 +133,6 @@
         setTimeout(function() {
             console.log('🔍 IMMEDIATE CHECK:');
             console.log('  - inventoryTable exists:', document.getElementById('inventoryTable') ? '✅' : '❌');
-            console.log('  - inventorySearchInput exists:', document.getElementById('inventorySearchInput') ? '✅' : '❌');
             console.log('  - Current tab:', $('.tab-pane.active').attr('id') || 'none');
             console.log('  - All tabs:', $('.tab-pane').map(function() { return this.id; }).get());
         }, 500);
@@ -175,9 +174,9 @@
                     inventoryDT = $table.DataTable({
                         autoWidth: true,
                         colReorder: true,
-                        dom: '<"datatable-header"l><"datatable-scroll"t><"datatable-footer"ip>', // Removed 'f' to hide search
+                        dom: '<"datatable-header"lf><"datatable-scroll"t><"datatable-footer"ip>', // Added 'f' back to show search
                         lengthMenu: [10, 25, 50],
-                        searching: true, // Keep search functionality but hide the box
+                        searching: true,
                         language: { search: '', lengthMenu: '_MENU_', paginate: { first: 'First', last: 'Last', next: '→', previous: '←' } }
                     });
                     console.log('✅ DataTable initialized successfully:', inventoryDT);
@@ -186,37 +185,7 @@
                     return;
                 }
 
-                // Setup search input
-                var $searchInput = $('#inventorySearchInput');
-                console.log('🔍 Looking for #inventorySearchInput, found:', $searchInput.length);
-                
-                if ($searchInput.length === 0) {
-                    console.warn('⚠️ #inventorySearchInput not found');
-                    return;
-                }
-
-                $searchInput.off('keyup.inv').on('keyup.inv', function() {
-                    console.log('🔍 Search triggered with value:', this.value);
-                    if (!inventoryDT) { 
-                        console.error('❌ inventoryDT is null');
-                        return; 
-                    }
-                    try {
-                        inventoryDT.search(this.value).draw();
-                        console.log('✅ Search applied successfully');
-                    } catch (error) {
-                        console.error('❌ Search failed:', error);
-                    }
-                });
-
-                window.clearInventorySearch = function() {
-                    console.log('🧹 clearInventorySearch called');
-                    $('#inventorySearchInput').val('');
-                    if (inventoryDT) { 
-                        inventoryDT.search('').draw(); 
-                        console.log('✅ Search cleared');
-                    }
-                };
+                // DataTable search is now handled by default search box
                 
                 console.log('✅ Inventory table setup complete');
             }
@@ -233,17 +202,13 @@
                 movementsDT = $table.DataTable({
                     autoWidth: true,
                     colReorder: true,
-                    dom: '<"datatable-header"l><"datatable-scroll"t><"datatable-footer"ip>', // Removed 'f' to hide search
+                    dom: '<"datatable-header"lf><"datatable-scroll"t><"datatable-footer"ip>', // Added 'f' back to show search
                     lengthMenu: [10, 25, 50],
-                    searching: true, // Keep search functionality but hide the box
+                    searching: true,
                     language: { search: '', lengthMenu: '_MENU_', paginate: { first: 'First', last: 'Last', next: '→', previous: '←' } }
                 });
 
-                // External search
-                $('#movementSearchInput').off('keyup.mov').on('keyup.mov', function() {
-                    if (!movementsDT) { return; }
-                    movementsDT.search(this.value).draw();
-                });
+                // DataTable search is now handled by default search box
 
                 // Date range filter scoped to movements table
                 var filterName = 'warehouseMovementsDateFilter';
@@ -264,11 +229,9 @@
                 });
 
                 window.clearMovementFilters = function() {
-                    $('#movementSearchInput').val('');
                     $('#movementDateFrom').val('');
                     $('#movementDateTo').val('');
                     if (movementsDT) {
-                        movementsDT.search('');
                         movementsDT.draw();
                     }
                 };
@@ -309,7 +272,6 @@
             console.log('  - DataTables:', typeof $.fn.DataTable !== 'undefined' ? '✅ Available' : '❌ Missing');
             console.log('  - Current URL:', window.location.pathname);
             console.log('  - #inventoryTable exists:', $('#inventoryTable').length > 0 ? '✅ Found' : '❌ Not found');
-            console.log('  - #inventorySearchInput exists:', $('#inventorySearchInput').length > 0 ? '✅ Found' : '❌ Not found');
 
             // Initialize after Livewire is fully loaded
             document.addEventListener('livewire:initialized', () => {
@@ -396,6 +358,38 @@
                         }
                     }, 300);
                 });
+            });
+
+            // Handle URL hash for tab switching
+            function handleUrlHash() {
+                const hash = window.location.hash;
+                if (hash === '#tab-inventory') {
+                    console.log('🔍 URL hash detected: switching to inventory tab');
+                    // Switch to inventory tab
+                    $('a[href="#tab-inventory"]').tab('show');
+                    // Initialize inventory table after tab switch
+                    setTimeout(function() {
+                        initInventoryTable();
+                    }, 200);
+                } else if (hash === '#tab-movements') {
+                    console.log('🔍 URL hash detected: switching to movements tab');
+                    // Switch to movements tab
+                    $('a[href="#tab-movements"]').tab('show');
+                    // Initialize movements table after tab switch
+                    setTimeout(function() {
+                        initMovementsTable();
+                    }, 200);
+                }
+            }
+
+            // Check for hash on page load
+            $(document).ready(function() {
+                handleUrlHash();
+            });
+
+            // Listen for hash changes
+            $(window).on('hashchange', function() {
+                handleUrlHash();
             });
 
         })();

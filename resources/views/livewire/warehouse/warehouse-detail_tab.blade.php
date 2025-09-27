@@ -131,23 +131,10 @@
 
                     <div class="tab-pane" id="tab-inventory">
                         <div class="row col-md-12 col-xs-12">
-                            <!-- Search and Filter Section -->
+                            <!-- Inventory Table Header -->
                             <div class="panel-heading">
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                            <input type="text" 
-                                                   class="form-control" 
-                                                   id="inventorySearchInput"
-                                                   placeholder="Search products...">
-                                            <div class="input-group-btn">
-                                                <button type="button" class="btn btn-default" onclick="clearInventorySearch()">
-                                                    <i class="icon-cross2"></i> Clear
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 text-right">
+                                    <div class="col-md-12 text-right">
                                         <span class="text-muted">
                                             Total Products: {{ count($warehouseInventory) }}
                                         </span>
@@ -201,7 +188,7 @@
                                                 </td>
                                                 <td class="col-md-2">
                                                     <ul class="icons-list">
-                                                        <li><a href="#" data-toggle="modal" title="View Details"><i class="icon-eye2"></i></a></li>
+                                                        <li><a href="{{ route('menu.menu_product') }}?product_id={{ $inventory->product->id }}&return_to=warehouse&warehouse_id={{ $warehouse->id }}" title="View Details"><i class="icon-eye2"></i></a></li>
                                                         <li><a href="#" title="Edit"><i class="icon-pencil6"></i></a></li>
                                                         <li><a href="#" title="Stock Movement"><i class="icon-arrow-right8"></i></a></li>
                                                     </ul>
@@ -225,32 +212,24 @@
 
                     <div class="tab-pane" id="tab-movements">
                         <div class="row col-md-12 col-xs-12">
-                            <!-- Search and Filter Section -->
+                            <!-- Date Filter Section -->
                             <div class="panel-heading">
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <div class="input-group">
-                                            <input type="text" 
-                                                   class="form-control" 
-                                                   id="movementSearchInput"
-                                                   placeholder="Search movements...">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
                                         <input type="date" 
                                                class="form-control" 
                                                id="movementDateFrom"
                                                placeholder="From Date">
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <input type="date" 
                                                class="form-control" 
                                                id="movementDateTo"
                                                placeholder="To Date">
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <button type="button" class="btn btn-default" onclick="clearMovementFilters()">
-                                            <i class="icon-cross2"></i> Clear Filters
+                                            <i class="icon-cross2"></i> Clear Date Filters
                                         </button>
                                     </div>
                                     <div class="col-md-3 text-right">

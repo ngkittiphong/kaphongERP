@@ -25,6 +25,16 @@
                     <div class="col-md-12">
                         <div class="row p-l-10 p-r-10 panel panel-flat">
                             <div class="panel-heading">
+                                <!-- Back Button -->
+                                @if(request()->has('return_to') && request()->get('return_to') === 'warehouse')
+                                    <div class="elements">
+                                        <button class="btn btn-default" onclick="goBackToWarehouse()">
+                                            <i class="icon-arrow-left8"></i> Back to Warehouse Inventory
+                                        </button>
+                                    </div>
+                                    <a class="elements-toggle"><i class="icon-more"></i></a>
+                                @endif
+                                
                                 <div class="tabbable">
                                     <ul class="nav nav-tabs nav-tabs-highlight">
                                         <li class="active">
@@ -465,5 +475,20 @@
                 });
             });
         });
+
+        // Back navigation function
+        function goBackToWarehouse() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const returnTo = urlParams.get('return_to');
+            const warehouseId = urlParams.get('warehouse_id');
+            
+            if (returnTo === 'warehouse' && warehouseId) {
+                // Navigate back to warehouse page with the specific warehouse selected and inventory tab active
+                window.location.href = '{{ route("menu.menu_warehouse") }}?warehouse_id=' + warehouseId + '#tab-inventory';
+            } else {
+                // Fallback to browser back
+                window.history.back();
+            }
+        }
     </script>
 @endpush

@@ -79,6 +79,12 @@ class ProductDetail extends Component
     public function mount($productId = null)
     {
         \Log::info("ProductDetail Component Mounted");
+        
+        // Check for product_id in query parameters if no productId is passed directly
+        if (!$productId && request()->has('product_id')) {
+            $productId = request()->get('product_id');
+        }
+        
         if ($productId) {
             $this->loadProduct($productId);
         }

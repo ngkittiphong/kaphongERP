@@ -37,7 +37,7 @@ Route::get('/menu/menu_user', function () {
 
 Route::get('/menu/menu_product', function () {
     return view('menu.menu_product');
-})->middleware('auth');
+})->name('menu.menu_product')->middleware('auth');
 
 Route::get('/menu/menu_category', function () {
     return view('menu.menu_category');
@@ -53,7 +53,7 @@ Route::get('/menu/menu_branch', function () {
 
 Route::get('/menu/menu_warehouse', function () {
     return view('menu.menu_warehouse');
-})->middleware('auth');
+})->name('menu.menu_warehouse')->middleware('auth');
 
 Route::get('/menu/menu_warehouse_checkstock', function () {
     return view('menu.menu_warehouse_checkstock');
