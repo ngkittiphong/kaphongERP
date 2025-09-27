@@ -164,6 +164,15 @@
                                         </div>
                                     </span>
                                 </div>
+                                <div class='row'>
+                                    <span href="#" class="list-group-item p-l-20">
+                        <div class="col-md-12 col-xs-12 text-center">
+                            <button class="btn btn-primary btn-sm" wire:click="openStockModal(0, 'Total All Warehouses')">
+                                <i class="icon-plus2"></i> Adjust Stock
+                            </button>
+                        </div>
+                                    </span>
+                                </div>
 
                             </div>
                         </div>
@@ -224,6 +233,15 @@
                                             <div class="col-md-5 col-xs-5 text-left">
                                                 ${{ number_format($warehouseProduct->balance * $warehouseProduct->avr_remain_price, 2) }}
                                                 <!-- Debug: Balance={{ $warehouseProduct->balance }}, Price={{ $warehouseProduct->avr_remain_price }} -->
+                                            </div>
+                                        </span>
+                                    </div>
+                                    <div class='row'>
+                                        <span href="#" class="list-group-item p-l-20">
+                                            <div class="col-md-12 col-xs-12 text-center">
+                                                <button class="btn btn-primary btn-sm" wire:click="openStockModal({{ $warehouseProduct->warehouse_id }}, '{{ $warehouseProduct->warehouse->name }}')">
+                                                    <i class="icon-plus2"></i> Adjust Stock
+                                                </button>
                                             </div>
                                         </span>
                                     </div>
@@ -309,6 +327,15 @@
                                                             <div class="col-md-5 col-xs-5 text-left">
                                                                 ${{ number_format($warehouseProduct->balance * $warehouseProduct->avr_remain_price, 2) }}
                                                                 <!-- Debug: Balance={{ $warehouseProduct->balance }}, Price={{ $warehouseProduct->avr_remain_price }} -->
+                                                            </div>
+                                                        </span>
+                                                    </div>
+                                                    <div class='row'>
+                                                        <span href="#" class="list-group-item p-l-20">
+                                                            <div class="col-md-12 col-xs-12 text-center">
+                                                                <button class="btn btn-primary btn-sm" wire:click="openStockModal({{ $warehouseProduct->warehouse_id }}, '{{ $warehouseProduct->warehouse->name }}')">
+                                                                    <i class="icon-plus2"></i> Adjust Stock
+                                                                </button>
                                                             </div>
                                                         </span>
                                                     </div>
@@ -445,6 +472,101 @@
                     </div>
                 </div>
             @endif
+        </div>
+    </div>
+</div>
+
+<!-- Stock Adjustment Modal -->
+<div wire:ignore.self class="modal fade" id="stockAdjustmentModal" tabindex="-1" role="dialog" aria-labelledby="stockAdjustmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" wire:click="closeStockModal">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="stockAdjustmentModalLabel">Adjust Stock - {{ $selectedWarehouseName ?? '' }}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="operationType">Operation Type:</label>
+                            <select wire:model.live="operationType" class="form-control" id="operationType">
+                                <option value="">Select Operation</option>
+                                <option value="stock_in">Stock In</option>
+                                <option value="stock_out">Stock Out</option>
+                                <option value="adjustment">Stock Adjustment</option>
+                            </select>
+                            @error('operationType') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+                </div>
+
+                @if($operationType)
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="quantity">Quantity:</label>
+                                <input type="number" wire:model.defer="quantity" class="form-control" id="quantity"
+                                       min="0" step="0.01" placeholder="Enter quantity">
+                                @error('quantity') <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="unitName">Unit:</label>
+                                <input type="text" class="form-control" id="unitName"
+                                       value="{{ $product->unit_name ?? 'pcs' }}" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="unitPrice">Unit Price ($):</label>
+                                <input type="number" wire:model.defer="unitPrice" class="form-control" id="unitPrice"
+                                       min="0" step="0.01" placeholder="Enter unit price">
+                                @error('unitPrice') <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="salePrice">Sale Price ($):</label>
+                                <input type="number" wire:model.defer="salePrice" class="form-control" id="salePrice"
+                                       min="0" step="0.01" placeholder="Enter sale price">
+                                @error('salePrice') <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="detail">Detail/Reason:</label>
+                                <textarea wire:model.defer="detail" class="form-control" id="detail" rows="3"
+                                          placeholder="Enter reason for this operation"></textarea>
+                                @error('detail') <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                @endif
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" wire:click="closeStockModal">Cancel</button>
+                @if($operationType)
+                    <button type="button" class="btn btn-primary" wire:click="processStockOperation"
+                            wire:loading.attr="disabled">
+                        <span wire:loading.remove wire:target="processStockOperation">
+                            <i class="icon-checkmark"></i> Process {{ ucfirst(str_replace('_', ' ', $operationType)) }}
+                        </span>
+                        <span wire:loading wire:target="processStockOperation">
+                            <i class="icon-spinner2 spinner"></i> Processing...
+                        </span>
+                    </button>
+                @endif
+            </div>
         </div>
     </div>
 </div>

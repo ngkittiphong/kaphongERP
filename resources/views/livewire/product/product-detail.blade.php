@@ -323,6 +323,105 @@
                         handleSlimSubmitForm);
                 }, 100);
             });
+
+            // Stock modal events
+            @this.on('showStockModal', () => {
+                console.log('🚀 [JS] showStockModal event received');
+                // Add a small delay to ensure Livewire state is updated
+                setTimeout(() => {
+                    $('#stockAdjustmentModal').modal('show');
+                }, 100);
+            });
+
+            @this.on('hideStockModal', () => {
+                console.log('🚀 [JS] hideStockModal event received');
+                $('#stockAdjustmentModal').modal('hide');
+                // Remove any remaining modal backdrop
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open');
+            });
+
+            // Handle modal close events - DISABLED FOR TESTING
+            // $('#stockAdjustmentModal').on('hidden.bs.modal', function () {
+            //     @this.call('closeStockModal');
+            // });
+
+            @this.on('confirmStockOperation', (data) => {
+                console.log('🚀 [JS] confirmStockOperation event received:', data);
+
+                // Temporarily hide the modal so the confirmation dialog is visible
+                $('#stockAdjustmentModal').modal('hide');
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open');
+
+                if (typeof Swal === 'undefined') {
+                    console.warn('⚠️ [JS] SweetAlert not available, using fallback confirmation.');
+                    const confirmed = window.confirm(`Confirm stock operation?\nCurrent: ${data.currentStock}\nNew: ${data.newStock}`);
+                    if (confirmed) {
+                        @this.call('processStockOperation', true);
+                    } else {
+                        setTimeout(() => {
+                            $('#stockAdjustmentModal').modal('show');
+                        }, 200);
+                    }
+                    return;
+                }
+
+                const operationLabel = data.operationType ? data.operationType.replace('_', ' ') : 'stock operation';
+
+                Swal.fire({
+                    title: 'Confirm Stock Operation',
+                    html: `
+                        <div class="text-left">
+                            <p><strong>Operation:</strong> ${operationLabel.toUpperCase()}</p>
+                            <p><strong>Current Stock:</strong> <span id="stock-confirm-current">${data.currentStock ?? 0}</span> ${'{{ $product->unit_name ?? "pcs" }}'}</p>
+                            <p><strong>New Stock:</strong> <span id="stock-confirm-new">${data.newStock ?? 0}</span> ${'{{ $product->unit_name ?? "pcs" }}'}</p>
+                        </div>
+                    `,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Confirm',
+                    cancelButtonText: 'Cancel',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        console.log('🚀 [JS] SweetAlert opened', Swal.getPopup());
+                    }
+                }).then((result) => {
+                    console.log('🚀 [JS] Confirmation result:', result);
+                    if (result.isConfirmed) {
+                        console.log('🚀 [JS] User confirmed, calling processStockOperation with confirm=true');
+                        @this.call('processStockOperation', true);
+                    } else {
+                        console.log('🚀 [JS] User cancelled, showing modal again');
+                        setTimeout(() => {
+                            $('#stockAdjustmentModal').modal('show');
+                        }, 200);
+                    }
+                });
+            });
+
+            // Success/Error message events
+            @this.on('showSuccessMessage', (message) => {
+                // Small delay to ensure modal is fully closed
+                setTimeout(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: message.message,
+                        confirmButtonText: 'OK'
+                    });
+                }, 300);
+            });
+
+            @this.on('showErrorMessage', (message) => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: message.message,
+                    confirmButtonText: 'OK'
+                });
+            });
         });
     </script>
 @endpush
