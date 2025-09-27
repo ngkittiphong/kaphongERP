@@ -164,15 +164,6 @@
                                         </div>
                                     </span>
                                 </div>
-                                <div class='row'>
-                                    <span href="#" class="list-group-item p-l-20">
-                        <div class="col-md-12 col-xs-12 text-center">
-                            <button class="btn btn-primary btn-sm" wire:click="openStockModal(0, 'Total All Warehouses')">
-                                <i class="icon-plus2"></i> Adjust Stock
-                            </button>
-                        </div>
-                                    </span>
-                                </div>
 
                             </div>
                         </div>
@@ -478,7 +469,7 @@
 
 <!-- Stock Adjustment Modal -->
 <div wire:ignore.self class="modal fade" id="stockAdjustmentModal" tabindex="-1" role="dialog" aria-labelledby="stockAdjustmentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close" wire:click="closeStockModal">
