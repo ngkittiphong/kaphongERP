@@ -6,22 +6,25 @@
                 <div class="panel-heading">
                     <div class="tabbable">
                         <ul class="nav nav-tabs nav-tabs-highlight">
-                            <li class="active">
-                                <a href="#tab-detail" data-toggle="tab" class="panel-title" aria-expanded="true">
+                            <li class="{{ $activeTab === 'detail' ? 'active' : '' }}">
+                                <a href="#tab-detail" class="panel-title" 
+                                   wire:click.prevent="switchTab('detail')" aria-expanded="{{ $activeTab === 'detail' ? 'true' : 'false' }}">
                                     <div class="panel-heading">
                                         <h3 class="panel-title">Detail</h3>
                                     </div>
                                 </a>
                             </li>
-                            <li class="">
-                                <a href="#tab-inventory" data-toggle="tab" aria-expanded="false">
+                            <li class="{{ $activeTab === 'inventory' ? 'active' : '' }}">
+                                <a href="#tab-inventory" 
+                                   wire:click.prevent="switchTab('inventory')" aria-expanded="{{ $activeTab === 'inventory' ? 'true' : 'false' }}">
                                     <div class="panel-heading">
                                         <h3 class="panel-title">Inventory</h3>
                                     </div>
                                 </a>
                             </li>
-                            <li class="">
-                                <a href="#tab-movements" data-toggle="tab" aria-expanded="false">
+                            <li class="{{ $activeTab === 'movements' ? 'active' : '' }}">
+                                <a href="#tab-movements" 
+                                   wire:click.prevent="switchTab('movements')" aria-expanded="{{ $activeTab === 'movements' ? 'true' : 'false' }}">
                                     <div class="panel-heading">
                                         <h3 class="panel-title">Movements</h3>
                                     </div>
@@ -38,7 +41,7 @@
                     </div>
                 </div>
                 <div class="tab-content">
-                    <div class="tab-pane active" id="tab-detail">
+                    <div class="tab-pane {{ $activeTab === 'detail' ? 'active' : '' }}" id="tab-detail">
                         <div class="row col-md-12 col-xs-12">
                             <div class="panel-heading no-padding-bottom">
                                 <h4 class="panel-title">Warehouse details</h4>
@@ -129,7 +132,7 @@
                         </div>
                     </div>
 
-                    <div class="tab-pane" id="tab-inventory">
+                    <div class="tab-pane {{ $activeTab === 'inventory' ? 'active' : '' }}" id="tab-inventory">
                         <div class="row col-md-12 col-xs-12">
                             <!-- Inventory Table Header -->
                             <div class="panel-heading">
@@ -189,7 +192,7 @@
                                                 <td class="col-md-2">
                                                     <ul class="icons-list">
                                                         <li><a href="{{ route('menu.menu_product') }}?product_id={{ $inventory->product->id }}&return_to=warehouse&warehouse_id={{ $warehouse->id }}" title="View Details"><i class="icon-eye2"></i></a></li>
-                                                        <li><a href="#" title="Edit"><i class="icon-pencil6"></i></a></li>
+                                                        <li><a href="#" title="Edit" wire:click.prevent="openStockModal({{ $inventory->product->id }}, {{ $warehouse->id }}, '{{ $warehouse->name }}')" onclick="console.log('🚀 [CLICK] Edit button clicked for product: {{ $inventory->product->id }}, warehouse: {{ $warehouse->id }}'); console.log('🚀 [CLICK] About to call Livewire method');"><i class="icon-pencil6"></i></a></li>
                                                         <li><a href="#" title="Stock Movement"><i class="icon-arrow-right8"></i></a></li>
                                                     </ul>
                                                 </td>
@@ -210,7 +213,7 @@
                         </div>
                     </div>
 
-                    <div class="tab-pane" id="tab-movements">
+                    <div class="tab-pane {{ $activeTab === 'movements' ? 'active' : '' }}" id="tab-movements">
                         <div class="row col-md-12 col-xs-12">
                             <!-- Date Filter Section -->
                             <div class="panel-heading">

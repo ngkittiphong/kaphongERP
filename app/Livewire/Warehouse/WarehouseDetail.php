@@ -9,6 +9,7 @@ use App\Models\WarehouseStatus;
 use App\Models\WarehouseProduct;
 use App\Models\Inventory;
 use App\Models\TransferSlip;
+use App\Models\Product;
 use App\Http\Controllers\WarehouseController;
 use App\Services\InventoryService;
 use Illuminate\Http\Request;
@@ -31,6 +32,23 @@ class WarehouseDetail extends Component
     
     // Branch selection for viewing warehouse details
     public $selectedBranchId = null;
+    
+    // Product edit modal properties
+    public $showProductEditModal = false;
+    public $selectedProduct = null;
+    public $selectedProductId = null;
+    public $selectedWarehouseId = null;
+    public $selectedWarehouseName = '';
+    public $operationType = '';
+    public $quantity = 0;
+    public $unitName = '';
+    public $unitPrice = 0;
+    public $salePrice = 0;
+    public $detail = '';
+    public $currentStock = 0;
+
+    // Tab state management
+    public $activeTab = 'detail';
 
     protected $listeners = [
         'warehouseSelected' => 'loadWarehouse',
@@ -40,7 +58,9 @@ class WarehouseDetail extends Component
         'createWarehouse' => 'createWarehouse',
         'deleteWarehouse' => 'deleteWarehouse',
         'reactivateWarehouse' => 'reactivateWarehouse',
-        'cancelForm' => 'cancelForm'
+        'cancelForm' => 'cancelForm',
+        'closeProductEditModal' => 'closeProductEditModal',
+        'processProductStockOperation' => 'processProductStockOperation'
     ];
 
     protected function getListeners()
@@ -53,7 +73,9 @@ class WarehouseDetail extends Component
             'createWarehouse' => 'createWarehouse',
             'deleteWarehouse' => 'deleteWarehouse',
             'reactivateWarehouse' => 'reactivateWarehouse',
-            'cancelForm' => 'cancelForm'
+            'cancelForm' => 'cancelForm',
+            'closeProductEditModal' => 'closeProductEditModal',
+            'processProductStockOperation' => 'processProductStockOperation'
         ];
     }
 
@@ -507,6 +529,212 @@ class WarehouseDetail extends Component
                 $this->warehouseInventory = [];
                 $this->warehouseMovements = [];
             }
+        }
+    }
+
+    /**
+     * Open stock adjustment modal (same as Product Detail)
+     */
+    public function openStockModal($productId, $warehouseId, $warehouseName)
+    {
+        \Log::info("🚀 [STOCK MODAL] openStockModal called - product: {$productId}, warehouse: {$warehouseId}, name: {$warehouseName}");
+        
+        // Preserve the current tab state
+        $this->activeTab = 'inventory';
+        
+        $this->selectedProductId = $productId;
+        $this->selectedWarehouseId = $warehouseId;
+        $this->selectedWarehouseName = $warehouseName;
+
+        $this->selectedProduct = Product::with('type')->find($productId);
+
+        if (!$this->selectedProduct) {
+            \Log::error("🚀 [STOCK MODAL] Product not found with ID: {$productId}");
+            $this->dispatch('showErrorMessage', message: 'Product not found');
+            return;
+        }
+
+        $this->currentStock = $this->resolveCurrentStock();
+        $this->showProductEditModal = true;
+        $this->resetProductEditModalFields();
+
+        \Log::info("🚀 [STOCK MODAL] Dispatching showStockModal event");
+        $this->dispatch('showStockModal');
+    }
+
+    /**
+     * Switch to a specific tab
+     */
+    public function switchTab($tabName)
+    {
+        $this->activeTab = $tabName;
+        $this->dispatch('tabSwitched', tab: $tabName);
+    }
+
+    /**
+     * Close product edit modal
+     */
+    public function closeProductEditModal()
+    {
+        $this->showProductEditModal = false;
+        $this->dispatch('hideStockModal');
+        $this->resetProductEditModalFields();
+    }
+
+    /**
+     * Close stock modal (alias for compatibility)
+     */
+    public function closeStockModal()
+    {
+        $this->closeProductEditModal();
+    }
+
+
+    /**
+     * Reset product edit modal fields
+     */
+    public function resetProductEditModalFields()
+    {
+        $product = $this->selectedProduct;
+        $this->operationType = '';
+        $this->quantity = 0;
+        $this->unitName = $product->unit_name ?? 'pcs';
+        $this->unitPrice = $product->buy_price ?? 0;
+        $this->salePrice = $product->sale_price ?? 0;
+        $this->detail = '';
+        $this->resetErrorBag();
+    }
+
+    protected function resolveCurrentStock(): float
+    {
+        if (!$this->selectedProductId) {
+            return 0;
+        }
+
+        if ($this->selectedWarehouseId > 0) {
+            return (float) (WarehouseProduct::where('warehouse_id', $this->selectedWarehouseId)
+                ->where('product_id', $this->selectedProductId)
+                ->value('balance') ?? 0);
+        }
+
+        return (float) WarehouseProduct::where('product_id', $this->selectedProductId)->sum('balance');
+    }
+
+    /**
+     * Process product stock operation
+     */
+    public function processProductStockOperation($confirm = false)
+    {
+        if (!$this->selectedProduct) {
+            $this->dispatch('showErrorMessage', message: 'Product not loaded');
+            return;
+        }
+
+        try {
+            $this->validate([
+                'operationType' => 'required|in:stock_in,stock_out,adjustment',
+                'quantity' => 'required|numeric|min:0.01',
+                'unitPrice' => 'nullable|numeric|min:0',
+                'salePrice' => 'nullable|numeric|min:0',
+                'detail' => 'nullable|string|max:255'
+            ]);
+        } catch (\Exception $e) {
+            \Log::error("🚀 [PRODUCT EDIT MODAL] Validation failed: " . $e->getMessage());
+            $this->dispatch('showErrorMessage', message: 'Validation failed: ' . $e->getMessage());
+            return;
+        }
+
+        $currentStock = $this->resolveCurrentStock();
+        $unitName = $this->unitName ?: ($this->selectedProduct->unit_name ?? 'pcs');
+
+        if (!$confirm) {
+            $newStock = $currentStock;
+
+            switch ($this->operationType) {
+                case 'adjustment':
+                    $newStock = (float) $this->quantity;
+                    break;
+                case 'stock_in':
+                    $newStock = $currentStock + (float) $this->quantity;
+                    break;
+                case 'stock_out':
+                    $newStock = $currentStock - (float) $this->quantity;
+                    break;
+            }
+
+            \Log::info("🚀 [PRODUCT EDIT MODAL] Dispatching confirmProductStockOperation event", [
+                'operationType' => $this->operationType,
+                'currentStock' => $currentStock,
+                'newStock' => $newStock,
+            ]);
+
+            $this->dispatch(
+                'confirmStockOperation',
+                operationType: $this->operationType,
+                currentStock: $currentStock,
+                newStock: $newStock,
+                productName: $this->selectedProduct->name,
+                productSku: $this->selectedProduct->sku_number,
+                productImage: asset('assets/images/default_product.png'),
+                warehouseName: $this->selectedWarehouseName,
+                operationDate: now()->format('d/m/Y'),
+                operationTime: now()->format('H:i:s'),
+                documentNumber: 'STK-' . now()->format('YmdHis'),
+                unitName: $unitName,
+            );
+
+            return;
+        }
+
+        if ($this->operationType === 'stock_out' && $this->quantity > $currentStock) {
+            $this->addError('quantity', 'Insufficient stock. Available: ' . $currentStock);
+            return;
+        }
+
+        try {
+            $inventoryService = new InventoryService();
+
+            $data = [
+                'product_id' => $this->selectedProductId,
+                'warehouse_id' => $this->selectedWarehouseId,
+                'unit_name' => $unitName,
+                'unit_price' => $this->unitPrice,
+                'sale_price' => $this->salePrice,
+                'detail' => $this->detail ?: ucfirst(str_replace('_', ' ', $this->operationType)),
+                'date_activity' => now(),
+            ];
+
+            if ($this->operationType === 'adjustment') {
+                $data['new_quantity'] = $this->quantity;
+            } else {
+                $data['quantity'] = $this->quantity;
+            }
+
+            $result = null;
+
+            switch ($this->operationType) {
+                case 'stock_in':
+                    $result = $inventoryService->stockIn($data);
+                    break;
+                case 'stock_out':
+                    $result = $inventoryService->stockOut($data);
+                    break;
+                case 'adjustment':
+                    $result = $inventoryService->stockAdjustment($data);
+                    break;
+            }
+
+            if ($result && ($result['success'] ?? false)) {
+                $this->closeProductEditModal();
+                $this->loadWarehouseInventory();
+                $this->loadWarehouseMovements();
+                $this->dispatch('showSuccessMessage', message: $result['message'] ?? 'Stock updated successfully');
+            } else {
+                $this->dispatch('showErrorMessage', message: 'Stock operation failed');
+            }
+        } catch (\Exception $e) {
+            \Log::error("🚀 [PRODUCT EDIT MODAL] Stock operation failed: " . $e->getMessage());
+            $this->dispatch('showErrorMessage', message: 'Stock operation failed: ' . $e->getMessage());
         }
     }
 
