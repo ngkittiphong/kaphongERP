@@ -10,7 +10,7 @@
                                 <a href="#tab-detail" class="panel-title" 
                                    wire:click.prevent="switchTab('detail')" aria-expanded="{{ $activeTab === 'detail' ? 'true' : 'false' }}">
                                     <div class="panel-heading">
-                                        <h3 class="panel-title">Detail</h3>
+                                        <h3 class="panel-title">{{ __t('common.detail', 'Detail') }}</h3>
                                     </div>
                                 </a>
                             </li>
@@ -18,7 +18,7 @@
                                 <a href="#tab-inventory" 
                                    wire:click.prevent="switchTab('inventory')" aria-expanded="{{ $activeTab === 'inventory' ? 'true' : 'false' }}">
                                     <div class="panel-heading">
-                                        <h3 class="panel-title">Inventory</h3>
+                                        <h3 class="panel-title">{{ __t('warehouse.inventory', 'Inventory') }}</h3>
                                     </div>
                                 </a>
                             </li>
@@ -26,14 +26,14 @@
                                 <a href="#tab-movements" 
                                    wire:click.prevent="switchTab('movements')" aria-expanded="{{ $activeTab === 'movements' ? 'true' : 'false' }}">
                                     <div class="panel-heading">
-                                        <h3 class="panel-title">Movements</h3>
+                                        <h3 class="panel-title">{{ __t('warehouse.movements', 'Movements') }}</h3>
                                     </div>
                                 </a>
                             </li>
                             {{-- <li class="">
                                 <a href="#tab-stock-operations" data-toggle="tab" aria-expanded="false">
                                     <div class="panel-heading">
-                                        <h3 class="panel-title">Stock Operations</h3>
+                                        <h3 class="panel-title">{{ __t('warehouse.stock_operations', 'Stock Operations') }}</h3>
                                     </div>
                                 </a>
                             </li> --}}
@@ -44,19 +44,19 @@
                     <div class="tab-pane {{ $activeTab === 'detail' ? 'active' : '' }}" id="tab-detail">
                         <div class="row col-md-12 col-xs-12">
                             <div class="panel-heading no-padding-bottom">
-                                <h4 class="panel-title">Warehouse details</h4>
+                                <h4 class="panel-title">{{ __t('warehouse.warehouse_details', 'Warehouse details') }}</h4>
                                 <div class="elements">
                                     @if($warehouse->status->name === 'Active')
                                         <button class="btn bg-amber-darkest"
                                             wire:click="$dispatch('showEditWarehouseForm')">
-                                            <i class="icon-pencil6"></i> Edit Warehouse
+                                            <i class="icon-pencil6"></i> {{ __t('warehouse.edit_warehouse', 'Edit Warehouse') }}
                                         </button>
                                         <button class="btn btn-danger" onclick="confirmDelete({{ $warehouse->id ?? 0 }})">
-                                            <i class="icon-trash"></i> Deactivate Warehouse
+                                            <i class="icon-trash"></i> {{ __t('warehouse.deactivate_warehouse', 'Deactivate Warehouse') }}
                                         </button>
                                     @else
                                         <button class="btn btn-success" onclick="confirmReactivate({{ $warehouse->id ?? 0 }})">
-                                            <i class="icon-checkmark"></i> Reactivate Warehouse
+                                            <i class="icon-checkmark"></i> {{ __t('warehouse.reactivate_warehouse', 'Reactivate Warehouse') }}
                                         </button>
                                     @endif
                                 </div>
@@ -151,15 +151,15 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Product Name</th>
-                                            <th>Product Code</th>
-                                            <th>Balance</th>
-                                            <th>Unit</th>
-                                            <th>Avg Buy Price</th>
-                                            <th>Avg Sale Price</th>
-                                            <th>Total Value</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
+                                            <th>{{ __t('product.product_name', 'Product Name') }}</th>
+                                            <th>{{ __t('product.product_code', 'Product Code') }}</th>
+                                            <th>{{ __t('warehouse.balance', 'Balance') }}</th>
+                                            <th>{{ __t('product.unit', 'Unit') }}</th>
+                                            <th>{{ __t('product.avg_buy_price', 'Avg Buy Price') }}</th>
+                                            <th>{{ __t('product.avg_sale_price', 'Avg Sale Price') }}</th>
+                                            <th>{{ __t('product.total_value', 'Total Value') }}</th>
+                                            <th>{{ __t('common.status', 'Status') }}</th>
+                                            <th>{{ __t('common.action', 'Action') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -191,9 +191,9 @@
                                                 </td>
                                                 <td class="col-md-2">
                                                     <ul class="icons-list">
-                                                        <li><a href="{{ route('menu.menu_product') }}?product_id={{ $inventory->product->id }}&return_to=warehouse&warehouse_id={{ $warehouse->id }}" title="View Details"><i class="icon-eye2"></i></a></li>
-                                                        <li><a href="#" title="Edit" wire:click.prevent="openStockModal({{ $inventory->product->id }}, {{ $warehouse->id }}, '{{ $warehouse->name }}')" onclick="console.log('🚀 [CLICK] Edit button clicked for product: {{ $inventory->product->id }}, warehouse: {{ $warehouse->id }}'); console.log('🚀 [CLICK] About to call Livewire method');"><i class="icon-pencil6"></i></a></li>
-                                                        <li><a href="#" title="Stock Movement" wire:click.prevent="openTransferForm({{ $inventory->product->id }}, {{ $warehouse->id }}, '{{ $warehouse->name }}')"><i class="icon-arrow-right8"></i></a></li>
+                                                        <li><a href="{{ route('menu.menu_product') }}?product_id={{ $inventory->product->id }}&return_to=warehouse&warehouse_id={{ $warehouse->id }}" title="{{ __t('common.view_details', 'View Details') }}"><i class="icon-eye2"></i></a></li>
+                                                        <li><a href="#" title="{{ __t('common.edit', 'Edit') }}" wire:click.prevent="openStockModal({{ $inventory->product->id }}, {{ $warehouse->id }}, '{{ $warehouse->name }}')" onclick="console.log('🚀 [CLICK] Edit button clicked for product: {{ $inventory->product->id }}, warehouse: {{ $warehouse->id }}'); console.log('🚀 [CLICK] About to call Livewire method');"><i class="icon-pencil6"></i></a></li>
+                                                        <li><a href="#" title="{{ __t('warehouse.stock_movement', 'Stock Movement') }}" wire:click.prevent="openTransferForm({{ $inventory->product->id }}, {{ $warehouse->id }}, '{{ $warehouse->name }}')"><i class="icon-arrow-right8"></i></a></li>
                                                     </ul>
                                                 </td>
                                             </tr>
@@ -222,13 +222,13 @@
                                         <input type="date" 
                                                class="form-control" 
                                                id="movementDateFrom"
-                                               placeholder="From Date">
+                                               placeholder="{{ __t('common.from_date', 'From Date') }}">
                                     </div>
                                     <div class="col-md-3">
                                         <input type="date" 
                                                class="form-control" 
                                                id="movementDateTo"
-                                               placeholder="To Date">
+                                               placeholder="{{ __t('common.to_date', 'To Date') }}">
                                     </div>
                                     <div class="col-md-3">
                                         <button type="button" class="btn btn-default" onclick="clearMovementFilters()">
@@ -253,11 +253,11 @@
                                             <th>Type</th>
                                             <th>Product</th>
                                             <th>Quantity</th>
-                                            <th>Unit</th>
+                                            <th>{{ __t('product.unit', 'Unit') }}</th>
                                             <th>Reference</th>
                                             <th>From/To</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
+                                            <th>{{ __t('common.status', 'Status') }}</th>
+                                            <th>{{ __t('common.action', 'Action') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -302,9 +302,9 @@
                                                 </td>
                                                 <td class="col-md-1">
                                                     <ul class="icons-list">
-                                                        <li><a href="#" data-toggle="modal" title="View Details"><i class="icon-eye2"></i></a></li>
+                                                        <li><a href="#" data-toggle="modal" title="{{ __t('common.view_details', 'View Details') }}"><i class="icon-eye2"></i></a></li>
                                                         @if($movement['type'] === 'Transfer')
-                                                            <li><a href="#" title="View Transfer"><i class="icon-arrow-right8"></i></a></li>
+                                                            <li><a href="#" title="{{ __t('warehouse.view_transfer', 'View Transfer') }}"><i class="icon-arrow-right8"></i></a></li>
                                                         @endif
                                                     </ul>
                                                 </td>

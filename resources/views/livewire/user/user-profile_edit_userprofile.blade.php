@@ -13,7 +13,7 @@
                 @if ($user->profile && $user->profile->avatar)
                     <img src="{{ $user->profile->avatar }}" alt="{{ $user->username }}'s Avatar" class="img-fluid" />
                 @else
-                    <img src="{{ asset('assets/images/faces/face_default.png') }}" alt="Default Icon"
+                    <img src="{{ asset('assets/images/faces/face_default.png') }}" alt="{{ __t('user.default_icon', 'Default Icon') }}"
                         class="img-fluid" />
                 @endif
 
@@ -25,15 +25,15 @@
                 ({{ $user->profile->nickname }})</h4>
             <div class="form-group col-md-8">
                 <select class="form-control">
-                    <option>Admin</option>
-                    <option>User</option>
+                    <option>{{ __t('user.admin', 'Admin') }}</option>
+                    <option>{{ __t('user.user', 'User') }}</option>
                 </select>
             </div>
 
             <div class="form-group col-md-8">
                 <select class="form-control">
-                    <option>Active</option>
-                    <option>Hold</option>
+                    <option>{{ __t('common.active', 'Active') }}</option>
+                    <option>{{ __t('user.hold', 'Hold') }}</option>
                 </select>
             </div>
         </div>
@@ -110,19 +110,19 @@
 
                 <!-- Nickname field -->
                 <div class="form-group">
-                    <label>Nickname</label>
+                    <label>{{ __t('user.nickname', 'Nickname') }}</label>
                     <input type="text" class="form-control" wire:model="nickname" value="test">
                 </div>
 
                 <!-- Description field -->
                 <div class="form-group">
-                    <label>Description</label>
+                    <label>{{ __t('user.description', 'Description') }}</label>
                     <textarea class="form-control" wire:model="description" rows="3">{{ $user->profile->description ?? '' }}</textarea>
                 </div>
 
                 <!-- Submit button -->
                 <div class="text-right">
-                    <button type="submit" class="btn bg-primary-darkest">Save Changes</button>
+                    <button type="submit" class="btn bg-primary-darkest">{{ __t('common.save_changes', 'Save Changes') }}</button>
                 </div>
             </div>
         </div>

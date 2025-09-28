@@ -27,8 +27,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="text-center">
-                            <h4>Select a warehouse to view details</h4>
-                            <p class="text-muted">Choose a warehouse from the list to see its information</p>
+                            <h4>{{ __t('warehouse.select_warehouse_to_view_details', 'Select a warehouse to view details') }}</h4>
+                            <p class="text-muted">{{ __t('warehouse.choose_warehouse_from_list', 'Choose a warehouse from the list to see its information') }}</p>
                         </div>
                     </div>
                 </div>

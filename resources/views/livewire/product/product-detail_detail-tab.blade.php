@@ -471,7 +471,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" wire:click="closeStockModal">
+                <button type="button" class="close" data-dismiss="modal" aria-label="{{ __t('common.close', 'Close') }}" wire:click="closeStockModal">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 <h4 class="modal-title" id="stockAdjustmentModalLabel">{{ __t('product.adjust_stock', 'Adjust Stock') }} - {{ $selectedWarehouseName ?? '' }}</h4>
@@ -481,20 +481,20 @@
                 <div class="row" style="margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
                     <div class="col-md-3">
                         <div class="text-center">
-                            <img src="{{ asset('assets/images/default_product.png') }}" alt="Product Image" 
+                            <img src="{{ asset('assets/images/default_product.png') }}" alt="{{ __t('product.product_image', 'Product Image') }}" 
                                  style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd;">
                         </div>
                     </div>
                     <div class="col-md-9">
                         <h5 class="text-primary" style="margin-top: 0;">{{ $product->name ?? 'N/A' }}</h5>
                         <p class="text-muted" style="margin-bottom: 5px;">
-                            <strong>SKU:</strong> {{ $product->sku_number ?? 'N/A' }}
+                            <strong>{{ __t('product.sku', 'SKU') }}:</strong> {{ $product->sku_number ?? 'N/A' }}
                         </p>
                         <p class="text-muted" style="margin-bottom: 5px;">
-                            <strong>Type:</strong> {{ $product->type->name ?? 'N/A' }}
+                            <strong>{{ __t('product.type', 'Type') }}:</strong> {{ $product->type->name ?? 'N/A' }}
                         </p>
                         <p class="text-muted" style="margin-bottom: 0;">
-                            <strong>Unit:</strong> {{ $product->unit_name ?? 'pcs' }}
+                            <strong>{{ __t('product.unit', 'Unit') }}:</strong> {{ $product->unit_name ?? 'pcs' }}
                         </p>
                     </div>
                 </div>

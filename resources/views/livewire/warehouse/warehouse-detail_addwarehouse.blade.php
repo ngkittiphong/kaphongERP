@@ -32,7 +32,7 @@
                                 <div class="form-group">
                                     <label class="control-label">{{ __t('warehouse.branch', 'Branch') }} <span class="text-danger">*</span></label>
                                     <select class="form-control" wire:model="branch_id" required>
-                                        <option value="">Select Branch</option>
+                                        <option value="">{{ __t('warehouse.select_branch', 'Select Branch') }}</option>
                                         @foreach($branches as $branch)
                                             <option value="{{ $branch->id }}">{{ $branch->name_en }}</option>
                                         @endforeach
@@ -44,7 +44,7 @@
                                 <div class="form-group">
                                     <label class="control-label">{{ __t('warehouse.user_creator', 'User Creator') }} <span class="text-danger">*</span></label>
                                     <select class="form-control" wire:model="user_create_id" required>
-                                        <option value="">Select User</option>
+                                        <option value="">{{ __t('warehouse.select_user', 'Select User') }}</option>
                                         @foreach(\App\Models\User::all() as $user)
                                             <option value="{{ $user->id }}">{{ $user->username }}</option>
                                         @endforeach
@@ -58,7 +58,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">{{ __t('warehouse.warehouse_name', 'Warehouse Name') }} <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" wire:model="name" placeholder="Enter warehouse name" required>
+                                    <input type="text" class="form-control" wire:model="name" placeholder="{{ __t('warehouse.enter_warehouse_name', 'Enter warehouse name') }}" required>
                                     @error('name') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
@@ -76,7 +76,7 @@
                                 <div class="form-group">
                                     <label class="control-label">{{ __t('common.status', 'Status') }} <span class="text-danger">*</span></label>
                                     <select class="form-control" wire:model="warehouse_status_id" required>
-                                        <option value="">Select Status</option>
+                                        <option value="">{{ __t('warehouse.select_status', 'Select Status') }}</option>
                                         @foreach($warehouse_statuses as $status)
                                             <option value="{{ $status->id }}">{{ $status->name }}</option>
                                         @endforeach
@@ -87,7 +87,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">{{ __t('warehouse.average_remain_price', 'Average Remain Price') }}</label>
-                                    <input type="number" class="form-control" wire:model="avr_remain_price" placeholder="0.00" step="0.01" min="0">
+                                    <input type="number" class="form-control" wire:model="avr_remain_price" placeholder="{{ __t('warehouse.enter_price', '0.00') }}" step="0.01" min="0">
                                     @error('avr_remain_price') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>

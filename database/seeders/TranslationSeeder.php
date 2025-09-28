@@ -1363,6 +1363,74 @@ class TranslationSeeder extends Seeder
                 'en' => 'Create Check Stock Report',
                 'th' => 'สร้างรายงานตรวจสอบสต็อก'
             ],
+            'warehouse.no_transfer_selected' => [
+                'en' => 'No Transfer Selected',
+                'th' => 'ยังไม่ได้เลือกการโอนย้าย'
+            ],
+            'warehouse.select_transfer_slip_from_list' => [
+                'en' => 'Please select a transfer slip from the list to view details',
+                'th' => 'กรุณาเลือกใบโอนย้ายจากรายการเพื่อดูรายละเอียด'
+            ],
+            'warehouse.select_warehouse_to_view_details' => [
+                'en' => 'Select a warehouse to view details',
+                'th' => 'เลือกคลังสินค้าเพื่อดูรายละเอียด'
+            ],
+            'warehouse.choose_warehouse_from_list' => [
+                'en' => 'Choose a warehouse from the list to see its information',
+                'th' => 'เลือกคลังสินค้าจากรายการเพื่อดูข้อมูล'
+            ],
+            'warehouse.stock_operations' => [
+                'en' => 'Stock Operations',
+                'th' => 'การดำเนินการสต็อก'
+            ],
+            'warehouse.stock_in' => [
+                'en' => 'Stock In',
+                'th' => 'รับเข้าสต็อก'
+            ],
+            'warehouse.stock_out' => [
+                'en' => 'Stock Out',
+                'th' => 'ส่งออกสต็อก'
+            ],
+            'warehouse.adjustment' => [
+                'en' => 'Adjustment',
+                'th' => 'ปรับปรุง'
+            ],
+            'warehouse.recent_transactions' => [
+                'en' => 'Recent Transactions',
+                'th' => 'รายการล่าสุด'
+            ],
+            'warehouse.latest_stock_movements' => [
+                'en' => 'Latest stock movements',
+                'th' => 'การเคลื่อนไหวสต็อกล่าสุด'
+            ],
+            'warehouse.no_recent_transactions' => [
+                'en' => 'No recent transactions',
+                'th' => 'ไม่มีรายการล่าสุด'
+            ],
+            'product.current_stock' => [
+                'en' => 'Current Stock',
+                'th' => 'สต็อกปัจจุบัน'
+            ],
+            'product.detail_notes' => [
+                'en' => 'Detail/Notes',
+                'th' => 'รายละเอียด/หมายเหตุ'
+            ],
+            'product.optional_notes' => [
+                'en' => 'Optional notes',
+                'th' => 'หมายเหตุเพิ่มเติม'
+            ],
+            'product.new_stock_balance' => [
+                'en' => 'New Stock Balance',
+                'th' => 'ยอดสต็อกใหม่'
+            ],
+            'common.in' => [
+                'en' => 'in',
+                'th' => 'ใน'
+            ],
+            'common.processing' => [
+                'en' => 'Processing...',
+                'th' => 'กำลังประมวลผล...'
+            ],
             'product.search_for_product' => [
                 'en' => 'Search for a product...',
                 'th' => 'ค้นหาสินค้า...'

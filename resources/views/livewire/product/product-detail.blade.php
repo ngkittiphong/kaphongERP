@@ -387,13 +387,13 @@
                             <div style="display: flex; align-items: center; margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #007bff;">
                                 <div style="margin-right: 15px;">
                                     <img src="${data.productImage || '{{ asset('assets/images/default_product.png') }}'}" 
-                                         alt="Product Image" 
+                                         alt="{{ __t('product.product_image', 'Product Image') }}" 
                                          style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;">
                                 </div>
                                 <div>
                                     <h6 style="margin: 0 0 5px 0; color: #007bff; font-weight: bold;">${data.productName || 'N/A'}</h6>
-                                    <p style="margin: 0; color: #6c757d; font-size: 14px;"><strong>SKU:</strong> ${data.productSku || 'N/A'}</p>
-                                    <p style="margin: 0; color: #6c757d; font-size: 14px;"><strong>Warehouse:</strong> ${data.warehouseName || 'N/A'}</p>
+                                    <p style="margin: 0; color: #6c757d; font-size: 14px;"><strong>{{ __t('product.sku', 'SKU') }}:</strong> ${data.productSku || 'N/A'}</p>
+                                    <p style="margin: 0; color: #6c757d; font-size: 14px;"><strong>{{ __t('warehouse.warehouse', 'Warehouse') }}:</strong> ${data.warehouseName || 'N/A'}</p>
                                 </div>
                             </div>
                             
@@ -404,14 +404,14 @@
                                 </h6>
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                                     <div>
-                                        <p style="margin: 5px 0;"><strong>Operation:</strong> <span style="color: #dc3545; font-weight: bold;">${operationLabel.toUpperCase()}</span></p>
-                                        <p style="margin: 5px 0;"><strong>Current Stock:</strong> <span style="color: #007bff; font-weight: bold;">${data.currentStock ?? 0} ${data.unitName || 'pcs'}</span></p>
-                                        <p style="margin: 5px 0;"><strong>New Stock:</strong> <span style="color: #28a745; font-weight: bold;">${data.newStock ?? 0} ${data.unitName || 'pcs'}</span></p>
+                                        <p style="margin: 5px 0;"><strong>{{ __t('product.operation', 'Operation') }}:</strong> <span style="color: #dc3545; font-weight: bold;">${operationLabel.toUpperCase()}</span></p>
+                                        <p style="margin: 5px 0;"><strong>{{ __t('product.current_stock', 'Current Stock') }}:</strong> <span style="color: #007bff; font-weight: bold;">${data.currentStock ?? 0} ${data.unitName || 'pcs'}</span></p>
+                                        <p style="margin: 5px 0;"><strong>{{ __t('product.new_stock', 'New Stock') }}:</strong> <span style="color: #28a745; font-weight: bold;">${data.newStock ?? 0} ${data.unitName || 'pcs'}</span></p>
                                     </div>
                                     <div>
-                                        <p style="margin: 5px 0;"><strong>Document No:</strong> <span style="color: #6c757d;">${data.documentNumber || 'N/A'}</span></p>
-                                        <p style="margin: 5px 0;"><strong>Date:</strong> <span style="color: #6c757d;">${data.operationDate || 'N/A'}</span></p>
-                                        <p style="margin: 5px 0;"><strong>Time:</strong> <span style="color: #6c757d;">${data.operationTime || 'N/A'}</span></p>
+                                        <p style="margin: 5px 0;"><strong>{{ __t('product.document_number', 'Document No') }}:</strong> <span style="color: #6c757d;">${data.documentNumber || 'N/A'}</span></p>
+                                        <p style="margin: 5px 0;"><strong>{{ __t('product.date', 'Date') }}:</strong> <span style="color: #6c757d;">${data.operationDate || 'N/A'}</span></p>
+                                        <p style="margin: 5px 0;"><strong>{{ __t('product.time', 'Time') }}:</strong> <span style="color: #6c757d;">${data.operationTime || 'N/A'}</span></p>
                                     </div>
                                 </div>
                             </div>

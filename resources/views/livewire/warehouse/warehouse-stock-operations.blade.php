@@ -3,7 +3,7 @@
     <div class="col-md-8">
         <div class="panel panel-flat">
             <div class="panel-heading">
-                <h5 class="panel-title">Stock Operations</h5>
+                <h5 class="panel-title">{{ __t('warehouse.stock_operations', 'Stock Operations') }}</h5>
                 <div class="heading-elements">
                     <ul class="icons-list">
                         <li><a data-action="collapse"></a></li>
@@ -18,19 +18,19 @@
                         <li class="{{ $activeTab === 'stock-in' ? 'active' : '' }}">
                             <a href="#tab-stock-in" data-toggle="tab" wire:click="setActiveTab('stock-in')" aria-expanded="{{ $activeTab === 'stock-in' ? 'true' : 'false' }}">
                                 <i class="icon-plus-circle2 position-left"></i>
-                                Stock In
+                                {{ __t('warehouse.stock_in', 'Stock In') }}
                             </a>
                         </li>
                         <li class="{{ $activeTab === 'stock-out' ? 'active' : '' }}">
                             <a href="#tab-stock-out" data-toggle="tab" wire:click="setActiveTab('stock-out')" aria-expanded="{{ $activeTab === 'stock-out' ? 'true' : 'false' }}">
                                 <i class="icon-minus-circle2 position-left"></i>
-                                Stock Out
+                                {{ __t('warehouse.stock_out', 'Stock Out') }}
                             </a>
                         </li>
                         <li class="{{ $activeTab === 'adjustment' ? 'active' : '' }}">
                             <a href="#tab-adjustment" data-toggle="tab" wire:click="setActiveTab('adjustment')" aria-expanded="{{ $activeTab === 'adjustment' ? 'true' : 'false' }}">
                                 <i class="icon-wrench position-left"></i>
-                                Adjustment
+                                {{ __t('warehouse.adjustment', 'Adjustment') }}
                             </a>
                         </li>
                     </ul>
@@ -61,8 +61,8 @@
         <div class="panel panel-flat">
             <div class="panel-heading">
                 <h6 class="panel-title">
-                    Recent Transactions
-                    <small class="display-block">Latest stock movements</small>
+                    {{ __t('warehouse.recent_transactions', 'Recent Transactions') }}
+                    <small class="display-block">{{ __t('warehouse.latest_stock_movements', 'Latest stock movements') }}</small>
                 </h6>
                 <div class="heading-elements">
                     <ul class="icons-list">
@@ -109,7 +109,7 @@
                     @else
                         <div class="text-center text-muted">
                             <i class="icon-info22 text-size-large"></i>
-                            <div class="mt-2">No recent transactions</div>
+                            <div class="mt-2">{{ __t('warehouse.no_recent_transactions', 'No recent transactions') }}</div>
                         </div>
                     @endif
                 </div>

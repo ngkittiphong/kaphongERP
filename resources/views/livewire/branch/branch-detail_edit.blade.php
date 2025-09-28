@@ -117,14 +117,14 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="edit_phone_country_code">{{ __t('branch.phone_country_code', 'Phone Country Code') }}</label>
-                                    <input type="text" wire:model="phone_country_code" class="form-control" id="edit_phone_country_code" placeholder="+66">
+                                    <input type="text" wire:model="phone_country_code" class="form-control" id="edit_phone_country_code" placeholder="{{ __t('branch.phone_country_code_placeholder', '+66') }}">
                                     @error('phone_country_code') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="edit_phone_number">{{ __t('branch.phone_number', 'Phone Number') }}</label>
-                                    <input type="text" wire:model="phone_number" class="form-control" id="edit_phone_number" placeholder="Enter phone number">
+                                    <input type="text" wire:model="phone_number" class="form-control" id="edit_phone_number" placeholder="{{ __t('branch.enter_phone_number', 'Enter phone number') }}">
                                     @error('phone_number') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>

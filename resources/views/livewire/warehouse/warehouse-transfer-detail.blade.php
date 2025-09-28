@@ -29,7 +29,7 @@
                                         <a href="#tab-detail" data-toggle="tab" class="panel-title"
                                             aria-expanded="true">
                                             <div class="panel-heading">
-                                                <h3 class="panel-title">Detail</h3>
+                                                <h3 class="panel-title">{{ __t('common.detail', 'Detail') }}</h3>
                                             </div>
                                         </a>
                                     </li>
@@ -194,10 +194,10 @@
                                                 <thead>
                                                     <tr>
                                                         <th>#</th>
-                                                        <th>Product Code</th>
-                                                        <th>Product Name</th>
-                                                        <th>Quantity</th>
-                                                        <th>Unit</th>
+                                                        <th>{{ __t('product.product_code', 'Product Code') }}</th>
+                                                        <th>{{ __t('product.product_name', 'Product Name') }}</th>
+                                                        <th>{{ __t('product.quantity', 'Quantity') }}</th>
+                                                        <th>{{ __t('product.unit', 'Unit') }}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -220,7 +220,7 @@
                                     @else
                                         <div class="text-center text-muted py-4">
                                             <i class="icon-inbox text-muted" style="font-size: 2rem;"></i>
-                                            <p class="mt-2">No product details found</p>
+                                            <p class="mt-2">{{ __t('product.no_product_details_found', 'No product details found') }}</p>
                                         </div>
                                     @endif
                                 </div>
@@ -236,8 +236,8 @@
                 <div class="col-md-12">
                     <div class="text-center text-muted py-5">
                         <i class="icon-inbox text-muted" style="font-size: 3rem;"></i>
-                        <h4 class="mt-3">No Transfer Selected</h4>
-                        <p>Please select a transfer slip from the list to view details</p>
+                        <h4 class="mt-3">{{ __t('warehouse.no_transfer_selected', 'No Transfer Selected') }}</h4>
+                        <p>{{ __t('warehouse.select_transfer_slip_from_list', 'Please select a transfer slip from the list to view details') }}</p>
                     </div>
                 </div>
             </div>
@@ -301,10 +301,10 @@
                         </p>
                         
                         <div class="form-group">
-                            <label for="cancellationReason" class="control-label">Cancellation Reason <span
+                            <label for="cancellationReason" class="control-label">{{ __t('warehouse.cancellation_reason', 'Cancellation Reason') }} <span
                                     class="text-danger">*</span></label>
                             <textarea class="form-control" id="cancellationReason" wire:model="cancellationReason" rows="3"
-                                placeholder="Please provide a reason for cancelling this transfer..." required></textarea>
+                                placeholder="{{ __t('warehouse.provide_cancellation_reason', 'Please provide a reason for cancelling this transfer...') }}" required></textarea>
                             @error('cancellationReason')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -313,7 +313,7 @@
                         @if ($transferSlip->status->name === 'In Transit')
                             <div class="alert alert-warning">
                                 <i class="icon-warning position-left"></i>
-                                <strong>Note:</strong> This transfer is currently in transit. Cancelling will restore
+                                <strong>{{ __t('common.note', 'Note') }}:</strong> {{ __t('warehouse.transfer_in_transit_note', 'This transfer is currently in transit. Cancelling will restore') }}
                                 the inventory to the sender warehouse.
                             </div>
                         @endif
@@ -350,7 +350,7 @@
         return `
             <div>
                 <strong>${item.name}</strong><br>
-                <small class="text-muted">SKU: ${item.sku} | Unit: ${unit} | Price: $${price}</small>
+                <small class="text-muted">{{ __t('product.sku', 'SKU') }}: ${item.sku} | {{ __t('product.unit', 'Unit') }}: ${unit} | {{ __t('product.price', 'Price') }}: $${price}</small>
             </div>
         `;
     };
@@ -410,7 +410,7 @@
                 limit: 10,
                 source: bloodhoundEngine.ttAdapter(),
                 templates: {
-                    notFound: '<div class="tt-suggestion">No products found</div>',
+                    notFound: '<div class="tt-suggestion">{{ __t('product.no_products_found', 'No products found') }}</div>',
                     suggestion: suggestionTemplate
                 }
             }).on('typeahead:select typeahead:autocomplete', function (e, datum) {
@@ -535,7 +535,7 @@
             `).join('');
         } catch (error) {
             console.error('🔥 Error building product list:', error);
-            productListHtml = '<div>Error loading product details</div>';
+            productListHtml = '<div>{{ __t('product.error_loading_product_details', 'Error loading product details') }}</div>';
         }
 
         Swal.fire({
@@ -543,14 +543,14 @@
             html: `
                 <div style="text-align: left;">
                     <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                        <h5 style="margin: 0 0 10px 0; color: #495057;">Transfer Details</h5>
+                        <h5 style="margin: 0 0 10px 0; color: #495057;">{{ __t('warehouse.transfer_details', 'Transfer Details') }}</h5>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-                            <div><strong>From:</strong> ${transferData.originWarehouse}</div>
+                            <div><strong>{{ __t('warehouse.from', 'From') }}:</strong> ${transferData.originWarehouse}</div>
                             <div><strong>To:</strong> ${transferData.destinationWarehouse}</div>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <div><strong>Products:</strong> ${transferData.productCount}</div>
-                            <div><strong>Total Qty:</strong> ${transferData.totalQuantity}</div>
+                            <div><strong>{{ __t('product.products', 'Products') }}:</strong> ${transferData.productCount}</div>
+                            <div><strong>{{ __t('product.total_qty', 'Total Qty') }}:</strong> ${transferData.totalQuantity}</div>
                         </div>
                     </div>
                     
@@ -562,7 +562,7 @@
                     </div>
 
                     <div style="max-height: 200px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 4px; padding: 10px;">
-                        <h6 style="margin: 0 0 10px 0; color: #495057;">Products to Transfer:</h6>
+                        <h6 style="margin: 0 0 10px 0; color: #495057;">{{ __t('warehouse.products_to_transfer', 'Products to Transfer') }}:</h6>
                         ${productListHtml}
                     </div>
                 </div>

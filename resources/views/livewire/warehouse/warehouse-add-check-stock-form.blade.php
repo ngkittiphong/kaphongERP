@@ -128,7 +128,7 @@
                                            class="form-control" 
                                            id="newProductQuantity"
                                            min="0"
-                                           placeholder="0">
+                                           placeholder="{{ __t('product.enter_quantity', '0') }}">
                                     @error('newProductQuantity') 
                                         <span class="text-danger">{{ $message }}</span> 
                                     @enderror
