@@ -6,7 +6,7 @@
     <div class="header no-margin-bottom">
         <div class="header-content">
             <div class="page-title">
-                <i class="icon-user position-left"></i> Transfer
+                <i class="icon-user position-left"></i> {{ __t('menu.transfer', 'Transfer') }}
             </div>
             {{-- @livewire('warehouse.warehouse-add-warehouse-btn') --}}
             

@@ -2,7 +2,7 @@
     <table class="table table-hover datatable-reorder-state-saving datatable-fixed-left">
         <thead>
             <tr>
-                <th scope="col"><?= __('Users') ?></th>
+                <th scope="col">{{ __t('menu.users', 'Users') }}</th>
             </tr>
         </thead>
         <tbody>

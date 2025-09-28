@@ -6,15 +6,15 @@
         <div class="btn-group" role="group">
             <button type="button" class="btn btn-sm {{ $filter === 'all' ? 'btn-primary' : 'btn-default' }}" 
                     wire:click="setFilter('all')">
-                All Warehouses
+                {{ __t('warehouse.all_warehouses', 'All Warehouses') }}
             </button>
             <button type="button" class="btn btn-sm {{ $filter === 'active' ? 'btn-success' : 'btn-default' }}" 
                     wire:click="setFilter('active')">
-                Active Only
+                {{ __t('warehouse.active_only', 'Active Only') }}
             </button>
             <button type="button" class="btn btn-sm {{ $filter === 'inactive' ? 'btn-danger' : 'btn-default' }}" 
                     wire:click="setFilter('inactive')">
-                Deactivated Only
+                {{ __t('warehouse.deactivated_only', 'Deactivated Only') }}
             </button>
         </div>
     </div>
@@ -23,7 +23,7 @@
         <table class="table table-hover datatable-reorder-state-saving datatable-fixed-left">
             <thead>
                 <tr>
-                    <th scope="col"><?= __('Warehouse') ?></th>
+                    <th scope="col">{{ __t('warehouse.warehouse', 'Warehouse') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,17 +41,17 @@
                                                 <span class="badge bg-danger ml-2">{{ $warehouse->status->name }}</span>
                                             @endif
                                             @if($warehouse->main_warehouse)
-                                                <span class="badge bg-primary ml-2">Main Warehouse</span>
+                                                <span class="badge bg-primary ml-2">{{ __t('warehouse.main_warehouse', 'Main Warehouse') }}</span>
                                             @endif
                                         </div>
                                         <div class=" text-size-large {{ $warehouse->status->name === 'Active' ? 'text-dark' : 'text-muted' }}">
-                                            Branch: {{ $warehouse->branch->name_en ?? 'N/A' }}
+                                            {{ __t('warehouse.branch', 'Branch') }}: {{ $warehouse->branch->name_en ?? 'N/A' }}
                                         </div>
                                         <div class=" text-size-large {{ $warehouse->status->name === 'Active' ? 'text-dark' : 'text-muted' }}">
-                                            Created: {{ $warehouse->date_create ? $warehouse->date_create->format('Y-m-d H:i') : 'N/A' }}
+                                            {{ __t('warehouse.created', 'Created') }}: {{ $warehouse->date_create ? $warehouse->date_create->format('Y-m-d H:i') : 'N/A' }}
                                         </div>
                                         <div class=" text-size-large {{ $warehouse->status->name === 'Active' ? 'text-dark' : 'text-muted' }}">
-                                            Creator: {{ $warehouse->userCreate->username ?? 'N/A' }}
+                                            {{ __t('warehouse.creator', 'Creator') }}: {{ $warehouse->userCreate->username ?? 'N/A' }}
                                         </div>
                                     </div>
                                 </div>

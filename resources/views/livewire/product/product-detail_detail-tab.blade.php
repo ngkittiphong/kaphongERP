@@ -19,12 +19,11 @@
         <div class="col-md-8 col-xs-12">
             <!--<div class="panel panel-flat">-->
             <div class="panel-heading no-padding-bottom">
-                <h4 class="panel-title"><?= __('Product details') ?></h4>
+                <h4 class="panel-title">{{ __t('product.product_details', 'Product details') }}</h4>
                 <div class="elements">
                     <!--<button type="button" class="btn bg-amber btn-sm">Button</button>-->
-                    <button class="btn bg-amber-darkest" wire:click="$dispatch('showEditProductForm')">Edit
-                        Product</button>
-                    <button class="btn btn-danger" onclick="confirmDelete({{ $product->id ?? 0 }})">Delete Product</button>
+                    <button class="btn bg-amber-darkest" wire:click="$dispatch('showEditProductForm')">{{ __t('product.edit_product', 'Edit Product') }}</button>
+                    <button class="btn btn-danger" onclick="confirmDelete({{ $product->id ?? 0 }})">{{ __t('product.delete_product', 'Delete Product') }}</button>
                 </div>
                 <a class="elements-toggle"><i class="icon-more"></i></a>
             </div>
@@ -32,7 +31,7 @@
                 <div class='row'>
                     <span href="#" class="list-group-item p-l-20">
                         <div class="col-md-3 col-xs-3 text-bold">
-                            Total Count :
+                            {{ __t('product.total_count', 'Total Count') }} :
                         </div>
                         <div class="col-md-8 col-xs-8 text-left">
                             {{ number_format($totalQuantity) }} {{ $product->unit_name ?? 'ชิ้น' }}
@@ -42,7 +41,7 @@
                 <div class='row'>
                     <span href="#" class="list-group-item p-l-20">
                         <div class="col-md-3 col-xs-3 text-bold">
-                            Product Type :
+                            {{ __t('product.product_type', 'Product Type') }} :
                         </div>
                         <div class="col-md-8 col-xs-8 text-left">
                             {{ $product->type->name ?? 'N/A' }}
@@ -52,7 +51,7 @@
                 <div class='row'>
                     <span href="#" class="list-group-item p-l-20">
                         <div class="col-md-3 col-xs-3 text-bold">
-                            Product Group :
+                            {{ __t('product.product_group', 'Product Group') }} :
                         </div>
                         <div class="col-md-8 col-xs-8 text-left">
                             {{ $product->group->name ?? 'N/A' }}
@@ -62,7 +61,7 @@
                 <div class='row'>
                     <span href="#" class="list-group-item p-l-20">
                         <div class="col-md-3 col-xs-3 text-bold">
-                            Product Unit :
+                            {{ __t('product.product_unit', 'Product Unit') }} :
                         </div>
                         <div class="col-md-8 col-xs-8 text-left">
                             {{ $product->unit_name ?? 'ชิ้น' }}
@@ -114,20 +113,20 @@
     <div class="row col-md-12 col-xs-12">
         <div class="row col-md-12 col-xs-12">
             <div class="panel-heading no-padding-bottom">
-                <!--<h4 class="panel-title"><?= __('Wharehouse') ?></h4>-->
+                <!--<h4 class="panel-title">{{ __t('warehouse.warehouse', 'Warehouse') }}</h4>-->
             </div>
             <div class="row">
                 <div class="col-md-4">
                     <div class="panel panel-flat bg-light-light">
                         <div class="panel-heading text-dark">
-                            <h4 class="text-default panel-title">Total All Warehouses</h4>
+                            <h4 class="text-default panel-title">{{ __t('product.total_all_warehouses', 'Total All Warehouses') }}</h4>
                         </div>
                         <div>
                             <div class="list-group text-default list-group-lg list-group-borderless">
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-7 col-xs-7 text-bold">
-                                            Remaining Quantity :
+                                            {{ __t('product.remaining_quantity', 'Remaining Quantity') }} :
                                         </div>
                                         <div class="col-md-5 col-xs-5 text-left">
                                             {{ number_format($totalQuantity) }} {{ $product->unit_name ?? 'pcs' }}
@@ -137,7 +136,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-7 col-xs-7 text-bold">
-                                            Average Sale Price :
+                                            {{ __t('product.average_sale_price', 'Average Sale Price') }} :
                                         </div>
                                         <div class="col-md-5 col-xs-5 text-left">
                                             ${{ number_format($averageSalePrice, 2) }}
@@ -147,7 +146,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-7 col-xs-7 text-bold">
-                                            Average Buy Price :
+                                            {{ __t('product.average_buy_price', 'Average Buy Price') }} :
                                         </div>
                                         <div class="col-md-5 col-xs-5 text-left">
                                             ${{ number_format($averageBuyPrice, 2) }}
@@ -157,7 +156,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-7 col-xs-7 text-bold">
-                                            Total Value :
+                                            {{ __t('product.total_value', 'Total Value') }} :
                                         </div>
                                         <div class="col-md-5 col-xs-5 text-left">
                                             ${{ number_format($totalValue, 2) }}
@@ -178,7 +177,7 @@
                                     <h3 class="text-default panel-title">
                                         {{ $warehouseProduct->warehouse->name }}
                                         @if($warehouseProduct->warehouse->main_warehouse)
-                                            <span class="badge bg-success">Main</span>
+                                            <span class="badge bg-success">{{ __t('product.main', 'Main') }}</span>
                                         @endif
                                     </h3>
                                 </div>
@@ -186,7 +185,7 @@
                                     <div class='row'>
                                         <span href="#" class="list-group-item p-l-20">
                                             <div class="col-md-7 col-xs-7 text-bold">
-                                                Remaining Quantity :
+                                                {{ __t('product.remaining_quantity', 'Remaining Quantity') }} :
                                             </div>
                                             <div class="col-md-5 col-xs-5 text-left">
                                                 @if($warehouseProduct->balance <= ($product->minimum_quantity ?? 0))
@@ -199,7 +198,7 @@
                                     <div class='row'>
                                         <span href="#" class="list-group-item p-l-20">
                                             <div class="col-md-7 col-xs-7 text-bold">
-                                                Average Sale Price :
+                                                {{ __t('product.average_sale_price', 'Average Sale Price') }} :
                                             </div>
                                             <div class="col-md-5 col-xs-5 text-left">
                                                 ${{ number_format($warehouseProduct->avr_sale_price, 2) }}
@@ -209,7 +208,7 @@
                                     <div class='row'>
                                         <span href="#" class="list-group-item p-l-20">
                                             <div class="col-md-7 col-xs-7 text-bold">
-                                                Average Buy Price :
+                                                {{ __t('product.average_buy_price', 'Average Buy Price') }} :
                                             </div>
                                             <div class="col-md-5 col-xs-5 text-left">
                                                 ${{ number_format($warehouseProduct->avr_buy_price, 2) }}
@@ -219,7 +218,7 @@
                                     <div class='row'>
                                         <span href="#" class="list-group-item p-l-20">
                                             <div class="col-md-7 col-xs-7 text-bold">
-                                                Total Value :
+                                                {{ __t('product.total_value', 'Total Value') }} :
                                             </div>
                                             <div class="col-md-5 col-xs-5 text-left">
                                                 ${{ number_format($warehouseProduct->balance * $warehouseProduct->avr_remain_price, 2) }}
@@ -231,7 +230,7 @@
                                         <span href="#" class="list-group-item p-l-20">
                                             <div class="col-md-12 col-xs-12 text-center">
                                                 <button class="btn btn-primary btn-sm" wire:click="openStockModal({{ $warehouseProduct->warehouse_id }}, '{{ $warehouseProduct->warehouse->name }}')">
-                                                    <i class="icon-plus2"></i> Adjust Stock
+                                                    <i class="icon-plus2"></i> {{ __t('product.adjust_stock', 'Adjust Stock') }}
                                                 </button>
                                             </div>
                                         </span>
@@ -245,11 +244,11 @@
                         <div class="panel panel-flat bg-warning-light">
                             <div class="panel-body text-center">
                                 <i class="icon-warning2 icon-2x text-warning"></i>
-                                <h4 class="text-warning">No Warehouse Data Found</h4>
-                                <p>This product has no inventory data in any warehouse</p>
+                                <h4 class="text-warning">{{ __t('product.no_warehouse_data_found', 'No Warehouse Data Found') }}</h4>
+                                <p>{{ __t('product.no_inventory_data_message', 'This product has no inventory data in any warehouse') }}</p>
                                 <div class="m-t-10">
                                     <button class="btn btn-primary btn-sm" wire:click="$dispatch('showEditProductForm')">
-                                        <i class="icon-plus2"></i> Add Warehouse Data
+                                        <i class="icon-plus2"></i> {{ __t('product.add_warehouse_data', 'Add Warehouse Data') }}
                                     </button>
                                 </div>
                             </div>
@@ -261,7 +260,7 @@
                     <div class="col-md-12">
                         <div class="panel panel-flat">
                             <div class="panel-heading">
-                                <h4 class="panel-title">Other Warehouses ({{ $warehouseProducts->count() - 2 }} warehouses)</h4>
+                                <h4 class="panel-title">{{ __t('product.other_warehouses', 'Other Warehouses') }} ({{ $warehouseProducts->count() - 2 }} {{ __t('product.warehouses', 'warehouses') }})</h4>
                             </div>
                             <div class="panel-body">
                                 <div class="row">
@@ -272,7 +271,7 @@
                                                     <h5 class="text-default panel-title">
                                                         {{ $warehouseProduct->warehouse->name }}
                                                         @if($warehouseProduct->warehouse->main_warehouse)
-                                                            <span class="badge bg-success">Main</span>
+                                                            <span class="badge bg-success">{{ __t('product.main', 'Main') }}</span>
                                                         @endif
                                                     </h5>
                                                 </div>
@@ -280,7 +279,7 @@
                                                     <div class='row'>
                                                         <span href="#" class="list-group-item p-l-20">
                                                             <div class="col-md-7 col-xs-7 text-bold">
-                                                                Remaining Quantity :
+                                                                {{ __t('product.remaining_quantity', 'Remaining Quantity') }} :
                                                             </div>
                                                             <div class="col-md-5 col-xs-5 text-left">
                                                                 @if($warehouseProduct->balance <= ($product->minimum_quantity ?? 0))
@@ -293,7 +292,7 @@
                                                     <div class='row'>
                                                         <span href="#" class="list-group-item p-l-20">
                                                             <div class="col-md-7 col-xs-7 text-bold">
-                                                                Average Sale Price :
+                                                                {{ __t('product.average_sale_price', 'Average Sale Price') }} :
                                                             </div>
                                                             <div class="col-md-5 col-xs-5 text-left">
                                                                 ${{ number_format($warehouseProduct->avr_sale_price, 2) }}
@@ -303,7 +302,7 @@
                                                     <div class='row'>
                                                         <span href="#" class="list-group-item p-l-20">
                                                             <div class="col-md-7 col-xs-7 text-bold">
-                                                                Average Buy Price :
+                                                                {{ __t('product.average_buy_price', 'Average Buy Price') }} :
                                                             </div>
                                                             <div class="col-md-5 col-xs-5 text-left">
                                                                 ${{ number_format($warehouseProduct->avr_buy_price, 2) }}
@@ -313,7 +312,7 @@
                                                     <div class='row'>
                                                         <span href="#" class="list-group-item p-l-20">
                                                             <div class="col-md-7 col-xs-7 text-bold">
-                                                                Total Value :
+                                                                {{ __t('product.total_value', 'Total Value') }} :
                                                             </div>
                                                             <div class="col-md-5 col-xs-5 text-left">
                                                                 ${{ number_format($warehouseProduct->balance * $warehouseProduct->avr_remain_price, 2) }}
@@ -325,7 +324,7 @@
                                                         <span href="#" class="list-group-item p-l-20">
                                                             <div class="col-md-12 col-xs-12 text-center">
                                                                 <button class="btn btn-primary btn-sm" wire:click="openStockModal({{ $warehouseProduct->warehouse_id }}, '{{ $warehouseProduct->warehouse->name }}')">
-                                                                    <i class="icon-plus2"></i> Adjust Stock
+                                                                    <i class="icon-plus2"></i> {{ __t('product.adjust_stock', 'Adjust Stock') }}
                                                                 </button>
                                                             </div>
                                                         </span>
@@ -347,7 +346,7 @@
 
     <div class="row col-md-12 col-xs-12">
         <div class="panel-heading no-padding-bottom">
-            <h4 class="panel-title">Main Product Unit : {{ $product->unit_name ?? 'pcs' }}</h4>
+            <h4 class="panel-title">{{ __t('product.main_product_unit', 'Main Product Unit') }} : {{ $product->unit_name ?? 'pcs' }}</h4>
         </div>
 
         <div class="row">
@@ -362,7 +361,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-7 col-xs-7 text-bold">
-                                            Sale Price :
+                                            {{ __t('product.sale_price', 'Sale Price') }} :
                                         </div>
                                         <div class="col-md-5 col-xs-5 text-left">
                                             ${{ number_format($subUnit->sale_price ?? $product->sale_price, 2) }}
@@ -372,7 +371,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-7 col-xs-7 text-bold">
-                                            Buy Price :
+                                            {{ __t('product.buy_price', 'Buy Price') }} :
                                         </div>
                                         <div class="col-md-5 col-xs-5 text-left">
                                             ${{ number_format($subUnit->buy_price ?? $product->buy_price, 2) }}
@@ -383,7 +382,7 @@
                                     <div class='row'>
                                         <span href="#" class="list-group-item p-l-20">
                                             <div class="col-md-12 col-xs-12 text-bold">
-                                                Barcode :
+                                                {{ __t('product.barcode', 'Barcode') }} :
                                             </div>
                                             <div class="col-md-12 col-xs-12 text-left">
                                                 {{ $subUnit->barcode }}
@@ -400,8 +399,8 @@
                     <div class="panel panel-flat bg-info-light">
                         <div class="panel-body text-center">
                             <i class="icon-info22 icon-2x text-info"></i>
-                            <h4 class="text-info">No Sub-Units</h4>
-                            <p>This product has only the main unit</p>
+                            <h4 class="text-info">{{ __t('product.no_sub_units', 'No Sub-Units') }}</h4>
+                            <p>{{ __t('product.only_main_unit_message', 'This product has only the main unit') }}</p>
                         </div>
                     </div>
                 </div>
@@ -411,7 +410,7 @@
                 <div class="col-md-12">
                     <div class="panel panel-flat">
                         <div class="panel-heading">
-                            <h4 class="panel-title">Other Sub-Units ({{ $product->subUnits->count() - 2 }} units)</h4>
+                            <h4 class="panel-title">{{ __t('product.other_sub_units', 'Other Sub-Units') }} ({{ $product->subUnits->count() - 2 }} {{ __t('product.units', 'units') }})</h4>
                         </div>
                         <div class="panel-body">
                             <div class="row">
@@ -425,7 +424,7 @@
                                                 <div class='row'>
                                                     <span href="#" class="list-group-item p-l-20">
                                                         <div class="col-md-7 col-xs-7 text-bold">
-                                                            Sale Price :
+                                                            {{ __t('product.sale_price', 'Sale Price') }} :
                                                         </div>
                                                         <div class="col-md-5 col-xs-5 text-left">
                                                             ${{ number_format($subUnit->sale_price ?? $product->sale_price, 2) }}
@@ -435,7 +434,7 @@
                                                 <div class='row'>
                                                     <span href="#" class="list-group-item p-l-20">
                                                         <div class="col-md-7 col-xs-7 text-bold">
-                                                            Buy Price :
+                                                            {{ __t('product.buy_price', 'Buy Price') }} :
                                                         </div>
                                                         <div class="col-md-5 col-xs-5 text-left">
                                                             ${{ number_format($subUnit->buy_price ?? $product->buy_price, 2) }}
@@ -446,7 +445,7 @@
                                                     <div class='row'>
                                                         <span href="#" class="list-group-item p-l-20">
                                                             <div class="col-md-12 col-xs-12 text-bold">
-                                                                Barcode :
+                                                                {{ __t('product.barcode', 'Barcode') }} :
                                                             </div>
                                                             <div class="col-md-12 col-xs-12 text-left">
                                                                 {{ $subUnit->barcode }}
@@ -475,7 +474,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close" wire:click="closeStockModal">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title" id="stockAdjustmentModalLabel">Adjust Stock - {{ $selectedWarehouseName ?? '' }}</h4>
+                <h4 class="modal-title" id="stockAdjustmentModalLabel">{{ __t('product.adjust_stock', 'Adjust Stock') }} - {{ $selectedWarehouseName ?? '' }}</h4>
             </div>
             <div class="modal-body" style="padding-top: 10px;">
                 <!-- Product Information Section -->
@@ -504,12 +503,12 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="operationType">Operation Type:</label>
+                            <label for="operationType">{{ __t('product.operation_type', 'Operation Type') }}:</label>
                             <select wire:model.live="operationType" class="form-control" id="operationType">
-                                <option value="">Select Operation</option>
-                                <option value="stock_in">Stock In</option>
-                                <option value="stock_out">Stock Out</option>
-                                <option value="adjustment">Stock Adjustment</option>
+                                <option value="">{{ __t('product.select_operation', 'Select Operation') }}</option>
+                                <option value="stock_in">{{ __t('product.stock_in', 'Stock In') }}</option>
+                                <option value="stock_out">{{ __t('product.stock_out', 'Stock Out') }}</option>
+                                <option value="adjustment">{{ __t('product.stock_adjustment', 'Stock Adjustment') }}</option>
                             </select>
                             @error('operationType') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
@@ -520,15 +519,15 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="quantity">Quantity:</label>
+                                <label for="quantity">{{ __t('product.quantity', 'Quantity') }}:</label>
                                 <input type="number" wire:model.defer="quantity" class="form-control" id="quantity"
-                                       min="0" step="0.01" placeholder="Enter quantity">
+                                       min="0" step="0.01" placeholder="{{ __t('product.enter_quantity', 'Enter quantity') }}">
                                 @error('quantity') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="unitName">Unit:</label>
+                                <label for="unitName">{{ __t('product.unit', 'Unit') }}:</label>
                                 <input type="text" class="form-control" id="unitName"
                                        value="{{ $product->unit_name ?? 'pcs' }}" readonly>
                             </div>
@@ -538,17 +537,17 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="unitPrice">Unit Price ($):</label>
+                                <label for="unitPrice">{{ __t('product.unit_price', 'Unit Price') }} ($):</label>
                                 <input type="number" wire:model.defer="unitPrice" class="form-control" id="unitPrice"
-                                       min="0" step="0.01" placeholder="Enter unit price">
+                                       min="0" step="0.01" placeholder="{{ __t('product.enter_unit_price', 'Enter unit price') }}">
                                 @error('unitPrice') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="salePrice">Sale Price ($):</label>
+                                <label for="salePrice">{{ __t('product.sale_price', 'Sale Price') }} ($):</label>
                                 <input type="number" wire:model.defer="salePrice" class="form-control" id="salePrice"
-                                       min="0" step="0.01" placeholder="Enter sale price">
+                                       min="0" step="0.01" placeholder="{{ __t('product.enter_sale_price', 'Enter sale price') }}">
                                 @error('salePrice') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                         </div>
@@ -557,9 +556,9 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="detail">Detail/Reason:</label>
+                                <label for="detail">{{ __t('product.detail_reason', 'Detail/Reason') }}:</label>
                                 <textarea wire:model.defer="detail" class="form-control" id="detail" rows="3"
-                                          placeholder="Enter reason for this operation"></textarea>
+                                          placeholder="{{ __t('product.enter_reason', 'Enter reason for this operation') }}"></textarea>
                                 @error('detail') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                         </div>
@@ -571,13 +570,13 @@
                 <div class="row" style="margin-top: 20px; padding: 15px; background-color: #e8f4fd; border-radius: 5px; border-left: 4px solid #2196F3;">
                     <div class="col-md-6">
                         <h6 class="text-primary" style="margin-top: 0; margin-bottom: 10px;">
-                            <i class="icon-info22"></i> Current Stock Information
+                            <i class="icon-info22"></i> {{ __t('product.current_stock_information', 'Current Stock Information') }}
                         </h6>
                         <p class="text-muted" style="margin-bottom: 5px;">
-                            <strong>Warehouse:</strong> {{ $selectedWarehouseName ?? 'N/A' }}
+                            <strong>{{ __t('product.warehouse', 'Warehouse') }}:</strong> {{ $selectedWarehouseName ?? 'N/A' }}
                         </p>
                         <p class="text-muted" style="margin-bottom: 5px;">
-                            <strong>Current Remaining:</strong> 
+                            <strong>{{ __t('product.current_remaining', 'Current Remaining') }}:</strong> 
                             <span class="text-primary" style="font-weight: bold; font-size: 16px;">
                                 {{ number_format($currentStock ?? 0) }} {{ $product->unit_name ?? 'pcs' }}
                             </span>
@@ -585,27 +584,27 @@
                     </div>
                     <div class="col-md-6">
                         <h6 class="text-primary" style="margin-top: 0; margin-bottom: 10px;">
-                            <i class="icon-calendar"></i> Operation Date
+                            <i class="icon-calendar"></i> {{ __t('product.operation_date', 'Operation Date') }}
                         </h6>
                         <p class="text-muted" style="margin-bottom: 5px;">
-                            <strong>Date:</strong> {{ now()->format('d/m/Y') }}
+                            <strong>{{ __t('product.date', 'Date') }}:</strong> {{ now()->format('d/m/Y') }}
                         </p>
                         <p class="text-muted" style="margin-bottom: 0;">
-                            <strong>Time:</strong> {{ now()->format('H:i:s') }}
+                            <strong>{{ __t('product.time', 'Time') }}:</strong> {{ now()->format('H:i:s') }}
                         </p>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" wire:click="closeStockModal">Cancel</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" wire:click="closeStockModal">{{ __t('common.cancel', 'Cancel') }}</button>
                 @if($operationType)
                     <button type="button" class="btn btn-primary" wire:click="processStockOperation"
                             wire:loading.attr="disabled">
                         <span wire:loading.remove wire:target="processStockOperation">
-                            <i class="icon-checkmark"></i> Process {{ ucfirst(str_replace('_', ' ', $operationType)) }}
+                            <i class="icon-checkmark"></i> {{ __t('product.process', 'Process') }} {{ ucfirst(str_replace('_', ' ', $operationType)) }}
                         </span>
                         <span wire:loading wire:target="processStockOperation">
-                            <i class="icon-spinner2 spinner"></i> Processing...
+                            <i class="icon-spinner2 spinner"></i> {{ __t('product.processing', 'Processing') }}...
                         </span>
                     </button>
                 @endif

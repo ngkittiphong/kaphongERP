@@ -4,7 +4,7 @@
         <div class="col-md-12">
             <div class="row p-l-10 p-r-10 panel panel-flat">
                 <div class="panel-heading">
-                    <h4 class="panel-title"><?= __('Add New Warehouse') ?></h4>
+                    <h4 class="panel-title">{{ __t('warehouse.add_new_warehouse', 'Add New Warehouse') }}</h4>
                     <div class="elements">
                         <button class="btn btn-success" wire:click="saveWarehouse">
                             <i class="icon-checkmark"></i> Save Warehouse
@@ -30,7 +30,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label"><?= __('Branch') ?> <span class="text-danger">*</span></label>
+                                    <label class="control-label">{{ __t('warehouse.branch', 'Branch') }} <span class="text-danger">*</span></label>
                                     <select class="form-control" wire:model="branch_id" required>
                                         <option value="">Select Branch</option>
                                         @foreach($branches as $branch)
@@ -42,7 +42,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label"><?= __('User Creator') ?> <span class="text-danger">*</span></label>
+                                    <label class="control-label">{{ __t('warehouse.user_creator', 'User Creator') }} <span class="text-danger">*</span></label>
                                     <select class="form-control" wire:model="user_create_id" required>
                                         <option value="">Select User</option>
                                         @foreach(\App\Models\User::all() as $user)
@@ -57,14 +57,14 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label"><?= __('Warehouse Name') ?> <span class="text-danger">*</span></label>
+                                    <label class="control-label">{{ __t('warehouse.warehouse_name', 'Warehouse Name') }} <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" wire:model="name" placeholder="Enter warehouse name" required>
                                     @error('name') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label"><?= __('Creation Date') ?> <span class="text-danger">*</span></label>
+                                    <label class="control-label">{{ __t('warehouse.creation_date', 'Creation Date') }} <span class="text-danger">*</span></label>
                                     <input type="datetime-local" class="form-control" wire:model="date_create" required>
                                     @error('date_create') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
@@ -74,7 +74,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label"><?= __('Status') ?> <span class="text-danger">*</span></label>
+                                    <label class="control-label">{{ __t('common.status', 'Status') }} <span class="text-danger">*</span></label>
                                     <select class="form-control" wire:model="warehouse_status_id" required>
                                         <option value="">Select Status</option>
                                         @foreach($warehouse_statuses as $status)
@@ -86,7 +86,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label"><?= __('Average Remain Price') ?></label>
+                                    <label class="control-label">{{ __t('warehouse.average_remain_price', 'Average Remain Price') }}</label>
                                     <input type="number" class="form-control" wire:model="avr_remain_price" placeholder="0.00" step="0.01" min="0">
                                     @error('avr_remain_price') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
@@ -99,7 +99,7 @@
                                     <div class="checkbox">
                                         <label>
                                             <input type="checkbox" wire:model="main_warehouse" value="1">
-                                            <?= __('Main Warehouse') ?>
+                                            {{ __t('warehouse.main_warehouse', 'Main Warehouse') }}
                                         </label>
                                     </div>
                                 </div>

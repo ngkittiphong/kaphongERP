@@ -42,18 +42,18 @@ body {
 				<div class="panel panel-body login-form border-left border-left-lg border-left-info">							
 					<div class="text-center m-b-20">
 						<div class="icon-object bg-info"><i class="icon-user"></i></div>
-						<h5>Sign in to your account</h5>
+						<h5>{{ __t('auth.sign_in_to_account', 'Sign in to your account') }}</h5>
 					</div>
 
 					<div class="form-group has-feedback has-feedback-left">
-						<input type="text" class="form-control" placeholder="username" name="username" required="required">
+						<input type="text" class="form-control" placeholder="{{ __t('auth.username', 'username') }}" name="username" required="required">
 						<div class="form-control-feedback">
 							<i class="icon-user text-muted"></i>
 						</div>
 					</div>
 
 					<div class="form-group has-feedback has-feedback-left">
-						<input type="password" class="form-control" placeholder="Password" name="password" required="required">
+						<input type="password" class="form-control" placeholder="{{ __t('auth.password', 'Password') }}" name="password" required="required">
 						<div class="form-control-feedback">
 							<i class="icon-lock text-muted"></i>
 						</div>
@@ -65,19 +65,19 @@ body {
 								<div class="checkbox m-l-5">
 									<label>
 										<input type="checkbox" class="styled" checked="checked">
-										Remember me
+																{{ __t('auth.remember_me', 'Remember me') }}
 									</label>
 								</div>
 							</div>
 
 							<div class="col-sm-6 text-right m-t-10">
-								<a href="http://localhost/templates/penguin/material/login_password_recover.html">Forgot password?</a>
+															<a href="http://localhost/templates/penguin/material/login_password_recover.html">{{ __t('auth.forgot_password', 'Forgot password?') }}</a>
 							</div>
 						</div>
 					</div>
 
 					<div class="form-group">
-						<button type="submit" class="btn btn-info btn-labeled btn-labeled-right btn-block"><b><i class="icon-enter"></i></b> Sign in</button>								
+							<button type="submit" class="btn btn-info btn-labeled btn-labeled-right btn-block"><b><i class="icon-enter"></i></b> {{ __t('auth.sign_in', 'Sign in') }}</button>
 					</div>
 
 					{{-- <div class="form-group">

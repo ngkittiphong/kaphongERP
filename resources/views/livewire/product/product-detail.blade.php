@@ -29,7 +29,7 @@
                                 @if(request()->has('return_to') && request()->get('return_to') === 'warehouse')
                                     <div class="elements">
                                         <button class="btn btn-default" onclick="goBackToWarehouse()">
-                                            <i class="icon-arrow-left8"></i> Back to Warehouse Inventory
+                                            <i class="icon-arrow-left8"></i> {{ __t('product.back_to_warehouse_inventory', 'Back to Warehouse Inventory') }}
                                         </button>
                                     </div>
                                     <a class="elements-toggle"><i class="icon-more"></i></a>
@@ -40,21 +40,21 @@
                                         <li class="active">
                                             <a href="#tab-detail" data-toggle="tab" class="panel-title" aria-expanded="true">
                                                 <div class="panel-heading">
-                                                    <h3 class="panel-title">Detail</h3>
+                                                    <h3 class="panel-title">{{ __t('product.detail', 'Detail') }}</h3>
                                                 </div>
                                             </a>
                                         </li>
                                         <li class="">
                                             <a href="#tab-stock-card" data-toggle="tab" aria-expanded="false">
                                                 <div class="panel-heading">
-                                                    <h3 class="panel-title">Stock Card</h3>
+                                                    <h3 class="panel-title">{{ __t('product.stock_card', 'Stock Card') }}</h3>
                                                 </div>
                                             </a>
                                         </li>
                                         <li class="">
                                             <a href="#tab-trading" data-toggle="tab" aria-expanded="false">
                                                 <div class="panel-heading">
-                                                    <h3 class="panel-title">Trading Detail </h3>
+                                                    <h3 class="panel-title">{{ __t('product.trading_detail', 'Trading Detail') }} </h3>
                                                 </div>
                                             </a>
                                         </li>
@@ -70,7 +70,7 @@
                                         <div class="panel panel-flat">
                                             <div class="panel-body text-center">
                                                 <div class="alert alert-info">
-                                                    <i class="icon-info22"></i> Please select a product to view stock card details.
+                                                    <i class="icon-info22"></i> {{ __t('product.select_product_to_view_stock_card', 'Please select a product to view stock card details.') }}
                                                 </div>
                                             </div>
                                         </div>
@@ -84,7 +84,7 @@
             </div>
         @else
             <div class="bg-white shadow rounded-lg p-6">
-                <p class="text-gray-500">Select a product to view details</p>
+                <p class="text-gray-500">{{ __t('product.select_product_to_view_details', 'Select a product to view details') }}</p>
             </div>
         @endif
     </div>
@@ -104,13 +104,13 @@
     <script>
         function confirmDelete(userId) {
             Swal.fire({
-                title: "Are you sure?",
-                text: "This action cannot be undone!",
+                title: "{{ __t('common.are_you_sure', 'Are you sure?') }}",
+                text: "{{ __t('common.action_cannot_be_undone', 'This action cannot be undone!') }}",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#d33",
                 cancelButtonColor: "#3085d6",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "{{ __t('common.yes_delete_it', 'Yes, delete it!') }}"
             }).then((result) => {
                 if (result.isConfirmed) {
                     Livewire.dispatch('deleteUser', {
@@ -151,18 +151,18 @@
             let hasErrors = false;
 
             if (!newPassword) {
-                $('#new_password_error').text('Password is required');
+                $('#new_password_error').text('{{ __t('user.password_required', 'Password is required') }}');
                 hasErrors = true;
             } else if (newPassword.length < 6) {
-                $('#new_password_error').text('Password must be at least 6 characters');
+                $('#new_password_error').text('{{ __t('user.password_min_length', 'Password must be at least 6 characters') }}');
                 hasErrors = true;
             }
 
             if (!newPasswordConfirmation) {
-                $('#new_password_confirmation_error').text('Please confirm your password');
+                $('#new_password_confirmation_error').text('{{ __t('user.confirm_password_required', 'Please confirm your password') }}');
                 hasErrors = true;
             } else if (newPassword !== newPasswordConfirmation) {
-                $('#new_password_confirmation_error').text('Passwords do not match');
+                $('#new_password_confirmation_error').text('{{ __t('user.passwords_do_not_match', 'Passwords do not match') }}');
                 hasErrors = true;
             }
 
@@ -172,7 +172,7 @@
 
             // Use the stored user ID
             if (!currentUserId) {
-                alert('User ID not found. Please refresh the page and try again.');
+                alert('{{ __t('user.user_id_not_found', 'User ID not found. Please refresh the page and try again.') }}');
                 return;
             }
 
@@ -191,8 +191,8 @@
                     // Show success message
                     Swal.fire({
                         icon: 'success',
-                        title: 'Success',
-                        text: 'Password changed successfully!',
+                        title: '{{ __t('common.success', 'Success') }}',
+                        text: '{{ __t('user.password_changed_successfully', 'Password changed successfully!') }}',
                     });
                     // Close modal
                     $('#passwordChangeModal').modal('hide');
@@ -214,8 +214,8 @@
                         // Display general error
                         Swal.fire({
                             icon: 'error',
-                            title: 'Error',
-                            text: 'Failed to change password. Please try again.',
+                            title: '{{ __t('common.error', 'Error') }}',
+                            text: '{{ __t('user.failed_to_change_password', 'Failed to change password. Please try again.') }}',
                         });
                     }
                 }
@@ -230,7 +230,7 @@
         Livewire.on('userCreated', data => {
             Swal.fire({
                 icon: 'success',
-                title: 'Success',
+                title: '{{ __t('common.success', 'Success') }}',
                 text: data.message,
             });
         });
@@ -380,7 +380,7 @@
                 const operationLabel = data.operationType ? data.operationType.replace('_', ' ') : 'stock operation';
 
                 Swal.fire({
-                    title: 'Confirm Stock Operation',
+                    title: '{{ __t('product.confirm_stock_operation', 'Confirm Stock Operation') }}',
                     html: `
                         <div style="text-align: left;">
                             <!-- Product Information -->
@@ -429,8 +429,8 @@
                     `,
                     icon: 'question',
                     showCancelButton: true,
-                    confirmButtonText: 'Confirm Operation',
-                    cancelButtonText: 'Cancel',
+                    confirmButtonText: '{{ __t('product.confirm_operation', 'Confirm Operation') }}',
+                    cancelButtonText: '{{ __t('common.cancel', 'Cancel') }}',
                     confirmButtonColor: '#007bff',
                     cancelButtonColor: '#6c757d',
                     allowOutsideClick: false,
@@ -459,9 +459,9 @@
                 setTimeout(() => {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Success',
+                        title: '{{ __t('common.success', 'Success') }}',
                         text: message.message,
-                        confirmButtonText: 'OK'
+                        confirmButtonText: '{{ __t('common.ok', 'OK') }}'
                     });
                 }, 300);
             });

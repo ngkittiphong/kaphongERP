@@ -6,7 +6,7 @@
     <div class="header no-margin-bottom">
         <div class="header-content">
             <div class="page-title">
-                <i class="icon-shuffle position-left"></i> Transfer Product
+                <i class="icon-shuffle position-left"></i> {{ __t('menu.transfer_product', 'Transfer Product') }}
             </div>
             @livewire('warehouse.warehouse-add-new-transfer')
         </div>
@@ -262,7 +262,7 @@
                 language: {
                         search: '_INPUT_',
                         lengthMenu: ' _MENU_',
-                        paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+                        paginate: { 'first': '{{ __t('common.first', 'First') }}', 'last': '{{ __t('common.last', 'Last') }}', 'next': '&rarr;', 'previous': '&larr;' }
                 }
 
         });
@@ -287,7 +287,7 @@
         });
 
         // Add placeholder to the datatable filter option
-        $('.dataTables_filter input[type=search]').attr('placeholder','Type to search...');
+        $('.dataTables_filter input[type=search]').attr('placeholder','{{ __t('common.type_to_search', 'Type to search...') }}');
 
         // Enable Select2 select for the length option
         $('.dataTables_length select').select2({
@@ -336,10 +336,10 @@
         window.addEventListener('showSuccessMessage', event => {
             if (typeof Swal !== 'undefined') {
                 Swal.fire({
-                    title: 'Success!',
+                    title: '{{ __t('common.success', 'Success!') }}',
                     text: event.detail,
                     icon: 'success',
-                    confirmButtonText: 'OK',
+                    confirmButtonText: '{{ __t('common.ok', 'OK') }}',
                     confirmButtonColor: '#007bff',
                     timer: 3000,
                     timerProgressBar: true

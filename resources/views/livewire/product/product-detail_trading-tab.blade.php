@@ -2,13 +2,13 @@
     <div class="row col-md-12 col-xs-12">
         <div class="col-md-6 col-xs-6">
             <div class="panel-heading no-padding-bottom">
-                <h4 class="panel-title"><?= __('Product sale details') ?></h4>
+                <h4 class="panel-title">{{ __t('product.product_sale_details', 'Product sale details') }}</h4>
             </div>
             <div class="list-group list-group-lg list-group-borderless">
                 <div class='row'>
                     <span href="#" class="list-group-item p-l-20">
                         <div class="col-md-3 col-xs-3 text-bold">
-                            Sale Price :
+                            {{ __t('product.sale_price', 'Sale Price') }} :
                         </div>
                         <div class="col-md-8 col-xs-8 text-left">
                             {{ $product->sale_price }}
@@ -38,7 +38,7 @@
                 <div class='row'>
                     <span href="#" class="list-group-item p-l-20">
                         <div class="col-md-12 col-xs-12 text-bold">
-                            Sale Description :
+                            {{ __t('product.sale_description', 'Sale Description') }} :
                         </div>
                         <div class="col-md-12 col-xs-12 text-left">
                             {{ $product->sale_description }}
@@ -50,13 +50,13 @@
         <div class="row col-md-6 col-xs-6">
 
             <div class="panel-heading no-padding-bottom">
-                <h4 class="panel-title"><?= __('Product buy details') ?></h4>
+                <h4 class="panel-title">{{ __t('product.product_buy_details', 'Product buy details') }}</h4>
             </div>
             <div class="list-group list-group-lg list-group-borderless">
                 <div class='row'>
                     <span href="#" class="list-group-item p-l-20">
                         <div class="col-md-3 col-xs-3 text-bold">
-                            Buy Price :
+                            {{ __t('product.buy_price', 'Buy Price') }} :
                         </div>
                         <div class="col-md-8 col-xs-8 text-left">
                             {{ $product->buy_price }}
@@ -86,7 +86,7 @@
                 <div class='row'>
                     <span href="#" class="list-group-item p-l-20">
                         <div class="col-md-12 col-xs-12 text-bold">
-                            Buy Description :
+                            {{ __t('product.buy_description', 'Buy Description') }} :
                         </div>
                         <div class="col-md-12 col-xs-12 text-left">
                             {{ $product->buy_description }}

@@ -4,7 +4,7 @@
         <div class="col-md-12">
             <div class="row p-l-10 p-r-10 panel panel-flat">
                 <div class="panel-heading">
-                    <h4 class="panel-title"><?= __('Add New Branch') ?></h4>
+                    <h4 class="panel-title">{{ __t('branch.add_new_branch', 'Add New Branch') }}</h4>
                 </div>
                 <div class="panel-body">
                     @if (session()->has('message'))
@@ -29,9 +29,9 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="company_id"><?= __('Company') ?> <span class="text-danger">*</span></label>
+                                    <label for="company_id">{{ __t('branch.company', 'Company') }} <span class="text-danger">*</span></label>
                                     <select wire:model="company_id" class="form-control" id="company_id">
-                                        <option value="">Select Company</option>
+                                        <option value="">{{ __t('branch.select_company', 'Select Company') }}</option>
                                         @foreach($companies as $company)
                                             <option value="{{ $company->id }}">{{ $company->name_th }}</option>
                                         @endforeach
@@ -41,8 +41,8 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="branch_code"><?= __('Branch Code') ?> <span class="text-danger">*</span></label>
-                                    <input type="text" wire:model="branch_code" class="form-control" id="branch_code" placeholder="Enter branch code">
+                                    <label for="branch_code">{{ __t('branch.branch_code', 'Branch Code') }} <span class="text-danger">*</span></label>
+                                    <input type="text" wire:model="branch_code" class="form-control" id="branch_code" placeholder="{{ __t('branch.enter_branch_code', 'Enter branch code') }}">
                                     @error('branch_code') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
@@ -51,15 +51,15 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="name_th"><?= __('Branch Name (Thai)') ?> <span class="text-danger">*</span></label>
-                                    <input type="text" wire:model="name_th" class="form-control" id="name_th" placeholder="Enter Thai name">
+                                    <label for="name_th">{{ __t('branch.branch_name_th', 'Branch Name (Thai)') }} <span class="text-danger">*</span></label>
+                                    <input type="text" wire:model="name_th" class="form-control" id="name_th" placeholder="{{ __t('branch.enter_thai_name', 'Enter Thai name') }}">
                                     @error('name_th') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="name_en"><?= __('Branch Name (English)') ?></label>
-                                    <input type="text" wire:model="name_en" class="form-control" id="name_en" placeholder="Enter English name">
+                                    <label for="name_en">{{ __t('branch.branch_name_en', 'Branch Name (English)') }}</label>
+                                    <input type="text" wire:model="name_en" class="form-control" id="name_en" placeholder="{{ __t('branch.enter_english_name', 'Enter English name') }}">
                                     @error('name_en') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
@@ -68,15 +68,15 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="address_th"><?= __('Address (Thai)') ?></label>
-                                    <textarea wire:model="address_th" class="form-control" id="address_th" rows="3" placeholder="Enter Thai address"></textarea>
+                                    <label for="address_th">{{ __t('branch.address_th', 'Address (Thai)') }}</label>
+                                    <textarea wire:model="address_th" class="form-control" id="address_th" rows="3" placeholder="{{ __t('branch.enter_thai_address', 'Enter Thai address') }}"></textarea>
                                     @error('address_th') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="address_en"><?= __('Address (English)') ?></label>
-                                    <textarea wire:model="address_en" class="form-control" id="address_en" rows="3" placeholder="Enter English address"></textarea>
+                                    <label for="address_en">{{ __t('branch.address_en', 'Address (English)') }}</label>
+                                    <textarea wire:model="address_en" class="form-control" id="address_en" rows="3" placeholder="{{ __t('branch.enter_english_address', 'Enter English address') }}"></textarea>
                                     @error('address_en') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
@@ -85,15 +85,15 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="phone_number"><?= __('Phone Number') ?></label>
-                                    <input type="text" wire:model="phone_number" class="form-control" id="phone_number" placeholder="Enter phone number">
+                                    <label for="phone_number">{{ __t('branch.phone_number', 'Phone Number') }}</label>
+                                    <input type="text" wire:model="phone_number" class="form-control" id="phone_number" placeholder="{{ __t('branch.enter_phone_number', 'Enter phone number') }}">
                                     @error('phone_number') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="email"><?= __('Email') ?></label>
-                                    <input type="email" wire:model="email" class="form-control" id="email" placeholder="Enter email">
+                                    <label for="email">{{ __t('branch.email', 'Email') }}</label>
+                                    <input type="email" wire:model="email" class="form-control" id="email" placeholder="{{ __t('branch.enter_email', 'Enter email') }}">
                                     @error('email') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
@@ -102,15 +102,15 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="contact_name"><?= __('Contact Name') ?></label>
-                                    <input type="text" wire:model="contact_name" class="form-control" id="contact_name" placeholder="Enter contact name">
+                                    <label for="contact_name">{{ __t('branch.contact_name', 'Contact Name') }}</label>
+                                    <input type="text" wire:model="contact_name" class="form-control" id="contact_name" placeholder="{{ __t('branch.enter_contact_name', 'Enter contact name') }}">
                                     @error('contact_name') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="contact_mobile"><?= __('Contact Mobile') ?></label>
-                                    <input type="text" wire:model="contact_mobile" class="form-control" id="contact_mobile" placeholder="Enter contact mobile">
+                                    <label for="contact_mobile">{{ __t('branch.contact_mobile', 'Contact Mobile') }}</label>
+                                    <input type="text" wire:model="contact_mobile" class="form-control" id="contact_mobile" placeholder="{{ __t('branch.enter_contact_mobile', 'Enter contact mobile') }}">
                                     @error('contact_mobile') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
@@ -121,7 +121,7 @@
                                 <div class="form-group">
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox" wire:model.live="is_active" {{ $is_active ? 'checked' : '' }}> <?= __('Active') ?>
+                                            <input type="checkbox" wire:model.live="is_active" {{ $is_active ? 'checked' : '' }}> {{ __t('branch.active', 'Active') }}
                                         </label>
                                     </div>
                                 </div>
@@ -130,7 +130,7 @@
                                 <div class="form-group">
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox" wire:model.live="is_head_office" {{ $is_head_office ? 'checked' : '' }}> <?= __('Head Office') ?>
+                                            <input type="checkbox" wire:model.live="is_head_office" {{ $is_head_office ? 'checked' : '' }}> {{ __t('branch.head_office', 'Head Office') }}
                                         </label>
                                     </div>
                                 </div>
@@ -139,10 +139,10 @@
 
                         <div class="form-group text-right">
                             <button type="button" class="btn btn-default" wire:click="cancelForm">
-                                <i class="icon-arrow-left8"></i> <?= __('Cancel') ?>
+                                <i class="icon-arrow-left8"></i> {{ __t('common.cancel', 'Cancel') }}
                             </button>
                             <button type="submit" class="btn btn-primary">
-                                <i class="icon-checkmark4"></i> <?= __('Save Branch') ?>
+                                <i class="icon-checkmark4"></i> {{ __t('branch.save_branch', 'Save Branch') }}
                             </button>
                         </div>
                     </form>

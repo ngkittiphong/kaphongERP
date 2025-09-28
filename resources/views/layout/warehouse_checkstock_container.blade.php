@@ -6,7 +6,7 @@
     <div class="header no-margin-bottom">
         <div class="header-content">
             <div class="page-title">
-                <i class="icon-file-check position-left"></i> Check stock work list
+                <i class="icon-file-check position-left"></i> {{ __t('warehouse.check_stock_work_list', 'Check stock work list') }}
             </div>
             @livewire('warehouse.warehouse-add-check-stock-btn')
         </div>
@@ -139,7 +139,7 @@
                 language: {
                         search: '_INPUT_',
                         lengthMenu: ' _MENU_',
-                        paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+                        paginate: { 'first': '{{ __t('common.first', 'First') }}', 'last': '{{ __t('common.last', 'Last') }}', 'next': '&rarr;', 'previous': '&larr;' }
                 }
         });
 
@@ -162,7 +162,7 @@
         });
 
         // Add placeholder to the datatable filter option
-        $('.dataTables_filter input[type=search]').attr('placeholder','Type to search...');
+        $('.dataTables_filter input[type=search]').attr('placeholder','{{ __t('common.type_to_search', 'Type to search...') }}');
 
         // Enable Select2 select for the length option
         $('.dataTables_length select').select2({

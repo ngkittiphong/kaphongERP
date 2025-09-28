@@ -27,8 +27,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="text-center">
-                            <h4>Select a branch to view details</h4>
-                            <p class="text-muted">Choose a branch from the list to see its information</p>
+                            <h4>{{ __t('branch.select_branch_to_view_details', 'Select a branch to view details') }}</h4>
+                            <p class="text-muted">{{ __t('branch.choose_branch_from_list', 'Choose a branch from the list to see its information') }}</p>
                         </div>
                     </div>
                 </div>
@@ -41,13 +41,13 @@
     <script>
         function confirmDelete(branchId) {
             Swal.fire({
-                title: "Are you sure?",
-                text: "This action cannot be undone!",
+                title: "{{ __t('common.are_you_sure', 'Are you sure?') }}",
+                text: "{{ __t('common.action_cannot_be_undone', 'This action cannot be undone!') }}",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#d33",
                 cancelButtonColor: "#3085d6",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "{{ __t('common.yes_delete_it', 'Yes, delete it!') }}"
             }).then((result) => {
                 if (result.isConfirmed) {
                     Livewire.dispatch('deleteBranch', {
@@ -64,7 +64,7 @@
         Livewire.on('branchCreated', data => {
             Swal.fire({
                 icon: 'success',
-                title: 'Create Success',
+                title: '{{ __t('common.create_success', 'Create Success') }}',
                 text: data.message,
             });
         });
@@ -72,7 +72,7 @@
         Livewire.on('branchUpdated', data => {
             Swal.fire({
                 icon: 'success',
-                title: 'Update Success',
+                title: '{{ __t('common.update_success', 'Update Success') }}',
                 text: data.message,
             });
         });
@@ -80,7 +80,7 @@
         Livewire.on('branchDeleted', data => {
             Swal.fire({
                 icon: 'success',
-                title: 'Delete Success',
+                title: '{{ __t('common.delete_success', 'Delete Success') }}',
                 text: data.message,
             });
         });

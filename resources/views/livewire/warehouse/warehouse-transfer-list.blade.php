@@ -27,7 +27,7 @@
         <table class="table table-hover table-condensed" style="margin-bottom: 0;">
             <thead style="position: sticky; top: 0; background: white; z-index: 10;">
                 <tr>
-                    <th scope="col" style="padding: 8px 12px;"><?= __('Work list') ?></th>
+                    <th scope="col" style="padding: 8px 12px;">{{ __t('warehouse.work_list', 'Work list') }}</th>
                 </tr>
             </thead>
             <tbody>

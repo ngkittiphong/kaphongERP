@@ -6,19 +6,19 @@
         <div class="btn-group" role="group">
             <button type="button" class="btn btn-sm {{ $filter === 'all' ? 'btn-primary' : 'btn-default' }}" 
                     wire:click="setFilter('all')">
-                All Reports
+                {{ __t('warehouse.all_reports', 'All Reports') }}
             </button>
             <button type="button" class="btn btn-sm {{ $filter === 'pending' ? 'btn-warning' : 'btn-default' }}" 
                     wire:click="setFilter('pending')">
-                In Process
+                {{ __t('warehouse.in_process', 'In Process') }}
             </button>
             <button type="button" class="btn btn-sm {{ $filter === 'completed' ? 'btn-success' : 'btn-default' }}" 
                     wire:click="setFilter('completed')">
-                Completed
+                {{ __t('warehouse.completed', 'Completed') }}
             </button>
             <button type="button" class="btn btn-sm {{ $filter === 'expired' ? 'btn-danger' : 'btn-default' }}" 
                     wire:click="setFilter('expired')">
-                Expired
+                {{ __t('warehouse.expired', 'Expired') }}
             </button>
         </div>
     </div>
@@ -27,7 +27,7 @@
         <table class="table table-hover datatable-reorder-state-saving datatable-fixed-left">
             <thead>
                 <tr>
-                    <th scope="col"><?= __('Work list') ?></th>
+                    <th scope="col">{{ __t('warehouse.work_list', 'Work list') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,11 +45,11 @@
                                         </div>
 
                                         <div class="text-size-large text-dark">
-                                            work date: {{ $this->getWorkDate($checkStockReport->datetime_create) }}
+                                            {{ __t('warehouse.work_date', 'work date') }}: {{ $this->getWorkDate($checkStockReport->datetime_create) }}
                                         </div>
                                         
                                         <div class="text-size-large text-dark">
-                                            expire date: {{ $this->getExpireDate($checkStockReport->datetime_create) }}
+                                            {{ __t('warehouse.expire_date', 'expire date') }}: {{ $this->getExpireDate($checkStockReport->datetime_create) }}
                                         </div>
                                         
                                         <div class="text-size-large text-bold {{ $this->getStatusTextColor($checkStockReport->closed, $checkStockReport->datetime_create) }}">
@@ -71,7 +71,7 @@
                         <td colspan="1" class="text-center text-muted">
                             <div class="py-4">
                                 <i class="icon-inbox text-muted" style="font-size: 2rem;"></i>
-                                <p class="mt-2">No check stock reports found</p>
+                                <p class="mt-2">{{ __t('warehouse.no_check_stock_reports_found', 'No check stock reports found') }}</p>
                             </div>
                         </td>
                     </tr>

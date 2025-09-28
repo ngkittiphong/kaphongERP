@@ -4,7 +4,7 @@
      <table class="table table-hover datatable-reorder-state-saving datatable-fixed-left">
          <thead>
              <tr>
-                 <th scope="col"><?= __('Branches') ?></th>
+                 <th scope="col">{{ __t('menu.branches', 'Branches') }}</th>
              </tr>
          </thead>
          <tbody>

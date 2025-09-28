@@ -6,7 +6,7 @@
     <div class="header no-margin-bottom">
         <div class="header-content">
             <div class="page-title">
-                <i class="icon-user position-left"></i> Product
+                <i class="icon-user position-left"></i> {{ __t('menu.products', 'Product') }}
             </div>
             @livewire('product.product-add-product-btn')
         </div>
@@ -64,8 +64,8 @@
                     search: '_INPUT_',
                     lengthMenu: '_MENU_',
                     paginate: {
-                        'first': 'First',
-                        'last': 'Last',
+                        'first': '{{ __t("common.first", "First") }}',
+                        'last': '{{ __t("common.last", "Last") }}',
                         'next': '&rarr;',
                         'previous': '&larr;'
                     }
@@ -80,7 +80,7 @@
             });
 
             // Add placeholder to the datatable filter option
-            $('.dataTables_filter input[type=search]').attr('placeholder', '{{ __("Find") }}');
+            $('.dataTables_filter input[type=search]').attr('placeholder', '{{ __t("common.find", "Find") }}');
 
             // Enable Select2 select for the length option
             $('.dataTables_length select').select2({

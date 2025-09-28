@@ -5,7 +5,7 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">
                         <i class="icon-file-check position-left text-primary"></i>
-                        Create New Check Stock Report
+                        {{ __t('warehouse.create_new_check_stock_report', 'Create New Check Stock Report') }}
                     </h3>
                 </div>
                 <div class="panel-body">
@@ -14,13 +14,13 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="warehouse_id" class="control-label">
-                                        Warehouse <span class="text-danger">*</span>
+                                        {{ __t('warehouse.warehouse', 'Warehouse') }} <span class="text-danger">*</span>
                                     </label>
                                     <select wire:model="warehouse_id" 
                                             class="form-control select2" 
                                             id="warehouse_id"
                                             required>
-                                        <option value="">Select Warehouse</option>
+                                        <option value="">{{ __t('warehouse.select_warehouse', 'Select Warehouse') }}</option>
                                         @foreach($warehouses as $warehouse)
                                             <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
                                         @endforeach
@@ -34,13 +34,13 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="user_create_id" class="control-label">
-                                        User <span class="text-danger">*</span>
+                                        {{ __t('user.user', 'User') }} <span class="text-danger">*</span>
                                     </label>
                                     <select wire:model="user_create_id" 
                                             class="form-control select2" 
                                             id="user_create_id"
                                             required>
-                                        <option value="">Select User</option>
+                                        <option value="">{{ __t('user.select_user', 'Select User') }}</option>
                                         @foreach($users as $user)
                                             <option value="{{ $user->id }}">{{ $user->username }}</option>
                                         @endforeach
@@ -56,7 +56,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="datetime_create" class="control-label">
-                                        Check Date <span class="text-danger">*</span>
+                                        {{ __t('warehouse.check_date', 'Check Date') }} <span class="text-danger">*</span>
                                     </label>
                                     <input type="datetime-local" 
                                            wire:model="datetime_create" 
@@ -72,13 +72,13 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="description" class="control-label">
-                                        Description
+                                        {{ __t('common.description', 'Description') }}
                                     </label>
                                     <textarea wire:model="description" 
                                               class="form-control" 
                                               id="description"
                                               rows="3"
-                                              placeholder="Optional description for this check stock report"></textarea>
+                                              placeholder="{{ __t('warehouse.optional_description_check_stock', 'Optional description for this check stock report') }}"></textarea>
                                     @error('description') 
                                         <span class="text-danger">{{ $message }}</span> 
                                     @enderror
@@ -91,7 +91,7 @@
                             <div class="col-md-12">
                                 <h4 class="text-primary">
                                     <i class="icon-package position-left"></i>
-                                    Products to Check
+                                    {{ __t('warehouse.products_to_check', 'Products to Check') }}
                                 </h4>
                                 <hr>
                             </div>
@@ -102,12 +102,12 @@
                             <div class="col-md-5">
                                 <div class="form-group">
                                     <label for="newProductId" class="control-label">
-                                        Product <span class="text-danger">*</span>
+                                        {{ __t('product.product', 'Product') }} <span class="text-danger">*</span>
                                     </label>
                                     <select wire:model="newProductId" 
                                             class="form-control select2-product" 
                                             id="newProductId">
-                                        <option value="">Select Product</option>
+                                        <option value="">{{ __t('product.select_product', 'Select Product') }}</option>
                                         @foreach($products as $product)
                                             <option value="{{ $product->id }}">{{ $product->sku_number }} - {{ $product->name }}</option>
                                         @endforeach
@@ -121,7 +121,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="newProductQuantity" class="control-label">
-                                        Quantity <span class="text-danger">*</span>
+                                        {{ __t('product.quantity', 'Quantity') }} <span class="text-danger">*</span>
                                     </label>
                                     <input type="number" 
                                            wire:model="newProductQuantity" 
@@ -143,7 +143,7 @@
                                                 class="btn btn-success btn-sm" 
                                                 wire:click="addProduct">
                                             <i class="icon-plus position-left"></i>
-                                            Add Product
+                                            {{ __t('product.add_product', 'Add Product') }}
                                         </button>
                                     </div>
                                 </div>
@@ -159,11 +159,11 @@
                                             <thead>
                                                 <tr>
                                                     <th width="5%">#</th>
-                                                    <th width="15%">SKU</th>
-                                                    <th width="35%">Product Name</th>
-                                                    <th width="15%">Quantity</th>
-                                                    <th width="10%">Unit</th>
-                                                    <th width="10%">Actions</th>
+                                                    <th width="15%">{{ __t('product.sku', 'SKU') }}</th>
+                                                    <th width="35%">{{ __t('product.product_name', 'Product Name') }}</th>
+                                                    <th width="15%">{{ __t('product.quantity', 'Quantity') }}</th>
+                                                    <th width="10%">{{ __t('product.unit', 'Unit') }}</th>
+                                                    <th width="10%">{{ __t('common.actions', 'Actions') }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -199,7 +199,7 @@
                                 <div class="col-md-12">
                                     <div class="alert alert-info text-center">
                                         <i class="icon-info"></i>
-                                        No products added yet. Please add products to create the check stock report.
+                                        {{ __t('warehouse.no_products_added_yet', 'No products added yet. Please add products to create the check stock report.') }}
                                     </div>
                                 </div>
                             </div>
@@ -212,12 +212,12 @@
                                             class="btn btn-default" 
                                             wire:click="cancel">
                                         <i class="icon-cross position-left"></i>
-                                        Cancel
+                                        {{ __t('common.cancel', 'Cancel') }}
                                     </button>
                                     <button type="submit" 
                                             class="btn btn-primary">
                                         <i class="icon-checkmark position-left"></i>
-                                        Create Check Stock Report
+                                        {{ __t('warehouse.create_check_stock_report', 'Create Check Stock Report') }}
                                     </button>
                                 </div>
                             </div>
@@ -239,7 +239,7 @@
 
         $('.select2-product').select2({
             width: '100%',
-            placeholder: 'Search for a product...'
+            placeholder: '{{ __t('product.search_for_product', 'Search for a product...') }}'
         });
 
         // Handle Select2 change events
@@ -269,7 +269,7 @@
 
         $('.select2-product').select2({
             width: '100%',
-            placeholder: 'Search for a product...'
+            placeholder: '{{ __t('product.search_for_product', 'Search for a product...') }}'
         });
     });
 

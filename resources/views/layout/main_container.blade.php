@@ -3,11 +3,11 @@
         <!--Page Header-->
         <div class="header">
             <div class="header-content">
-                <div class="page-title"><i class="icon-display4"></i> Dashboard</div>
+                <div class="page-title"><i class="icon-display4"></i> {{ __t('dashboard.title', 'Dashboard') }}</div>
                 <ul class="breadcrumb">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="index.htm#">Dashboards</a></li>
-                    <li class="active"><a href="index.htm#">Default Dashboard</a></li>
+                    <li><a href="/">{{ __t('common.home', 'Home') }}</a></li>
+                    <li><a href="index.htm#">{{ __t('menu.dashboards', 'Dashboards') }}</a></li>
+                    <li class="active"><a href="index.htm#">{{ __t('dashboard.default_dashboard', 'Default Dashboard') }}</a></li>
                 </ul>					
             </div>
         </div>		
@@ -21,7 +21,7 @@
                 <div class="col-md-8 col-sm-8">
                     <div class="panel panel-flat no-border bg-slate-light">
                         <div class="panel-heading text-center heading-condensed">
-                            <h6 class="panel-title text-uppercase text-muted">Earnings graph</h6>						
+                            <h6 class="panel-title text-uppercase text-muted">{{ __t('dashboard.earnings_graph', 'Earnings graph') }}</h6>						
                         </div>
                         <div class="p-10">
                             <div class="row">
@@ -31,19 +31,19 @@
                             </div>
                             <div class="row text-center p-t-20">
                                 <div class="col-md-6 col-sm-12 hidden-sm">
-                                    <h6 class="panel-title text-uppercase text-muted">Total earnings this year</h6>	
+                                    <h6 class="panel-title text-uppercase text-muted">{{ __t('dashboard.total_earnings_this_year', 'Total earnings this year') }}</h6>	
                                     <h1 class="panel-title text-uppercase text-size-huge text-semibold">$45,723</h1>	
                                     <div class="row m-t-20">
                                         <div class="col-md-4 col-sm-4 col-xs-4">
-                                            <h6 class="panel-title text-uppercase text-muted">America</h6>	
+                                            <h6 class="panel-title text-uppercase text-muted">{{ __t('dashboard.america', 'America') }}</h6>	
                                             <h5 class="panel-title text-uppercase text-size-extralarge">$12,411</h5>	
                                         </div>
                                         <div class="col-md-4 col-sm-4 col-xs-4">
-                                            <h6 class="panel-title text-uppercase text-muted">Europe</h6>	
+                                            <h6 class="panel-title text-uppercase text-muted">{{ __t('dashboard.europe', 'Europe') }}</h6>	
                                             <h5 class="panel-title text-uppercase text-size-extralarge">$24,212</h5>	
                                         </div>
                                         <div class="col-md-4 col-sm-4 col-xs-4">
-                                            <h6 class="panel-title text-uppercase text-muted">Asia</h6>	
+                                            <h6 class="panel-title text-uppercase text-muted">{{ __t('dashboard.asia', 'Asia') }}</h6>	
                                             <h5 class="panel-title text-uppercase text-size-extralarge">$9,100</h5>	
                                         </div>
                                     </div>
@@ -58,7 +58,7 @@
                 <div class="col-md-4 col-sm-4">
                     <div class="panel panel-flat no-border bg-lime-darker no-margin">
                         <div class="panel-heading">
-                            <h4 class="panel-title">April 2016</h4>						
+                            <h4 class="panel-title">{{ __t('dashboard.april_2016', 'April 2016') }}</h4>						
                         </div>
                         <div class="chart" id="google-line"></div>
                     </div>
@@ -66,14 +66,14 @@
                         <div class="row">
                             <div class="col-md-4 col-sm-4 col-xs-4 text-right p-t-10">
                                 <h4 class="no-margin text-semibold text-lime-lighter">60%</h4>
-                                <p class="text-muted text-uppercase">Direct Sell</p>
+                                <p class="text-muted text-uppercase">{{ __t('dashboard.direct_sell', 'Direct Sell') }}</p>
                             </div>
                             <div class="col-md-4 col-sm-4 col-xs-4">
                                 <div class="chart" id="google-donut-rotate"></div>
                             </div>	
                             <div class="col-md-4 col-sm-4 col-xs-4 text-left p-t-10">
                                 <h4 class="no-margin text-semibold text-lime-lighter">40%</h4>
-                                <p class="text-muted text-uppercase small">Channel Sell</p>
+                                <p class="text-muted text-uppercase small">{{ __t('dashboard.channel_sell', 'Channel Sell') }}</p>
                             </div>	
                         </div>					
                     </div>
@@ -82,7 +82,7 @@
                         <div class="row">
                             <div class="col-md-6 col-sm-6 col-xs-6 text-right p-t-20">
                                 <h2 class="no-margin text-semibold text-purple-darker p-t-5">$34,356</h2>
-                                <p class="text-muted text-uppercase">Expected Sales</p>
+                                <p class="text-muted text-uppercase">{{ __t('dashboard.expected_sales', 'Expected Sales') }}</p>
                             </div>						
                             <div class="col-md-6 col-sm-6 col-xs-6 text-left p-10 p-r-20">
                                 <div class="chart" id="google-column-sales"></div>
@@ -96,7 +96,7 @@
                                 <div class="wi wi-day-snow wi-40 m-l-10 text-amber p-t-20"></div>
                             </div>						
                             <div class="col-md-8 col-sm-8 col-xs-8 text-left">
-                                <p class="text-muted text-uppercase no-margin no-padding p-t-15 p-b-10"><i class="icon-location3"></i> New York (Rainy)</p>
+                                <p class="text-muted text-uppercase no-margin no-padding p-t-15 p-b-10"><i class="icon-location3"></i> {{ __t('dashboard.new_york_rainy', 'New York (Rainy)') }}</p>
                                 <div class="weather-cent text-amber-dark no-margin no-padding"><span>18</span></div>							
                             </div>	
                         </div>					
@@ -111,7 +111,7 @@
                         <div class="panel-body">													
                             <div class="row">
                                 <div class="col-md-5 col-sm-5">
-                                    <p class="text-muted text-uppercase no-margin">Today</p>
+                                    <p class="text-muted text-uppercase no-margin">{{ __t('dashboard.today', 'Today') }}</p>
                                     <div class="row-fluid no-margin">
                                         <div class="col-md-3 col-sm-3 col-xs-3 no-margin">
                                             <div class="wi wi-day-snow wi-30 p-l-20 p-t-15 text-teal"></div>
@@ -124,32 +124,32 @@
                                 <div class="col-md-7 col-sm-12 col-xs-12 p-r-20">
                                     <div class="row">
                                         <div class="col-md-2 col-xs-2 col-sm-2">
-                                            <p class="text-muted text-uppercase no-margin">Mon</p>
+                                            <p class="text-muted text-uppercase no-margin">{{ __t('dashboard.mon', 'Mon') }}</p>
                                             <div class="wi wi-day-snow wi-20 p-l-20 text-indigo"></div>
                                             <div class="weather-cent wi-small text-muted"><span>17</span></div>
                                         </div>
                                         <div class="col-md-2 col-sm-2 col-xs-2">
-                                            <p class="text-muted text-uppercase no-margin">Tue</p>
+                                            <p class="text-muted text-uppercase no-margin">{{ __t('dashboard.tue', 'Tue') }}</p>
                                             <div class="wi wi-day-cloudy-windy wi-20 p-l-20 text-lime"></div>
                                             <div class="weather-cent wi-small text-muted"><span>19</span></div>
                                         </div>
                                         <div class="col-md-2 col-sm-2 col-xs-2">
-                                            <p class="text-muted text-uppercase no-margin">Wed</p>
+                                            <p class="text-muted text-uppercase no-margin">{{ __t('dashboard.wed', 'Wed') }}</p>
                                             <div class="wi wi-day-lightning wi-20 p-l-20 text-amber"></div>
                                             <div class="weather-cent wi-small text-muted"><span>18</span></div>
                                         </div>
                                         <div class="col-md-2 col-sm-2 col-xs-2">
-                                            <p class="text-muted text-uppercase no-margin">Thur</p>
+                                            <p class="text-muted text-uppercase no-margin">{{ __t('dashboard.thu', 'Thu') }}</p>
                                             <div class="wi wi-night-rain-mix wi-20 p-l-20 text-blue"></div>
                                             <div class="weather-cent wi-small text-muted"><span>21</span></div>
                                         </div>
                                         <div class="col-md-2 col-sm-2 col-xs-2">
-                                            <p class="text-muted text-uppercase no-margin">Fri</p>
+                                            <p class="text-muted text-uppercase no-margin">{{ __t('dashboard.fri', 'Fri') }}</p>
                                             <div class="wi wi-night-rain wi-20 p-l-20 text-slate"></div>
                                             <div class="weather-cent wi-small text-muted"><span>19</span></div>
                                         </div>
                                         <div class="col-md-2 col-sm-2 col-xs-2">
-                                            <p class="text-muted text-uppercase no-margin">Sat</p>
+                                            <p class="text-muted text-uppercase no-margin">{{ __t('dashboard.sat', 'Sat') }}</p>
                                             <div class="wi wi-sunrise wi-20 p-l-20 text-success"></div>
                                             <div class="weather-cent wi-small text-muted"><span>18</span></div>
                                         </div>
@@ -194,7 +194,7 @@
                 <div class="col-md-3 col-sm-4">
                     <div class="panel panel-flat no-border">
                         <div class="panel-heading">
-                            <h4 class="panel-title"><i class="icon-feed position-left"></i>Recent Activities</h4>									
+                            <h4 class="panel-title"><i class="icon-feed position-left"></i>{{ __t('dashboard.recent_activities', 'Recent Activities') }}</h4>									
                         </div>
                         <div class="panel-body">
                             <div class="m-b-10">
@@ -220,16 +220,16 @@
                 <div class="col-md-9 col-sm-8">
                     <div class="panel panel-flat no-border">
                         <div class="panel-heading p-t-15 p-l-20">
-                            <h4 class="panel-title"><i class="icon-users position-left"></i>Latest users</h4>				
+                            <h4 class="panel-title"><i class="icon-users position-left"></i>{{ __t('dashboard.latest_users', 'Latest users') }}</h4>				
                         </div>
                         <div class="table-responsive">
                             <table class="table table-condensed table-striped">
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>First Name</th>
-                                        <th>Last Name</th>
-                                        <th>Username</th>
+                                        <th>{{ __t('dashboard.first_name', 'First Name') }}</th>
+                                        <th>{{ __t('dashboard.last_name', 'Last Name') }}</th>
+                                        <th>{{ __t('dashboard.username', 'Username') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>

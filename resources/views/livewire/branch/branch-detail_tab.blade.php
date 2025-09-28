@@ -9,28 +9,28 @@
                             <li class="active">
                                 <a href="#tab-detail" data-toggle="tab" class="panel-title" aria-expanded="true">
                                     <div class="panel-heading">
-                                        <h3 class="panel-title">Detail</h3>
+                                        <h3 class="panel-title">{{ __t('common.detail', 'Detail') }}</h3>
                                     </div>
                                 </a>
                             </li>
                             <li class="">
                                 <a href="#tab-warehouse" data-toggle="tab" aria-expanded="false">
                                     <div class="panel-heading">
-                                        <h3 class="panel-title">Warehouse</h3>
+                                        <h3 class="panel-title">{{ __t('menu.warehouse', 'Warehouse') }}</h3>
                                     </div>
                                 </a>
                             </li>
                             <li class="">
                                 <a href="#tab-user" data-toggle="tab" aria-expanded="false">
                                     <div class="panel-heading">
-                                        <h3 class="panel-title">User </h3>
+                                        <h3 class="panel-title">{{ __t('menu.users', 'User') }}</h3>
                                     </div>
                                 </a>
                             </li>
                             <li class="">
                                 <a href="#tab-payment" data-toggle="tab" aria-expanded="false">
                                     <div class="panel-heading">
-                                        <h3 class="panel-title">Payment </h3>
+                                        <h3 class="panel-title">{{ __t('setting.payment', 'Payment') }}</h3>
                                     </div>
                                 </a>
                             </li>
@@ -41,14 +41,14 @@
                     <div class="tab-pane active" id="tab-detail">
                         <div class="row col-md-12 col-xs-12">
                             <div class="panel-heading no-padding-bottom">
-                                <h4 class="panel-title"><?= __('Branch details') ?></h4>
+                                <h4 class="panel-title">{{ __t('branch.branch_details', 'Branch details') }}</h4>
                                 <div class="elements">
                                     <button class="btn bg-amber-darkest"
                                         wire:click="$dispatch('showEditBranchForm')">
-                                        <i class="icon-pencil6"></i> Edit Branch
+                                        <i class="icon-pencil6"></i> {{ __t('branch.edit_branch', 'Edit Branch') }}
                                     </button>
                                     <button class="btn btn-danger" onclick="confirmDelete({{ $branch->id ?? 0 }})">
-                                        <i class="icon-trash"></i> Delete Branch
+                                        <i class="icon-trash"></i> {{ __t('branch.delete_branch', 'Delete Branch') }}
                                     </button>
                                 </div>
                                 <a class="elements-toggle"><i class="icon-more"></i></a>
@@ -57,7 +57,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            ชื่อสาขา :
+                                            {{ __t('branch.branch_name', 'ชื่อสาขา') }} :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
                                             {{ $branch->name_th ?? 'N/A' }} ({{ $branch->name_en ?? 'N/A' }})
@@ -67,12 +67,12 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            เลขที่สาขา :
+                                            {{ __t('branch.branch_no', 'เลขที่สาขา') }} :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
                                             {{ $branch->branch_code ?? 'N/A' }} 
                                             @if($branch && $branch->is_head_office)
-                                                (สาขาหลัก)
+                                                ({{ __t('branch.head_office', 'สาขาหลัก') }})
                                             @endif
                                         </div>
                                     </span>
@@ -80,7 +80,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            บริษัท :
+                                            {{ __t('branch.company', 'บริษัท') }} :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
                                             {{ $branch->company->name_th ?? 'N/A' }}
@@ -90,7 +90,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            ที่อยู่ :
+                                            {{ __t('branch.address', 'ที่อยู่') }} :
                                         </div>
                                         <div class="col-md-4 col-xs-4 text-left">
                                             {{ $branch->address_th ?? 'N/A' }}
@@ -103,7 +103,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            ที่อยู่ออกใบเสร็จ :
+                                            {{ __t('branch.billing_address', 'ที่อยู่ออกใบเสร็จ') }} :
                                         </div>
                                         <div class="col-md-4 col-xs-4 text-left">
                                             {{ $branch->bill_address_th ?? 'N/A' }}
@@ -145,11 +145,11 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            สถานะ :
+                                            {{ __t('common.status', 'สถานะ') }} :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
                                             <span class="badge bg-{{ $branch->is_active ? 'success' : 'danger' }}">
-                                                {{ $branch->is_active ? 'Active' : 'Inactive' }}
+                                                {{ $branch->is_active ? __t('common.active', 'Active') : __t('common.inactive', 'Inactive') }}
                                             </span>
                                         </div>
                                     </span>
@@ -165,10 +165,10 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Warehouse Name</th>
-                                            <th>Average Remaining Price</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
+                                            <th>{{ __t('warehouse.warehouse_name', 'Warehouse Name') }}</th>
+                                            <th>{{ __t('warehouse.average_remaining_price', 'Average Remaining Price') }}</th>
+                                            <th>{{ __t('common.status', 'Status') }}</th>
+                                            <th>{{ __t('common.action', 'Action') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -176,7 +176,7 @@
                                             <tr class="text-default">
                                                 <td class="col-md-1">{{ $index + 1 }}.</td>
                                                 <td class="col-md-5">{{ $warehouse->name }}</td>
-                                                <td class="col-md-3">{{ number_format($warehouse->avr_remain_price ?? 0, 2) }} บาท</td>
+                                                <td class="col-md-3">{{ number_format($warehouse->avr_remain_price ?? 0, 2) }} {{ __t('common.baht', 'บาท') }}</td>
                                                 <td>
                                                     <span class="badge bg-{{ $warehouse->status->name === 'Active' ? 'success' : 'danger' }}">
                                                         {{ $warehouse->status->name }}
@@ -192,7 +192,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="5" class="text-center">No warehouses found for this branch</td>
+                                                <td colspan="5" class="text-center">{{ __t('warehouse.no_warehouses_found_for_branch', 'No warehouses found for this branch') }}</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -208,16 +208,16 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Avatar</th>
-                                            <th>Name</th>
-                                            <th>Username</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
+                                            <th>{{ __t('user.avatar', 'Avatar') }}</th>
+                                            <th>{{ __t('user.name', 'Name') }}</th>
+                                            <th>{{ __t('user.username', 'Username') }}</th>
+                                            <th>{{ __t('common.status', 'Status') }}</th>
+                                            <th>{{ __t('common.action', 'Action') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td colspan="6" class="text-center">User management for this branch - Coming soon</td>
+                                            <td colspan="6" class="text-center">{{ __t('user.user_management_coming_soon', 'User management for this branch - Coming soon') }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -228,13 +228,13 @@
                     <div class="tab-pane" id="tab-payment">
                         <div class="row col-md-12 col-xs-12">
                             <div class="panel-heading no-padding-bottom">
-                                <h4 class="panel-title"><?= __('บัญชีธนาคาร') ?></h4>
+                                <h4 class="panel-title">{{ __t('setting.bank_account', 'บัญชีธนาคาร') }}</h4>
                             </div>
                             <div class="list-group list-group-lg list-group-borderless">
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-12 col-xs-12 text-center">
-                                            <p>Payment information for this branch - Coming soon</p>
+                                            <p>{{ __t('setting.payment_information_coming_soon', 'Payment information for this branch - Coming soon') }}</p>
                                         </div>
                                     </span>
                                 </div>

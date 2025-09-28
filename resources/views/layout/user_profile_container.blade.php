@@ -6,7 +6,7 @@
     <div class="header no-margin-bottom">
         <div class="header-content">
             <div class="page-title">
-                <i class="icon-user position-left"></i> User
+                <i class="icon-user position-left"></i> {{ __t('menu.user', 'User') }}
             </div>
             @livewire('user.user-add-user-btn')
         </div>

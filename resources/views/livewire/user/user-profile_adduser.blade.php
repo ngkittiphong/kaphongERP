@@ -71,14 +71,14 @@
 
                     <div class="col-md-7 col-xs-12">
                         <div class="panel-heading no-padding-bottom">
-                            <h4 class="panel-title">Add New User</h4>
+                            <h4 class="panel-title">{{ __t('user.add_new_user', 'Add New User') }}</h4>
                         </div>
 
                         <!-- User profile form fields -->
                         <div class="list-group list-group-lg list-group-borderless">
                             <!-- Username field (readonly) -->
                             <div class="form-group has-feedback has-feedback-left">
-                                <input type="text" class="form-control" wire:model="username" placeholder="Username"
+                                <input type="text" class="form-control" wire:model="username" placeholder="{{ __t('user.username', 'Username') }}"
                                     required>
                                 <div class="form-control-feedback">
                                     <i class="icon-user text-muted"></i>
@@ -90,7 +90,7 @@
 
                             <!-- Email fields (readonly) -->
                             <div class="form-group has-feedback has-feedback-left">
-                                <input type="email" class="form-control" wire:model="email" placeholder="Email"
+                                <input type="email" class="form-control" wire:model="email" placeholder="{{ __t('user.email', 'Email') }}"
                                     required>
                                 <div class="form-control-feedback">
                                     <i class="icon-envelope text-muted"></i>
@@ -102,7 +102,7 @@
 
 
                             <div class="form-group has-feedback has-feedback-left">
-                                <input type="password" class="form-control" wire:model="password" placeholder="Password"
+                                <input type="password" class="form-control" wire:model="password" placeholder="{{ __t('user.password', 'Password') }}"
                                     required>
                                 <div class="form-control-feedback">
                                     <i class="icon-lock text-muted"></i>
@@ -113,7 +113,7 @@
                             </div>
                             <div class="form-group has-feedback has-feedback-left">
                                 <input type="password" class="form-control" wire:model="password_confirmation"
-                                    placeholder="Confirm password" required>
+                                    placeholder="{{ __t('user.confirm_password', 'Confirm password') }}" required>
                                 <div class="form-control-feedback">
                                     <i class="icon-lock text-muted"></i>
                                 </div>
@@ -135,7 +135,7 @@
                                 </div>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="ชื่อ - นามสกุล"
+                                        <input type="text" class="form-control" placeholder="{{ __t('user.fullname_th', 'ชื่อ - นามสกุล') }}"
                                             wire:model="fullname_th">
                                     </div>
                                 </div>
@@ -152,7 +152,7 @@
                                 </div>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <input type="text" placeholder="Fullname" class="form-control"
+                                        <input type="text" placeholder="{{ __t('user.fullname_en', 'Fullname') }}" class="form-control"
                                             wire:model="fullname_en" value="{{ $user->profile->fullname_en ?? '' }}">
                                     </div>
                                 </div>
@@ -160,21 +160,21 @@
 
                             <!-- Nickname field -->
                             <div class="form-group">
-                                <label>Nickname</label>
+                                <label>{{ __t('user.nickname', 'Nickname') }}</label>
                                 <input type="text" class="form-control" wire:model="nickname"
-                                    placeholder="Nickname">
+                                    placeholder="{{ __t('user.nickname', 'Nickname') }}">
                             </div>
 
                             <!-- Description field -->
                             <div class="form-group">
-                                <label>Description</label>
+                                <label>{{ __t('user.description', 'Description') }}</label>
                                 <textarea class="form-control" wire:model="description" rows="3">{{ $user->profile->description ?? '' }}</textarea>
                             </div>
                             <!-- Additional profile fields... -->
 
                             <div class="text-right">
                                 <button type="submit" class="btn bg-primary">
-                                    Create now
+                                    {{ __t('user.create_now', 'Create now') }}
                                 </button>
                             </div>
 

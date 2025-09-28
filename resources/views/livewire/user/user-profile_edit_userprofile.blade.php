@@ -43,7 +43,7 @@
     <form wire:submit.prevent="updateUserAndProfile" id="updateUserProfileForm">
         <div class="col-md-8 col-xs-12">
             <div class="panel-heading no-padding-bottom">
-                <h4 class="panel-title"><?= __('Edit User') ?></h4>
+                <h4 class="panel-title">{{ __t('user.edit_user', 'Edit User') }}</h4>
             </div>
 
             <!-- User profile form fields -->

@@ -5,7 +5,7 @@
     <div class="header no-margin-bottom">
         <div class="header-content">
             <div class="page-title">
-                <i class="icon-home5 position-left"></i> Warehouse
+                <i class="icon-home5 position-left"></i> {{ __t('menu.warehouse', 'Warehouse') }}
             </div>
             @livewire('warehouse.warehouse-add-warehouse-btn')
         </div>
@@ -35,7 +35,7 @@
                 language: {
                         search: '_INPUT_',
                         lengthMenu: ' _MENU_',
-                        paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+                        paginate: { 'first': '{{ __t('common.first', 'First') }}', 'last': '{{ __t('common.last', 'Last') }}', 'next': '&rarr;', 'previous': '&larr;' }
                 }
 
         });
@@ -73,7 +73,7 @@
         });
 
         // Add placeholder to the datatable filter option
-        $('.dataTables_filter input[type=search]').attr('placeholder','Type to search...');
+        $('.dataTables_filter input[type=search]').attr('placeholder','{{ __t('common.type_to_search', 'Type to search...') }}');
 
         // Enable Select2 select for the length option
         $('.dataTables_length select').select2({

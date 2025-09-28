@@ -5,7 +5,7 @@
     <div class="header no-margin-bottom">
         <div class="header-content">
             <div class="page-title">
-                <i class="icon-home position-left"></i> Branch
+                <i class="icon-home position-left"></i> {{ __t('menu.branch', 'Branch') }}
             </div>
             @livewire('branch.branch-add-branch-btn')
         </div>
@@ -37,7 +37,7 @@
                 language: {
                         search: '_INPUT_',
                         lengthMenu: ' _MENU_',
-                        paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+                        paginate: { 'first': '{{ __t('common.first', 'First') }}', 'last': '{{ __t('common.last', 'Last') }}', 'next': '&rarr;', 'previous': '&larr;' }
                 }
         });
 
@@ -74,7 +74,7 @@
         });
 
         // Add placeholder to the datatable filter option
-        $('.dataTables_filter input[type=search]').attr('placeholder','Type to search...');
+        $('.dataTables_filter input[type=search]').attr('placeholder','{{ __t('common.type_to_search', 'Type to search...') }}');
 
         // Enable Select2 select for the length option
         $('.dataTables_length select').select2({

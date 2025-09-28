@@ -12,7 +12,7 @@
                                     <li class="active">
                                         <a href="#tab-detail" data-toggle="tab" class="panel-title" aria-expanded="true">
                                             <div class="panel-heading">
-                                                <h3 class="panel-title">Detail</h3>
+                                                <h3 class="panel-title">{{ __t('common.detail', 'Detail') }}</h3>
                                             </div>
                                         </a>
                                     </li>
@@ -31,7 +31,7 @@
                                         </h5>
                                         <row>
                                             <div class="col-md-2 col-xs-2 col-lg-2 text-left text-size-extralarge">
-                                                ผู้ดำเนินการ :
+                                                {{ __t('warehouse.operator', 'ผู้ดำเนินการ') }} :
                                             </div>
                                             <div class="col-md-10 col-xs-10 col-lg-10 text-left text-size-extralarge">
                                                 {{ $checkStockReport->userCreate->username ?? 'N/A' }}
@@ -39,7 +39,7 @@
                                         </row>
                                         <row>
                                             <div class="col-md-2 col-xs-2 col-lg-2 text-left text-size-extralarge">
-                                                duration :
+                                                {{ __t('warehouse.duration', 'duration') }} :
                                             </div>
                                             <div class="col-md-10 col-xs-10 col-lg-10 text-left text-size-extralarge">
                                                 {{ $this->getDurationText($checkStockReport->datetime_create) }}
@@ -47,7 +47,7 @@
                                         </row>
                                         <row>
                                             <div class="col-md-2 col-xs-2 col-lg-2 text-left text-size-extralarge">
-                                                สถานะงาน :
+                                                {{ __t('warehouse.job_status', 'สถานะงาน') }} :
                                             </div>
                                             <div class="col-md-10 col-xs-10 col-lg-10 text-left text-size-extralarge {{ $this->getStatusTextColor($checkStockReport->closed, $checkStockReport->datetime_create) }}">
                                                 {{ $this->getStatusText($checkStockReport->closed, $checkStockReport->datetime_create) }}
@@ -55,7 +55,7 @@
                                         </row>
                                         <row>
                                             <div class="col-md-2 col-xs-2 col-lg-2 text-left text-size-extralarge">
-                                                ตรวจนับครั้งล่าสุด :
+                                                {{ __t('warehouse.last_count_date', 'ตรวจนับครั้งล่าสุด') }} :
                                             </div>
                                             <div class="col-md-10 col-xs-10 col-lg-10 text-left text-size-extralarge">
                                                 {{ $this->getLastCountDate($checkStockReport) }}
@@ -67,7 +67,7 @@
                                                 <div class="col-md-12 col-xs-12 col-lg-12 text-right">
                                                     <button type="button" class="btn btn-success" wire:click="closeReport">
                                                         <i class="icon-checkmark position-left"></i>
-                                                        Close Report
+                                                        {{ __t('warehouse.close_report', 'Close Report') }}
                                                     </button>
                                                 </div>
                                             </row>
@@ -76,7 +76,7 @@
                                                 <div class="col-md-12 col-xs-12 col-lg-12 text-right">
                                                     <button type="button" class="btn btn-warning" wire:click="openReport">
                                                         <i class="icon-play position-left"></i>
-                                                        Reopen Report
+                                                        {{ __t('warehouse.reopen_report', 'Reopen Report') }}
                                                     </button>
                                                 </div>
                                             </row>
@@ -89,11 +89,11 @@
                                                 <thead>
                                                     <tr>
                                                         <th>#</th>
-                                                        <th>รหัสสินค้า</th>
-                                                        <th>ชื่อสินค้า</th>
-                                                        <th>จำนวนนับ/ ตามระบบ</th>
-                                                        <th>หน่วย</th>
-                                                        <th>ผลการนับ</th>
+                                                        <th>{{ __t('product.product_code', 'รหัสสินค้า') }}</th>
+                                                        <th>{{ __t('product.product_name', 'ชื่อสินค้า') }}</th>
+                                                        <th>{{ __t('warehouse.counted_system_quantity', 'จำนวนนับ/ ตามระบบ') }}</th>
+                                                        <th>{{ __t('product.unit', 'หน่วย') }}</th>
+                                                        <th>{{ __t('warehouse.count_result', 'ผลการนับ') }}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -119,7 +119,7 @@
                                     @else
                                         <div class="text-center text-muted py-4">
                                             <i class="icon-inbox text-muted" style="font-size: 2rem;"></i>
-                                            <p class="mt-2">No check stock details found</p>
+                                            <p class="mt-2">{{ __t('warehouse.no_check_stock_details_found', 'No check stock details found') }}</p>
                                         </div>
                                     @endif
                                 </div>
@@ -135,8 +135,8 @@
                 <div class="col-md-12">
                     <div class="text-center text-muted py-5">
                         <i class="icon-inbox text-muted" style="font-size: 3rem;"></i>
-                        <h4 class="mt-3">No Check Stock Report Selected</h4>
-                        <p>Please select a check stock report from the list to view details</p>
+                        <h4 class="mt-3">{{ __t('warehouse.no_check_stock_report_selected', 'No Check Stock Report Selected') }}</h4>
+                        <p>{{ __t('warehouse.select_check_stock_report_from_list', 'Please select a check stock report from the list to view details') }}</p>
                     </div>
                 </div>
             </div>

@@ -3,42 +3,42 @@
     <div class="panel panel-flat">
         <div class="panel-heading">
             <h4 class="panel-title">
-                Stock Card Detail Statement
+                {{ __t('product.stock_card_detail_statement', 'Stock Card Detail Statement') }}
             </h4>
         </div>
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-3 col-xs-3">
-                    <label>Start Date</label>
+                    <label>{{ __t('product.start_date', 'Start Date') }}</label>
                     <div class="input-group">
                         <span class="input-group-addon"><i class="icon-calendar"></i></span>
                         <input type="date" 
                                class="form-control" 
                                wire:model.live="startDate"
-                               placeholder="Select start date">
+                               placeholder="{{ __t('product.select_start_date', 'Select start date') }}">
                     </div>
                 </div>
 
                 <div class="col-md-3 col-xs-3">
-                    <label>End Date</label>
+                    <label>{{ __t('product.end_date', 'End Date') }}</label>
                     <div class="input-group">
                         <span class="input-group-addon"><i class="icon-calendar"></i></span>
                         <input type="date" 
                                class="form-control" 
                                wire:model.live="endDate"
-                               placeholder="Select end date">
+                               placeholder="{{ __t('product.select_end_date', 'Select end date') }}">
                     </div>
                 </div>
 
                 <div class="col-md-6 col-xs-6">
                     <div class="form-group">
-                        <label class="display-block">Select Branch & Warehouse</label>
+                        <label class="display-block">{{ __t('product.select_branch_warehouse', 'Select Branch & Warehouse') }}</label>
                         <select class="form-control" wire:model.live="selectedBranchId">
-                            <option value="">All Branches & Warehouses</option>
+                            <option value="">{{ __t('product.all_branches_warehouses', 'All Branches & Warehouses') }}</option>
                             @foreach($branches as $branch)
                                 <optgroup label="🏢 {{ $branch->name_en }}">
                                     <option value="branch_{{ $branch->id }}" style="font-weight: bold;">
-                                        Select All Warehouses in {{ $branch->name_en }}
+                                        {{ __t('product.select_all_warehouses_in', 'Select All Warehouses in') }} {{ $branch->name_en }}
                                     </option>
                                     @foreach($warehouses->where('branch_id', $branch->id) as $warehouse)
                                         <option value="warehouse_{{ $warehouse->id }}" style="padding-left: 20px;">
@@ -50,7 +50,7 @@
                         </select>
                         <small class="text-muted">
                             <i class="icon-info22"></i> 
-                            Select a branch to include all its warehouses, or select a specific warehouse.
+                            {{ __t('product.branch_warehouse_help_text', 'Select a branch to include all its warehouses, or select a specific warehouse.') }}
                         </small>
                     </div>
                 </div>
@@ -84,7 +84,7 @@
                                 </div>
                                 <div class="panel-footer bg-blue-lighter">
                                     <div class="elements">
-                                        <span class="text-size-extralarge">Remaining Stock</span>
+                                        <span class="text-size-extralarge">{{ __t('product.remaining_stock', 'Remaining Stock') }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -107,7 +107,7 @@
                                 </div>
                                 <div class="panel-footer" style="background-color:#D0F1CF">
                                     <div class="elements">
-                                        <span class="text-size-extralarge">Incoming Stock</span>
+                                        <span class="text-size-extralarge">{{ __t('product.incoming_stock', 'Incoming Stock') }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -130,7 +130,7 @@
                                 </div>
                                 <div class="panel-footer" style="background-color:#F1CFCF">
                                     <div class="elements">
-                                        <span class="text-size-extralarge">Outgoing Stock</span>
+                                        <span class="text-size-extralarge">{{ __t('product.outgoing_stock', 'Outgoing Stock') }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -143,23 +143,23 @@
                     <table class="table datatable-stock-card">
                         <thead>
                             <tr>
-                                <th>Move</th>
-                                <th>Date</th>
-                                <th>Document No.</th>
-                                <th>Detail</th>
-                                <th>Warehouse</th>
-                                <th>Quantity In</th>
-                                <th>Quantity Out</th>
-                                <th>Unit</th>
+                                <th>{{ __t('product.move', 'Move') }}</th>
+                                <th>{{ __t('product.date', 'Date') }}</th>
+                                <th>{{ __t('product.document_no', 'Document No.') }}</th>
+                                <th>{{ __t('product.detail', 'Detail') }}</th>
+                                <th>{{ __t('product.warehouse', 'Warehouse') }}</th>
+                                <th>{{ __t('product.quantity_in', 'Quantity In') }}</th>
+                                <th>{{ __t('product.quantity_out', 'Quantity Out') }}</th>
+                                <th>{{ __t('product.unit', 'Unit') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($stockMovements as $movement)
                                 <tr style="background-color:{{ $movement['color'] }}">
-                                    <td>{{ $movement['type'] == 'in' ? 'In' : 'Out' }}</td>
+                                    <td>{{ $movement['type'] == 'in' ? __t('product.in', 'In') : __t('product.out', 'Out') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($movement['date'])->format('d/m/Y') }}</td>
                                     <td>
-                                        <a href="#" title="View Document">{{ $movement['document_no'] }}</a>
+                                        <a href="#" title="{{ __t('product.view_document', 'View Document') }}">{{ $movement['document_no'] }}</a>
                                     </td>
                                     <td>{{ $movement['detail'] }}</td>
                                     <td>{{ $movement['warehouse'] }}</td>
@@ -171,7 +171,7 @@
                                 <tr>
                                     <td colspan="8" class="text-center">
                                         <div class="alert alert-info">
-                                            <i class="icon-info22"></i> No stock movements found for the selected period.
+                                            <i class="icon-info22"></i> {{ __t('product.no_stock_movements_found', 'No stock movements found for the selected period.') }}
                                         </div>
                                     </td>
                                 </tr>
@@ -181,7 +181,7 @@
                                 <!-- Summary Row -->
                                 <tr class="bg-light">
                                     <td></td>
-                                    <td><strong>Total</strong></td>
+                                    <td><strong>{{ __t('product.total', 'Total') }}</strong></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -193,7 +193,7 @@
                                 <!-- Remaining Stock Row -->
                                 <tr class="bg-info">
                                     <td></td>
-                                    <td><strong>Remaining</strong></td>
+                                    <td><strong>{{ __t('product.remaining', 'Remaining') }}</strong></td>
                                     <td><strong>{{ number_format($remainingStock) }}</strong></td>
                                     <td></td>
                                     <td></td>
@@ -210,7 +210,7 @@
             <div class="panel panel-flat">
                 <div class="panel-body text-center">
                     <div class="alert alert-info">
-                        <i class="icon-info22"></i> Please select a product to view stock card details.
+                        <i class="icon-info22"></i> {{ __t('product.select_product_to_view_stock_card', 'Please select a product to view stock card details.') }}
                     </div>
                 </div>
             </div>

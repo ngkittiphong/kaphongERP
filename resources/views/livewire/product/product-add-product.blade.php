@@ -3,7 +3,7 @@
         <div class="col-md-12">
             <div class="row p-l-10 p-r-10 panel panel-flat">
                 <div class="panel-heading">
-                    <h4 class="panel-title">{{ 'Add New Product' }}</h4>
+                    <h4 class="panel-title">{{ __t('product.add_new_product', 'Add New Product') }}</h4>
                 </div>
                 <form wire:submit.prevent="{{ 'createProduct' }}" id="addProductForm">
                     <div class="row">
@@ -34,27 +34,27 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="name">Product Name *</label>
+                                <label for="name">{{ __t('product.product_name', 'Product Name') }} *</label>
                                 <input type="text" class="form-control" id="name" wire:model="name" required>
                                 @error('name') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                             
                             <div class="form-group">
-                                <label for="sku_number">SKU Number</label>
+                                <label for="sku_number">{{ __t('product.sku_number', 'SKU Number') }}</label>
                                 <input type="text" class="form-control" id="sku_number" wire:model="sku_number">
                                 @error('sku_number') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="form-group">
-                                <label for="serial_number">Serial Number</label>
+                                <label for="serial_number">{{ __t('product.serial_number', 'Serial Number') }}</label>
                                 <input type="text" class="form-control" id="serial_number" wire:model="serial_number">
                                 @error('serial_number') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="form-group">
-                                <label for="product_type_id">Product Type *</label>
+                                <label for="product_type_id">{{ __t('product.product_type', 'Product Type') }} *</label>
                                 <select class="form-control" id="product_type_id" wire:model="product_type_id" required>
-                                    <option value="">Select Type</option>
+                                    <option value="">{{ __t('product.select_type', 'Select Type') }}</option>
                                     @foreach($productTypes as $type)
                                         <option value="{{ $type->id }}" {{ $product && $product->product_type_id == $type->id ? 'selected' : '' }}>
                                             {{ $type->name }}
@@ -65,7 +65,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="product_group_name">Product Group *</label>
+                                <label for="product_group_name">{{ __t('product.product_group', 'Product Group') }} *</label>
                                 <input
                                 type="text"
                                 id="product_group_name"
@@ -77,9 +77,9 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="product_status_id">Product Status *</label>
+                                <label for="product_status_id">{{ __t('product.product_status', 'Product Status') }} *</label>
                                 <select class="form-control" id="product_status_id" wire:model="product_status_id" required>
-                                    <option value="">Select Status</option>
+                                    <option value="">{{ __t('product.select_status', 'Select Status') }}</option>
                                     @foreach($productStatuses as $status)
                                         <option value="{{ $status->id }}" {{ $product && $product->product_status_id == $status->id ? 'selected' : '' }}>
                                             {{ $status->name }}
@@ -93,21 +93,21 @@
                         <!-- Pricing Information -->
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="unit_name">Unit Name *</label>
+                                <label for="unit_name">{{ __t('product.unit_name', 'Unit Name') }} *</label>
                                 <input type="text" class="form-control" id="unit_name" wire:model="unit_name" required>
                                 @error('unit_name') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="form-group">
-                                <label for="buy_price">Buy Price</label>
+                                <label for="buy_price">{{ __t('product.buy_price', 'Buy Price') }}</label>
                                 <input type="number" step="0.01" class="form-control" id="buy_price" wire:model="buy_price" value="{{ $product ? $product->buy_price : 0.00 }}">
                                 @error('buy_price') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="form-group">
-                                <label for="buy_vat_id">Buy VAT</label>
+                                <label for="buy_vat_id">{{ __t('product.buy_vat', 'Buy VAT') }}</label>
                                 <select class="form-control" id="buy_vat_id" wire:model="buy_vat_id">
-                                    <option value="">Select VAT</option>
+                                    <option value="">{{ __t('product.select_vat', 'Select VAT') }}</option>
                                     @foreach($vats as $vat)
                                         <option value="{{ $vat->id }}" {{ $product && $product->buy_vat_id == $vat->id ? 'selected' : '' }}>
                                             {{ $vat->name }}
@@ -118,9 +118,9 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="buy_withholding_id">Buy Withholding</label>
+                                <label for="buy_withholding_id">{{ __t('product.buy_withholding', 'Buy Withholding') }}</label>
                                 <select class="form-control" id="buy_withholding_id" wire:model="buy_withholding_id">
-                                    <option value="">Select Withholding</option>
+                                    <option value="">{{ __t('product.select_withholding', 'Select Withholding') }}</option>
                                     @foreach($withholdings as $withholding)
                                         <option value="{{ $withholding->id }}" {{ $product && $product->buy_withholding_id == $withholding->id ? 'selected' : '' }}>
                                             {{ $withholding->name }}
@@ -131,15 +131,15 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="sale_price">Sale Price *</label>
+                                <label for="sale_price">{{ __t('product.sale_price', 'Sale Price') }} *</label>
                                 <input type="number" step="0.01" class="form-control" id="sale_price" wire:model="sale_price" required value="{{ $product ? $product->sale_price : 0.00 }}">
                                 @error('sale_price') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="form-group">
-                                <label for="sale_vat_id">Sale VAT</label>
+                                <label for="sale_vat_id">{{ __t('product.sale_vat', 'Sale VAT') }}</label>
                                 <select class="form-control" id="sale_vat_id" wire:model="sale_vat_id">
-                                    <option value="">Select VAT</option>
+                                    <option value="">{{ __t('product.select_vat', 'Select VAT') }}</option>
                                     @foreach($vats as $vat)
                                         <option value="{{ $vat->id }}" {{ $product && $product->sale_vat_id == $vat->id ? 'selected' : '' }}>
                                             {{ $vat->name }}
@@ -150,9 +150,9 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="sale_withholding_id">Sale Withholding</label>
+                                <label for="sale_withholding_id">{{ __t('product.sale_withholding', 'Sale Withholding') }}</label>
                                 <select class="form-control" id="sale_withholding_id" wire:model="sale_withholding_id">
-                                    <option value="">Select Withholding</option>
+                                    <option value="">{{ __t('product.select_withholding', 'Select Withholding') }}</option>
                                     @foreach($withholdings as $withholding)
                                         <option value="{{ $withholding->id }}" {{ $product && $product->sale_withholding_id == $withholding->id ? 'selected' : '' }}>
                                             {{ $withholding->name }}
@@ -163,13 +163,13 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="minimum_quantity">Minimum Quantity</label>
+                                <label for="minimum_quantity">{{ __t('product.minimum_quantity', 'Minimum Quantity') }}</label>
                                 <input type="number" class="form-control" id="minimum_quantity" wire:model="minimum_quantity" value="{{ $product ? $product->minimum_quantity : '' }}">
                                 @error('minimum_quantity') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="form-group">
-                                <label for="maximum_quantity">Maximum Quantity</label>
+                                <label for="maximum_quantity">{{ __t('product.maximum_quantity', 'Maximum Quantity') }}</label>
                                 <input type="number" class="form-control" id="maximum_quantity" wire:model="maximum_quantity" value="{{ $product ? $product->maximum_quantity : '' }}">
                                 @error('maximum_quantity') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
@@ -180,14 +180,14 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="buy_description">Buy Description</label>
+                                <label for="buy_description">{{ __t('product.buy_description', 'Buy Description') }}</label>
                                 <textarea class="form-control" id="buy_description" wire:model="buy_description" rows="3">{{ $product ? $product->buy_description : '' }}</textarea>
                                 @error('buy_description') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="sale_description">Sale Description</label>
+                                <label for="sale_description">{{ __t('product.sale_description', 'Sale Description') }}</label>
                                 <textarea class="form-control" id="sale_description" wire:model="sale_description" rows="3">{{ $product ? $product->sale_description : '' }}</textarea>
                                 @error('sale_description') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
@@ -195,7 +195,7 @@
                     </div>
 
                     <div class="panel-footer">
-                        <button type="submit" class="btn btn-primary">{{ $product ? 'Update Product' : 'Add new Product' }}</button>
+                        <button type="submit" class="btn btn-primary">{{ $product ? __t('product.update_product', 'Update Product') : __t('product.add_new_product', 'Add new Product') }}</button>
                     </div>
                 </form>
             </div>
@@ -219,10 +219,10 @@
         // Success message handler
         Livewire.on('showSuccessMessage', (data) => {
             Swal.fire({
-                title: 'Success!',
+                title: '{{ __t('common.success', 'Success!') }}',
                 text: data.message,
                 icon: 'success',
-                confirmButtonText: 'OK',
+                confirmButtonText: '{{ __t('common.ok', 'OK') }}',
                 timer: 3000,
                 timerProgressBar: true,
                 showConfirmButton: false
@@ -232,7 +232,7 @@
         // Error message handler
         Livewire.on('showErrorMessage', (data) => {
             Swal.fire({
-                title: 'Error!',
+                title: '{{ __t('common.error', 'Error!') }}',
                 text: data.message,
                 icon: 'error',
                 confirmButtonText: 'OK'

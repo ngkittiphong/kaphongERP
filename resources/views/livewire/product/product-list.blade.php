@@ -4,7 +4,7 @@
     <table class="table table-hover datatable-reorder-state-saving datatable-fixed-left">
         <thead>
             <tr>
-                <th scope="col"><?= __('Products') ?></th>
+                <th scope="col">{{ __t('menu.products', 'Products') }}</th>
             </tr>
         </thead>
          <tbody>
@@ -64,8 +64,8 @@
                  <tr>
                      <td colspan="1" class="text-center">
                          <div class="alert alert-info">
-                             <i class="icon-info22"></i> No products found. 
-                             <br><small>Products count: {{ isset($items) ? count($items) : 'undefined' }}</small>
+                             <i class="icon-info22"></i> {{ __t('product.no_products_found', 'No products found.') }} 
+                             <br><small>{{ __t('product.products_count', 'Products count') }}: {{ isset($items) ? count($items) : 'undefined' }}</small>
                          </div>
                      </td>
                  </tr>
