@@ -35,6 +35,8 @@ class DatabaseSeeder extends Seeder
             StockCheckerSeeder::class,
             CheckStockReportSeeder::class,
             CheckStockDetailSeeder::class,
+            TranslationSeeder::class,
+            CompleteWarehouseProductSeeder::class,
         ]);
     }
 }
