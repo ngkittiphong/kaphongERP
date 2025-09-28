@@ -1431,6 +1431,10 @@ class TranslationSeeder extends Seeder
                 'en' => 'Processing...',
                 'th' => 'กำลังประมวลผล...'
             ],
+            'common.language' => [
+                'en' => 'Language',
+                'th' => 'ภาษา'
+            ],
             'product.search_for_product' => [
                 'en' => 'Search for a product...',
                 'th' => 'ค้นหาสินค้า...'

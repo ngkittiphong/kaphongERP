@@ -9,8 +9,7 @@
 	@yield('content')
 	@show
 
-	<!-- Language Switcher -->
-	@include('components.language-switcher')
+	<!-- Language Switcher moved to sidebar -->
 
 	@livewireScripts
 	{{-- @livewire('livewire-ui-modal')	 --}}

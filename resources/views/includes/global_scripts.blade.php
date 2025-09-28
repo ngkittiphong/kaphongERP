@@ -86,11 +86,10 @@ $(document).ready(function() {
             }
             
             // Show loading state
-            const $button = $('#languageDropdown');
-            const $switcher = $('.language-switcher');
-            const originalText = $button.find('.current-locale').text();
-            $button.find('.current-locale').text('Switching...');
-            $button.prop('disabled', true);
+            const $switcher = $('.language-switcher-sidebar');
+            const $currentDisplay = $('.current-language-display');
+            const originalText = $('.current-locale').text();
+            $('.current-locale').text('Switching...');
             $switcher.addClass('switching');
             
             // Get CSRF token from meta tag or form
@@ -121,9 +120,9 @@ $(document).ready(function() {
                         $('.language-option').removeClass('active');
                         $(`.language-option[data-locale="${locale}"]`).addClass('active');
                         
-                        // Update button text
+                        // Update sidebar language display
                         const newText = locale === 'th' ? 'ไทย' : 'English';
-                        $button.find('.current-locale').text(newText);
+                        $('.current-locale').text(newText);
                         
                         console.log('🔄 Reloading page in 500ms to apply translations...');
                         // Reload the page to apply translations
@@ -133,7 +132,7 @@ $(document).ready(function() {
                     } else {
                         // Handle error
                         console.error('❌ Language switch failed:', response.error);
-                        $button.find('.current-locale').text(originalText);
+                        $('.current-locale').text(originalText);
                         alert('Language switch failed: ' + (response.error || 'Unknown error'));
                     }
                 },
@@ -141,7 +140,7 @@ $(document).ready(function() {
                     console.error('❌ Language switch error:', xhr.responseText, status, error);
                     console.error('📊 Response status:', xhr.status);
                     console.error('📊 Response headers:', xhr.getAllResponseHeaders());
-                    $button.find('.current-locale').text(originalText);
+                    $('.current-locale').text(originalText);
                     
                     // Show error message
                     let errorMsg = 'Failed to switch language. Please try again.';
@@ -152,7 +151,6 @@ $(document).ready(function() {
                     alert('Error: ' + errorMsg);
                 },
                 complete: function() {
-                    $button.prop('disabled', false);
                     $switcher.removeClass('switching');
                 }
             });
