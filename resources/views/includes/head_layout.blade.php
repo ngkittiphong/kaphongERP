@@ -2,6 +2,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="csrf-token" content="{{ csrf_token() }}">
 	<title>Salmon ERP - Simple & Specific </title>	
 	<link href="{{ asset('assets/images/favicon.ico') }}" rel="apple-touch-icon" type="image/png" sizes="144x144">
 	<link href="{{ asset('assets/images/favicon.ico') }}" rel="apple-touch-icon" type="image/png" sizes="114x114">

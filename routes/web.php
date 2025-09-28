@@ -6,6 +6,7 @@ use App\Http\Middleware\EnsureTokenIsValid;
 use App\Http\Middleware\AutoLogin;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\LanguageController;
 
 //------------------Root Route--------------------------------
 Route::get('/', function () {
@@ -126,5 +127,42 @@ Route::prefix('inventory')->middleware('auth')->group(function () {
     Route::get('/stock-history', [InventoryController::class, 'getStockHistory'])->name('inventory.stock-history');
     Route::get('/validate-integrity', [InventoryController::class, 'validateStockIntegrity'])->name('inventory.validate-integrity');
     Route::post('/reconcile-stock', [InventoryController::class, 'reconcileStock'])->name('inventory.reconcile-stock');
+});
+
+//------------------Language Route--------------------------------
+Route::post('/language/switch', [LanguageController::class, 'switch'])->name('language.switch');
+Route::get('/language/current', [LanguageController::class, 'getCurrent'])->name('language.current');
+
+// Debug route for testing language switching
+Route::get('/debug/language', function() {
+    // Force set locale from session
+    $sessionLocale = session('locale', 'en');
+    if (in_array($sessionLocale, ['en', 'th'])) {
+        app()->setLocale($sessionLocale);
+    }
+    
+    return response()->json([
+        'current_locale' => app()->getLocale(),
+        'session_locale' => session('locale'),
+        'test_translation' => __t('menu.main', 'Main'),
+        'products_translation' => __t('menu.products', 'Products'),
+        'session_id' => session()->getId(),
+        'timestamp' => now()
+    ]);
+});
+
+// Test route to manually set session locale
+Route::get('/debug/set-locale/{locale}', function($locale) {
+    if (in_array($locale, ['en', 'th'])) {
+        session(['locale' => $locale]);
+        app()->setLocale($locale);
+    }
+    
+    return response()->json([
+        'message' => 'Locale set to ' . $locale,
+        'current_locale' => app()->getLocale(),
+        'session_locale' => session('locale'),
+        'test_translation' => __t('menu.main', 'Main')
+    ]);
 });
 

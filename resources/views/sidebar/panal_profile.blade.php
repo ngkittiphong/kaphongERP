@@ -12,7 +12,7 @@
                     data-service="{{ route('upload.avatar') }}"
                     data-token="{{ csrf_token() }}"
                     data-max-file-size="2"
-                    data-label="Click or drag your photo"
+                    data-label="{{ __t('profile.click_or_drag_photo', 'Click or drag your photo') }}"
                     {{-- data-push="true" [auto upload]--}}
                     data-save-initial-image="true"
                     data-will-request="handleRequest"
@@ -47,16 +47,16 @@
     </div>
     <div class="col-md-12 col-sm-12 m-t-5">
         <button type="button" class="btn btn-block bg-primary mt-33" data-toggle="modal" data-target="#change-nickname-modal">
-            Change Nickname
+            {{ __t('profile.change_nickname', 'Change Nickname') }}
         </button>
     </div>
     <div class="col-md-12 col-sm-12  m-t-5">
-            <button type="button" class="btn btn-block bg-warning mt-33" data-toggle="modal" data-target="#new-email"> change password</button>
+            <button type="button" class="btn btn-block bg-warning mt-33" data-toggle="modal" data-target="#new-email">{{ __t('profile.change_password', 'Change Password') }}</button>
     </div>
     
     
     <div class="col-md-12 col-sm-12 m-t-40">
-        <label>Sign name</label>
+        <label>{{ __t('profile.sign_name', 'Sign name') }}</label>
         <div
             class="slim"
             data-size="300,150"
@@ -91,7 +91,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="changeNicknameModalLabel">Change Nickname</h4>
+                <h4 class="modal-title" id="changeNicknameModalLabel">{{ __t('profile.change_nickname', 'Change Nickname') }}</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -100,7 +100,7 @@
                 <form id="change-nickname-form">
                     @csrf
                     <div class="form-group">
-                        <label for="new-nickname">New Nickname</label>
+                        <label for="new-nickname">{{ __t('profile.new_nickname', 'New Nickname') }}</label>
                         <input type="text" 
                                class="form-control" 
                                id="new-nickname" 
@@ -112,8 +112,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="save-nickname">Save Changes</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{ __t('common.cancel', 'Cancel') }}</button>
+                <button type="button" class="btn btn-primary" id="save-nickname">{{ __t('common.save_changes', 'Save Changes') }}</button>
             </div>
         </div>
     </div>

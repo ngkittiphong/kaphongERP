@@ -1,5 +1,5 @@
 <!doctype html>
-<html style="height:100%">
+<html style="height:100%" lang="{{ session('locale', 'en') }}">
 
 @include('includes.head_layout')
 
@@ -8,6 +8,9 @@
 
 	@yield('content')
 	@show
+
+	<!-- Language Switcher -->
+	@include('components.language-switcher')
 
 	@livewireScripts
 	{{-- @livewire('livewire-ui-modal')	 --}}
