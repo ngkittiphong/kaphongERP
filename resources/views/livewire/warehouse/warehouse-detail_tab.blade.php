@@ -193,7 +193,7 @@
                                                     <ul class="icons-list">
                                                         <li><a href="{{ route('menu.menu_product') }}?product_id={{ $inventory->product->id }}&return_to=warehouse&warehouse_id={{ $warehouse->id }}" title="View Details"><i class="icon-eye2"></i></a></li>
                                                         <li><a href="#" title="Edit" wire:click.prevent="openStockModal({{ $inventory->product->id }}, {{ $warehouse->id }}, '{{ $warehouse->name }}')" onclick="console.log('🚀 [CLICK] Edit button clicked for product: {{ $inventory->product->id }}, warehouse: {{ $warehouse->id }}'); console.log('🚀 [CLICK] About to call Livewire method');"><i class="icon-pencil6"></i></a></li>
-                                                        <li><a href="#" title="Stock Movement"><i class="icon-arrow-right8"></i></a></li>
+                                                        <li><a href="#" title="Stock Movement" wire:click.prevent="openTransferForm({{ $inventory->product->id }}, {{ $warehouse->id }}, '{{ $warehouse->name }}')"><i class="icon-arrow-right8"></i></a></li>
                                                     </ul>
                                                 </td>
                                             </tr>

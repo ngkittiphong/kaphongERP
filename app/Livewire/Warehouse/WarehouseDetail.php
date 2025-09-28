@@ -563,6 +563,45 @@ class WarehouseDetail extends Component
     }
 
     /**
+     * Open transfer form with preselected product and source warehouse
+     */
+    public function openTransferForm($productId, $warehouseId, $warehouseName)
+    {
+        \Log::info("🚀 [TRANSFER FORM] openTransferForm called - product: {$productId}, warehouse: {$warehouseId}, name: {$warehouseName}");
+        
+        // Preserve the current tab state
+        $this->activeTab = 'inventory';
+        
+        $this->selectedProductId = $productId;
+        $this->selectedWarehouseId = $warehouseId;
+        $this->selectedWarehouseName = $warehouseName;
+
+        $this->selectedProduct = Product::with('type')->find($productId);
+
+        if (!$this->selectedProduct) {
+            \Log::error("🚀 [TRANSFER FORM] Product not found with ID: {$productId}");
+            $this->dispatch('showErrorMessage', message: 'Product not found');
+            return;
+        }
+
+        // Store preselection data in session for the transfer page
+        session([
+            'transfer_preselection' => [
+                'productId' => $productId,
+                'productName' => $this->selectedProduct->name,
+                'productSku' => $this->selectedProduct->sku_number,
+                'warehouseId' => $warehouseId,
+                'warehouseName' => $warehouseName
+            ]
+        ]);
+
+        \Log::info("🚀 [TRANSFER FORM] Stored preselection data in session, redirecting to transfer page");
+        
+        // Redirect to transfer page
+        return redirect()->route('menu.menu_warehouse_transfer');
+    }
+
+    /**
      * Switch to a specific tab
      */
     public function switchTab($tabName)

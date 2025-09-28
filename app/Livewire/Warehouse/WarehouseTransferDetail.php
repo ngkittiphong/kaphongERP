@@ -28,6 +28,7 @@ class WarehouseTransferDetail extends Component
         'transferSlipSelected' => 'loadTransferSlip',
         'refreshComponent' => '$refresh',
         'showAddForm' => 'showAddForm',
+        'showAddFormWithPreselection' => 'showAddFormWithPreselection',
         'hideAddForm' => 'hideAddForm',
     ];
 
@@ -36,6 +37,13 @@ class WarehouseTransferDetail extends Component
         // Initialize with empty state
         $this->transferSlip = null;
         $this->inventoryService = app(InventoryService::class);
+        
+        // Check for preselection data and show add form automatically
+        $preselectionData = session('transfer_preselection');
+        if ($preselectionData) {
+            \Log::info('🔥 WarehouseTransferDetail: Found preselection data, showing add form automatically');
+            $this->showAddForm = true;
+        }
     }
 
     public function loadTransferSlip($transferSlip)
@@ -439,6 +447,17 @@ class WarehouseTransferDetail extends Component
         $this->showAddForm = true;
         $this->transferSlip = null;
         $this->transferSlipId = null;
+    }
+
+    public function showAddFormWithPreselection($data)
+    {
+        \Log::info('🔥 WarehouseTransferDetail: showAddFormWithPreselection called', $data);
+        $this->showAddForm = true;
+        $this->transferSlip = null;
+        $this->transferSlipId = null;
+        
+        // Dispatch the preselection data to the add form component
+        $this->dispatch('showAddFormWithPreselection', $data);
     }
 
     public function hideAddForm()

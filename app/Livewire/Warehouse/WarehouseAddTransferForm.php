@@ -60,6 +60,7 @@ class WarehouseAddTransferForm extends Component
     
     protected $listeners = [
         'showAddForm' => 'showAddForm',
+        'showAddFormWithPreselection' => 'showAddFormWithPreselection',
         'transferSlipCreated' => 'handleTransferSlipCreated',
         'selectProductFromSearch' => 'selectProductFromSearch',
         'clearProductSearch' => 'clearProductSearch',
@@ -100,6 +101,15 @@ class WarehouseAddTransferForm extends Component
         $this->loadCompanyProfile();
         $this->loadDropdownData();
         $this->addEmptyProduct();
+        
+        // Check for preselection data from session
+        $preselectionData = session('transfer_preselection');
+        if ($preselectionData) {
+            Log::info('🔥 WarehouseAddTransferForm: Found preselection data in session', $preselectionData);
+            $this->applyPreselection($preselectionData);
+            // Clear the session data after use
+            session()->forget('transfer_preselection');
+        }
         
         // Dispatch event with product data for typeahead initialization
         $this->dispatch('transferFormReady', [
@@ -191,6 +201,7 @@ class WarehouseAddTransferForm extends Component
             $this->transferProducts = array_values($this->transferProducts);
         }
     }
+
 
     public function updatedTransferProducts($value, $index)
     {
@@ -307,6 +318,44 @@ class WarehouseAddTransferForm extends Component
         Log::info('🔥 WarehouseAddTransferForm: showAddForm() called');
         $this->showForm = true;
         $this->resetForm();
+    }
+
+    public function showAddFormWithPreselection($data)
+    {
+        Log::info('🔥 WarehouseAddTransferForm: showAddFormWithPreselection() called', $data);
+        $this->showForm = true;
+        $this->resetForm();
+        $this->applyPreselection($data);
+    }
+
+    private function applyPreselection($data)
+    {
+        // Preselect the warehouse as origin warehouse
+        if (isset($data['warehouseId'])) {
+            $this->warehouseOriginId = $data['warehouseId'];
+            Log::info('🔥 Preselected origin warehouse:', ['warehouseId' => $data['warehouseId']]);
+        }
+        
+        // Preselect the product in the first transfer product row
+        if (isset($data['productId']) && count($this->transferProducts) > 0) {
+            $product = Product::find($data['productId']);
+            if ($product) {
+                $this->transferProducts[0]['product_id'] = $product->id;
+                $this->transferProducts[0]['product_name'] = $product->name;
+                $this->transferProducts[0]['product_description'] = $product->buy_description ?? '';
+                $this->transferProducts[0]['product_search'] = $product->name . ' (' . $product->sku_number . ')';
+                $this->transferProducts[0]['unit_name'] = $product->unit_name;
+                $this->transferProducts[0]['cost_per_unit'] = $product->buy_price ?? 0;
+                $this->transferProducts[0]['quantity'] = 1; // Default quantity
+                $this->calculateProductTotal('0.quantity');
+                
+                Log::info('🔥 Preselected product:', [
+                    'productId' => $product->id,
+                    'productName' => $product->name,
+                    'sku' => $product->sku_number
+                ]);
+            }
+        }
     }
 
 

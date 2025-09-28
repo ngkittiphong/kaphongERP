@@ -61,7 +61,7 @@ Route::get('/menu/menu_warehouse_checkstock', function () {
 
 Route::get('/menu/menu_warehouse_transfer', function () {
     return view('menu.menu_warehouse_transfer');
-})->middleware('auth');
+})->name('menu.menu_warehouse_transfer')->middleware('auth');
 
 Route::get('/menu/menu_warehouse_stock', function () {
     return view('menu.menu_warehouse_stock');

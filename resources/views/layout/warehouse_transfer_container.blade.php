@@ -326,6 +326,12 @@
             Livewire.dispatch('showAddForm', {}, 'warehouse.warehouse-transfer-detail');
         });
 
+        // Listen for show add transfer form with preselection event
+        window.addEventListener('showAddFormWithPreselection', event => {
+            console.log('showAddFormWithPreselection->warehouse-transfer-detail', event.detail);
+            Livewire.dispatch('showAddFormWithPreselection', event.detail, 'warehouse.warehouse-transfer-detail');
+        });
+
         // Listen for success message
         window.addEventListener('showSuccessMessage', event => {
             if (typeof Swal !== 'undefined') {
