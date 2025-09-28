@@ -278,8 +278,8 @@
         setTimeout(function() {
             console.log('🔍 IMMEDIATE CHECK:');
             console.log('  - inventoryTable exists:', document.getElementById('inventoryTable') ? '✅' : '❌');
-            console.log('  - Current tab:', $('.tab-pane.active').attr('id') || 'none');
-            console.log('  - All tabs:', $('.tab-pane').map(function() { return this.id; }).get());
+            console.log('  - Current tab:', $('.panel-flat .tab-pane.active').attr('id') || 'none');
+            console.log('  - All tabs:', $('.panel-flat .tab-pane').map(function() { return this.id; }).get());
         }, 500);
         
         (function() {
@@ -453,7 +453,7 @@
                     console.log('🔍 Debugging tab state:');
                     console.log('  - #tab-inventory exists:', $('#tab-inventory').length);
                     console.log('  - #tab-inventory has active class:', $('#tab-inventory').hasClass('active'));
-                    console.log('  - Active tab:', $('.tab-pane.active').attr('id'));
+                    console.log('  - Active tab:', $('.panel-flat .tab-pane.active').attr('id'));
                     console.log('  - #inventoryTable exists:', $('#inventoryTable').length);
                     console.log('  - #movementsTable exists:', $('#movementsTable').length);
                     
@@ -545,9 +545,9 @@
                 // Tab switching events
                 @this.on('tabSwitched', (data) => {
                     console.log('🚀 [JS] Tab switched to:', data.tab);
-                    // Update Bootstrap tab display
-                    $('.nav-tabs li').removeClass('active');
-                    $('.tab-pane').removeClass('active');
+                    // Update Bootstrap tab display - only target warehouse detail tabs, not sidebar tabs
+                    $('.panel-flat .nav-tabs li').removeClass('active');
+                    $('.panel-flat .tab-pane').removeClass('active');
                     
                     $(`a[href="#tab-${data.tab}"]`).parent().addClass('active');
                     $(`#tab-${data.tab}`).addClass('active');
