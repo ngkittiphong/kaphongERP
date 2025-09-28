@@ -336,6 +336,7 @@
 
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.3.1/typeahead.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     
     console.log('TransferDetail: Script initialized');
@@ -465,30 +466,129 @@
             tryInit();
         }
     });
-    
-    // // Also listen for the custom event as fallback
-    // window.addEventListener("showAddNewTransferForm", () => {
-    //     console.log('Typeahead: showAddNewTransferForm event received');
-    //     tryInit();
-    // });
 
-    // @this.on('transferFormReady', () => {
-    //             console.log('transferFormReady: message.processed event received');
-                                    
-    // });
+    // Re-initialize after Livewire updates
+    Livewire.hook('message.processed', () => {
+        console.log('Typeahead: message.processed event received');
+        setTimeout(() => {
+            // Only try to init if we have data stored
+            if (productDataset.length > 0) {
+                initTypeahead();
+            }
+        }, 100);
+    });
 
-    // // Re-initialize after Livewire updates
-    // Livewire.hook('message.processed', () => {
-    //     console.log('Typeahead: message.processed event received');
-    //     setTimeout(() => {
-    //         // Only try to init if we have data stored
-    //         if (productDataset.length > 0) {
-    //             initTypeahead();
-    //         }
-    //     }, 100);
-    // });
+    // Listen for transfer confirmation event
+    Livewire.on('confirmTransferCreation', (event) => {
+        console.log('🔥 Transfer confirmation event received:', event);
+        
+        // Handle both array and object event formats
+        const data = Array.isArray(event) ? event[0] : event;
+        console.log('🔥 Processed event data:', data);
+        
+        // Validate data structure
+        if (!data || typeof data !== 'object') {
+            console.error('🔥 Invalid event data received:', data);
+            return;
+        }
+        
+        // Set default values to prevent undefined errors
+        const transferData = {
+            originWarehouse: data.originWarehouse || 'Unknown',
+            destinationWarehouse: data.destinationWarehouse || 'Unknown',
+            productCount: data.productCount || 0,
+            totalQuantity: data.totalQuantity || 0,
+            totalCost: data.totalCost || 0,
+            transferProducts: data.transferProducts || []
+        };
+        
+        console.log('🔥 Using transfer data:', transferData);
+        
+        if (typeof Swal === 'undefined') {
+            console.warn('⚠️ SweetAlert not available, using fallback confirmation.');
+            const confirmed = window.confirm(
+                `Confirm Transfer Creation?\n\n` +
+                `From: ${transferData.originWarehouse}\n` +
+                `To: ${transferData.destinationWarehouse}\n` +
+                `Products: ${transferData.productCount}\n` +
+                `Total Quantity: ${transferData.totalQuantity}\n` +
+                `Total Cost: $${transferData.totalCost.toFixed(2)}`
+            );
+            if (confirmed) {
+                Livewire.dispatch('confirmSubmit', { confirmed: true }, 'warehouse.warehouse-add-transfer-form');
+            }
+            return;
+        }
 
+        // Build product list HTML with error handling
+        let productListHtml = '';
+        try {
+            productListHtml = transferData.transferProducts.map(product => `
+                <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
+                    <div style="flex: 1;">
+                        <strong>${product.name || 'Unknown Product'}</strong>
+                    </div>
+                    <div style="text-align: right;">
+                        ${product.quantity || 0} ${product.unit || 'pcs'} - $${(product.cost || 0).toFixed(2)}
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('🔥 Error building product list:', error);
+            productListHtml = '<div>Error loading product details</div>';
+        }
 
+        Swal.fire({
+            title: 'Confirm Transfer Creation',
+            html: `
+                <div style="text-align: left;">
+                    <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <h5 style="margin: 0 0 10px 0; color: #495057;">Transfer Details</h5>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                            <div><strong>From:</strong> ${transferData.originWarehouse}</div>
+                            <div><strong>To:</strong> ${transferData.destinationWarehouse}</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div><strong>Products:</strong> ${transferData.productCount}</div>
+                            <div><strong>Total Qty:</strong> ${transferData.totalQuantity}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background-color: #e8f4fd; padding: 10px; border-radius: 6px; text-align: center; margin-bottom: 15px;">
+                        <p style="margin: 0; font-weight: bold; color: #495057;">
+                            Total Cost: 
+                            <span style="color: #007bff; font-size: 1.2em;">$${transferData.totalCost.toFixed(2)}</span>
+                        </p>
+                    </div>
+
+                    <div style="max-height: 200px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 4px; padding: 10px;">
+                        <h6 style="margin: 0 0 10px 0; color: #495057;">Products to Transfer:</h6>
+                        ${productListHtml}
+                    </div>
+                </div>
+            `,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Create Transfer',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#007bff',
+            cancelButtonColor: '#6c757d',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            width: '700px',
+            didOpen: () => {
+                console.log('🔥 Transfer confirmation dialog opened');
+            }
+        }).then((result) => {
+            console.log('🔥 Transfer confirmation result:', result);
+            if (result.isConfirmed) {
+                console.log('🔥 User confirmed transfer creation');
+                Livewire.dispatch('confirmSubmit', { confirmed: true }, 'warehouse.warehouse-add-transfer-form');
+            } else {
+                console.log('🔥 User cancelled transfer creation');
+            }
+        });
+    });
 
 });
 </script>

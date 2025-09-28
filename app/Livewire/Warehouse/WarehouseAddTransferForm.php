@@ -63,6 +63,7 @@ class WarehouseAddTransferForm extends Component
         'transferSlipCreated' => 'handleTransferSlipCreated',
         'selectProductFromSearch' => 'selectProductFromSearch',
         'clearProductSearch' => 'clearProductSearch',
+        'confirmSubmit' => 'confirmSubmit',
     ];
     
     protected $rules = [
@@ -235,17 +236,17 @@ class WarehouseAddTransferForm extends Component
     }
 
 
-    public function selectProductFromSearch($productId, $productIndex)
+    public function selectProductFromSearch($id, $index)
     {
-        $product = Product::find($productId);
-        if ($product) {
-            $this->transferProducts[$productIndex]['product_id'] = $product->id;
-            $this->transferProducts[$productIndex]['product_name'] = $product->name;
-            $this->transferProducts[$productIndex]['product_description'] = $product->buy_description ?? '';
-            $this->transferProducts[$productIndex]['product_search'] = $product->name . ' (' . $product->sku_number . ')';
-            $this->transferProducts[$productIndex]['unit_name'] = $product->unit_name;
-            $this->transferProducts[$productIndex]['cost_per_unit'] = $product->buy_price ?? 0;
-            $this->calculateProductTotal($productIndex . '.quantity');
+        $product = Product::find($id);
+        if ($product && isset($this->transferProducts[$index])) {
+            $this->transferProducts[$index]['product_id'] = $product->id;
+            $this->transferProducts[$index]['product_name'] = $product->name;
+            $this->transferProducts[$index]['product_description'] = $product->buy_description ?? '';
+            $this->transferProducts[$index]['product_search'] = $product->name . ' (' . $product->sku_number . ')';
+            $this->transferProducts[$index]['unit_name'] = $product->unit_name;
+            $this->transferProducts[$index]['cost_per_unit'] = $product->buy_price ?? 0;
+            $this->calculateProductTotal($index . '.quantity');
         }
         
         // Clear search results
@@ -258,6 +259,13 @@ class WarehouseAddTransferForm extends Component
         $this->productSearchResults = [];
         $this->showProductSearch = false;
     }
+
+    public function confirmSubmit($confirmed)
+    {
+        Log::info('🔥 WarehouseAddTransferForm: confirmSubmit() called with:', ['confirmed' => $confirmed]);
+        $this->submit($confirmed);
+    }
+
 
     public function selectProduct($index)
     {
@@ -330,9 +338,39 @@ class WarehouseAddTransferForm extends Component
         $this->isSubmitting = false;
     }
 
-    public function submit()
+    public function showTransferConfirmation()
     {
-        Log::info('🔥 WarehouseAddTransferForm: submit() method called');
+        // Get warehouse names for confirmation
+        $originWarehouse = Warehouse::find($this->warehouseOriginId);
+        $destinationWarehouse = Warehouse::find($this->warehouseDestinationId);
+        
+        // Calculate totals
+        $totalQuantity = $this->getTotalQuantity();
+        $totalCost = $this->getTotalCost();
+        $productCount = count($this->transferProducts);
+        
+        Log::info('🔥 Dispatching confirmTransferCreation event');
+        
+        $this->dispatch('confirmTransferCreation', [
+            'originWarehouse' => $originWarehouse ? $originWarehouse->name : 'Unknown',
+            'destinationWarehouse' => $destinationWarehouse ? $destinationWarehouse->name : 'Unknown',
+            'totalQuantity' => $totalQuantity,
+            'totalCost' => $totalCost,
+            'productCount' => $productCount,
+            'transferProducts' => array_map(function($product) {
+                return [
+                    'name' => $product['product_name'] ?? 'Unknown Product',
+                    'quantity' => $product['quantity'] ?? 0,
+                    'unit' => $product['unit_name'] ?? 'pcs',
+                    'cost' => $product['cost_total'] ?? 0
+                ];
+            }, $this->transferProducts)
+        ]);
+    }
+
+    public function submit($confirmed = false)
+    {
+        Log::info('🔥 WarehouseAddTransferForm: submit() method called', ['confirmed' => $confirmed]);
         Log::info('🔥 Form data:', [
             'companyName' => $this->companyName,
             'warehouseOriginId' => $this->warehouseOriginId,
@@ -359,6 +397,12 @@ class WarehouseAddTransferForm extends Component
         if (empty($this->transferProducts)) {
             Log::error('🔥 No products found after filtering');
             $this->addError('transferProducts', 'At least one product must be added to the transfer.');
+            return;
+        }
+        
+        // If not confirmed, show confirmation dialog
+        if (!$confirmed) {
+            $this->showTransferConfirmation();
             return;
         }
         

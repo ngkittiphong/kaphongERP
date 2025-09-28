@@ -252,6 +252,7 @@
 @push('scripts')
 
 <script src="{{ asset('js/tables/datatables/extensions/buttons.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 
@@ -327,7 +328,19 @@
 
         // Listen for success message
         window.addEventListener('showSuccessMessage', event => {
-            alert(event.detail);
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Success!',
+                    text: event.detail,
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#007bff',
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            } else {
+                alert(event.detail);
+            }
         });
         
 
