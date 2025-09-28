@@ -68,6 +68,9 @@ class WarehouseTransferDetail extends Component
             ])->find($this->transferSlipId);
         }
         
+        // Hide the add form when a transfer slip is selected
+        $this->showAddForm = false;
+        
         \Log::info("🔥 Transfer slip loaded:", ['loaded' => $this->transferSlip ? 'Yes' : 'No']);
     }
 
