@@ -11,16 +11,24 @@ use App\Http\Controllers\LanguageController;
 //------------------Root Route--------------------------------
 Route::get('/', function () {
     return view('index');
-})->middleware([AutoLogin::class, 'auth']);
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
 //------------------User Route--------------------------------
 Route::get('/user/login', function () {
     return view('user.login');
 })->name('login');
 Route::post('/user/signin_process', [UserController::class, 'signinProcess']);
-Route::get('/user/signOut', [UserController::class, 'signOut'])->middleware('auth');
+Route::get('/user/signOut', [UserController::class, 'signOut'])->name('user.signOut')->middleware('auth');
 //api
 Route::post('/users/{id}/change-password', [UserController::class, 'changePassword'])->middleware('auth');
+
+// Force password change routes
+Route::get('/user/change-password', function () {
+    return view('user.force_change_pwd');
+})->name('user.change-password')->middleware('auth');
+Route::post('/user/change-password', [UserController::class, 'forceChangePassword'])
+    ->name('user.change-password.update')
+    ->middleware('auth');
 
 //unuse
 //Route::post('/user/user_create', [UserController::class, 'store'])->name('users.store');
@@ -34,46 +42,46 @@ Route::post('/users/{id}/change-password', [UserController::class, 'changePasswo
 //------------------Menu Route--------------------------------
 Route::get('/menu/menu_user', function () {
     return view('menu.menu_user');
-})->middleware('auth');
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
 Route::get('/menu/menu_product', function () {
     return view('menu.menu_product');
-})->name('menu.menu_product')->middleware('auth');
+})->name('menu.menu_product')->middleware(['auth', 'force.password.change']);
 
 Route::get('/menu/menu_category', function () {
     return view('menu.menu_category');
-})->middleware('auth');
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
 Route::get('/menu/menu_transfer', function () {
     return view('menu.menu_transfer');
-})->middleware('auth');
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
 Route::get('/menu/menu_branch', function () {
     return view('menu.menu_branch');
-})->middleware('auth');
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
 Route::get('/menu/menu_warehouse', function () {
     return view('menu.menu_warehouse');
-})->name('menu.menu_warehouse')->middleware('auth');
+})->name('menu.menu_warehouse')->middleware(['auth', 'force.password.change']);
 
 Route::get('/menu/menu_warehouse_checkstock', function () {
     return view('menu.menu_warehouse_checkstock');
-})->middleware('auth');
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
 Route::get('/menu/menu_warehouse_transfer', function () {
     return view('menu.menu_warehouse_transfer');
-})->name('menu.menu_warehouse_transfer')->middleware('auth');
+})->name('menu.menu_warehouse_transfer')->middleware(['auth', 'force.password.change']);
 
 Route::get('/menu/menu_warehouse_stock', function () {
     return view('menu.menu_warehouse_stock');
-})->middleware('auth');
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
 //------------------Setting Route--------------------------------
 Route::get('/setting/company_profile', [BranchController::class, 'getHeadOffice'])->name('setting.company_profile');
 
 Route::get('/setting/delivery_note', function () {
     return view('setting.setting_delivery_note');
-})->middleware('auth');
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
 
 // Route::get('/menu/menu_report', function () {
@@ -91,11 +99,11 @@ Route::get('/setting/delivery_note', function () {
 
 Route::match(['get','post'],'/test', function() {
     dd("Got request!");
-})->middleware('auth');
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
 Route::get('/test-transfer', function() {
     return view('menu.menu_warehouse_transfer');
-})->middleware('auth');
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
 //------------------Message Route--------------------------------
 // Route::post('/post-message', [MessageController::class, 'store'])->name('post.message')->middleware('auth');
@@ -110,15 +118,15 @@ Route::get('/test-transfer', function() {
 // Password change route (as a web route)
 
 // Add this with your other routes
-Route::post('/upload/avatar', [UserController::class, 'uploadAvatar'])->name('upload.avatar')->middleware('auth');
+Route::post('/upload/avatar', [UserController::class, 'uploadAvatar'])->name('upload.avatar')->middleware(['auth', 'force.password.change']);
 
-Route::post('/users/update-nickname', [UserController::class, 'updateNickname'])->middleware('auth');
+Route::post('/users/update-nickname', [UserController::class, 'updateNickname'])->middleware(['auth', 'force.password.change']);
 
 //------------------Branch Route--------------------------------
 Route::resource('branches', BranchController::class);
 
 //------------------Inventory Route--------------------------------
-Route::prefix('inventory')->middleware('auth')->group(function () {
+Route::prefix('inventory')->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class])->group(function () {
     Route::post('/stock-in', [InventoryController::class, 'stockIn'])->name('inventory.stock-in');
     Route::post('/stock-out', [InventoryController::class, 'stockOut'])->name('inventory.stock-out');
     Route::post('/stock-adjustment', [InventoryController::class, 'stockAdjustment'])->name('inventory.stock-adjustment');

@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Http\Requests\UserRequest;    
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class UserController
 {  
@@ -122,6 +123,37 @@ class UserController
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/user/login');
+    }
+
+    public function forceChangePassword(Request $request)
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $user->request_change_pass) {
+            return redirect('/');
+        }
+
+        $validated = $request->validate([
+            'current_password' => ['required'],
+            'new_password' => ['required', 'string', 'min:6'],
+            'new_password_confirmation' => ['required', 'same:new_password'],
+        ]);
+
+        if (! Hash::check($validated['current_password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => __t('auth.current_password_incorrect', 'The current password is incorrect.'),
+            ]);
+        }
+
+        $rawPassword = $validated['new_password'];
+        $user->password = Hash::make($rawPassword);
+        $user->request_change_pass = false;
+        $user->save();
+
+        Auth::loginUsingId($user->id);
+
+        return redirect('/')
+            ->with('status', __t('auth.password_changed_successfully', 'Password changed successfully.'));
     }
 
     // public function store(UserRequest $request)
@@ -292,6 +324,10 @@ class UserController
             // Update the password using Hash directly
             $hashedPassword = Hash::make($rawPassword);
             $user->password = $hashedPassword;
+            
+            // Reset the request_change_pass flag when password is changed
+            $user->request_change_pass = false;
+            
             $user->save();
 
             // Verify the password was stored correctly
