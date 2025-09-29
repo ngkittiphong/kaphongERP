@@ -46,7 +46,7 @@ Route::get('/menu/menu_user', function () {
 
 Route::get('/menu/menu_product', function () {
     return view('menu.menu_product');
-})->name('menu.menu_product')->middleware(['auth', 'force.password.change']);
+})->name('menu.menu_product')->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
 Route::get('/menu/menu_category', function () {
     return view('menu.menu_category');
@@ -62,7 +62,7 @@ Route::get('/menu/menu_branch', function () {
 
 Route::get('/menu/menu_warehouse', function () {
     return view('menu.menu_warehouse');
-})->name('menu.menu_warehouse')->middleware(['auth', 'force.password.change']);
+})->name('menu.menu_warehouse')->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
 Route::get('/menu/menu_warehouse_checkstock', function () {
     return view('menu.menu_warehouse_checkstock');
@@ -70,7 +70,7 @@ Route::get('/menu/menu_warehouse_checkstock', function () {
 
 Route::get('/menu/menu_warehouse_transfer', function () {
     return view('menu.menu_warehouse_transfer');
-})->name('menu.menu_warehouse_transfer')->middleware(['auth', 'force.password.change']);
+})->name('menu.menu_warehouse_transfer')->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
 Route::get('/menu/menu_warehouse_stock', function () {
     return view('menu.menu_warehouse_stock');
@@ -118,9 +118,9 @@ Route::get('/test-transfer', function() {
 // Password change route (as a web route)
 
 // Add this with your other routes
-Route::post('/upload/avatar', [UserController::class, 'uploadAvatar'])->name('upload.avatar')->middleware(['auth', 'force.password.change']);
+Route::post('/upload/avatar', [UserController::class, 'uploadAvatar'])->name('upload.avatar')->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
-Route::post('/users/update-nickname', [UserController::class, 'updateNickname'])->middleware(['auth', 'force.password.change']);
+Route::post('/users/update-nickname', [UserController::class, 'updateNickname'])->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
 //------------------Branch Route--------------------------------
 Route::resource('branches', BranchController::class);
