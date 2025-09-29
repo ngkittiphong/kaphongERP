@@ -1106,6 +1106,10 @@ class TranslationSeeder extends Seeder
             'user.confirm_new_password' => [
                 'en' => 'Confirm New Password',
                 'th' => 'ยืนยันรหัสผ่านใหม่'
+            ],
+            'user.force_password_change' => [
+                'en' => 'Force user to change password on next login',
+                'th' => 'บังคับให้ผู้ใช้เปลี่ยนรหัสผ่านในการเข้าสู่ระบบครั้งถัดไป'
             ]
         ];
 

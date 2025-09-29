@@ -305,6 +305,7 @@ class UserController
         $validator = Validator::make($request->all(), [
             'new_password' => 'required|min:6',
             'new_password_confirmation' => 'required|same:new_password',
+            'request_change_pass' => 'boolean',
         ]);
 
         if ($validator->fails()) {
@@ -325,8 +326,8 @@ class UserController
             $hashedPassword = Hash::make($rawPassword);
             $user->password = $hashedPassword;
             
-            // Reset the request_change_pass flag when password is changed
-            $user->request_change_pass = false;
+            // Set the request_change_pass flag based on the checkbox value
+            $user->request_change_pass = $request->has('request_change_pass') && $request->request_change_pass;
             
             $user->save();
 

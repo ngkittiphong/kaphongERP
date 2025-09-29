@@ -83,6 +83,7 @@
             // Get form values
             const newPassword = $('#new_password').val();
             const newPasswordConfirmation = $('#new_password_confirmation').val();
+            const requestChangePass = $('#request_change_pass').is(':checked') ? 1 : 0;
             
             // Validate on client side
             let hasErrors = false;
@@ -122,6 +123,7 @@
                 data: {
                     new_password: newPassword,
                     new_password_confirmation: newPasswordConfirmation,
+                    request_change_pass: requestChangePass,
                     _token: '{{ csrf_token() }}'
                 },
                 success: function(response) {
