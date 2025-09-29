@@ -34,12 +34,14 @@ class ForcePasswordChangeMiddlewareTest extends TestCase
         // Create test data
         $this->userStatus = UserStatus::create([
             'name' => 'Active',
-            'description' => 'Active user status'
+            'sign' => 'active',
+            'color' => 'green'
         ]);
         
         $this->userType = UserType::create([
             'name' => 'Admin',
-            'description' => 'Administrator user type'
+            'sign' => 'admin',
+            'color' => 'blue'
         ]);
 
         $this->user = User::create([
