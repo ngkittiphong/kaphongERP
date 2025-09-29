@@ -22,8 +22,8 @@ class AdminUsersSeeder extends Seeder
                 'username' => 'admin' . $i,
                 'email' => 'admin' . $i . '@example.com',
                 'password' => Hash::make('password'),
-                'user_type_id' => 1, // Admin Type
-                'user_status_id' => 1, // Active Status
+                'user_type_id' => DB::table('user_types')->where('name', 'Admin')->first()->id, // Admin Type
+                'user_status_id' => DB::table('user_statuses')->where('name', 'Active')->first()->id, // Active Status
                 'request_change_pass' => false,
                 'created_at' => now(),
                 'updated_at' => now(),
