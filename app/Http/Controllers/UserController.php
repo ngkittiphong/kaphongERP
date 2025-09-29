@@ -60,6 +60,13 @@ class UserController
      */
     public function signinProcess(Request $request)
     {
+        \Log::debug('Login attempt started:', [
+            'username' => $request->username,
+            'csrf_token' => $request->_token,
+            'session_id' => session()->getId(),
+            'all_input' => $request->all()
+        ]);
+
         $request->validate([
             'username' => 'required|string|max:255',
             'password' => 'required|min:6',
@@ -90,14 +97,13 @@ class UserController
         // Try manual password verification
         if (Hash::check($request->password, $user->password)) {
             Auth::login($user);
-            $request->session()->regenerate();
             
             \Log::info('Login successful:', [
                 'username' => $user->username,
                 'user_id' => $user->id
             ]);
 
-            return redirect('/');
+            return redirect('/')->with('success', 'Login successful!');
         }
 
         \Log::warning('Login failed - Invalid password:', [
