@@ -11,7 +11,7 @@ use App\Http\Controllers\LanguageController;
 //------------------Root Route--------------------------------
 Route::get('/', function () {
     return view('index');
-})->middleware(AutoLogin::class);
+})->middleware([AutoLogin::class, 'auth']);
 
 //------------------User Route--------------------------------
 Route::get('/user/login', function () {
