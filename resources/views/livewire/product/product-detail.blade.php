@@ -1,5 +1,6 @@
 <!-- resources/views/livewire/user-profile.blade.php -->
 <!-----------------------------  Start Product Detail    -------------------------->
+
 <div class="row p-l-10 p-r-10">
     <!-- 1) Show Loading Spinner (centered) when busy -->
     <div wire:loading.flex class="flex items-center justify-center w-full"
@@ -282,6 +283,8 @@
                     
                     afterSelect(item) {
                         console.log('Selected:', item);
+                        // Update the Livewire model
+                        @this.set('product_group_name', item);
                     }
                 });
 
@@ -453,18 +456,37 @@
                 });
             });
 
-            // Success/Error message events
-            @this.on('showSuccessMessage', (message) => {
-                // Small delay to ensure modal is fully closed
-                setTimeout(() => {
-                    Swal.fire({
-                        icon: 'success',
-                        title: '{{ __t('common.success', 'Success') }}',
-                        text: message.message,
-                        confirmButtonText: '{{ __t('common.ok', 'OK') }}'
-                    });
-                }, 300);
+            @this.on('showSuccessMessage', (data) => {
+        // Handle array data structure - Livewire sometimes wraps data in arrays
+        const eventData = Array.isArray(data) ? data[0] : data;
+        
+        // Small delay to ensure modal is fully closed
+        setTimeout(() => {
+            const swalConfig = {
+                icon: 'success',
+                title: '{{ __t('common.success', 'Success') }}',
+                text: eventData.message,
+                confirmButtonText: '{{ __t('common.ok', 'OK') }}'
+            };
+            
+            // If there's a redirect URL, make it mandatory to click OK
+            if (eventData.redirectUrl) {
+                swalConfig.allowOutsideClick = false;
+                swalConfig.allowEscapeKey = false;
+            }
+            
+            Swal.fire(swalConfig).then((result) => {
+                if (result.isConfirmed && eventData.redirectUrl) {
+                    // Add a small delay to ensure database transaction is committed
+                    // setTimeout(() => {
+                    //     window.location.replace(eventData.redirectUrl);
+                    // }, 1000); // 1 second delay to ensure DB commit
+                }
+            }).catch((error) => {
+                console.error('SweetAlert error:', error);
             });
+        }, 300);
+    });
 
             @this.on('showErrorMessage', (message) => {
                 Swal.fire({
@@ -490,5 +512,24 @@
                 window.history.back();
             }
         }
+
+        // Product delete confirmation function
+        function confirmDelete(productId) {
+            Swal.fire({
+                title: "{{ __t('common.are_you_sure', 'Are you sure?') }}",
+                text: "{{ __t('product.change_status_to_inactive', 'This will change the product status to inactive. The product will no longer be available for new transactions.') }}",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "{{ __t('product.change_to_inactive', 'Yes, change to inactive!') }}",
+                cancelButtonText: "{{ __t('common.cancel', 'Cancel') }}"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch('deleteProduct');
+                }
+            });
+        }
     </script>
 @endpush
+

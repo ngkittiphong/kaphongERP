@@ -96,10 +96,7 @@ Route::get('/setting/delivery_note', function () {
 
 
 //------------------Test Route--------------------------------
-
-Route::match(['get','post'],'/test', function() {
-    dd("Got request!");
-})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
+// Removed test route - no longer needed
 
 Route::get('/test-transfer', function() {
     return view('menu.menu_warehouse_transfer');

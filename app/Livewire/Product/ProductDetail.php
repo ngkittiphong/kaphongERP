@@ -12,6 +12,7 @@ use App\Models\Withholding;
 use App\Models\WarehouseProduct;
 use App\Livewire\Product\ProductStockCard;
 use App\Services\InventoryService;
+use App\Services\ProductService;
 
 
 class ProductDetail extends Component
@@ -237,20 +238,22 @@ class ProductDetail extends Component
             // Log the request data
             \Log::info("Request data: " . $request->product_group_name);
 
-            // Call the ProductController's store method
-            $controller = new \App\Http\Controllers\ProductController();
-            $response = $controller->store($request);
-            $responseData = json_decode($response->getContent());
+            // Use ProductService to create product
+            $data = $request->all();
+            $result = $this->getProductService()->createProduct($data);
 
-            if ($responseData->success) {
-                \Log::info("Product created successfully");
-                $this->showAddProductForm = false;
+            if ($result['success']) {
+                $this->showAddEditProductForm = false;
                 $this->dispatch('refreshComponent');
-                $this->dispatch('showSuccessMessage', message: $responseData->message);
-                return redirect()->route('menu_product');
+                
+                // Show success message and wait for user to click OK before redirecting
+                $redirectUrl = route('menu.menu_product', ['product_id' => $result['product']->id], false);
+                $this->dispatch('showSuccessMessage', [
+                    'message' => $result['message'],
+                    'redirectUrl' => $redirectUrl
+                ]);
             } else {
-                \Log::info("Error creating product createProduct: " . $responseData->message);
-                $this->dispatch('showErrorMessage', message: $responseData->message);
+                $this->dispatch('showErrorMessage', message: $result['message']);
             }
         } catch (\Exception $e) {
             \Log::info("Error creating product Exception: " . $e->getMessage());
@@ -295,20 +298,22 @@ class ProductDetail extends Component
                 'product_cover_img' => $this->product_cover_img,
             ]);
 
-            // Call the ProductController's update method
-            $controller = new \App\Http\Controllers\ProductController();
-            $response = $controller->update($request, $this->product);
-            $responseData = json_decode($response->getContent());
+            // Use ProductService to update product
+            $data = $request->all();
+            $result = $this->getProductService()->updateProduct($this->product, $data);
 
-            if ($responseData->success) {
-                \Log::info("Product updated successfully");
+            if ($result['success']) {
                 $this->showAddEditProductForm = false;
                 $this->dispatch('refreshComponent');
-                $this->dispatch('showSuccessMessage', message: $responseData->message);
-                return redirect()->route('menu_product');
+                
+                // Show success message and wait for user to click OK before redirecting
+                $redirectUrl = route('menu.menu_product', ['product_id' => $this->productId], false);
+                $this->dispatch('showSuccessMessage', [
+                    'message' => $result['message'],
+                    'redirectUrl' => $redirectUrl
+                ]);
             } else {
-                \Log::info("Error updating product: " . $responseData->message);
-                $this->dispatch('showErrorMessage', message: $responseData->message);
+                $this->dispatch('showErrorMessage', message: $result['message']);
             }
         } catch (\Exception $e) {
             \Log::info("Error updating product: " . $e->getMessage());
@@ -633,6 +638,46 @@ class ProductDetail extends Component
         \Log::info("🧪 [SIMPLE] Simple test method called - no events!");
         // Just update a property to show it worked
         $this->detail = "Simple test worked at " . now()->format('H:i:s');
+    }
+
+    /**
+     * Get ProductService instance
+     */
+    public function getProductService()
+    {
+        return app(ProductService::class);
+    }
+
+    /**
+     * Delete product (change status to inactive)
+     */
+    public function deleteProduct()
+    {
+        try {
+            if (!$this->product) {
+                $this->dispatch('showErrorMessage', message: 'No product selected to delete.');
+                return;
+            }
+
+            // Use ProductService to soft delete the product
+            $result = $this->getProductService()->softDeleteProduct($this->product);
+
+            if ($result['success']) {
+                $this->dispatch('refreshComponent');
+                
+                // Show success message and redirect to product list
+                $redirectUrl = route('menu.menu_product', [], false);
+                $this->dispatch('showSuccessMessage', [
+                    'message' => $result['message'],
+                    'redirectUrl' => $redirectUrl
+                ]);
+            } else {
+                $this->dispatch('showErrorMessage', message: $result['message']);
+            }
+        } catch (\Exception $e) {
+            \Log::error("Error deleting product: " . $e->getMessage());
+            $this->dispatch('showErrorMessage', message: 'Error deleting product: ' . $e->getMessage());
+        }
     }
 
     

@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div class="col-lg-8 col-md-8 col-sm-8">
-                @livewire('product.product-detail')
+                @livewire('product.product-detail', ['productId' => request()->get('product_id')])
             </div>
         </div> 
     </div>

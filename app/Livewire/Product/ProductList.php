@@ -5,6 +5,7 @@ namespace App\Livewire\Product;
 use App\Livewire\BaseListComponent;
 use App\Models\Product;
 use App\Http\Controllers\ProductController;
+use App\Services\ProductService;
 
 class ProductList extends BaseListComponent
 {
@@ -15,7 +16,8 @@ class ProductList extends BaseListComponent
 
     protected function getController()
     {
-        return new ProductController();
+        // Use Laravel's service container to resolve dependencies
+        return app(ProductController::class);
     }
 
     protected function getModel()

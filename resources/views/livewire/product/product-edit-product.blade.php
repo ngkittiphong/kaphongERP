@@ -207,7 +207,7 @@
 @push('scripts')
 <script>
     document.addEventListener('livewire:initialized', () => {
-        Livewire.on('showAddProductForm', () => {
+        Livewire.on('showAddEditProductForm', () => {
             $('#addProductModal').modal('show');
         });
 
@@ -215,18 +215,7 @@
             $('#addProductModal').modal('hide');
         });
 
-        // Success message handler
-        Livewire.on('showSuccessMessage', (data) => {
-            Swal.fire({
-                title: '{{ __t('common.success', 'Success!') }}',
-                text: data.message,
-                icon: 'success',
-                confirmButtonText: '{{ __t('common.ok', 'OK') }}',
-                timer: 3000,
-                timerProgressBar: true,
-                showConfirmButton: false
-            });
-        });
+        // Success message handler - handled by main detail view
 
         // Error message handler
         Livewire.on('showErrorMessage', (data) => {

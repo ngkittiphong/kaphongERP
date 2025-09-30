@@ -5,7 +5,7 @@
                 <div class="panel-heading">
                     <h4 class="panel-title">{{ __t('product.add_new_product', 'Add New Product') }}</h4>
                 </div>
-                <form wire:submit.prevent="{{ 'createProduct' }}" id="addProductForm">
+                <form wire:submit.prevent="{{ $product ? 'updateProduct' : 'createProduct' }}" id="addProductForm" onsubmit="console.log('🚀 Form submitted, product exists:', {{ $product ? 'true' : 'false' }});">
                     <div class="row">
                         <!-- Basic Information -->
                         <div class="text-center">
@@ -208,7 +208,7 @@
 <script>
 
     document.addEventListener('livewire:initialized', () => {
-        Livewire.on('showAddProductForm', () => {
+        Livewire.on('showAddEditProductForm', () => {
             $('#addProductModal').modal('show');
         });
 
@@ -216,18 +216,7 @@
             $('#addProductModal').modal('hide');
         });
 
-        // Success message handler
-        Livewire.on('showSuccessMessage', (data) => {
-            Swal.fire({
-                title: '{{ __t('common.success', 'Success!') }}',
-                text: data.message,
-                icon: 'success',
-                confirmButtonText: '{{ __t('common.ok', 'OK') }}',
-                timer: 3000,
-                timerProgressBar: true,
-                showConfirmButton: false
-            });
-        });
+        // Success message handler removed - handled by main detail view
 
         // Error message handler
         Livewire.on('showErrorMessage', (data) => {
