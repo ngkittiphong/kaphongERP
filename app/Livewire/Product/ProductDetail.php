@@ -190,6 +190,7 @@ class ProductDetail extends Component
         $this->serial_number = $this->product->serial_number;
         $this->product_type_id = $this->product->product_type_id;
         $this->product_group_id = $this->product->product_group_id;
+        $this->product_group_name = $this->product->group ? $this->product->group->name : '';
         $this->product_status_id = $this->product->product_status_id;
         $this->unit_name = $this->product->unit_name;
         $this->buy_price = $this->product->buy_price;
@@ -261,6 +262,16 @@ class ProductDetail extends Component
     {
         \Log::info("updateProduct method called");
         try {
+            // Handle product group - find or create if name is provided
+            $productGroupId = $this->product_group_id;
+            if (!empty($this->product_group_name)) {
+                $productGroup = ProductGroup::firstOrCreate(
+                    ['name' => $this->product_group_name],
+                    ['name' => $this->product_group_name]
+                );
+                $productGroupId = $productGroup->id;
+            }
+
             // Create a new request instance with all form data
             $request = new \Illuminate\Http\Request();
             $request->merge([
@@ -268,7 +279,7 @@ class ProductDetail extends Component
                 'sku_number' => $this->sku_number,
                 'serial_number' => $this->serial_number,
                 'product_type_id' => $this->product_type_id,
-                'product_group_id' => $this->product_group_id,
+                'product_group_id' => $productGroupId,
                 'product_status_id' => $this->product_status_id,
                 'unit_name' => $this->unit_name,
                 'buy_price' => $this->buy_price,
