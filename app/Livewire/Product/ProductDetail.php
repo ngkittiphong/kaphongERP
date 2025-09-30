@@ -68,9 +68,9 @@ class ProductDetail extends Component
 
     protected $listeners = [
         'ProductSelected' => 'loadProduct',
-        'showAddProductForm' => 'displayAddProductForm',
+        'showAddEditProductForm' => 'displayAddProductForm',
         'showEditProductForm' => 'displayEditProductForm',
-        'refreshComponent' => '$refresh',
+        'refreshComponent' => '$refresh',//'handleRefreshComponent',
         'createProduct' => 'createProduct',
         'updateProduct' => 'updateProduct',
         'deleteProduct' => 'deleteProduct',
@@ -243,11 +243,20 @@ class ProductDetail extends Component
             $result = $this->getProductService()->createProduct($data);
 
             if ($result['success']) {
+                // Update productId to the newly created product's ID
+                $this->productId = $result['product']->id;
+                $this->product = $result['product'];
+                
+                \Log::info("ProductDetail: Updated productId after creation", [
+                    'new_product_id' => $this->productId,
+                    'new_product_name' => $this->product->name
+                ]);
+                
                 $this->showAddEditProductForm = false;
                 $this->dispatch('refreshComponent');
                 
                 // Show success message and wait for user to click OK before redirecting
-                $redirectUrl = route('menu.menu_product', ['product_id' => $result['product']->id], false);
+                $redirectUrl = route('menu.menu_product', ['product_id' => $this->productId], false);
                 $this->dispatch('showSuccessMessage', [
                     'message' => $result['message'],
                     'redirectUrl' => $redirectUrl
@@ -678,6 +687,37 @@ class ProductDetail extends Component
             \Log::error("Error deleting product: " . $e->getMessage());
             $this->dispatch('showErrorMessage', message: 'Error deleting product: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Handle refresh component signal with logging
+     */
+    public function handleRefreshComponent()
+    {
+        \Log::info("🔄 ProductDetail: Refresh signal received", [
+            'product_id' => $this->productId,
+            'product_name' => $this->product ? $this->product->name : 'none',
+            'show_add_edit_form' => $this->showAddEditProductForm,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        // Reload the current product if we have a productId
+        if ($this->productId) {
+            \Log::info("🔄 ProductDetail: Reloading product data", [
+                'product_id' => $this->productId
+            ]);
+            $this->loadProduct($this->productId);
+        }
+
+        // Refresh warehouse product data if we have a product
+        if ($this->product) {
+            \Log::info("🔄 ProductDetail: Refreshing warehouse product data", [
+                'product_id' => $this->product->id
+            ]);
+            $this->loadWarehouseProductData();
+        }
+
+        \Log::info("🔄 ProductDetail: Refresh completed successfully");
     }
 
     
