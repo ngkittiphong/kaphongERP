@@ -32,7 +32,7 @@
             </thead>
             <tbody>
                 @forelse ($items as $checkStockReport)
-                    <tr class="lease-order-row hover:bg-gray-100 cursor-pointer transfer-row"
+                    <tr class="lease-order-row transfer-row"
                         wire:click="selectCheckStockReport({{ $checkStockReport->id }})"
                         onclick="console.log('Check Stock Report clicked: {{ $checkStockReport->id }}')"
                         data-checkstock-id="{{ $checkStockReport->id }}">

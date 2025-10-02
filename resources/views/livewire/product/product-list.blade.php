@@ -10,7 +10,7 @@
          <tbody>
              @if(isset($items) && count($items) > 0)
                  @foreach ($items as $product)
-                 <tr class="lease-order-row hover:bg-gray-100 cursor-pointer"
+                 <tr class="lease-order-row"
                      wire:click="$dispatch('ProductSelected', { productId: {{ $product->id }} })">
                      <td>
                          <div class="row col-md-12">

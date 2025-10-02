@@ -3,7 +3,7 @@
 
 <div class="row p-l-10 p-r-10">
     <!-- 1) Show Loading Spinner (centered) when busy -->
-    <div wire:loading.flex class="flex items-center justify-center w-full"
+    <div wire:loading.flex class="d-flex align-items-center justify-content-center w-100"
         style="position: fixed; top: 50%; left: 65%; transform: translate(-50%, -50%); z-index: 9999;">
         <div class="panel-body">
             <div class="loader">
@@ -84,8 +84,8 @@
                 </div>
             </div>
         @else
-            <div class="bg-white shadow rounded-lg p-6">
-                <p class="text-gray-500">{{ __t('product.select_product_to_view_details', 'Select a product to view details') }}</p>
+            <div class="bg-white shadow rounded p-4">
+                <p class="text-muted">{{ __t('product.select_product_to_view_details', 'Select a product to view details') }}</p>
             </div>
         @endif
     </div>

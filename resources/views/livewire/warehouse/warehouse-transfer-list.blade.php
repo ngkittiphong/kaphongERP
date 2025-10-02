@@ -32,7 +32,7 @@
             </thead>
             <tbody>
                 @forelse ($items as $transferSlip)
-                    <tr class="lease-order-row hover:bg-gray-100 cursor-pointer transfer-row"
+                    <tr class="lease-order-row transfer-row"
                         wire:click="selectTransferSlip({{ $transferSlip->id }})"
                         onclick="console.log('Transfer Slip clicked: {{ $transferSlip->id }}')"
                         data-transfer-id="{{ $transferSlip->id }}"

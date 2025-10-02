@@ -1,7 +1,7 @@
 <!-- resources/views/livewire/user-profile.blade.php -->
 <div class="row p-l-10 p-r-10">
     <!-- 1) Show Loading Spinner (centered) when busy -->
-    <div wire:loading.flex class="flex items-center justify-center w-full"
+    <div wire:loading.flex class="d-flex align-items-center justify-content-center w-100"
         style="position: fixed; top: 50%; left: 65%; transform: translate(-50%, -50%); z-index: 9999;">
         <div class="panel-body">
             <div class="loader">

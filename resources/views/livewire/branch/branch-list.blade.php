@@ -9,7 +9,7 @@
          </thead>
          <tbody>
              @foreach ($items as $branch)
-                 <tr class="lease-order-row hover:bg-gray-100 cursor-pointer"
+                 <tr class="lease-order-row"
                      wire:click="$dispatch('BranchSelected', { branchId: {{ $branch->id }} })">
                      <td>
                          <div class="row col-md-12">

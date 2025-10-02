@@ -1,3 +1,102 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Custom CSS for KaphongERP */
+/* Bootstrap-based styling */
+
+/* Custom utility classes */
+.min-vh-100 {
+    min-height: 100vh;
+}
+
+/* Custom hover effects for tables */
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Custom status indicators */
+.status-circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-block;
+    text-align: center;
+    line-height: 20px;
+    font-size: 10px;
+    color: white;
+}
+
+.status-mark {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Custom row styling */
+.lease-order-row {
+    cursor: pointer;
+}
+
+.lease-order-row:hover {
+    background-color: #f8f9fa;
+}
+
+/* Custom selection indicator */
+.selection-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    font-size: 6px;
+}
+
+/* Custom panel styling */
+.panel-flat {
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+/* Custom badge colors */
+.bg-amber-darkest {
+    background-color: #b45309;
+    color: white;
+}
+
+.bg-light-light {
+    background-color: #f8f9fa;
+}
+
+.bg-light-lighter {
+    background-color: #f1f3f4;
+}
+
+.bg-slate-lighter {
+    background-color: #e2e8f0;
+}
+
+.bg-teal-light {
+    background-color: #ccfbf1;
+}
+
+.bg-info-light {
+    background-color: #dbeafe;
+}
+
+.bg-blue-lighter {
+    background-color: #dbeafe;
+}
+
+.bg-warning-light {
+    background-color: #fef3c7;
+}
+
+.bg-success-light {
+    background-color: #d1fae5;
+}
+
+.bg-danger-light {
+    background-color: #fee2e2;
+}
+
+.bg-grey-lighter {
+    background-color: #f3f4f6;
+}

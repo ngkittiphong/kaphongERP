@@ -7,7 +7,7 @@
         </thead>
         <tbody>
             <?php foreach ($users as $l_user): ?>
-            <tr class="lease-order-row hover:bg-gray-100 cursor-pointer"
+            <tr class="lease-order-row"
                 wire:click="$dispatch('ProfileSelected', { userId: {{ $l_user->id }} })">
                 <td>
                     <div class="media-left">
