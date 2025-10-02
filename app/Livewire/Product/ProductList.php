@@ -12,6 +12,7 @@ class ProductList extends BaseListComponent
     protected $listeners = [
         'refreshComponent' => '$refresh',
         'productListUpdated' => 'refreshList',
+        'refreshProductList' => '$refresh',
     ];
 
     protected function getController()

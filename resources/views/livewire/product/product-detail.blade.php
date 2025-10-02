@@ -103,139 +103,113 @@
 
 @push('scripts')
     <script>
-        function confirmDelete(userId) {
-            Swal.fire({
-                title: "{{ __t('common.are_you_sure', 'Are you sure?') }}",
-                text: "{{ __t('common.action_cannot_be_undone', 'This action cannot be undone!') }}",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "{{ __t('common.yes_delete_it', 'Yes, delete it!') }}"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Livewire.dispatch('deleteUser', {
-                        userId: userId
-                    });
-                }
-            });
-        }
-
-        // Password change modal functions
-        let currentUserId = null;
-
-        function openPasswordModal(userId) {
-            currentUserId = userId;
-            // Update the username field in the modal
-            const usernameField = document.querySelector('#passwordChangeModal #username');
-            if (usernameField) {
-                // Try to find the username from the link that was clicked
-                const usernameText = document.querySelector(`a[data-user-id="${userId}"]`).previousElementSibling
-                    .textContent.trim();
-                if (usernameText) {
-                    usernameField.value = usernameText;
-                }
-            }
-            $('#passwordChangeModal').modal('show');
-        }
-
-        function submitPasswordChange() {
-            // Clear previous errors
-            $('#new_password_error').text('');
-            $('#new_password_confirmation_error').text('');
-
-            // Get form values
-            const newPassword = $('#new_password').val();
-            const newPasswordConfirmation = $('#new_password_confirmation').val();
-
-            // Validate on client side
-            let hasErrors = false;
-
-            if (!newPassword) {
-                $('#new_password_error').text('{{ __t('user.password_required', 'Password is required') }}');
-                hasErrors = true;
-            } else if (newPassword.length < 6) {
-                $('#new_password_error').text('{{ __t('user.password_min_length', 'Password must be at least 6 characters') }}');
-                hasErrors = true;
-            }
-
-            if (!newPasswordConfirmation) {
-                $('#new_password_confirmation_error').text('{{ __t('user.confirm_password_required', 'Please confirm your password') }}');
-                hasErrors = true;
-            } else if (newPassword !== newPasswordConfirmation) {
-                $('#new_password_confirmation_error').text('{{ __t('user.passwords_do_not_match', 'Passwords do not match') }}');
-                hasErrors = true;
-            }
-
-            if (hasErrors) {
+        // Product DataTable Initialization Function
+        let isInitializingDataTable = false;
+        
+        function initProductDataTable() {
+            // Prevent multiple simultaneous initializations
+            if (isInitializingDataTable) {
+                console.log('DataTable initialization already in progress, skipping...');
                 return;
             }
-
-            // Use the stored user ID
-            if (!currentUserId) {
-                alert('{{ __t('user.user_id_not_found', 'User ID not found. Please refresh the page and try again.') }}');
+            
+            isInitializingDataTable = true;
+            
+            console.log('Initializing Product DataTable...');
+            console.log('jQuery version:', $.fn.jquery);
+            console.log('DataTable available:', typeof $.fn.DataTable);
+            console.log('Table elements found:', $('.datatable-reorder-state-saving').length);
+            
+            // Target only the table in the product list sidebar
+            const $productTable = $('.secondary-sidebar .datatable-reorder-state-saving').first();
+            
+            if ($productTable.length === 0) {
+                console.warn('Product table not found in sidebar, skipping initialization');
+                isInitializingDataTable = false;
                 return;
             }
-
-            console.log('Changing password for user ID:', currentUserId);
-
-            // Send AJAX request to change password
-            $.ajax({
-                url: '/users/' + currentUserId + '/change-password',
-                type: 'POST',
-                data: {
-                    new_password: newPassword,
-                    new_password_confirmation: newPasswordConfirmation,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    // Show success message
-                    Swal.fire({
-                        icon: 'success',
-                        title: '{{ __t('common.success', 'Success') }}',
-                        text: '{{ __t('user.password_changed_successfully', 'Password changed successfully!') }}',
-                    });
-                    // Close modal
-                    $('#passwordChangeModal').modal('hide');
-                    // Clear form
-                    $('#passwordChangeForm')[0].reset();
-                },
-                error: function(xhr) {
-                    const response = xhr.responseJSON;
-                    if (response && response.errors) {
-                        // Display validation errors
-                        if (response.errors.new_password) {
-                            $('#new_password_error').text(response.errors.new_password[0]);
-                        }
-                        if (response.errors.new_password_confirmation) {
-                            $('#new_password_confirmation_error').text(response.errors
-                                .new_password_confirmation[0]);
-                        }
-                    } else {
-                        // Display general error
-                        Swal.fire({
-                            icon: 'error',
-                            title: '{{ __t('common.error', 'Error') }}',
-                            text: '{{ __t('user.failed_to_change_password', 'Failed to change password. Please try again.') }}',
-                        });
-                    }
+            
+            console.log('Found product table, proceeding with initialization...');
+            
+            // Clean up any existing DataTable instances and DOM elements first
+            if ($.fn.DataTable.isDataTable($productTable)) {
+                console.log('Destroying existing DataTable before reinitializing...');
+                try {
+                    $productTable.DataTable().destroy(true);
+                } catch (e) {
+                    console.warn('Error destroying DataTable:', e);
                 }
+            }
+            
+            // Clean up any DataTable-generated DOM elements in the sidebar
+            $('.secondary-sidebar .dataTables_wrapper').each(function() {
+                $(this).children().unwrap();
             });
+            $('.secondary-sidebar .dataTables_filter').remove();
+            $('.secondary-sidebar .dataTables_length').remove();
+            $('.secondary-sidebar .dataTables_info').remove();
+            $('.secondary-sidebar .dataTables_paginate').remove();
+            
+            try {
+                console.log('Initializing DataTable directly...');
+                
+                // Initialize DataTable with proper configuration
+                $productTable.DataTable({
+                    autoWidth: true,
+                    columnDefs: [{
+                        //			orderable: false,
+                        //			targets: [ 25 ]
+                    }],
+                    colReorder: true,
+                    dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+                    lengthMenu: [10, 25, 50],
+                    language: {
+                        search: '_INPUT_',
+                        lengthMenu: '_MENU_',
+                        paginate: {
+                            'first': '{{ __t("common.first", "First") }}',
+                            'last': '{{ __t("common.last", "Last") }}',
+                            'next': '&rarr;',
+                            'previous': '&larr;'
+                        }
+                    },
+                    stateSave: true,
+                    fixedColumns: true,
+                    scrollResize: true,
+                    scrollX: true,
+                    scrollCollapse: true,
+                    pageLength: 10,
+                    order: [[ 0, 'asc' ]]
+                });
+
+                // Add placeholder to the datatable filter option in the sidebar
+                $('.secondary-sidebar .dataTables_filter input[type=search]').attr('placeholder', '{{ __t("common.find", "Find") }}');
+
+                // Enable Select2 select for the length option in the sidebar
+                $('.secondary-sidebar .dataTables_length select').select2({
+                    minimumResultsForSearch: Infinity,
+                    width: 'auto'
+                });
+
+                // Handle row clicks
+                $(".lease-order-row").off('click.datatable').on("click.datatable", function() {
+                    $(".lease-order-row").removeClass('active');
+                    $(this).addClass('active');
+                });
+
+                console.log('Product DataTable initialized successfully');
+            } catch (error) {
+                console.error('Error initializing Product DataTable:', error);
+            } finally {
+                isInitializingDataTable = false;
+            }
         }
+
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
 
-    <script>
-        Livewire.on('userCreated', data => {
-            Swal.fire({
-                icon: 'success',
-                title: '{{ __t('common.success', 'Success') }}',
-                text: data.message,
-            });
-        });
-    </script>
 
 
     <script>
@@ -255,6 +229,7 @@
             script.src = "{{ asset('slim/js/slim.kickstart.min.js') }}";
             document.body.appendChild(script);
         }
+
 
         function initTypeahead() {
             console.log('initTypeahead');
@@ -316,6 +291,13 @@
 
         document.addEventListener('livewire:initialized', () => {
             console.log('livewire:initialized');
+            
+            // Initialize Product DataTable after Livewire is ready
+            setTimeout(() => {
+                console.log('Initializing DataTable after Livewire initialization...');
+                initProductDataTable();
+            }, 1000);
+            
             @this.on('productSelected', () => {
                 console.log('productSelected');
                 setTimeout(() => {
@@ -454,6 +436,39 @@
                         }, 200);
                     }
                 });
+            });
+
+            @this.on('refreshComponent', () => {
+                console.log('🚀 [JS] refreshComponent event received');
+                
+                // Reset the initialization flag
+                isInitializingDataTable = false;
+                
+                // Completely destroy the DataTable and clean up DOM
+                const $productTable = $('.secondary-sidebar .datatable-reorder-state-saving').first();
+                if ($productTable.length > 0 && $.fn.DataTable.isDataTable($productTable)) {
+                    console.log('🧹 Destroying DataTable completely for refresh...');
+                    $productTable.DataTable().destroy(true);
+                }
+                
+                // Remove all DataTable-generated elements
+                $('.secondary-sidebar .dataTables_wrapper').remove();
+                $('.secondary-sidebar .dataTables_filter').remove();
+                $('.secondary-sidebar .dataTables_length').remove();
+                $('.secondary-sidebar .dataTables_info').remove();
+                $('.secondary-sidebar .dataTables_paginate').remove();
+                $('.secondary-sidebar .dataTables_scrollHead').remove();
+                $('.secondary-sidebar .dataTables_scrollBody').remove();
+                $('.secondary-sidebar .dataTables_scrollFoot').remove();
+                
+                // Dispatch refresh to ProductList component
+                Livewire.dispatch('refreshProductList');
+                
+                // Wait for Livewire to refresh and then reinitialize DataTable
+                setTimeout(() => {
+                    console.log('🔄 Reinitializing DataTable after component refresh...');
+                    initProductDataTable();
+                }, 800);
             });
 
             @this.on('showSuccessMessage', (data) => {

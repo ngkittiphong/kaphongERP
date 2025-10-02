@@ -50,11 +50,13 @@
                         return null;
                     }
                     
-                    // Check if table is already initialized and return existing instance
+                    // Check if table is already initialized and destroy it first
                     if ($.fn.DataTable.isDataTable(selector)) {
-                        console.log(`DataTable already exists for ${selector}, returning existing instance`);
-                        this.tables[tableId] = $(selector).DataTable();
-                        return this.tables[tableId];
+                        console.log(`DataTable already exists for ${selector}, destroying and recreating`);
+                        $(selector).DataTable().destroy(true);
+                        // Clear from our tracking
+                        delete this.tables[tableId];
+                        delete this.configs[tableId];
                     }
 
                     // Merge with default config
@@ -62,7 +64,7 @@
                     
                     // Initialize the table
                     this.tables[tableId] = $table.DataTable(finalConfig);
-                    console.log(`DataTable initialized for ${tableId}:`, this.tables[tableId]);
+                    console.log(`DataTable initialized for ${tableId}`);
                     
                     // Store configuration for later use
                     this.configs[tableId] = finalConfig;
@@ -193,14 +195,22 @@
             
             // Initialize standard tables with reorder functionality
             if ($('.datatable-reorder-state-saving').length > 0 && !$.fn.DataTable.isDataTable('.datatable-reorder-state-saving')) {
-                $('.datatable-reorder-state-saving').DataTable({
-                    ...window.DataTableManager.defaultConfig,
+                console.log('Found datatable-reorder-state-saving table, initializing...');
+                const productTable = window.DataTableManager.initTable('.datatable-reorder-state-saving', {
                     stateSave: true,
                     fixedColumns: true,
                     scrollResize: true,
                     scrollX: true,
-                    scrollCollapse: true
+                    scrollCollapse: true,
+                    pageLength: 10,
+                    order: [[ 0, 'asc' ]]
                 });
+                
+                if (productTable) {
+                    console.log('Product table initialized successfully via DataTableManager');
+                } else {
+                    console.error('Failed to initialize product table via DataTableManager');
+                }
             }
 
             // Check if inventory table exists and initialize if not already done
@@ -296,17 +306,26 @@
 
         // Reinitialize on Livewire updates (only for specific events)
         document.addEventListener('livewire:initialized', () => {
-            @this.on('{{ $listUpdatedEvent ?? 'userListUpdated' }}', () => {
+            // Listen for generic list update events
+            Livewire.on('userListUpdated', () => {
+                setTimeout(() => {
+                    initDataTable();
+                }, 500);
+            });
+            
+            Livewire.on('productListUpdated', () => {
                 setTimeout(() => {
                     initDataTable();
                 }, 500);
             });
         });
 
-        // Only reinitialize on Livewire updates if warehouse data changes
+        // Reinitialize on Livewire updates for warehouse and product data changes
         document.addEventListener('livewire:updated', (event) => {
-            // Only reinitialize if the update is related to warehouse data
-            if (event.detail && event.detail.component && event.detail.component.includes('warehouse')) {
+            // Reinitialize if the update is related to warehouse or product data
+            if (event.detail && event.detail.component && 
+                (event.detail.component.includes('warehouse') || event.detail.component.includes('product'))) {
+                console.log('Livewire update detected for component:', event.detail.component);
                 setTimeout(() => {
                     tryInitDataTable();
                 }, 500);
@@ -318,6 +337,21 @@
             setTimeout(() => {
                 tryInitDataTable();
             }, 1000);
+        });
+
+        // Additional refresh handling for product components
+        document.addEventListener('livewire:updated', (event) => {
+            // Check if this is a product component update that might need datatable refresh
+            if (event.detail && event.detail.component && event.detail.component.includes('product')) {
+                console.log('Product component updated, checking for datatable refresh...');
+                setTimeout(() => {
+                    // Check if datatable needs reinitialization
+                    if ($('.datatable-reorder-state-saving').length > 0) {
+                        console.log('Reinitializing product datatable after update...');
+                        tryInitDataTable();
+                    }
+                }, 300);
+            }
         });
     </script>
 @endpush
