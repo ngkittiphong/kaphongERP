@@ -197,6 +197,9 @@ class UserProfile extends Component
             $resultMessage = $resultData['message'] ?? 'Failed to create user & profile.';
             $resultError = $resultData['error'] ?? '';
             
+            \Log::error("❌ User creation failed with status: " . $response->status());
+            \Log::error("❌ Response content: " . $response->getContent());
+            
             // Add errors to form validation
             if (isset($resultData['errors'])) {
                 // Handle validation errors

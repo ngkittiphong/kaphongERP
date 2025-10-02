@@ -67,7 +67,7 @@
 								   id="current-password" 
 								   name="current_password" 
 								   required>
-							<div class="invalid-feedback" id="current-password-error"></div>
+							<div class="text-danger" id="current-password-error"></div>
 						</div>
 						<div class="form-group">
 							<label for="new-password">{{ __t('profile.new_password', 'New Password') }}</label>
@@ -76,7 +76,7 @@
 								   id="new-password" 
 								   name="new_password" 
 								   required>
-							<div class="invalid-feedback" id="new-password-error"></div>
+							<div class="text-danger" id="new-password-error"></div>
 						</div>
 						<div class="form-group">
 							<label for="confirm-password">{{ __t('profile.confirm_password', 'Confirm New Password') }}</label>
@@ -85,7 +85,7 @@
 								   id="confirm-password" 
 								   name="confirm_password" 
 								   required>
-							<div class="invalid-feedback" id="confirm-password-error"></div>
+							<div class="text-danger" id="confirm-password-error"></div>
 						</div>
 					</form>
 				</div>

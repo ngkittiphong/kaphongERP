@@ -1,37 +1,37 @@
 <!-- resources/views/livewire/user-profile.blade.php -->
-<div class="row p-l-10 p-r-10">
-    <!-- 1) Show Loading Spinner (centered) when busy -->
-    <div wire:loading.flex class="d-flex align-items-center justify-content-center w-100"
-        style="position: fixed; top: 50%; left: 65%; transform: translate(-50%, -50%); z-index: 9999;">
-        <div class="panel-body">
-            <div class="loader">
-                <div class="loader-inner ball-beat">
-                    <div></div>
-                    <div></div>
-                    <div></div>
+    <div class="row p-l-10 p-r-10">
+        <!-- 1) Show Loading Spinner (centered) when busy -->
+        <div wire:loading.flex class="d-flex align-items-center justify-content-center w-100"
+            style="position: fixed; top: 50%; left: 65%; transform: translate(-50%, -50%); z-index: 9999;">
+            <div class="panel-body">
+                <div class="loader">
+                    <div class="loader-inner ball-beat">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- 2) Hide the Form While Loading -->
-    <div wire:loading.remove>
-        @if ($showAddUserForm)
-            @include('livewire.user.user-profile_adduser')
-        @elseif($user && $user->profile && $showEditProfileForm == false)
-            @include('livewire.user.user-profile_tab')
-        @elseif($showEditProfileForm && $user)
-            @include('livewire.user.user-profile_tab')
-        @elseif($user && $user->profile == null)
-            {{-- <div class="form-group has-feedback has-feedback-left">
-                <button type="button" class="btn btn-sm btn-success btn-labeled"
-                    wire:click="$dispatch('showEditProfileForm')">
-                    <b><i class="icon-plus3"></i></b> Add User Profile
-                </button>
-            </div> --}}
-        @endif
+        <!-- 2) Hide the Form While Loading -->
+        <div wire:loading.remove>
+            @if ($showAddUserForm)
+                @include('livewire.user.user-profile_adduser')
+            @elseif($user && $user->profile && $showEditProfileForm == false)
+                @include('livewire.user.user-profile_tab')
+            @elseif($showEditProfileForm && $user)
+                @include('livewire.user.user-profile_tab')
+            @elseif($user && $user->profile == null)
+                {{-- <div class="form-group has-feedback has-feedback-left">
+                    <button type="button" class="btn btn-sm btn-success btn-labeled"
+                        wire:click="$dispatch('showEditProfileForm')">
+                        <b><i class="icon-plus3"></i></b> Add User Profile
+                    </button>
+                </div> --}}
+            @endif
+        </div>
     </div>
-</div>
 
 @push('styles')
     <!-- Include Slim CSS -->
@@ -91,8 +91,8 @@
             if (!newPassword) {
                 $('#new_password_error').text('Password is required');
                 hasErrors = true;
-            } else if (newPassword.length < 6) {
-                $('#new_password_error').text('Password must be at least 6 characters');
+            } else if (newPassword.length < {{ \App\Services\ValidationRulesService::getPasswordRules()['min_length'] }}) {
+                $('#new_password_error').text('Password must be at least {{ \App\Services\ValidationRulesService::getPasswordRules()['min_length'] }} characters');
                 hasErrors = true;
             }
             
@@ -186,18 +186,18 @@
             }
 
             // Create and append new script using Alpine
-            const script = document.createElement('script');
-            script.id = 'slim-script';
-            script.src = "{{ asset('slim/js/slim.kickstart.min.js') }}";
-            document.body.appendChild(script);
+                const script = document.createElement('script');
+                script.id = 'slim-script';
+                script.src = "{{ asset('slim/js/slim.kickstart.min.js') }}";
+                document.body.appendChild(script);
         }
 
         function setAvatarFromSlim() {
             const slim = document.getElementById('slim-avatar');
             if (slim) {
                 const resultImage = document.querySelector('#slim-avatar .slim-result img.in');
-                const base64Data = resultImage.src;
-                @this.set('avatar', base64Data);
+                    const base64Data = resultImage.src;
+                    @this.set('avatar', base64Data);
             }
         }
 

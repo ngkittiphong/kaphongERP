@@ -1,3 +1,17 @@
+@error('form')
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <strong>Error:</strong> {{ $message }}
+    </div>
+@enderror
+
+@if (session()->has('error'))
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <strong>Error:</strong> {{ session('error') }}
+    </div>
+@endif
+
 <div class="tab-pane active" id="tab-detail">
     <div class="col-md-4 col-xs-12">
         <div class="text-center">
@@ -24,17 +38,31 @@
                     alt="{{ $user->status->name }}"></i>{{ $user->profile?->fullname_th }}
                 ({{ $user->profile->nickname }})</h4>
             <div class="form-group col-md-8">
-                <select class="form-control">
-                    <option>{{ __t('user.admin', 'Admin') }}</option>
-                    <option>{{ __t('user.user', 'User') }}</option>
+                <label class="control-label">User Type</label>
+                <select class="form-control @error('user_type_id') is-invalid @enderror" wire:model="user_type_id">
+                    @foreach ($userTypes as $type)
+                        <option value="{{ $type->id }}" {{ $user->user_type_id == $type->id ? 'selected' : '' }}>
+                            {{ $type->name }}
+                        </option>
+                    @endforeach
                 </select>
+                @error('user_type_id')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
             </div>
 
             <div class="form-group col-md-8">
-                <select class="form-control">
-                    <option>{{ __t('common.active', 'Active') }}</option>
-                    <option>{{ __t('user.hold', 'Hold') }}</option>
+                <label class="control-label">User Status</label>
+                <select class="form-control @error('user_status_id') is-invalid @enderror" wire:model="user_status_id">
+                    @foreach ($userStatuses as $status)
+                        <option value="{{ $status->id }}" {{ $user->user_status_id == $status->id ? 'selected' : '' }}>
+                            {{ $status->name }}
+                        </option>
+                    @endforeach
                 </select>
+                @error('user_status_id')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
             </div>
         </div>
     </div>
@@ -70,19 +98,25 @@
                 <div class="row">
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label>Prefix (Thai)</label>
-                            <select class="form-control" wire:model="prefix_th">
-                                <option value="นาย">นาย</option>
-                                <option value="นาง">นาง</option>
-                                <option value="นางสาว">นางสาว</option>
+                            <label class="control-label">Prefix (Thai)</label>
+                            <select class="form-control @error('prefix_th') is-invalid @enderror" wire:model="prefix_th">
+                                <option value="นาย" {{ ($user->profile->prefix_th ?? '') == 'นาย' ? 'selected' : '' }}>นาย</option>
+                                <option value="นาง" {{ ($user->profile->prefix_th ?? '') == 'นาง' ? 'selected' : '' }}>นาง</option>
+                                <option value="นางสาว" {{ ($user->profile->prefix_th ?? '') == 'นางสาว' ? 'selected' : '' }}>นางสาว</option>
                             </select>
+                            @error('prefix_th')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                     <div class="col-md-9">
                         <div class="form-group">
-                            <label>Full Name (Thai)</label>
-                            <input type="text" class="form-control" wire:model="fullname_th"
+                            <label class="control-label">Full Name (Thai)</label>
+                            <input type="text" class="form-control @error('fullname_th') is-invalid @enderror" wire:model="fullname_th"
                                 value="{{ $user->profile->fullname_th ?? '' }}">
+                            @error('fullname_th')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -91,33 +125,67 @@
                 <div class="row">
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label>Prefix (English)</label>
-                            <select class="form-control" wire:model="prefix_en">
-                                <option value="Mr.">Mr.</option>
-                                <option value="Mrs.">Mrs.</option>
-                                <option value="Ms.">Ms.</option>
+                            <label class="control-label">Prefix (English)</label>
+                            <select class="form-control @error('prefix_en') is-invalid @enderror" wire:model="prefix_en">
+                                <option value="Mr." {{ ($user->profile->prefix_en ?? '') == 'Mr.' ? 'selected' : '' }}>Mr.</option>
+                                <option value="Mrs." {{ ($user->profile->prefix_en ?? '') == 'Mrs.' ? 'selected' : '' }}>Mrs.</option>
+                                <option value="Ms." {{ ($user->profile->prefix_en ?? '') == 'Ms.' ? 'selected' : '' }}>Ms.</option>
                             </select>
+                            @error('prefix_en')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                     <div class="col-md-9">
                         <div class="form-group">
-                            <label>Full Name (English)</label>
-                            <input type="text" class="form-control" wire:model="fullname_en"
+                            <label class="control-label">Full Name (English)</label>
+                            <input type="text" class="form-control @error('fullname_en') is-invalid @enderror" wire:model="fullname_en"
                                 value="{{ $user->profile->fullname_en ?? '' }}">
+                            @error('fullname_en')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                 </div>
 
                 <!-- Nickname field -->
                 <div class="form-group">
-                    <label>{{ __t('user.nickname', 'Nickname') }}</label>
-                    <input type="text" class="form-control" wire:model="nickname" value="test">
+                    <label class="control-label">{{ __t('user.nickname', 'Nickname') }}</label>
+                    <input type="text" class="form-control @error('nickname') is-invalid @enderror" wire:model="nickname" 
+                        value="{{ $user->profile->nickname ?? '' }}">
+                    @error('nickname')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <!-- Card ID field -->
+                <div class="form-group">
+                    <label class="control-label">Card ID Number</label>
+                    <input type="text" class="form-control @error('card_id_no') is-invalid @enderror" wire:model="card_id_no"
+                        value="{{ $user->profile->card_id_no ?? '' }}" placeholder="Card ID Number">
+                    @error('card_id_no')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <!-- Birth Date field -->
+                <div class="form-group">
+                    <label class="control-label">Birth Date</label>
+                    <input type="date" class="form-control @error('birth_date') is-invalid @enderror" wire:model="birth_date"
+                        value="{{ $user->profile->birth_date ?? '' }}">
+                    @error('birth_date')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <!-- Description field -->
                 <div class="form-group">
-                    <label>{{ __t('user.description', 'Description') }}</label>
-                    <textarea class="form-control" wire:model="description" rows="3">{{ $user->profile->description ?? '' }}</textarea>
+                    <label class="control-label">{{ __t('user.description', 'Description') }}</label>
+                    <textarea class="form-control @error('description') is-invalid @enderror" wire:model="description" rows="3" 
+                        placeholder="Enter description...">{{ $user->profile->description ?? '' }}</textarea>
+                    @error('description')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <!-- Submit button -->

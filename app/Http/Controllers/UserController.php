@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Http\Requests\UserRequest;    
 use Illuminate\Http\Request;
+use App\Services\ValidationRulesService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
@@ -178,12 +179,10 @@ class UserController
         // ]);
         //$validator = Validator::make($request->all(), (new UserRequest())->rules());
 
-        $validator = Validator::make($request->all(), [
-            'username' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:6',
-            'password_confirmation' => 'required|same:password'
-        ]);
+        $validator = Validator::make($request->all(), 
+            ValidationRulesService::getUserCreationRules(),
+            ValidationRulesService::getUserCreationMessages()
+        );
 
         \Log::debug("Request details:", [
             'request' => $request->all()
@@ -246,20 +245,30 @@ class UserController
 
     public function update(Request $request, $id)
     {
-        // 1) Validation automatically runs here
-        //    If validation fails, it redirects back with errors
-        //$validated = $request->validated();
-        //$validated = $request->validate();
-        // $this->validate([
-        //     (new UserRequest())->rules()
-        //     // or just rely fully on the controller
-        // ]);
-        //$validator = Validator::make($request->all(), (new UserRequest())->rules());
+        // 1) Validate the request using centralized rules
+        $validator = Validator::make($request->all(), 
+            ValidationRulesService::getUserUpdateRules($id),
+            ValidationRulesService::getUserCreationMessages()
+        );
+
+        \Log::debug("Update request details:", [
+            'request' => $request->all(),
+            'user_id' => $id
+        ]);
+
+        if ($validator->fails()) {
+            \Log::error("Update validation failed: " . json_encode($validator->errors()));
+            return response()->json([
+                'message' => 'Validation failed. Please check your input.',
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
         try {
             // 2) Find the user
             $user = User::findOrFail($id);
         } catch (\Exception $e) {
+            \Log::error("Error finding user: " . $e->getMessage());
             return response()->json([
                 'message' => 'Error finding user',
                 'error' => $e->getMessage()
@@ -267,7 +276,13 @@ class UserController
         }
 
         try {
-            // 3) Update the profile
+            // 3) Update the user basic information
+            $user->update([
+                'user_type_id'   => $request->user_type_id,
+                'user_status_id' => $request->user_status_id,
+            ]);
+
+            // 4) Update the profile
             $user->profile()->update([
                 'nickname'       => $request->nickname       ?? '',
                 'card_id_no'     => $request->card_id_no     ?? '',
@@ -280,6 +295,7 @@ class UserController
                 'avatar'         => $request->avatar         ?? '',
             ]);
         } catch (\Exception $e) {
+            \Log::error("Error updating user: " . $e->getMessage());
             return response()->json([
                 'message' => 'Error updating user profile',
                 'error' => $e->getMessage()
@@ -302,11 +318,10 @@ class UserController
      */
     public function changePassword(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'new_password' => 'required|min:6',
-            'new_password_confirmation' => 'required|same:new_password',
-            'request_change_pass' => 'boolean',
-        ]);
+        $validator = Validator::make($request->all(), 
+            ValidationRulesService::getPasswordChangeRules(),
+            ValidationRulesService::getPasswordChangeMessages()
+        );
 
         if ($validator->fails()) {
             \Log::error("Password validation failed: " . json_encode($validator->errors()));

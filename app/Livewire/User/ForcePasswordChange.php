@@ -6,6 +6,7 @@ use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Services\ValidationRulesService;
 
 class ForcePasswordChange extends Component
 {
@@ -13,22 +14,16 @@ class ForcePasswordChange extends Component
     public $new_password_confirmation = '';
     public $current_password = '';
 
-    protected $rules = [
-        'current_password' => 'required',
-        'new_password' => 'required|min:6',
-        'new_password_confirmation' => 'required|same:new_password',
-    ];
+    protected $rules = [];
 
-    protected $messages = [
-        'current_password.required' => 'Current password is required.',
-        'new_password.required' => 'New password is required.',
-        'new_password.min' => 'New password must be at least 6 characters.',
-        'new_password_confirmation.required' => 'Password confirmation is required.',
-        'new_password_confirmation.same' => 'Password confirmation does not match.',
-    ];
+    protected $messages = [];
 
     public function mount()
     {
+        // Load rules and messages from centralized service
+        $this->rules = ValidationRulesService::getForcePasswordChangeRules();
+        $this->messages = ValidationRulesService::getForcePasswordChangeMessages();
+        
         // Ensure user is authenticated and needs to change password
         if (!Auth::check() || !Auth::user()->request_change_pass) {
             return redirect()->route('login');

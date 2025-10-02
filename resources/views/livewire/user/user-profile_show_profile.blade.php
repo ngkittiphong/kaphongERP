@@ -86,14 +86,15 @@
                         <div class="text-danger" id="new_password_confirmation_error"></div>
                     </div>
                     
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <div class="checkbox">
                             <label>
                                 <input type="checkbox" id="request_change_pass" name="request_change_pass" value="1" checked>
                                 {{ __t('user.force_password_change', 'Force user to change password on next login') }}
                             </label>
                         </div>
-                    </div>
+                    </div> --}}
+                    <input type="hidden" id="request_change_pass" name="request_change_pass" value="1">
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">{{ __t('common.cancel', 'Cancel') }}</button>
                         <button type="button" class="btn btn-primary" onclick="submitPasswordChange()">{{ __t('user.change_password', 'Change Password') }}</button>
