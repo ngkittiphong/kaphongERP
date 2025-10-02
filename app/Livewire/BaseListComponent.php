@@ -14,7 +14,7 @@ abstract class BaseListComponent extends Component
     protected $eventPrefix;
 
     protected $listeners = [
-        'refreshComponent' => '$refresh',
+        // Individual components will override this with their specific refresh events
     ];
 
     public function mount()
@@ -54,7 +54,19 @@ abstract class BaseListComponent extends Component
             $this->controller = $this->getController();
         }
         
+        \Log::info("🔄 BaseListComponent: Loading fresh items from database", [
+            'event_prefix' => $this->eventPrefix,
+            'controller_class' => get_class($this->controller)
+        ]);
+        
+        // Force fresh data from database
         $this->items = $this->controller->index();
+        
+        \Log::info("🔄 BaseListComponent: Items loaded successfully", [
+            'items_count' => $this->items ? $this->items->count() : 0,
+            'event_prefix' => $this->eventPrefix
+        ]);
+        
         $this->dispatch($this->eventPrefix . 'ListUpdated');
     }
 

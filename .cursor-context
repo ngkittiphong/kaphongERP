@@ -1,0 +1,49 @@
+# KaphongERP Project Context
+
+## Framework Versions
+- Laravel 11.31+
+- Livewire 3.5+
+- PHP 8.2+
+- Bootstrap CSS (included in project)
+
+## Project Context
+This is a Laravel ERP system with:
+- Inventory management
+- Warehouse operations
+- Product management
+- User management
+- Translation system (Thai/English)
+- Stock operations (in/out/adjustment)
+- Transfer slips
+- Check stock reports
+
+## Default Assumptions
+- Always use Laravel 11.x syntax and features
+- Always use Livewire 3.x patterns
+- Always use modern PHP 8.2+ capabilities
+- Don't mention versions unless there's a compatibility issue
+
+## Key Features
+- Multi-language support (Thai/English)
+- Warehouse management with multiple branches
+- Product catalog with SKU management
+- Stock tracking and operations
+- Transfer slip system
+- Check stock reports
+- User management with profiles
+- Company and branch management
+
+## Database
+- SQLite database
+- Comprehensive seeding system
+- Translation keys and values tables
+- Inventory tracking tables
+- Warehouse product relationships
+
+## Development Notes
+- Uses Vite for asset building
+- Bootstrap CSS for styling
+- Livewire for dynamic components
+- Laravel Pail for logging
+- Faker for test data generation
+

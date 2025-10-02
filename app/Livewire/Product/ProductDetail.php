@@ -672,7 +672,11 @@ class ProductDetail extends Component
             $result = $this->getProductService()->softDeleteProduct($this->product);
 
             if ($result['success']) {
-                $this->dispatch('refreshComponent');
+                // Dispatch refresh event to update the product list
+                $this->dispatch('refreshProductList');
+                
+                // Dispatch event for DataTable reinitialization
+                $this->dispatch('refreshDataTable');
                 
                 // Show success message and redirect to product list
                 $redirectUrl = route('menu.menu_product', [], false);

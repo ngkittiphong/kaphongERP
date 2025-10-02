@@ -471,6 +471,10 @@ class TranslationSeeder extends Seeder
                 'en' => 'Delete Product',
                 'th' => 'ลบสินค้า'
             ],
+            'product.delete_product_confirmation' => [
+                'en' => 'This will delete the product. The product will no longer be available for new transactions.',
+                'th' => 'การดำเนินการนี้จะลบสินค้า สินค้าจะไม่สามารถใช้สำหรับธุรกรรมใหม่ได้'
+            ],
             'product.total_count' => [
                 'en' => 'Total Count',
                 'th' => 'จำนวนรวม'

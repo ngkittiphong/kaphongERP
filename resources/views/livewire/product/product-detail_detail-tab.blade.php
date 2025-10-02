@@ -23,7 +23,7 @@
                 <div class="elements">
                     <!--<button type="button" class="btn bg-amber btn-sm">Button</button>-->
                     <button class="btn bg-amber-darkest" wire:click="$dispatch('showEditProductForm')">{{ __t('product.edit_product', 'Edit Product') }}</button>
-                    <button class="btn btn-danger" onclick="confirmDelete({{ $product->id ?? 0 }})">{{ __t('product.change_to_inactive', 'Change to Inactive') }}</button>
+                    <button class="btn btn-danger" onclick="confirmDelete({{ $product->id ?? 0 }})">{{ __t('product.delete_product', 'Delete Product') }}</button>
                 </div>
                 <a class="elements-toggle"><i class="icon-more"></i></a>
             </div>

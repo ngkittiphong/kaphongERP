@@ -183,13 +183,19 @@
                 });
 
                 // Add placeholder to the datatable filter option in the sidebar
-                $('.secondary-sidebar .dataTables_filter input[type=search]').attr('placeholder', '{{ __t("common.find", "Find") }}');
+                const searchInput = $('.secondary-sidebar .dataTables_filter input[type=search]');
+                if (searchInput.length > 0) {
+                    searchInput.attr('placeholder', '{{ __t("common.find", "Find") }}');
+                }
 
                 // Enable Select2 select for the length option in the sidebar
-                $('.secondary-sidebar .dataTables_length select').select2({
-                    minimumResultsForSearch: Infinity,
-                    width: 'auto'
-                });
+                const lengthSelect = $('.secondary-sidebar .dataTables_length select');
+                if (lengthSelect.length > 0) {
+                    lengthSelect.select2({
+                        minimumResultsForSearch: Infinity,
+                        width: 'auto'
+                    });
+                }
 
                 // Handle row clicks
                 $(".lease-order-row").off('click.datatable').on("click.datatable", function() {
@@ -304,8 +310,12 @@
                     initSlim();
                     initTypeahead();
                     $('.venobox').venobox();
-                    document.getElementById('updateUserProfileForm').addEventListener('submit',
-                        handleSlimSubmitForm);
+                    
+                    // Safely add event listener only if element exists
+                    const updateForm = document.getElementById('updateUserProfileForm');
+                    if (updateForm) {
+                        updateForm.addEventListener('submit', handleSlimSubmitForm);
+                    }
                 }, 100);
             });
 
@@ -314,8 +324,12 @@
                 setTimeout(() => {
                     initSlim();
                     initTypeahead();
-                    document.getElementById('addProductForm').addEventListener('submit',
-                        handleSlimSubmitForm);
+                    
+                    // Safely add event listener only if element exists
+                    const addForm = document.getElementById('addProductForm');
+                    if (addForm) {
+                        addForm.addEventListener('submit', handleSlimSubmitForm);
+                    }
                 }, 100);
             });
 
@@ -438,8 +452,8 @@
                 });
             });
 
-            @this.on('refreshComponent', () => {
-                console.log('🚀 [JS] refreshComponent event received');
+            @this.on('refreshDataTable', () => {
+                console.log('🚀 [JS] refreshDataTable event received');
                 
                 // Reset the initialization flag
                 isInitializingDataTable = false;
@@ -460,9 +474,6 @@
                 $('.secondary-sidebar .dataTables_scrollHead').remove();
                 $('.secondary-sidebar .dataTables_scrollBody').remove();
                 $('.secondary-sidebar .dataTables_scrollFoot').remove();
-                
-                // Dispatch refresh to ProductList component
-                Livewire.dispatch('refreshProductList');
                 
                 // Wait for Livewire to refresh and then reinitialize DataTable
                 setTimeout(() => {
@@ -532,12 +543,12 @@
         function confirmDelete(productId) {
             Swal.fire({
                 title: "{{ __t('common.are_you_sure', 'Are you sure?') }}",
-                text: "{{ __t('product.change_status_to_inactive', 'This will change the product status to inactive. The product will no longer be available for new transactions.') }}",
+                text: "{{ __t('product.delete_product_confirmation', 'This will delete the product. The product will no longer be available for new transactions.') }}",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#d33",
                 cancelButtonColor: "#3085d6",
-                confirmButtonText: "{{ __t('product.change_to_inactive', 'Yes, change to inactive!') }}",
+                confirmButtonText: "{{ __t('product.delete_product', 'Yes, delete!') }}",
                 cancelButtonText: "{{ __t('common.cancel', 'Cancel') }}"
             }).then((result) => {
                 if (result.isConfirmed) {

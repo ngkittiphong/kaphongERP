@@ -15,15 +15,21 @@ use Illuminate\Support\Facades\Log;
 class ProductService
 {
     /**
-     * Get all products with relationships
+     * Get all products with relationships (excluding deleted products)
      */
     public function getAllProducts()
     {
         Log::info('ProductService@getAllProducts: Starting to retrieve all products');
-        $products = Product::with(['type', 'group', 'status'])->get();
+        
+        // Force fresh query without any caching
+        $products = Product::with(['type', 'group', 'status'])
+            ->where('product_status_id', '!=', 0) // Exclude deleted products (status 0)
+            ->get();
+            
         Log::info('ProductService@getAllProducts: Retrieved products successfully', [
             'count' => $products->count(),
-            'product_ids' => $products->pluck('id')->toArray()
+            'product_ids' => $products->pluck('id')->toArray(),
+            'deleted_products_count' => Product::where('product_status_id', 0)->count()
         ]);
         return $products;
     }
@@ -238,7 +244,7 @@ class ProductService
     }
 
     /**
-     * Soft delete a product (change status to inactive)
+     * Soft delete a product (change status to delete)
      */
     public function softDeleteProduct(Product $product)
     {
@@ -252,21 +258,9 @@ class ProductService
             DB::beginTransaction();
             Log::info('ProductService@softDeleteProduct: Database transaction started');
 
-            // Find the "Inactive" status
-            Log::info('ProductService@softDeleteProduct: Looking for Inactive status');
-            $inactiveStatus = ProductStatus::where('name', 'Inactive')->first();
-            
-            if (!$inactiveStatus) {
-                Log::error('ProductService@softDeleteProduct: Inactive status not found');
-                throw new \Exception('Inactive status not found');
-            }
-            Log::info('ProductService@softDeleteProduct: Inactive status found', [
-                'inactive_status_id' => $inactiveStatus->id
-            ]);
-
-            // Change product status to inactive
-            Log::info('ProductService@softDeleteProduct: Updating product status to inactive');
-            $product->update(['product_status_id' => $inactiveStatus->id]);
+            // Change product status to delete (status 0)
+            Log::info('ProductService@softDeleteProduct: Updating product status to delete');
+            $product->update(['product_status_id' => 0]);
             Log::info('ProductService@softDeleteProduct: Product status updated successfully');
 
             DB::commit();
@@ -275,17 +269,17 @@ class ProductService
             Log::info('ProductService@softDeleteProduct: Product soft deleted successfully', [
                 'product_id' => $product->id,
                 'product_name' => $product->name,
-                'new_status' => 'Inactive'
+                'new_status' => 'Delete'
             ]);
 
             return [
                 'success' => true,
-                'message' => 'Product status changed to inactive successfully.'
+                'message' => 'Product deleted successfully.'
             ];
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('ProductService@softDeleteProduct: Error changing product status', [
+            Log::error('ProductService@softDeleteProduct: Error deleting product', [
                 'product_id' => $product->id,
                 'error_message' => $e->getMessage(),
                 'error_trace' => $e->getTraceAsString()
@@ -293,7 +287,7 @@ class ProductService
             
             return [
                 'success' => false,
-                'message' => 'Error changing product status: ' . $e->getMessage()
+                'message' => 'Error deleting product: ' . $e->getMessage()
             ];
         }
     }

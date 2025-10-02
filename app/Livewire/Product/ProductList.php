@@ -10,9 +10,7 @@ use App\Services\ProductService;
 class ProductList extends BaseListComponent
 {
     protected $listeners = [
-        'refreshComponent' => '$refresh',
-        'productListUpdated' => 'refreshList',
-        'refreshProductList' => '$refresh',
+        'refreshProductList' => 'refreshList',
     ];
 
     protected function getController()
@@ -67,12 +65,33 @@ class ProductList extends BaseListComponent
         $this->loadItems();
     }
 
+    /**
+     * Force refresh the product list with fresh data from database
+     */
+    public function refreshList()
+    {
+        \Log::info("🔄 ProductList: Refreshing product list with fresh data");
+        
+        // Clear any potential caching
+        if (method_exists($this, 'clearCache')) {
+            $this->clearCache();
+        }
+        
+        // Force reload items from database
+        $this->loadItems();
+        
+        \Log::info("🔄 ProductList: Product list refreshed successfully", [
+            'products_count' => $this->items ? $this->items->count() : 0
+        ]);
+    }
+
     public function getStatusColor($statusName)
     {
         return match($statusName) {
             'Active' => 'success',
             'Inactive' => 'warning',
             'Discontinued' => 'danger',
+            'Delete' => 'danger',
             'Draft' => 'secondary',
             default => 'secondary'
         };
@@ -84,6 +103,7 @@ class ProductList extends BaseListComponent
             'Active' => 'checkmark3',
             'Inactive' => 'pause2',
             'Discontinued' => 'cross2',
+            'Delete' => 'cross2',
             'Draft' => 'pencil3',
             default => 'question'
         };
