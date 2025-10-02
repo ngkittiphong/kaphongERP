@@ -1,9 +1,15 @@
+@push('styles')
+    <!-- Include Slim CSS -->
+    <link rel="stylesheet" href="{{ asset('slim/css/slim.min.css') }}">
+@endpush
+
 <div role="tabpanel" class="tab-pane profile fade" id="profile">
     <div class="row">
         <div class="col-md-12 col-sm-12">
             <div class="text-center">
                 {{-- <img  class="img-responsive img-circle user-avatar" alt=""/> --}}
                 <div
+                    id="slim-avatar"
                     class="slim"
                     data-size="300,300"
                     data-ratio="1:1"
@@ -40,6 +46,16 @@
                     />
                 </div>
                 
+                <!-- Confirm Upload Button (hidden by default) -->
+                <div id="avatar-confirm-container" style="display: none; margin-top: 10px;">
+                    <button type="button" id="confirm-avatar-upload" class="btn btn-success btn-sm">
+                        <i class="icon-checkmark"></i> Confirm Upload
+                    </button>
+                    <button type="button" id="cancel-avatar-upload" class="btn btn-default btn-sm" style="margin-left: 5px;">
+                        <i class="icon-cross"></i> Cancel
+                    </button>
+                </div>
+                
                 <h4 class="no-margin-bottom m-t-10">{{ Auth::user()->profile->fullname_en ?? Auth::user()->username }}</h4>
                 <div class="text-light text-size-small text-white">{{ Auth::user()->profile->nickname ?? '' }}</div>
             </div>
@@ -51,7 +67,7 @@
         </button>
     </div>
     <div class="col-md-12 col-sm-12  m-t-5">
-            <button type="button" class="btn btn-block bg-warning mt-33" data-toggle="modal" data-target="#new-email">{{ __t('profile.change_password', 'Change Password') }}</button>
+            <button type="button" class="btn btn-block bg-warning mt-33" data-toggle="modal" data-target="#change-password-modal">{{ __t('profile.change_password', 'Change Password') }}</button>
     </div>
     
     
@@ -193,3 +209,72 @@ document.getElementById('save-nickname').addEventListener('click', function() {
     });
 });
 </script>
+
+@push('scripts')
+<script>
+    function initSlimProfile() {
+        console.log('Initializing slim for profile panel');
+        
+        // Remove old script if exists
+        const oldScript = document.getElementById('slim-profile-script');
+        if (oldScript) {
+            oldScript.remove();
+        }
+
+        // Create and append new script
+        const script = document.createElement('script');
+        script.id = 'slim-profile-script';
+        script.src = "{{ asset('slim/js/slim.kickstart.min.js') }}";
+        script.onload = function() {
+            console.log('Slim script loaded for profile panel');
+            
+            // Initialize slim after script loads
+            setTimeout(() => {
+                if (typeof Slim !== 'undefined') {
+                    console.log('Slim is available and ready!');
+                } else {
+                    console.warn('Slim not available after script load');
+                }
+            }, 100);
+        };
+        script.onerror = function() {
+            console.error('Failed to load Slim script');
+            Swal.fire({
+                icon: 'error',
+                title: 'Script Error',
+                text: 'Failed to load image upload script. Please refresh the page.',
+                confirmButtonText: 'OK'
+            });
+        };
+        document.body.appendChild(script);
+    }
+
+    // Initialize slim when the profile tab is shown
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize slim immediately
+        initSlimProfile();
+        
+        // Add event listeners for confirm and cancel buttons
+        const confirmBtn = document.getElementById('confirm-avatar-upload');
+        const cancelBtn = document.getElementById('cancel-avatar-upload');
+        
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', confirmAvatarUpload);
+        }
+        
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', cancelAvatarUpload);
+        }
+        
+        // Re-initialize when profile tab is clicked
+        const profileTab = document.querySelector('#tab-profile a');
+        if (profileTab) {
+            profileTab.addEventListener('click', function() {
+                setTimeout(() => {
+                    initSlimProfile();
+                }, 100);
+            });
+        }
+    });
+</script>
+@endpush
