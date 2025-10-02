@@ -19,7 +19,11 @@
     <!-- 2) Hide the Form While Loading -->
     <div wire:loading.remove>
         @if($showAddEditProductForm)
-            @include('livewire.product.product-add-product')
+            @if($product)
+                @include('livewire.product.product-edit-product')
+            @else
+                @include('livewire.product.product-add-product')
+            @endif
         @elseif($product)
             <div class="panel-body">
                 <div class="row">
@@ -264,8 +268,15 @@
                     
                     afterSelect(item) {
                         console.log('Selected:', item);
-                        // Update the Livewire model
-                        @this.set('product_group_name', item);
+                        
+                        // Update the input field value
+                        $("#product_group_name").val(item);
+                        
+                        // Update Livewire component property directly without network request
+                        // This updates the component's data without triggering a roundtrip to the server
+                        @this.product_group_name = item;
+                        
+                        console.log('Updated Livewire property directly:', item);
                     }
                 });
 

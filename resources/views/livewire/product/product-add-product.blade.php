@@ -69,8 +69,8 @@
                                 <input
                                 type="text"
                                 id="product_group_name"
-                                class="form-control"
-                                wire:model="product_group_name"
+                                class="form-control typeahead"
+                                wire:model.defer="product_group_name"
                                 required
                               />
                                 @error('product_group_name') <span class="text-danger">{{ $message }}</span> @enderror

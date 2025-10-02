@@ -91,7 +91,7 @@ class ProductDetail extends Component
         }
         $this->productTypes = ProductType::all();
         $this->productGroups = ProductGroup::all();
-        $this->productStatuses = ProductStatus::all();
+        $this->productStatuses = ProductStatus::where('id', '!=', 0)->get(); // Exclude Delete status (ID 0)
         $this->vats = Vat::all();
         $this->withholdings = Withholding::all();
     }
@@ -186,6 +186,9 @@ class ProductDetail extends Component
         $this->resetErrorBag();
         \Log::info("Product ID: " . $this->productId);
         \Log::info("Product: " . json_encode($this->product));
+        
+        // Dispatch event to initialize typeahead for edit form
+        $this->dispatch('productSelected', product: $this->product);
         $this->name = $this->product->name;
         $this->sku_number = $this->product->sku_number;
         $this->serial_number = $this->product->serial_number;
@@ -254,6 +257,9 @@ class ProductDetail extends Component
                 
                 $this->showAddEditProductForm = false;
                 $this->dispatch('refreshComponent');
+                $this->dispatch('refreshProductList'); // Refresh the product list to show the new product
+                // Dispatch event for DataTable reinitialization
+                $this->dispatch('refreshDataTable');
                 
                 // Show success message and wait for user to click OK before redirecting
                 $redirectUrl = route('menu.menu_product', ['product_id' => $this->productId], false);
@@ -314,6 +320,9 @@ class ProductDetail extends Component
             if ($result['success']) {
                 $this->showAddEditProductForm = false;
                 $this->dispatch('refreshComponent');
+                $this->dispatch('refreshProductList');
+                // Dispatch event for DataTable reinitialization
+                $this->dispatch('refreshDataTable'); // Refresh the product list to show updated product
                 
                 // Show success message and wait for user to click OK before redirecting
                 $redirectUrl = route('menu.menu_product', ['product_id' => $this->productId], false);
