@@ -447,4 +447,60 @@ class UserController
             ], 500);
         }
     }
+
+    /**
+     * Change current user's password
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changePasswordProfile(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'current_password' => 'required',
+                'new_password' => 'required|string|min:8',
+                'confirm_password' => 'required|same:new_password',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $user = Auth::user();
+            
+            // Verify current password
+            if (!Hash::check($request->current_password, $user->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Current password is incorrect',
+                    'errors' => [
+                        'current_password' => ['The current password is incorrect.']
+                    ]
+                ], 422);
+            }
+
+            // Update the password
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+
+            \Log::debug('Password changed successfully for user: ' . $user->id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password changed successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Password change error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error changing password: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

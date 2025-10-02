@@ -41,10 +41,177 @@
 <!--{{-- <script src="{{ asset('js/pages/dashboard_default.js') }}"></script> --}}-->
 <!--<script src="{{ asset('js/maps/jvectormap/jvectormap.min.js') }}"></script>-->
 <!--<script src="{{ asset('js/maps/jvectormap/map_files/world.js') }}"></script>-->
+
+<!-- Change Nickname Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const saveNicknameBtn = document.getElementById('save-nickname');
+    if (saveNicknameBtn) {
+        saveNicknameBtn.addEventListener('click', function() {
+            const nickname = document.getElementById('new-nickname').value;
+            const form = document.getElementById('change-nickname-form');
+            const errorDiv = document.getElementById('nickname-error');
+            
+            // Reset error state
+            errorDiv.textContent = '';
+            document.getElementById('new-nickname').classList.remove('is-invalid');
+
+            fetch('/users/update-nickname', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ nickname: nickname })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the displayed nickname
+                    const nicknameDisplay = document.querySelector('.text-light.text-size-small.text-white');
+                    if (nicknameDisplay) {
+                        nicknameDisplay.textContent = nickname;
+                    }
+                    
+                    // Close the modal
+                    $('#change-nickname-modal').modal('hide');
+                    
+                    // Show success message with SweetAlert2
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Nickname updated successfully!',
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    // Show error message with SweetAlert2
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Error updating nickname',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error updating nickname. Please try again.',
+                    confirmButtonText: 'OK'
+                });
+            });
+        });
+    }
+});
+</script>
+
+<!-- Change Password Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const savePasswordBtn = document.getElementById('save-password');
+    if (savePasswordBtn) {
+        savePasswordBtn.addEventListener('click', function() {
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            // Reset error states
+            document.getElementById('current-password').classList.remove('is-invalid');
+            document.getElementById('new-password').classList.remove('is-invalid');
+            document.getElementById('confirm-password').classList.remove('is-invalid');
+            document.getElementById('current-password-error').textContent = '';
+            document.getElementById('new-password-error').textContent = '';
+            document.getElementById('confirm-password-error').textContent = '';
+
+            // Validate passwords match
+            if (newPassword !== confirmPassword) {
+                document.getElementById('confirm-password').classList.add('is-invalid');
+                document.getElementById('confirm-password-error').textContent = 'Passwords do not match';
+                return;
+            }
+
+            // Validate password length
+            if (newPassword.length < 8) {
+                document.getElementById('new-password').classList.add('is-invalid');
+                document.getElementById('new-password-error').textContent = 'Password must be at least 8 characters long';
+                return;
+            }
+
+            fetch('/users/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ 
+                    current_password: currentPassword,
+                    new_password: newPassword,
+                    confirm_password: confirmPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close the modal
+                    $('#change-password-modal').modal('hide');
+                    
+                    // Clear form
+                    document.getElementById('change-password-form').reset();
+                    
+                    // Show success message with SweetAlert2
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Password changed successfully!',
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    // Show error messages
+                    if (data.errors) {
+                        if (data.errors.current_password) {
+                            document.getElementById('current-password').classList.add('is-invalid');
+                            document.getElementById('current-password-error').textContent = data.errors.current_password[0];
+                        }
+                        if (data.errors.new_password) {
+                            document.getElementById('new-password').classList.add('is-invalid');
+                            document.getElementById('new-password-error').textContent = data.errors.new_password[0];
+                        }
+                        if (data.errors.confirm_password) {
+                            document.getElementById('confirm-password').classList.add('is-invalid');
+                            document.getElementById('confirm-password-error').textContent = data.errors.confirm_password[0];
+                        }
+                    } else {
+                        // Show error message with SweetAlert2
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'Error changing password. Please try again.',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error changing password. Please try again.',
+                    confirmButtonText: 'OK'
+                });
+            });
+        });
+    }
+});
+</script>
 <!-- /page scripts -->
 
 {{-- SweetAlert2 --}}
-<!--<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>-->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 @endunless
 

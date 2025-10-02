@@ -119,6 +119,8 @@ Route::post('/upload/avatar', [UserController::class, 'uploadAvatar'])->name('up
 
 Route::post('/users/update-nickname', [UserController::class, 'updateNickname'])->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
+Route::post('/users/change-password', [UserController::class, 'changePasswordProfile'])->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
+
 //------------------Branch Route--------------------------------
 Route::resource('branches', BranchController::class);
 
