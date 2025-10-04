@@ -59,22 +59,6 @@ body {
 						</div>
 					</div>
 
-					<div class="login-options">
-						<div class="row">
-							<div class="col-sm-6">
-								<div class="checkbox m-l-5">
-									<label>
-										<input type="checkbox" class="styled" checked="checked">
-																{{ __t('auth.remember_me', 'Remember me') }}
-									</label>
-								</div>
-							</div>
-
-							<div class="col-sm-6 text-right m-t-10">
-															<a href="http://localhost/templates/penguin/material/login_password_recover.html">{{ __t('auth.forgot_password', 'Forgot password?') }}</a>
-							</div>
-						</div>
-					</div>
 
 					<div class="form-group">
 							<button type="submit" class="btn btn-info btn-labeled btn-labeled-right btn-block"><b><i class="icon-enter"></i></b> {{ __t('auth.sign_in', 'Sign in') }}</button>
