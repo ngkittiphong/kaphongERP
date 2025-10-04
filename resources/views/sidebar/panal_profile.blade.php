@@ -102,40 +102,7 @@
     </div>
 </div>
 
-<!-- Add this modal HTML after your existing content but before the closing </div> -->
-<div class="modal fade" id="change-nickname-modal" tabindex="-1" role="dialog" aria-labelledby="changeNicknameModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="changeNicknameModalLabel">{{ __t('profile.change_nickname', 'Change Nickname') }}</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="change-nickname-form">
-                    @csrf
-                    <div class="form-group">
-                        <label for="new-nickname">{{ __t('profile.new_nickname', 'New Nickname') }}</label>
-                        <input type="text" 
-                               class="form-control" 
-                               id="new-nickname" 
-                               name="nickname" 
-                               value="{{ Auth::user()->profile->nickname ?? '' }}"
-                               required>
-                        <div class="invalid-feedback" id="nickname-error"></div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">{{ __t('common.cancel', 'Cancel') }}</button>
-                <button type="button" class="btn btn-primary" id="save-nickname">{{ __t('common.save_changes', 'Save Changes') }}</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Add this JavaScript after the div -->
+<!-- Add this JavaScript -->
 <script>
 function handleRequest(xhr) {
     // Add CSRF token to request
@@ -145,7 +112,12 @@ function handleRequest(xhr) {
 function handleUpload(error, data, response) {
     if (error) {
         console.error('Upload error:', error);
-        alert('Error uploading image. Please try again.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Upload Error',
+            text: 'Error uploading image. Please try again.',
+            confirmButtonText: 'OK'
+        });
         return;
     }
     
@@ -157,57 +129,99 @@ function handleUpload(error, data, response) {
             avatarImg.src = response.path;
         }
         console.log('Upload successful:', response.message);
+        
+        // Show success message
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Image uploaded successfully!',
+            timer: 2000,
+            showConfirmButton: false
+        });
     }
 }
 
 function handleServerError(error, defaultError) {
     console.error('Server error:', error || defaultError);
-    alert('Error uploading image. Please try again.');
+    Swal.fire({
+        icon: 'error',
+        title: 'Server Error',
+        text: 'Error uploading image. Please try again.',
+        confirmButtonText: 'OK'
+    });
 }
 
-document.getElementById('save-nickname').addEventListener('click', function() {
-    const nickname = document.getElementById('new-nickname').value;
-    const form = document.getElementById('change-nickname-form');
-    const errorDiv = document.getElementById('nickname-error');
-    
-    // Reset error state
-    errorDiv.textContent = '';
-    document.getElementById('new-nickname').classList.remove('is-invalid');
+function confirmAvatarUpload() {
+    // Handle avatar upload confirmation
+    console.log('Avatar upload confirmed');
+    // You can add specific logic here for avatar upload
+}
 
-    fetch('/users/update-nickname', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ nickname: nickname })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Update the displayed nickname
-            const nicknameDisplay = document.querySelector('.text-light.text-size-small.text-white');
-            if (nicknameDisplay) {
-                nicknameDisplay.textContent = nickname;
-            }
+function cancelAvatarUpload() {
+    // Handle avatar upload cancellation
+    console.log('Avatar upload cancelled');
+    // You can add specific logic here for avatar upload cancellation
+}
+
+// Add event listener when DOM and modal are ready
+function attachNicknameSaveListener() {
+    const saveNicknameBtn = document.getElementById('save-nickname');
+    if (saveNicknameBtn && !saveNicknameBtn.hasAttribute('data-listener-attached')) {
+        saveNicknameBtn.addEventListener('click', function() {
+            const nickname = document.getElementById('new-nickname').value;
+            const form = document.getElementById('change-nickname-form');
+            const errorDiv = document.getElementById('nickname-error');
             
-            // Close the modal
-            $('#change-nickname-modal').modal('hide');
-            
-            // Show success message (you can customize this)
-            alert('Nickname updated successfully!');
-        } else {
-            // Show error message
-            document.getElementById('new-nickname').classList.add('is-invalid');
-            errorDiv.textContent = data.message || 'Error updating nickname';
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        document.getElementById('new-nickname').classList.add('is-invalid');
-        errorDiv.textContent = 'Error updating nickname. Please try again.';
-    });
-});
+            // Reset error state
+            if (errorDiv) errorDiv.textContent = '';
+            const nicknameInput = document.getElementById('new-nickname');
+            if (nicknameInput) nicknameInput.classList.remove('is-invalid');
+
+            fetch('/users/update-nickname', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ nickname: nickname })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the displayed nickname
+                    const nicknameDisplay = document.querySelector('.text-light.text-size-small.text-white');
+                    if (nicknameDisplay) {
+                        nicknameDisplay.textContent = nickname;
+                    }
+                    
+                    // Close the modal
+                    $('#change-nickname-modal').modal('hide');
+                    
+                    // Show success message using SweetAlert (system alert removed)
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Nickname updated successfully!',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    // Show error message
+                    if (nicknameInput) nicknameInput.classList.add('is-invalid');
+                    if (errorDiv) errorDiv.textContent = data.message || 'Error updating nickname';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                if (nicknameInput) nicknameInput.classList.add('is-invalid');
+                if (errorDiv) errorDiv.textContent = 'Error updating nickname. Please try again.';
+            });
+        });
+        
+        // Mark as attached to prevent duplicate listeners
+        saveNicknameBtn.setAttribute('data-listener-attached', 'true');
+    }
+}
 </script>
 
 @push('scripts')
@@ -266,12 +280,19 @@ document.getElementById('save-nickname').addEventListener('click', function() {
             cancelBtn.addEventListener('click', cancelAvatarUpload);
         }
         
+        // Attach nickname save listener with a delay to ensure modal is loaded
+        setTimeout(() => {
+            attachNicknameSaveListener();
+        }, 100);
+        
         // Re-initialize when profile tab is clicked
         const profileTab = document.querySelector('#tab-profile a');
         if (profileTab) {
             profileTab.addEventListener('click', function() {
                 setTimeout(() => {
                     initSlimProfile();
+                    // Re-attach listeners when switching tabs
+                    attachNicknameSaveListener();
                 }, 100);
             });
         }
