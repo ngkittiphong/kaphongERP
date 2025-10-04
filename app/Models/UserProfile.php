@@ -23,6 +23,10 @@ class UserProfile extends Model
         'description',
     ];
 
+    protected $casts = [
+        'birth_date' => 'datetime',
+    ];
+
     // 🔹 Relationship: A Profile belongs to One User
     public function user()
     {

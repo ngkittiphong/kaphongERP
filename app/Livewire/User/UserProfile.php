@@ -57,7 +57,8 @@ class UserProfile extends Component
             $this->fullname_en = $this->user->profile->fullname_en;
             $this->prefix_en = $this->user->profile->prefix_en;
             $this->prefix_th = $this->user->profile->prefix_th;
-            $this->birth_date = $this->user->profile->birth_date;
+            $this->birth_date = $this->user->profile->birth_date ? 
+                $this->user->profile->birth_date->format('Y-m-d') : '';
             $this->description = $this->user->profile->description;
         }
 
@@ -79,6 +80,11 @@ class UserProfile extends Component
         $this->user = null;
         $this->user_type_id = 1;
         $this->user_status_id = 1;
+        
+        // Set default prefix values
+        $this->prefix_th = 'นาย';
+        $this->prefix_en = 'Mr.';
+        
         $this->dispatch('addUser');
     }
 
@@ -154,7 +160,7 @@ class UserProfile extends Component
         $this->resetValidation();
 
         // Create a Request instance with the validated data
-        $request = new Request([
+        $requestData = [
                 'username'             => $this->username,
                 'email'                => $this->email,
                 'password'             => $this->password,
@@ -172,7 +178,10 @@ class UserProfile extends Component
                 'birth_date'           => $this->birth_date,
                 'description'          => $this->description,
                 'avatar'               => $this->avatar,
-                ]);
+                ];
+
+        \Log::debug("About to create user with data:", $requestData);
+        $request = new Request($requestData);
 
         // Instantiate the controller and call its store method
         $controller = new UserController();

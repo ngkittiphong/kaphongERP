@@ -79,7 +79,8 @@
                         </div>
 
                         <!-- User profile form fields -->
-                        <div class="list-group list-group-lg list-group-borderless">
+                        <form wire:submit.prevent="saveUserAndProfile">
+                            <div class="list-group list-group-lg list-group-borderless">
                             <!-- Username field -->
                             <div class="form-group has-feedback has-feedback-left">
                                 <input type="text" class="form-control @error('username') is-invalid @enderror" wire:model="username" placeholder="{{ __t('user.username', 'Username') }}"
@@ -226,10 +227,9 @@
                                     {{ __t('user.create_now', 'Create now') }}
                                 </button>
                             </div>
-
-                        </div>
+                            </div>
+                        </form>
                     </div>
-                </form>
             </div>
         </div>
     </div>
