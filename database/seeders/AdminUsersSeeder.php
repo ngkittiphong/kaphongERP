@@ -17,6 +17,9 @@ class AdminUsersSeeder extends Seeder
         $faker = Faker::create();
         
         for ($i = 1; $i <= 10; $i++) {
+            // Generate consistent base name for both EN and TH versions
+            $baseName = $faker->firstName . ' ' . $faker->lastName;
+            
             // Insert Admin User
             $userId = DB::table('users')->insertGetId([
                 'username' => 'admin' . $i,
@@ -29,7 +32,7 @@ class AdminUsersSeeder extends Seeder
                 'updated_at' => now(),
             ]);
 
-            // Insert User Profile
+            // Insert User Profile with consistent naming
             DB::table('user_profiles')->insert([
                 'user_id' => $userId,
                 'profile_no' => strtoupper($faker->bothify('PRF###')),
@@ -37,9 +40,9 @@ class AdminUsersSeeder extends Seeder
                 'nickname' => $faker->firstName,
                 'card_id_no' => $faker->numerify('#############'),
                 'prefix_th' => 'นาย',
-                'fullname_th' => $faker->name,
+                'fullname_th' => $baseName . '_TH',
                 'prefix_en' => 'Mr.',
-                'fullname_en' => $faker->name,
+                'fullname_en' => $baseName . '_EN',
                 'birth_date' => $faker->dateTimeBetween('-40 years', '-20 years'),
                 'description' => $faker->sentence,
                 'created_at' => now(),
