@@ -391,29 +391,115 @@ class UserController
     public function uploadAvatar(Request $request)
     {
         try {
+            \Log::debug('uploadAvatar request data (start)', [
+                'all_inputs' => $request->all(),
+                'hasFiles' => $request->allFiles(),
+                'all_keys' => array_keys($request->all()),
+            ]);
             // Get the authenticated user
             $user = Auth::user();
+            \Log::debug('Authenticated user for avatar upload', [
+                'user_id' => $user ? $user->id : null,
+                'username' => $user ? $user->username : null,
+            ]);
             
-            // Get the image data from Slim
-            $imageData = $request->input('output');
-            if (empty($imageData)) {
+            // Accept multiple Slim payload shapes
+            $base64Image = null;
+
+            // 1) Preferred: JSON string under 'output'
+            $outputJson = $request->input('output');
+            \Log::debug('Step 1: Checking for output JSON', ['outputJson' => $outputJson]);
+            if (!empty($outputJson)) {
+                $decoded = json_decode($outputJson, true);
+                \Log::debug('Step 1: Decoded output JSON', ['decoded' => $decoded]);
+                if (is_array($decoded)) {
+                    $base64Image = data_get($decoded, 'output.image')
+                        ?? data_get($decoded, 'output.data')
+                        ?? data_get($decoded, 'image')
+                        ?? data_get($decoded, 'data');
+                    \Log::debug('Step 1: Extracted base64Image from output JSON', ['base64Image' => $base64Image]);
+                    // Slim sometimes sends only a field name containing the actual base64 value
+                    if (!$base64Image) {
+                        $fieldName = data_get($decoded, 'output.field');
+                        \Log::debug('Step 1: No base64Image found, checking output.field', ['fieldName' => $fieldName]);
+                        if ($fieldName) {
+                            $base64Image = $request->input($fieldName);
+                            \Log::debug('Step 1: Extracted base64Image from fieldName input', [
+                                'fieldName' => $fieldName,
+                                'base64Image' => $base64Image
+                            ]);
+                            if (!$base64Image && $request->hasFile($fieldName)) {
+                                $file = $request->file($fieldName);
+                                \Log::debug('Step 1: Found file for fieldName', [
+                                    'fieldName' => $fieldName,
+                                    'file' => $file ? $file->getClientOriginalName() : null
+                                ]);
+                                $contents = file_get_contents($file->getRealPath());
+                                $mime = $file->getMimeType() ?: 'image/png';
+                                $base64Image = 'data:' . $mime . ';base64,' . base64_encode($contents);
+                                \Log::debug('Step 1: Created base64Image from file', [
+                                    'mime' => $mime,
+                                    'base64Image' => substr($base64Image, 0, 30) . '...'
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 2) Alternate field name used by Slim: 'input'
+            if (!$base64Image) {
+                $inputJson = $request->input('input');
+                \Log::debug('Step 2: Checking for input JSON', ['inputJson' => $inputJson]);
+                if (!empty($inputJson)) {
+                    $decoded = json_decode($inputJson, true);
+                    \Log::debug('Step 2: Decoded input JSON', ['decoded' => $decoded]);
+                    if (is_array($decoded)) {
+                        $base64Image = data_get($decoded, 'output.image')
+                            ?? data_get($decoded, 'output.data')
+                            ?? data_get($decoded, 'image')
+                            ?? data_get($decoded, 'data');
+                        \Log::debug('Step 2: Extracted base64Image from input JSON', ['base64Image' => $base64Image]);
+                    }
+                }
+            }
+
+            // 3) Raw field 'image' or 'avatar'
+            if (!$base64Image) {
+                $base64Image = $request->input('image') ?? $request->input('avatar');
+                \Log::debug('Step 3: Checking raw image/avatar fields', [
+                    'image' => $request->input('image'),
+                    'avatar' => $request->input('avatar'),
+                    'base64Image' => $base64Image
+                ]);
+            }
+
+            // 4) File upload scenario (Slim can send a file under 'slim' key)
+            if (
+                !$base64Image &&
+                ($request->hasFile('slim') || $request->hasFile('avatar'))
+            ) {
+                $file = $request->file('slim') ?? $request->file('avatar');
+                \Log::debug('Step 4: Checking file upload', [
+                    'hasFile_slim' => $request->hasFile('slim'),
+                    'hasFile_avatar' => $request->hasFile('avatar'),
+                    'file' => $file ? $file->getClientOriginalName() : null
+                ]);
+                $contents = file_get_contents($file->getRealPath());
+                $mime = $file->getMimeType() ?: 'image/png';
+                $base64Image = 'data:' . $mime . ';base64,' . base64_encode($contents);
+                \Log::debug('Step 4: Created base64Image from uploaded file', [
+                    'mime' => $mime,
+                    'base64Image' => substr($base64Image, 0, 30) . '...'
+                ]);
+            }
+
+            if (empty($base64Image)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'No image data provided'
                 ], 400);
             }
-
-            // Decode the JSON data from Slim
-            $decoded = json_decode($imageData, true);
-            if (!isset($decoded['output']['image'])) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid image data format'
-                ], 400);
-            }
-
-            // Get the base64 image data
-            $base64Image = $decoded['output']['image'];
 
             // Update user's profile with base64 image data
             $user->profile()->update([

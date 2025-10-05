@@ -104,9 +104,56 @@
 
 <!-- Add this JavaScript -->
 <script>
+
 function handleRequest(xhr) {
     // Add CSRF token to request
     xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+
+    const slim = document.getElementById('slim-avatar_panel');
+    console.debug('[handleRequest] slim element:', slim);
+    if (!slim) {
+        console.debug('[handleRequest] No slim element found, aborting.');
+        return;
+    }
+
+    const base64Data = getSlimResultImage(slim);
+    console.debug('[handleRequest] base64Data:', base64Data);
+
+    if (base64Data) {
+        // Store for window access
+        window.output = base64Data;
+        
+        // Add the base64 data to the FormData that Slim is sending
+        if (xhr.upload && xhr.upload.addEventListener) {
+            // For newer browsers, we can modify the request
+            const formData = new FormData();
+            formData.append('avatar', base64Data);
+            formData.append('image', base64Data);
+            formData.append('base64_image', base64Data);
+            
+            // Override the send method to include our data
+            const originalSend = xhr.send;
+            xhr.send = function(data) {
+                // If data is FormData, append our base64
+                if (data instanceof FormData) {
+                    data.append('avatar', base64Data);
+                    data.append('image', base64Data);
+                    data.append('base64_image', base64Data);
+                } else {
+                    // If data is string/other, create new FormData
+                    const newFormData = new FormData();
+                    newFormData.append('avatar', base64Data);
+                    newFormData.append('image', base64Data);
+                    newFormData.append('base64_image', base64Data);
+                    if (data) {
+                        newFormData.append('original_data', data);
+                    }
+                    data = newFormData;
+                }
+                return originalSend.call(this, data);
+            };
+        }
+    }
 }
 
 function handleUpload(error, data, response) {
@@ -123,11 +170,6 @@ function handleUpload(error, data, response) {
     
     // Handle successful upload
     if (response.success) {
-        // Refresh the avatar image
-        const avatarImg = document.querySelector('.slim img');
-        if (avatarImg) {
-            avatarImg.src = response.path;
-        }
         console.log('Upload successful:', response.message);
         
         // Show success message
@@ -135,8 +177,11 @@ function handleUpload(error, data, response) {
             icon: 'success',
             title: 'Success!',
             text: 'Image uploaded successfully!',
-            timer: 2000,
+            timer: 1000,
             showConfirmButton: false
+        }).then(() => {
+            // Refresh the page to update all avatar instances
+            window.location.reload();
         });
     }
 }
