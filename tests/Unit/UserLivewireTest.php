@@ -4,7 +4,6 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Livewire\User\UserProfile;
-use App\Livewire\User\ForcePasswordChange;
 use App\Models\User;
 use App\Models\UserProfile as UserProfileModel;
 use App\Models\UserStatus;
@@ -158,145 +157,6 @@ class UserLivewireTest extends TestCase
             ->assertSet('showEditProfileForm', false);
     }
 
-    /** @test */
-    public function force_password_change_component_can_be_rendered()
-    {
-        Livewire::test(ForcePasswordChange::class)
-            ->assertStatus(200);
-    }
-
-    /** @test */
-    public function force_password_change_component_validates_current_password()
-    {
-        Livewire::test(ForcePasswordChange::class)
-            ->set('current_password', 'wrongpassword')
-            ->set('new_password', 'newpassword123')
-            ->set('new_password_confirmation', 'newpassword123')
-            ->call('changePassword')
-            ->assertHasErrors(['current_password']);
-    }
-
-    /** @test */
-    public function force_password_change_component_validates_new_password()
-    {
-        Livewire::test(ForcePasswordChange::class)
-            ->set('current_password', 'password123')
-            ->set('new_password', 'short')
-            ->set('new_password_confirmation', 'short')
-            ->call('changePassword')
-            ->assertHasErrors(['new_password']);
-    }
-
-    /** @test */
-    public function force_password_change_component_validates_password_confirmation()
-    {
-        Livewire::test(ForcePasswordChange::class)
-            ->set('current_password', 'password123')
-            ->set('new_password', 'newpassword123')
-            ->set('new_password_confirmation', 'differentpassword')
-            ->call('changePassword')
-            ->assertHasErrors(['new_password_confirmation']);
-    }
-
-    /** @test */
-    public function force_password_change_component_can_change_password_successfully()
-    {
-        // Mock authentication
-        Auth::shouldReceive('check')->andReturn(true);
-        Auth::shouldReceive('user')->andReturn($this->user);
-
-        // Mock the UserController response
-        $this->mock(\App\Http\Controllers\UserController::class, function ($mock) {
-            $mock->shouldReceive('forceChangePassword')
-                ->once()
-                ->andReturn(redirect('/')->with('success', 'Password changed successfully!'));
-        });
-
-        Livewire::test(ForcePasswordChange::class)
-            ->set('current_password', 'password123')
-            ->set('new_password', 'newpassword123')
-            ->set('new_password_confirmation', 'newpassword123')
-            ->call('changePassword')
-            ->assertRedirect('/');
-    }
-
-    /** @test */
-    public function force_password_change_component_handles_authentication_failure()
-    {
-        // Mock unauthenticated user
-        Auth::shouldReceive('check')->andReturn(false);
-
-        Livewire::test(ForcePasswordChange::class)
-            ->set('current_password', 'password123')
-            ->set('new_password', 'newpassword123')
-            ->set('new_password_confirmation', 'newpassword123')
-            ->call('changePassword')
-            ->assertRedirect('/');
-    }
-
-    /** @test */
-    public function force_password_change_component_handles_user_not_requiring_password_change()
-    {
-        // User doesn't require password change
-        $this->user->update(['request_change_pass' => false]);
-
-        // Mock authentication
-        Auth::shouldReceive('check')->andReturn(true);
-        Auth::shouldReceive('user')->andReturn($this->user);
-
-        Livewire::test(ForcePasswordChange::class)
-            ->set('current_password', 'password123')
-            ->set('new_password', 'newpassword123')
-            ->set('new_password_confirmation', 'newpassword123')
-            ->call('changePassword')
-            ->assertRedirect('/');
-    }
-
-    /** @test */
-    public function force_password_change_component_resets_form_after_successful_change()
-    {
-        // Mock authentication
-        Auth::shouldReceive('check')->andReturn(true);
-        Auth::shouldReceive('user')->andReturn($this->user);
-
-        // Mock the UserController response
-        $this->mock(\App\Http\Controllers\UserController::class, function ($mock) {
-            $mock->shouldReceive('forceChangePassword')
-                ->once()
-                ->andReturn(redirect('/')->with('success', 'Password changed successfully!'));
-        });
-
-        Livewire::test(ForcePasswordChange::class)
-            ->set('current_password', 'password123')
-            ->set('new_password', 'newpassword123')
-            ->set('new_password_confirmation', 'newpassword123')
-            ->call('changePassword')
-            ->assertSet('current_password', null)
-            ->assertSet('new_password', null)
-            ->assertSet('new_password_confirmation', null);
-    }
-
-    /** @test */
-    public function force_password_change_component_handles_controller_exceptions()
-    {
-        // Mock authentication
-        Auth::shouldReceive('check')->andReturn(true);
-        Auth::shouldReceive('user')->andReturn($this->user);
-
-        // Mock the UserController to throw an exception
-        $this->mock(\App\Http\Controllers\UserController::class, function ($mock) {
-            $mock->shouldReceive('forceChangePassword')
-                ->once()
-                ->andThrow(new \Exception('Database error'));
-        });
-
-        Livewire::test(ForcePasswordChange::class)
-            ->set('current_password', 'password123')
-            ->set('new_password', 'newpassword123')
-            ->set('new_password_confirmation', 'newpassword123')
-            ->call('changePassword')
-            ->assertHasErrors(['form']);
-    }
 
     /** @test */
     public function user_profile_component_can_handle_missing_user()
@@ -316,11 +176,4 @@ class UserLivewireTest extends TestCase
         $this->assertTrue($component->instance()->user->relationLoaded('type'));
     }
 
-    /** @test */
-    public function force_password_change_component_uses_correct_layout()
-    {
-        $component = Livewire::test(ForcePasswordChange::class);
-        
-        $this->assertEquals('layout.master_layout', $component->instance()->layout);
-    }
 }

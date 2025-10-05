@@ -113,7 +113,7 @@
                             <!-- Password field -->
                             <div class="form-group has-feedback has-feedback-left">
                                 <input type="password" class="form-control @error('password') is-invalid @enderror" wire:model="password" placeholder="{{ __t('user.password', 'Password') }}"
-                                    required>
+                                    autocomplete="new-password" required>
                                 <div class="form-control-feedback">
                                     <i class="icon-lock text-muted"></i>
                                 </div>
@@ -125,7 +125,7 @@
                             <!-- Password Confirmation field -->
                             <div class="form-group has-feedback has-feedback-left">
                                 <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" wire:model="password_confirmation"
-                                    placeholder="{{ __t('user.confirm_password', 'Confirm password') }}" required>
+                                    placeholder="{{ __t('user.confirm_password', 'Confirm password') }}" autocomplete="new-password" required>
                                 <div class="form-control-feedback">
                                     <i class="icon-lock text-muted"></i>
                                 </div>

@@ -10,7 +10,6 @@ use App\Models\UserType;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\ForcePasswordChange;
 use App\Livewire\User\UserProfile as UserProfileComponent;
-use App\Livewire\User\ForcePasswordChange as ForcePasswordChangeComponent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -132,11 +131,8 @@ class UserModuleTestSuite extends TestCase
             ->assertSet('showChangePasswordModal', true);
 
         // 8. Force password change component works
-        Livewire::test(ForcePasswordChangeComponent::class)
-            ->set('current_password', 'password123')
-            ->set('new_password', 'newpassword123')
-            ->set('new_password_confirmation', 'newpassword123')
-            ->assertStatus(200);
+        // Note: ForcePasswordChange Livewire component has been removed
+        // The functionality is now handled by the traditional Blade template
     }
 
     /** @test */

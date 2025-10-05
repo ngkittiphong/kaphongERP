@@ -21,11 +21,41 @@
 
             <form method="POST" action="{{ route('user.change-password.update') }}">
                 @csrf
+                <!-- Hidden username field for accessibility -->
+                <input type="text" 
+                       name="username" 
+                       value="{{ Auth::user()->username ?? '' }}" 
+                       autocomplete="username"
+                       style="display: none;"
+                       tabindex="-1">
                 <div class="panel panel-body login-form border-left border-left-lg border-left-success">
                     <div class="text-center m-b-20">
                         <div class="icon-object bg-success"><i class="icon-lock"></i></div>
                         <h5>{{ __t('auth.change_password_required', 'Change your password to continue') }}</h5>
                         <span class="display-block text-muted">{{ __t('auth.change_password_notice', 'For security reasons, you must update your password before accessing the system.') }}</span>
+                        
+                        @php
+                            $username = Auth::user()->username ?? '';
+                            $maskedUsername = '';
+                            if ($username !== '') {
+                                $len = strlen($username);
+                                if ($len <= 2) {
+                                    $maskedUsername = $username;
+                                } else {
+                                    $maskedUsername = substr($username, 0, 1)
+                                        . str_repeat('*', $len - 2)
+                                        . substr($username, -1);
+                                }
+                            }
+                        @endphp
+                        
+                        @if($username)
+                        <div class="m-t-15">
+                            <span class="text-muted small">
+                                {{ __t('auth.username', 'Username') }}: <strong class="text-dark">{{ $maskedUsername }}</strong>
+                            </span>
+                        </div>
+                        @endif
                     </div>
 
                     {{-- <div class="form-group has-feedback has-feedback-left">
@@ -48,6 +78,7 @@
                                class="form-control @error('new_password') border-danger @enderror"
                                placeholder="{{ __t('auth.new_password', 'New password') }}"
                                name="new_password"
+                               autocomplete="new-password"
                                required>
                         <div class="form-control-feedback">
                             <i class="icon-lock2 text-muted"></i>
@@ -62,6 +93,7 @@
                                class="form-control @error('new_password_confirmation') border-danger @enderror"
                                placeholder="{{ __t('auth.confirm_password', 'Confirm new password') }}"
                                name="new_password_confirmation"
+                               autocomplete="new-password"
                                required>
                         <div class="form-control-feedback">
                             <i class="icon-lock4 text-muted"></i>

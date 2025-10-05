@@ -53,7 +53,7 @@ body {
 					</div>
 
 					<div class="form-group has-feedback has-feedback-left">
-						<input type="password" class="form-control" placeholder="{{ __t('auth.password', 'Password') }}" name="password" required="required">
+						<input type="password" class="form-control" placeholder="{{ __t('auth.password', 'Password') }}" name="password" autocomplete="current-password" required="required">
 						<div class="form-control-feedback">
 							<i class="icon-lock text-muted"></i>
 						</div>

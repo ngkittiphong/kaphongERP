@@ -60,12 +60,20 @@
 				<div class="modal-body">
 					<form id="change-password-form">
 						@csrf
+						<!-- Hidden username field for accessibility -->
+						<input type="text" 
+							   name="username" 
+							   value="{{ Auth::user()->username ?? '' }}" 
+							   autocomplete="username"
+							   style="display: none;"
+							   tabindex="-1">
 						<div class="form-group">
 							<label for="current-password">{{ __t('profile.current_password', 'Current Password') }}</label>
 							<input type="password" 
 								   class="form-control" 
 								   id="current-password" 
 								   name="current_password" 
+								   autocomplete="current-password"
 								   required>
 							<div class="text-danger" id="current-password-error"></div>
 						</div>
@@ -75,6 +83,7 @@
 								   class="form-control" 
 								   id="new-password" 
 								   name="new_password" 
+								   autocomplete="new-password"
 								   required>
 							<div class="text-danger" id="new-password-error"></div>
 						</div>
@@ -84,6 +93,7 @@
 								   class="form-control" 
 								   id="confirm-password" 
 								   name="confirm_password" 
+								   autocomplete="new-password"
 								   required>
 							<div class="text-danger" id="confirm-password-error"></div>
 						</div>
