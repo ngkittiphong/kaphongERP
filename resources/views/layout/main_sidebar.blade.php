@@ -8,7 +8,7 @@
 					</div>
 					<div class="admin-user-info">
 						<ul class="user-info">
-							<li><a href="#" class="text-semibold text-size-large">{{ Auth::check() && Auth::user()->profile ? (Auth::user()->profile->fullname_th ?? Auth::user()->username) : (Auth::check() ? Auth::user()->username : 'Guest') }}</a></li>
+							<li><a href="#" class="text-semibold text-size-large">{{ Auth::check() && Auth::user()->profile ? (Auth::user()->profile->fullname_en ?? Auth::user()->username) : (Auth::check() ? Auth::user()->username : 'Guest') }}</a></li>
 							<li><a href="#"><small>{{ Auth::check() && Auth::user()->type ? Auth::user()->type->name : (Auth::check() ? 'User' : 'Guest') }}</small></a></li>
 						</ul>
 						@if(Auth::check())
