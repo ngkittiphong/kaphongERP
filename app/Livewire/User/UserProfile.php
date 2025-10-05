@@ -241,6 +241,9 @@ class UserProfile extends Component
                 session()->flash('error', $resultMessage);
                 \Log::error("❌ Failed to create user & profile: " . $resultMessage);
             }
+
+            // Re-initialize Slim after errors since the DOM re-rendered
+            $this->dispatch('addUser');
         }
     }
 
