@@ -142,17 +142,10 @@ function handleRequest(xhr) {
         return;
     }
 
-    // Get base64 data from Slim (simplified version)
-    let base64Data = null;
-    try {
-        if (slim && slim.slim && typeof slim.slim.getData === 'function') {
-            const data = slim.slim.getData();
-            base64Data = data?.output?.image || data?.image || null;
-        }
-    } catch (error) {
-        console.error('[handleRequest] Error getting Slim data:', error);
-    }
-    console.debug('[handleRequest] base64Data:', base64Data);
+    // Get base64 data from Slim - try multiple methods
+    const base64Data = getSlimResultImage(slim);
+    
+    console.debug('[handleRequest] Final base64Data:', base64Data ? base64Data.substring(0, 50) + '...' : 'null');
 
     if (base64Data) {
         // Store for window access
@@ -202,17 +195,9 @@ function handleRequestSign(xhr) {
         return;
     }
 
-    // Get base64 data from Slim (simplified version)
-    let base64Data = null;
-    try {
-        if (slim && slim.slim && typeof slim.slim.getData === 'function') {
-            const data = slim.slim.getData();
-            base64Data = data?.output?.image || data?.image || null;
-        }
-    } catch (error) {
-        console.error('[handleRequestSign] Error getting Slim data:', error);
-    }
-    console.debug('[handleRequestSign] base64Data:', base64Data);
+    // Get base64 data from Slim - try multiple methods
+    const base64Data = getSlimResultImage(slim);
+    console.debug('[handleRequestSign] Final base64Data:', base64Data ? base64Data.substring(0, 50) + '...' : 'null');
 
     if (base64Data) {
         window.sign_output = base64Data;
