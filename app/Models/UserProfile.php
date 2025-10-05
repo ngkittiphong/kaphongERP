@@ -14,6 +14,7 @@ class UserProfile extends Model
         'user_id',
         'profile_no',
         'avatar',
+        'sign_img',
         'nickname',
         'card_id_no',
         'prefix_th',
