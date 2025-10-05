@@ -275,6 +275,9 @@ class UserProfile extends Component
             session()->flash('message', 'User & Profile updated successfully!');
             \Log::info("✅ Profile updated successfully!");
             $this->showEditProfileForm = false;
+            // Reload the user to reflect updated relations/types in UI
+            $this->user = User::with('profile')->find($this->user->id);
+            \Log::debug('After update - user_type_id', ['user_type_id' => $this->user->user_type_id]);
             $this->dispatch('refreshComponent');
         } else {
             // Get error message from response

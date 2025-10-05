@@ -237,7 +237,7 @@ class UserController
                 'fullname_en'    => $request->fullname_en    ?? '',
                 'prefix_en'      => $request->prefix_en      ?? '',
                 'prefix_th'      => $request->prefix_th      ?? '',
-                'birth_date'     => $request->birth_date     ?? null,
+                'birth_date'     => $this->nullableDate($request->birth_date),
                 'description'    => $request->description    ?? '',
                 'avatar'         => $request->avatar         ?? '',
             ]);
@@ -303,7 +303,7 @@ class UserController
                 'fullname_en'    => $request->fullname_en    ?? '',
                 'prefix_en'      => $request->prefix_en      ?? '',
                 'prefix_th'      => $request->prefix_th      ?? '',
-                'birth_date'     => $request->birth_date     ?? null,
+                'birth_date'     => $this->nullableDate($request->birth_date),
                 'description'    => $request->description    ?? '',
                 'avatar'         => $request->avatar         ?? '',
             ]);
@@ -529,6 +529,23 @@ class UserController
                 'success' => false,
                 'message' => 'Error changing password: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    private function nullableDate($value)
+    {
+        if (is_null($value)) {
+            return null;
+        }
+        $trimmed = trim((string) $value);
+        if ($trimmed === '') {
+            return null;
+        }
+        // Accept common formats; let Carbon parse valid dates, otherwise null
+        try {
+            return \Carbon\Carbon::parse($trimmed);
+        } catch (\Throwable $e) {
+            return null;
         }
     }
 }

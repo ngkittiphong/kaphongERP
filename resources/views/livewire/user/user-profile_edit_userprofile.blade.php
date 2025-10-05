@@ -41,9 +41,7 @@
                 <label class="control-label">User Type</label>
                 <select class="form-control @error('user_type_id') is-invalid @enderror" wire:model="user_type_id">
                     @foreach ($userTypes as $type)
-                        <option value="{{ $type->id }}" {{ $user->user_type_id == $type->id ? 'selected' : '' }}>
-                            {{ $type->name }}
-                        </option>
+                        <option value="{{ $type->id }}">{{ $type->name }}</option>
                     @endforeach
                 </select>
                 @error('user_type_id')
@@ -55,9 +53,7 @@
                 <label class="control-label">User Status</label>
                 <select class="form-control @error('user_status_id') is-invalid @enderror" wire:model="user_status_id">
                     @foreach ($userStatuses as $status)
-                        <option value="{{ $status->id }}" {{ $user->user_status_id == $status->id ? 'selected' : '' }}>
-                            {{ $status->name }}
-                        </option>
+                        <option value="{{ $status->id }}">{{ $status->name }}</option>
                     @endforeach
                 </select>
                 @error('user_status_id')
