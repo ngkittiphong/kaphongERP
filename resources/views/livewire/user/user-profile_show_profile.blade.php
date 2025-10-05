@@ -30,7 +30,7 @@
             <a href="#" class="list-group-item p-l-20">
                 <i class="icon-user-lock"></i> {{ $user->username }}
             </a>
-            <a href="#" class="list-group-item p-l-20" onclick="openPasswordModal({{ $user->id }}); return false;" data-user-id="{{ $user->id }}">
+            <a href="#" class="list-group-item p-l-20 change-password-link" onclick="openPasswordModal({{ $user->id }}); return false;" data-user-id="{{ $user->id }}">
                 <i class="icon-lock"></i> {{ __t('user.change_password', 'Change Password') }}
             </a>
             <a href="#" class="list-group-item p-l-20">
@@ -145,3 +145,47 @@
     </div>
 </div>
 @endif
+
+<style>
+.change-password-link {
+    background-color: #f8f9fa !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 6px !important;
+    margin: 5px 0 !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    position: relative !important;
+}
+
+.change-password-link:hover {
+    background-color: #007bff !important;
+    color: white !important;
+    border-color: #007bff !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3) !important;
+}
+
+.change-password-link:hover i {
+    color: white !important;
+}
+
+.change-password-link:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 1px 4px rgba(0, 123, 255, 0.3) !important;
+}
+
+.change-password-link::after {
+    content: "→" !important;
+    position: absolute !important;
+    right: 15px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    opacity: 0.6 !important;
+    transition: all 0.3s ease !important;
+}
+
+.change-password-link:hover::after {
+    opacity: 1 !important;
+    transform: translateY(-50%) translateX(3px) !important;
+}
+</style>
