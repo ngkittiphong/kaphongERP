@@ -172,7 +172,7 @@
                 <div class="form-group">
                     <label class="control-label">Birth Date</label>
                     <input type="date" class="form-control @error('birth_date') is-invalid @enderror" wire:model="birth_date"
-                        value="{{ $user->profile->birth_date ?? '' }}">
+                        value="{{ $user->profile && $user->profile->birth_date ? date('Y-m-d', strtotime($user->profile->birth_date)) : '' }}">
                     @error('birth_date')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror

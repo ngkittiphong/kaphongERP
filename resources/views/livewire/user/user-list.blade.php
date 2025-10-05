@@ -17,7 +17,7 @@
 
                     <div class="media-body">
                         <span class="media-heading text-size-extralarge text-dark">
-                            <?= $l_user->profile?->fullname_th ?> ({{ $l_user->profile?->nickname }})
+                            <?= $l_user->profile?->fullname_en ?> ({{ $l_user->profile?->nickname }})
                         </span>
 
                         <span class=" text-size-extralarge text-dark">
