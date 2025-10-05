@@ -46,7 +46,7 @@ body {
 					</div>
 
 					<div class="form-group has-feedback has-feedback-left">
-						<input type="text" class="form-control" placeholder="{{ __t('auth.username', 'username') }}" name="username" required="required">
+						<input type="text" class="form-control" placeholder="{{ __t('auth.username', 'username') }}" name="username" autocomplete="username" required="required">
 						<div class="form-control-feedback">
 							<i class="icon-user text-muted"></i>
 						</div>

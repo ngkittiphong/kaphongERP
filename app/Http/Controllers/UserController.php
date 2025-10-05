@@ -101,6 +101,21 @@ class UserController
         if (Hash::check($request->password, $user->password)) {
             Auth::login($user);
             
+            // Set session timeout to 5 minutes if user needs to change password
+            if ($user->request_change_pass) {
+                config(['session.lifetime' => 5]);
+                session(['last_activity' => now()->timestamp]);
+                session(['force_password_change' => true]);
+                
+                \Log::info('Login successful with force password change:', [
+                    'username' => $user->username,
+                    'user_id' => $user->id,
+                    'session_timeout' => '5 minutes'
+                ]);
+                
+                return redirect('/')->with('warning', 'You must change your password within 5 minutes or your session will expire.');
+            }
+            
             \Log::info('Login successful:', [
                 'username' => $user->username,
                 'user_id' => $user->id
@@ -151,6 +166,10 @@ class UserController
         $user->password = Hash::make($rawPassword);
         $user->request_change_pass = false;
         $user->save();
+
+        // Reset session timeout to normal duration after successful password change
+        config(['session.lifetime' => 120]); // Reset to default 2 hours
+        session()->forget(['force_password_change', 'last_activity']);
 
         Auth::loginUsingId($user->id);
 

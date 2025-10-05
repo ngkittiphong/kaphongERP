@@ -56,6 +56,15 @@
                             </span>
                         </div>
                         @endif
+                        
+                        <!-- Session timeout warning -->
+                        <div class="m-t-15">
+                            <div class="alert alert-warning alert-sm">
+                                <i class="icon-clock"></i>
+                                <strong>{{ __t('auth.session_timeout', 'Session Timeout') }}:</strong>
+                                <span id="session-countdown">{{ __t('auth.timeout_message', 'You have 5 minutes to change your password or your session will expire.') }}</span>
+                            </div>
+                        </div>
                     </div>
 
                     {{-- <div class="form-group has-feedback has-feedback-left">
@@ -120,4 +129,43 @@
             @include('includes.footer_layout')
         </div>
     </div>
+
+    <!-- Session countdown timer script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial time (5 minutes = 300 seconds)
+            let timeLeft = 300; // 5 minutes in seconds
+            const countdownElement = document.getElementById('session-countdown');
+            
+            function updateCountdown() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                
+                if (timeLeft <= 0) {
+                    countdownElement.innerHTML = '<span class="text-danger">Session expired! Redirecting to login...</span>';
+                    // Redirect to login after 2 seconds
+                    setTimeout(function() {
+                        window.location.href = '{{ route("login") }}';
+                    }, 2000);
+                    return;
+                }
+                
+                // Update the display
+                countdownElement.innerHTML = `You have <strong>${minutes}:${seconds.toString().padStart(2, '0')}</strong> to change your password or your session will expire.`;
+                
+                // Change color when time is running low
+                if (timeLeft <= 60) { // Last minute
+                    countdownElement.className = 'text-danger';
+                } else if (timeLeft <= 120) { // Last 2 minutes
+                    countdownElement.className = 'text-warning';
+                }
+                
+                timeLeft--;
+            }
+            
+            // Update countdown every second
+            updateCountdown(); // Initial call
+            setInterval(updateCountdown, 1000);
+        });
+    </script>
 @endsection
