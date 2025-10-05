@@ -135,16 +135,16 @@ class UserController
         }
 
         $validated = $request->validate([
-            'current_password' => ['required'],
+            //'current_password' => ['required'],
             'new_password' => ['required', 'string', 'min:6'],
             'new_password_confirmation' => ['required', 'same:new_password'],
         ]);
 
-        if (! Hash::check($validated['current_password'], $user->password)) {
-            throw ValidationException::withMessages([
-                'current_password' => __t('auth.current_password_incorrect', 'The current password is incorrect.'),
-            ]);
-        }
+        // if (! Hash::check($validated['current_password'], $user->password)) {
+        //     throw ValidationException::withMessages([
+        //         'current_password' => __t('auth.current_password_incorrect', 'The current password is incorrect.'),
+        //     ]);
+        // }
 
         $rawPassword = $validated['new_password'];
         $user->password = Hash::make($rawPassword);

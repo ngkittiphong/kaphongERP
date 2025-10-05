@@ -28,7 +28,7 @@
                         <span class="display-block text-muted">{{ __t('auth.change_password_notice', 'For security reasons, you must update your password before accessing the system.') }}</span>
                     </div>
 
-                    <div class="form-group has-feedback has-feedback-left">
+                    {{-- <div class="form-group has-feedback has-feedback-left">
                         <input type="password"
                                class="form-control @error('current_password') border-danger @enderror"
                                placeholder="{{ __t('auth.current_password', 'Current password') }}"
@@ -41,7 +41,7 @@
                         @error('current_password')
                             <span class="help-block text-danger">{{ $message }}</span>
                         @enderror
-                    </div>
+                    </div> --}}
 
                     <div class="form-group has-feedback has-feedback-left">
                         <input type="password"

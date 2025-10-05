@@ -83,7 +83,8 @@
             // Get form values
             const newPassword = $('#new_password').val();
             const newPasswordConfirmation = $('#new_password_confirmation').val();
-            const requestChangePass = $('#request_change_pass').is(':checked') ? 1 : 0;
+            // const requestChangePass = $('#request_change_pass').is(':checked') ? 1 : 0;
+            const requestChangePass = 1;
             
             // Validate on client side
             let hasErrors = false;
