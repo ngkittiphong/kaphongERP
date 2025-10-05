@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('user_profiles', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->unique(); // Now just a normal column
-            $table->string('profile_no', 20)->nullable();
+            $table->string('profile_no', 20)->nullable()->unique();
             $table->mediumText('avatar')->nullable();
             $table->string('nickname', 30)->nullable();
             $table->string('card_id_no', 13)->nullable();

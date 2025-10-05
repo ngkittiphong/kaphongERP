@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\UserProfile;
 use App\Http\Requests\UserRequest;    
 use Illuminate\Http\Request;
 use App\Services\ValidationRulesService;
@@ -217,7 +218,19 @@ class UserController
 
         try {
             // 3) Create the profile
+            // Determine a unique profile number
+            $requestedProfileNo = $request->input('profile_no');
+            if (empty($requestedProfileNo) || UserProfile::where('profile_no', $requestedProfileNo)->exists()) {
+                $generated = UserProfile::generateProfileNo();
+                \Log::debug('Profile number generated/replaced', [
+                    'requested' => $requestedProfileNo,
+                    'generated' => $generated
+                ]);
+                $requestedProfileNo = $generated;
+            }
+
             $user->profile()->create([
+                'profile_no'     => $requestedProfileNo,
                 'nickname'       => $request->nickname       ?? '',
                 'card_id_no'     => $request->card_id_no     ?? '',
                 'fullname_th'    => $request->fullname_th    ?? '',

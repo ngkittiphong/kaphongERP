@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Faker\Factory as Faker;
+use App\Models\UserProfile;
 
 class AdminUsersSeeder extends Seeder
 {
@@ -32,11 +33,11 @@ class AdminUsersSeeder extends Seeder
                 'updated_at' => now(),
             ]);
 
-            // Insert User Profile with consistent naming
-            DB::table('user_profiles')->insert([
+            // Insert User Profile via model to auto-generate profile_no
+            UserProfile::create([
                 'user_id' => $userId,
-                'profile_no' => strtoupper($faker->bothify('PRF###')),
-                'avatar' => null, // Default no avatar
+                // do not set profile_no to allow model generator to run
+                'avatar' => null,
                 'nickname' => $faker->firstName,
                 'card_id_no' => $faker->numerify('#############'),
                 'prefix_th' => 'นาย',

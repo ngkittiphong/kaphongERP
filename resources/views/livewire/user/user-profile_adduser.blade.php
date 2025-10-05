@@ -75,7 +75,12 @@
 
                     <div class="col-md-7 col-xs-12">
                         <div class="panel-heading no-padding-bottom">
-                            <h4 class="panel-title">{{ __t('user.add_new_user', 'Add New User') }}</h4>
+                            <h4 class="panel-title">
+                                {{ __t('user.add_new_user', 'Add New User') }}
+                                @if($profile_no_preview)
+                                    <span class="text-muted">({{ $profile_no_preview }})</span>
+                                @endif
+                            </h4>
                         </div>
 
                         <!-- User profile form fields -->

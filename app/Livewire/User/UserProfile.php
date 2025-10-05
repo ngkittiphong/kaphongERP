@@ -4,6 +4,7 @@ namespace App\Livewire\User;
 
 use Livewire\Component;
 use App\Models\User;
+use App\Models\UserProfile as UserProfileModel;
 use App\Models\UserType;
 use App\Models\UserStatus;
 use Illuminate\Support\Facades\Hash;
@@ -24,6 +25,7 @@ class UserProfile extends Component
     public $avatar;
     public $userTypes = [];
     public $userStatuses = [];
+    public $profile_no_preview;
 
     protected $listeners = [
         'ProfileSelected' => 'loadProfile',
@@ -93,6 +95,8 @@ class UserProfile extends Component
         // Set default prefix values
         $this->prefix_th = 'นาย';
         $this->prefix_en = 'Mr.';
+        // Pre-generate a profile number preview for display
+        $this->profile_no_preview = UserProfileModel::generateProfileNo();
         
         $this->dispatch('addUser');
     }
@@ -170,6 +174,7 @@ class UserProfile extends Component
 
         // Create a Request instance with the validated data
         $requestData = [
+                'profile_no'           => $this->profile_no_preview,
                 'username'             => $this->username,
                 'email'                => $this->email,
                 'password'             => $this->password,
