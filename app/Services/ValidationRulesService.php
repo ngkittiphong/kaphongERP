@@ -55,6 +55,8 @@ class ValidationRulesService
             'prefix_th' => 'nullable|string|max:50',
             'birth_date' => 'nullable|date',
             'description' => 'nullable|string',
+            'avatar' => 'nullable|string',
+            'sign_img' => 'nullable|string',
         ];
     }
 
@@ -81,6 +83,8 @@ class ValidationRulesService
             'prefix_th' => 'nullable|string|max:50',
             'birth_date' => 'nullable|date',
             'description' => 'nullable|string',
+            'avatar' => 'nullable|string',
+            'sign_img' => 'nullable|string',
         ];
     }
 

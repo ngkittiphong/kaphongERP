@@ -116,6 +116,9 @@ Route::get('/test-transfer', function() {
 
 // Add this with your other routes
 Route::post('/upload/avatar', [UserController::class, 'uploadAvatar'])->name('upload.avatar')->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
+Route::post('/upload/avatar/delete', [UserController::class, 'deleteAvatar'])->name('upload.avatar.delete')->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
+Route::post('/upload/signature', [UserController::class, 'uploadSignature'])->name('upload.signature')->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
+Route::post('/upload/signature/delete', [UserController::class, 'deleteSignature'])->name('upload.signature.delete')->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
 Route::post('/users/update-nickname', [UserController::class, 'updateNickname'])->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 

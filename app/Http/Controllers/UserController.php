@@ -240,6 +240,7 @@ class UserController
                 'birth_date'     => $this->nullableDate($request->birth_date),
                 'description'    => $request->description    ?? '',
                 'avatar'         => $request->avatar         ?? '',
+                'sign_img'       => $request->sign_img       ?? '',
             ]);
         } catch (\Exception $e) {
             \Log::error("Error creating user profile: " . $e->getMessage());
@@ -306,6 +307,7 @@ class UserController
                 'birth_date'     => $this->nullableDate($request->birth_date),
                 'description'    => $request->description    ?? '',
                 'avatar'         => $request->avatar         ?? '',
+                'sign_img'       => $request->sign_img       ?? '',
             ]);
         } catch (\Exception $e) {
             \Log::error("Error updating user: " . $e->getMessage());
@@ -519,6 +521,164 @@ class UserController
             return response()->json([
                 'success' => false,
                 'message' => 'Error uploading avatar: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function uploadSignature(Request $request)
+    {
+        try {
+            \Log::debug('uploadSignature request data (start)', [
+                'all_inputs' => $request->all(),
+                'hasFiles' => $request->allFiles(),
+                'all_keys' => array_keys($request->all()),
+            ]);
+
+            $user = Auth::user();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthenticated'
+                ], 401);
+            }
+
+            $base64Image = null;
+
+            $outputJson = $request->input('output');
+            if (!empty($outputJson)) {
+                $decoded = json_decode($outputJson, true);
+                if (is_array($decoded)) {
+                    $base64Image = data_get($decoded, 'output.image')
+                        ?? data_get($decoded, 'output.data')
+                        ?? data_get($decoded, 'image')
+                        ?? data_get($decoded, 'data');
+                    if (!$base64Image) {
+                        $fieldName = data_get($decoded, 'output.field');
+                        if ($fieldName) {
+                            $base64Image = $request->input($fieldName);
+                            if (!$base64Image && $request->hasFile($fieldName)) {
+                                $file = $request->file($fieldName);
+                                $contents = file_get_contents($file->getRealPath());
+                                $mime = $file->getMimeType() ?: 'image/png';
+                                $base64Image = 'data:' . $mime . ';base64,' . base64_encode($contents);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!$base64Image) {
+                $inputJson = $request->input('input');
+                if (!empty($inputJson)) {
+                    $decoded = json_decode($inputJson, true);
+                    if (is_array($decoded)) {
+                        $base64Image = data_get($decoded, 'output.image')
+                            ?? data_get($decoded, 'output.data')
+                            ?? data_get($decoded, 'image')
+                            ?? data_get($decoded, 'data');
+                    }
+                }
+            }
+
+            if (!$base64Image) {
+                $base64Image = $request->input('image') ?? $request->input('signature') ?? $request->input('sign_img');
+            }
+
+            if (!$base64Image && ($request->hasFile('signature') || $request->hasFile('slim'))) {
+                $file = $request->file('signature') ?? $request->file('slim');
+                $contents = file_get_contents($file->getRealPath());
+                $mime = $file->getMimeType() ?: 'image/png';
+                $base64Image = 'data:' . $mime . ';base64,' . base64_encode($contents);
+            }
+
+            if (empty($base64Image)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No image data provided'
+                ], 400);
+            }
+
+            $user->profile()->update([
+                'sign_img' => $base64Image
+            ]);
+
+            \Log::debug('Signature updated successfully for user: ' . $user->id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Signature updated successfully',
+                'path' => $base64Image
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Signature upload error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error uploading signature: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function deleteAvatar(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthenticated'
+                ], 401);
+            }
+
+            // Set avatar to null
+            $user->profile()->update([
+                'avatar' => null
+            ]);
+
+            \Log::debug('Avatar deleted successfully for user: ' . $user->id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Avatar deleted successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Avatar delete error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting avatar: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function deleteSignature(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthenticated'
+                ], 401);
+            }
+
+            // Set signature to null
+            $user->profile()->update([
+                'sign_img' => null
+            ]);
+
+            \Log::debug('Signature deleted successfully for user: ' . $user->id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Signature deleted successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Signature delete error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting signature: ' . $e->getMessage()
             ], 500);
         }
     }
