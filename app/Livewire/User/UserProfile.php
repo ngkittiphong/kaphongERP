@@ -47,6 +47,15 @@ class UserProfile extends Component
         \Log::info("loadUserProfile");
         $this->showEditProfileForm = false;
         $this->user = User::with('profile')->find($userId) ?? null;
+        
+        // Always populate core user properties first
+        if ($this->user) {
+            $this->username = $this->user->username;
+            $this->email = $this->user->email;
+            $this->user_type_id = $this->user->user_type_id;
+            $this->user_status_id = $this->user->user_status_id;
+        }
+        
         if ($this->user && !$this->user->profile) {
             \Log::warning("User {$userId} has no profile");
             $this->user->profile = null;

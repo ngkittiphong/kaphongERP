@@ -9,7 +9,7 @@
             <div class="text-center">
                 {{-- <img  class="img-responsive img-circle user-avatar" alt=""/> --}}
                 <div
-                    id="slim-avatar"
+                    id="slim-avatar_panel"
                     class="slim"
                     data-size="300,300"
                     data-ratio="1:1"
