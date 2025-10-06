@@ -42,17 +42,32 @@ class UserProfile extends Model
 
     public static function generateProfileNo(int $maxAttempts = 5): string
     {
-        $datePart = now()->format('ymd');
+        $year = now()->format('Y'); // 4-digit year (e.g., 2025)
+        $month = now()->format('m'); // 2-digit month (e.g., 01, 12)
+        
+        // Get the next available ID from the database
+        $nextId = static::max('id') + 1;
+        
+        // Ensure the ID is 4 digits with leading zeros
+        $profileId = str_pad($nextId, 4, '0', STR_PAD_LEFT);
+        
+        // Generate the final profile number
+        $candidate = "HR{$year}{$month}{$profileId}"; // e.g., HR2025010001
+        
+        // Double-check uniqueness (shouldn't be necessary with database IDs, but safety first)
         for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
-            $randomPart = strtoupper(Str::random(4));
-            $candidate = 'PRF' . $datePart . '-' . $randomPart; // e.g. PRF250905-AB3X
-
-            if (! static::where('profile_no', $candidate)->exists()) {
+            if (!static::where('profile_no', $candidate)->exists()) {
                 return $candidate;
             }
+            // If somehow it exists, increment and try again
+            $nextId++;
+            $profileId = str_pad($nextId, 4, '0', STR_PAD_LEFT);
+            $candidate = "HR{$year}{$month}{$profileId}";
         }
-
-        return 'PRF' . $datePart . '-' . strtoupper(Str::random(6));
+        
+        // Fallback: use timestamp-based ID if all else fails
+        $fallbackId = str_pad(now()->timestamp % 10000, 4, '0', STR_PAD_LEFT);
+        return "HR{$year}{$month}{$fallbackId}";
     }
 
     // 🔹 Relationship: A Profile belongs to One User
