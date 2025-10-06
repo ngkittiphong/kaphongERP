@@ -47,6 +47,7 @@ class TransferSlipSeeder extends Seeder
         }
 
         $transferSlipsCreated = 0;
+        $createdTransferSlips = [];
 
         // Define status distribution for realistic scenarios
         $statusDistribution = [
@@ -56,6 +57,8 @@ class TransferSlipSeeder extends Seeder
             'Delivered' => 3,    // 15% - Arrived but not yet completed
             'Completed' => 5,    // 25% - Fully processed
         ];
+
+        $this->command->info('Starting TransferSlipSeeder with new TF pattern...');
 
         // Create transfer slips
         for ($i = 0; $i < 20; $i++) {
@@ -79,10 +82,13 @@ class TransferSlipSeeder extends Seeder
                 $userReceiveName = $receiveUser->name ?? 'User ' . $receiveUser->id;
             }
 
+            // Generate transfer slip number using the new pattern
+            $transferSlipNumber = TransferSlip::generateTransferSlipNumber();
+            
             $transferSlip = TransferSlip::create([
                 'user_request_id' => $requestUser->id,
                 'user_receive_id' => $receiveUser->id,
-                'transfer_slip_number' => TransferSlip::generateTransferSlipNumber(),
+                'transfer_slip_number' => $transferSlipNumber,
                 'company_name' => 'Company ' . ($i + 1),
                 'company_address' => 'Address ' . ($i + 1) . ', City, Country',
                 'tax_id' => '1234567890' . str_pad($i, 3, '0', STR_PAD_LEFT),
@@ -101,6 +107,16 @@ class TransferSlipSeeder extends Seeder
                 'description' => 'Transfer description ' . ($i + 1),
                 'note' => 'Transfer note ' . ($i + 1),
             ]);
+
+            // Store transfer slip info for logging
+            $createdTransferSlips[] = [
+                'id' => $transferSlip->id,
+                'transfer_slip_number' => $transferSlipNumber,
+                'status' => $statusName,
+                'origin_warehouse' => $originWarehouse->name,
+                'destination_warehouse' => $destinationWarehouse->name,
+                'date_request' => $dateRequest->format('Y-m-d')
+            ];
 
             // Create transfer slip details
             $selectedProducts = $products->random(rand(2, 6));
@@ -170,6 +186,12 @@ class TransferSlipSeeder extends Seeder
         }
 
         $this->command->info("Created {$transferSlipsCreated} transfer slips with details and inventory entries.");
+        
+        // Display generated transfer slip numbers
+        $this->command->info('Generated Transfer Slip Numbers:');
+        foreach ($createdTransferSlips as $transferSlip) {
+            $this->command->line("  - {$transferSlip['transfer_slip_number']} ({$transferSlip['status']}) - {$transferSlip['origin_warehouse']} → {$transferSlip['destination_warehouse']} ({$transferSlip['date_request']})");
+        }
     }
 
     /**
