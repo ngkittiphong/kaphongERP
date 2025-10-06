@@ -101,10 +101,12 @@ class UserController
         if (Hash::check($request->password, $user->password)) {
             Auth::login($user);
             
+            // Initialize session tracking for all users
+            session(['last_activity' => now()->timestamp]);
+            
             // Set session timeout to 5 minutes if user needs to change password
             if ($user->request_change_pass) {
                 config(['session.lifetime' => 5]);
-                session(['last_activity' => now()->timestamp]);
                 session(['force_password_change' => true]);
                 
                 \Log::info('Login successful with force password change:', [

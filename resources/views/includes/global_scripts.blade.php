@@ -490,6 +490,67 @@ function getSlimResultImage(slimElement) {
     console.debug('[getSlimResultImage] no image found, returning null');
     return null;
 }
+
+// Session expiration handling
+(function() {
+    let sessionCheckInterval;
+    let lastActivity = Date.now();
+    
+    // Track user activity
+    function updateLastActivity() {
+        lastActivity = Date.now();
+    }
+    
+    // Check for session expiration
+    function checkSessionExpiration() {
+        const now = Date.now();
+        const timeSinceLastActivity = now - lastActivity;
+        
+        // Check if session might be expired (5 minutes for force password change, 2 hours for normal)
+        const sessionTimeout = {{ Auth::check() && Auth::user()->request_change_pass ? 5 * 60 * 1000 : 120 * 60 * 1000 }};
+        
+        if (timeSinceLastActivity > sessionTimeout) {
+            // Session likely expired, redirect to login
+            console.warn('Session appears to be expired, redirecting to login');
+            window.location.href = '{{ route("login") }}';
+            return;
+        }
+        
+        // Show warning when approaching timeout
+        const warningTime = sessionTimeout - (5 * 60 * 1000); // 5 minutes before timeout
+        if (timeSinceLastActivity > warningTime && timeSinceLastActivity < sessionTimeout) {
+            console.warn('Session will expire soon');
+        }
+    }
+    
+    // Initialize session monitoring
+    function initSessionMonitoring() {
+        // Track various user activities
+        ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'].forEach(function(event) {
+            document.addEventListener(event, updateLastActivity, true);
+        });
+        
+        // Check session every 30 seconds
+        sessionCheckInterval = setInterval(checkSessionExpiration, 30000);
+        
+        // Check on page visibility change
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                clearInterval(sessionCheckInterval);
+            } else {
+                updateLastActivity();
+                sessionCheckInterval = setInterval(checkSessionExpiration, 30000);
+            }
+        });
+    }
+    
+    // Start session monitoring when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSessionMonitoring);
+    } else {
+        initSessionMonitoring();
+    }
+})();
 </script>
 
 
