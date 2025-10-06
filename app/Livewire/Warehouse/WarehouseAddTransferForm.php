@@ -393,14 +393,18 @@ class WarehouseAddTransferForm extends Component
         $originWarehouse = Warehouse::find($this->warehouseOriginId);
         $destinationWarehouse = Warehouse::find($this->warehouseDestinationId);
         
+        // Generate transfer slip number for preview
+        $transferSlipNumber = TransferSlip::generateTransferSlipNumber();
+        
         // Calculate totals
         $totalQuantity = $this->getTotalQuantity();
         $totalCost = $this->getTotalCost();
         $productCount = count($this->transferProducts);
         
-        Log::info('🔥 Dispatching confirmTransferCreation event');
+        Log::info('🔥 Dispatching confirmTransferCreation event with transfer slip number:', ['number' => $transferSlipNumber]);
         
         $this->dispatch('confirmTransferCreation', [
+            'transferSlipNumber' => $transferSlipNumber,
             'originWarehouse' => $originWarehouse ? $originWarehouse->name : 'Unknown',
             'destinationWarehouse' => $destinationWarehouse ? $destinationWarehouse->name : 'Unknown',
             'totalQuantity' => $totalQuantity,

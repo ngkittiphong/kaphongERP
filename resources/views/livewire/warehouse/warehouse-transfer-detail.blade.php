@@ -494,6 +494,7 @@
         
         // Set default values to prevent undefined errors
         const transferData = {
+            transferSlipNumber: data.transferSlipNumber || 'TF' + new Date().getFullYear() + String(new Date().getMonth() + 1).padStart(2, '0') + String(new Date().getDate()).padStart(2, '0') + '0001',
             originWarehouse: data.originWarehouse || 'Unknown',
             destinationWarehouse: data.destinationWarehouse || 'Unknown',
             productCount: data.productCount || 0,
@@ -508,6 +509,7 @@
             console.warn('⚠️ SweetAlert not available, using fallback confirmation.');
             const confirmed = window.confirm(
                 `Confirm Transfer Creation?\n\n` +
+                `Transfer Slip Number: ${transferData.transferSlipNumber}\n` +
                 `From: ${transferData.originWarehouse}\n` +
                 `To: ${transferData.destinationWarehouse}\n` +
                 `Products: ${transferData.productCount}\n` +
@@ -548,9 +550,13 @@
                             <div><strong>{{ __t('warehouse.from', 'From') }}:</strong> ${transferData.originWarehouse}</div>
                             <div><strong>To:</strong> ${transferData.destinationWarehouse}</div>
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                             <div><strong>{{ __t('product.products', 'Products') }}:</strong> ${transferData.productCount}</div>
                             <div><strong>{{ __t('product.total_qty', 'Total Qty') }}:</strong> ${transferData.totalQuantity}</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div><strong>{{ __t('transfer.transfer_slip_number', 'Transfer Slip Number') }}:</strong> <span style="color: #007bff; font-weight: bold;">${transferData.transferSlipNumber}</span></div>
+                            <div><strong>{{ __t('transfer.date', 'Date') }}:</strong> ${new Date().toLocaleDateString()}</div>
                         </div>
                     </div>
                     

@@ -94,23 +94,68 @@ class TransferSlip extends Model
 
     /**
      * Generate a unique transfer slip number.
+     * Format: TF + YYYY + MM + DD + NNNN
+     * Where NNNN is 4-digit sequence number for that specific date
+     * Automatically handles duplicates by incrementing the sequence number
      */
-    public static function generateTransferSlipNumber(): string
+    public static function generateTransferSlipNumber(int $maxAttempts = 10): string
     {
-        $prefix = 'TS';
-        $date = now()->format('Ymd');
-        $lastTransferSlip = self::where('transfer_slip_number', 'like', $prefix . $date . '%')
+        $prefix = 'TF';
+        $year = now()->format('Y'); // 4-digit year (e.g., 2025)
+        $month = now()->format('m'); // 2-digit month (e.g., 01, 12)
+        $day = now()->format('d'); // 2-digit day (e.g., 01, 31)
+        $datePattern = $year . $month . $day; // YYYYMMDD
+        
+        // Find the last transfer slip for this specific date
+        $lastTransferSlip = self::where('transfer_slip_number', 'like', $prefix . $datePattern . '%')
             ->orderBy('transfer_slip_number', 'desc')
             ->first();
 
         if ($lastTransferSlip) {
+            // Extract the last 4 digits from the existing transfer_slip_number
             $lastNumber = (int) substr($lastTransferSlip->transfer_slip_number, -4);
             $newNumber = $lastNumber + 1;
         } else {
+            // First transfer slip for this date
             $newNumber = 1;
         }
 
-        return $prefix . $date . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+        // Try to generate a unique transfer slip number
+        for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
+            // Ensure the sequence number is 4 digits with leading zeros
+            $sequenceNumber = str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+            $candidate = $prefix . $datePattern . $sequenceNumber; // e.g., TF202501150001
+            
+            // Check if this transfer slip number already exists
+            if (!self::where('transfer_slip_number', $candidate)->exists()) {
+                \Log::debug('Generated unique transfer slip number', [
+                    'number' => $candidate,
+                    'attempt' => $attempt + 1,
+                    'date_pattern' => $datePattern
+                ]);
+                return $candidate;
+            }
+            
+            // If it exists, increment and try again
+            $newNumber++;
+            \Log::warning('Transfer slip number collision detected, retrying', [
+                'collision_number' => $candidate,
+                'attempt' => $attempt + 1,
+                'next_number' => $newNumber
+            ]);
+        }
+        
+        // If we've exhausted all attempts, use timestamp-based fallback
+        $fallbackNumber = str_pad(now()->timestamp % 10000, 4, '0', STR_PAD_LEFT);
+        $fallbackCandidate = $prefix . $datePattern . $fallbackNumber;
+        
+        \Log::error('Failed to generate unique transfer slip number after max attempts', [
+            'max_attempts' => $maxAttempts,
+            'fallback_number' => $fallbackCandidate,
+            'date_pattern' => $datePattern
+        ]);
+        
+        return $fallbackCandidate;
     }
 
     /**
