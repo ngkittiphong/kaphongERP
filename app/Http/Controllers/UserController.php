@@ -218,55 +218,54 @@ class UserController
             ], 422);
         }
 
+        // Use database transaction to ensure both user and profile are created together
+        // If profile creation fails, user creation will be rolled back
         try {
-            // 2) Create the user
-            $user = User::create([
-                'username'       => $request->username,
-                'email'          => $request->email,
-                'password'       => Hash::make($request->password),
-                'user_type_id'   => $request->user_type_id,
-                'user_status_id' => $request->user_status_id,
-            ]);
-            \Log::debug("Creating user with username: " . $request->username);
-            \Log::debug("Hashed password: " . Hash::make($request->password));
-        } catch (\Exception $e) {
-            \Log::error("Error creating user: " . $e->getMessage());
-            return response()->json([
-                'message' => 'Error creating user',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-
-        try {
-            // 3) Create the profile
-            // Determine a unique profile number
-            $requestedProfileNo = $request->input('profile_no');
-            if (empty($requestedProfileNo) || UserProfile::where('profile_no', $requestedProfileNo)->exists()) {
-                $generated = UserProfile::generateProfileNo();
-                \Log::debug('Profile number generated/replaced', [
-                    'requested' => $requestedProfileNo,
-                    'generated' => $generated
+            $user = DB::transaction(function () use ($request) {
+                // 2) Create the user
+                $user = User::create([
+                    'username'       => $request->username,
+                    'email'          => $request->email,
+                    'password'       => Hash::make($request->password),
+                    'user_type_id'   => $request->user_type_id,
+                    'user_status_id' => $request->user_status_id,
                 ]);
-                $requestedProfileNo = $generated;
-            }
+                
+                \Log::debug("Creating user with username: " . $request->username);
+                \Log::debug("Hashed password: " . Hash::make($request->password));
 
-            $user->profile()->create([
-                'profile_no'     => $requestedProfileNo,
-                'nickname'       => $request->nickname       ?? '',
-                'card_id_no'     => $request->card_id_no     ?? '',
-                'fullname_th'    => $request->fullname_th    ?? '',
-                'fullname_en'    => $request->fullname_en    ?? '',
-                'prefix_en'      => $request->prefix_en      ?? '',
-                'prefix_th'      => $request->prefix_th      ?? '',
-                'birth_date'     => $this->nullableDate($request->birth_date),
-                'description'    => $request->description    ?? '',
-                'avatar'         => $request->avatar         ?? '',
-                'sign_img'       => $request->sign_img       ?? '',
-            ]);
+                // 3) Create the profile
+                // Determine a unique profile number
+                $requestedProfileNo = $request->input('profile_no');
+                if (empty($requestedProfileNo) || UserProfile::where('profile_no', $requestedProfileNo)->exists()) {
+                    $generated = UserProfile::generateProfileNo();
+                    \Log::debug('Profile number generated/replaced', [
+                        'requested' => $requestedProfileNo,
+                        'generated' => $generated
+                    ]);
+                    $requestedProfileNo = $generated;
+                }
+
+                $user->profile()->create([
+                    'profile_no'     => $requestedProfileNo,
+                    'nickname'       => $request->nickname       ?? '',
+                    'card_id_no'     => $request->card_id_no     ?? '',
+                    'fullname_th'    => $request->fullname_th    ?? '',
+                    'fullname_en'    => $request->fullname_en    ?? '',
+                    'prefix_en'      => $request->prefix_en      ?? '',
+                    'prefix_th'      => $request->prefix_th      ?? '',
+                    'birth_date'     => $this->nullableDate($request->birth_date),
+                    'description'    => $request->description    ?? '',
+                    'avatar'         => $request->avatar         ?? '',
+                    'sign_img'       => $request->sign_img       ?? '',
+                ]);
+
+                return $user;
+            });
         } catch (\Exception $e) {
-            \Log::error("Error creating user profile: " . $e->getMessage());
+            \Log::error("Error creating user and profile: " . $e->getMessage());
             return response()->json([
-                'message' => 'Error creating user profile',
+                'message' => 'Error creating user and profile',
                 'error' => $e->getMessage()
             ], 500);
         }
