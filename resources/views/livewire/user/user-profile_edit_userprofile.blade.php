@@ -15,7 +15,7 @@
 <div class="tab-pane active" id="tab-detail">
     <div class="col-md-4 col-xs-12">
         <div class="text-center">
-            <div id="slim-avatar" class="slim" data-size="300,300" data-ratio="1:1" data-shape="circle"
+            {{-- <div id="slim-avatar" class="slim" data-size="300,300" data-ratio="1:1" data-shape="circle"
                 data-instant-edit="true"
                 style="
                 width: 200px; 
@@ -33,7 +33,7 @@
 
                 <!-- File input for uploading/replacing the image -->
                 <input type="file" name="slim" accept="image/jpeg, image/png" />
-            </div>
+            </div> --}}
             <h4 class="no-margin-bottom m-t-10"><i class=""
                     alt="{{ $user->status->name }}"></i>{{ $user->profile?->fullname_th }}
                 ({{ $user->profile->nickname }})</h4>
@@ -118,7 +118,7 @@
                 </div>
 
                 <!-- English name fields -->
-                <div class="row">
+                <div class="row" style="display: none;">
                     <div class="col-md-3">
                         <div class="form-group">
                             <label class="control-label">Prefix (English)</label>
@@ -155,7 +155,7 @@
                 </div>
 
                 <!-- Card ID field -->
-                <div class="form-group">
+                <div class="form-group" style="display: none;">
                     <label class="control-label">Card ID Number</label>
                     <input type="text" class="form-control @error('card_id_no') is-invalid @enderror" wire:model="card_id_no"
                         value="{{ $user->profile->card_id_no ?? '' }}" placeholder="Card ID Number">
@@ -165,7 +165,7 @@
                 </div>
 
                 <!-- Birth Date field -->
-                <div class="form-group">
+                <div class="form-group" style="display: none;">
                     <label class="control-label">Birth Date</label>
                     <input type="date" class="form-control @error('birth_date') is-invalid @enderror" wire:model="birth_date"
                         value="{{ $user->profile && $user->profile->birth_date ? date('Y-m-d', strtotime($user->profile->birth_date)) : '' }}">

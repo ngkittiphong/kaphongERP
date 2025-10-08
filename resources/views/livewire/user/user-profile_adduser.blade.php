@@ -23,7 +23,7 @@
                     @csrf
                     <div class="col-md-5 col-xs-12">
                         <div class="text-center">
-                            <div class="col-md-4 col-xs-12">
+                            {{-- <div class="col-md-4 col-xs-12 style="display: none;">
                                 <div class="text-center">
                                     <div id="slim-avatar" class="slim" data-size="300,300" data-ratio="1:1"
                                         data-shape="circle" data-instant-edit="true"
@@ -41,7 +41,7 @@
                                         <input type="file" name="slim" accept="image/jpeg, image/png" />
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
 
                         <!-- User Type -->
@@ -162,7 +162,7 @@
                             </div>
                             
                             <!-- English Name Fields -->
-                            <div class="row">
+                            <div class="row" style="display: none;">
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label class="control-label">Prefix (EN)</label>
@@ -199,7 +199,7 @@
                             </div>
 
                             <!-- Card ID field -->
-                            <div class="form-group">
+                            <div class="form-group" style="display: none;">
                                 <label class="control-label">Card ID Number</label>
                                 <input type="text" class="form-control @error('card_id_no') is-invalid @enderror" wire:model="card_id_no"
                                     placeholder="Card ID Number">
@@ -209,7 +209,7 @@
                             </div>
 
                             <!-- Birth Date field -->
-                            <div class="form-group">
+                            <div class="form-group" style="display: none;">
                                 <label class="control-label">Birth Date</label>
                                 <input type="date" class="form-control @error('birth_date') is-invalid @enderror" wire:model="birth_date">
                                 @error('birth_date')

@@ -1,12 +1,12 @@
 <div class="tab-pane active" id="tab-detail">
     <div class="col-md-4 col-xs-12">
         <div class="text-center">
-            <div style="width: 200px; height: 200px; margin: 0 auto; border-radius: 50%; overflow: hidden;">
+            {{-- <div style="width: 200px; height: 200px; margin: 0 auto; border-radius: 50%; overflow: hidden;">
                 <img src="{{ $user->profile && $user->profile->avatar ? $user->profile->avatar : asset('assets/images/faces/face_default.png') }}"
                     alt="{{ $user->username }}'s Avatar"
                     class="img-fluid"
                     style="width: 100%; height: 100%; object-fit: cover;" />
-            </div>
+            </div> --}}
 
             <h4 class="no-margin-bottom m-t-10"><i class=""
                     alt="{{ $user->status->name }}"></i>{{ $user->profile?->fullname_th }}
