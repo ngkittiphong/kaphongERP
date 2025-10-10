@@ -15,7 +15,7 @@
 <div class="tab-pane active" id="tab-detail">
     <div class="col-md-4 col-xs-12">
         <div class="text-center">
-            {{-- <div id="slim-avatar" class="slim" data-size="300,300" data-ratio="1:1" data-shape="circle"
+            <div id="slim-avatar" class="slim" data-size="300,300" data-ratio="1:1" data-shape="circle"
                 data-instant-edit="true"
                 style="
                 width: 200px; 
@@ -33,7 +33,7 @@
 
                 <!-- File input for uploading/replacing the image -->
                 <input type="file" name="slim" accept="image/jpeg, image/png" />
-            </div> --}}
+            </div>
             <h4 class="no-margin-bottom m-t-10"><i class=""
                     alt="{{ $user->status->name }}"></i>{{ $user->profile?->fullname_th }}
                 ({{ $user->profile->nickname }})</h4>

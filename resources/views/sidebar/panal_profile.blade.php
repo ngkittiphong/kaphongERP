@@ -64,7 +64,7 @@
                     </button>
                 </div>
                 
-                <h4 class="no-margin-bottom m-t-10">{{ Auth::user()->profile->fullname_en ?? Auth::user()->username }}</h4>
+                <h4 class="no-margin-bottom m-t-10">{{ Auth::user()->profile->fullname_th ?? Auth::user()->username }}</h4>
                 <div class="text-light text-size-small text-white">{{ Auth::user()->profile->nickname ?? '' }}</div>
             </div>
         </div>
