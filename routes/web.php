@@ -17,6 +17,9 @@ Route::get('/', function () {
 Route::get('/user/login', function () {
     return view('user.login');
 })->name('login');
+Route::get('/user/signin_process', function () {
+    return redirect('/user/login')->with('info', 'Please use the login form to sign in.');
+});
 Route::post('/user/signin_process', [UserController::class, 'signinProcess']);
 Route::get('/user/signOut', [UserController::class, 'signOut'])->name('user.signOut')->middleware('auth');
 //api

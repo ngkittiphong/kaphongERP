@@ -70,70 +70,128 @@ class UserController
             'all_input' => $request->all()
         ]);
 
-        $request->validate([
-            'username' => 'required|string|max:255',
-            'password' => 'required|min:6',
-        ]);
-
-        $user = User::where('username', $request->username)->first();
-        
-        if (!$user) {
-            \Log::warning('Login failed - User not found:', ['username' => $request->username]);
-            return redirect('/user/login')
-                ->withErrors(['username' => 'Invalid username'])
-                ->withInput();
-        }
-
-        // Get fresh user data to ensure we have the latest password hash
-        $user = $user->fresh();
-        
-        // Detailed debug logging
-        \Log::debug('Login attempt details:', [
-            'username' => $user->username,
-            'provided_password' => $request->password,
-            'stored_hash' => $user->password,
-            'hash_check' => Hash::check($request->password, $user->password),
-            'password_length' => strlen($request->password),
-            'hash_length' => strlen($user->password)
-        ]);
-
-        // Try manual password verification
-        if (Hash::check($request->password, $user->password)) {
-            Auth::login($user);
-            
-            // Initialize session tracking for all users
-            session(['last_activity' => now()->timestamp]);
-            
-            // Set session timeout to 5 minutes if user needs to change password
-            if ($user->request_change_pass) {
-                config(['session.lifetime' => 5]);
-                session(['force_password_change' => true]);
-                
-                \Log::info('Login successful with force password change:', [
-                    'username' => $user->username,
-                    'user_id' => $user->id,
-                    'session_timeout' => '5 minutes'
+        try {
+            $request->validate([
+                'username' => 'required|string|max:255',
+                'password' => 'required|min:6',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Check if it's a CSRF token mismatch (419 error)
+            if ($e->getMessage() === 'CSRF token mismatch.' || 
+                str_contains($e->getMessage(), 'CSRF') ||
+                $e->status === 419) {
+                \Log::warning('CSRF token mismatch during login:', [
+                    'username' => $request->username,
+                    'session_id' => session()->getId(),
+                    'csrf_token' => $request->_token
                 ]);
                 
-                return redirect('/')->with('warning', 'You must change your password within 5 minutes or your session will expire.');
+                return redirect('/user/login')
+                    ->withErrors(['csrf' => 'Session expired. Please try again.'])
+                    ->withInput();
             }
             
-            \Log::info('Login successful:', [
-                'username' => $user->username,
-                'user_id' => $user->id
-            ]);
-
-            return redirect('/')->with('success', 'Login successful!');
+            // Re-throw other validation errors
+            throw $e;
         }
 
-        \Log::warning('Login failed - Invalid password:', [
-            'username' => $request->username,
-            'password_verification_failed' => true
-        ]);
+        try {
+            $user = User::where('username', $request->username)->first();
+            
+            if (!$user) {
+                \Log::warning('Login failed - User not found:', ['username' => $request->username]);
+                return redirect('/user/login')
+                    ->withErrors(['username' => 'Invalid username'])
+                    ->withInput();
+            }
 
-        return redirect('/user/login')
-            ->withErrors(['password' => 'Invalid password'])
-            ->withInput();
+            // Get fresh user data to ensure we have the latest password hash
+            $user = $user->fresh();
+            
+            // Detailed debug logging
+            \Log::debug('Login attempt details:', [
+                'username' => $user->username,
+                'provided_password' => $request->password,
+                'stored_hash' => $user->password,
+                'hash_check' => Hash::check($request->password, $user->password),
+                'password_length' => strlen($request->password),
+                'hash_length' => strlen($user->password)
+            ]);
+
+            // Try manual password verification
+            if (Hash::check($request->password, $user->password)) {
+                Auth::login($user);
+                
+                // Initialize session tracking for all users
+                session(['last_activity' => now()->timestamp]);
+                
+                // Set session timeout to 5 minutes if user needs to change password
+                if ($user->request_change_pass) {
+                    config(['session.lifetime' => 5]);
+                    session(['force_password_change' => true]);
+                    
+                    \Log::info('Login successful with force password change:', [
+                        'username' => $user->username,
+                        'user_id' => $user->id,
+                        'session_timeout' => '5 minutes'
+                    ]);
+                    
+                    return redirect('/')->with('warning', 'You must change your password within 5 minutes or your session will expire.');
+                }
+                
+                \Log::info('Login successful:', [
+                    'username' => $user->username,
+                    'user_id' => $user->id
+                ]);
+
+                return redirect('/')->with('success', 'Login successful!');
+            }
+
+            \Log::warning('Login failed - Invalid password:', [
+                'username' => $request->username,
+                'password_verification_failed' => true
+            ]);
+
+            return redirect('/user/login')
+                ->withErrors(['password' => 'Invalid password'])
+                ->withInput();
+                
+        } catch (\Illuminate\Http\Exceptions\ThrottleRequestsException $e) {
+            // Handle rate limiting
+            \Log::warning('Login rate limited:', [
+                'username' => $request->username,
+                'ip' => $request->ip()
+            ]);
+            
+            return redirect('/user/login')
+                ->withErrors(['throttle' => 'Too many login attempts. Please try again later.'])
+                ->withInput();
+                
+        } catch (\Exception $e) {
+            // Handle any other unexpected errors, including 419 CSRF errors
+            if ($e->getCode() === 419 || str_contains($e->getMessage(), 'CSRF')) {
+                \Log::warning('CSRF token mismatch during login (catch block):', [
+                    'username' => $request->username,
+                    'session_id' => session()->getId(),
+                    'error' => $e->getMessage()
+                ]);
+                
+                return redirect('/user/login')
+                    ->withErrors(['csrf' => 'Session expired. Please try again.'])
+                    ->withInput();
+            }
+            
+            // Log unexpected errors
+            \Log::error('Unexpected error during login:', [
+                'username' => $request->username,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect('/user/login')
+                ->withErrors(['general' => 'An error occurred. Please try again.'])
+                ->withInput();
+        }
     }
 
     public function signOut(Request $request)

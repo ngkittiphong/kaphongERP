@@ -104,12 +104,13 @@ class UserLivewireTest extends TestCase
     /** @test */
     public function user_profile_component_can_change_password_successfully()
     {
-        // Mock the UserController response
-        $this->mock(\App\Http\Controllers\UserController::class, function ($mock) {
-            $mock->shouldReceive('changePassword')
-                ->once()
-                ->andReturn(response()->json(['message' => 'Password changed successfully!'], 200));
-        });
+        // Mock the UserController using app container
+        $mockController = \Mockery::mock(\App\Http\Controllers\UserController::class);
+        $mockController->shouldReceive('changePassword')
+            ->once()
+            ->andReturn(response()->json(['message' => 'Password changed successfully!'], 200));
+        
+        $this->app->instance(\App\Http\Controllers\UserController::class, $mockController);
 
         Livewire::test(UserProfile::class, ['user' => $this->user])
             ->set('new_password', 'newpassword123')
@@ -123,15 +124,16 @@ class UserLivewireTest extends TestCase
     /** @test */
     public function user_profile_component_handles_password_change_errors()
     {
-        // Mock the UserController response with error
-        $this->mock(\App\Http\Controllers\UserController::class, function ($mock) {
-            $mock->shouldReceive('changePassword')
-                ->once()
-                ->andReturn(response()->json([
-                    'error' => 'Failed to change password',
-                    'errors' => ['new_password' => ['Password is too short']]
-                ], 422));
-        });
+        // Mock the UserController using app container
+        $mockController = \Mockery::mock(\App\Http\Controllers\UserController::class);
+        $mockController->shouldReceive('changePassword')
+            ->once()
+            ->andReturn(response()->json([
+                'error' => 'Failed to change password',
+                'errors' => ['new_password' => ['Password is too short']]
+            ], 422));
+        
+        $this->app->instance(\App\Http\Controllers\UserController::class, $mockController);
 
         Livewire::test(UserProfile::class, ['user' => $this->user])
             ->set('new_password', 'short')

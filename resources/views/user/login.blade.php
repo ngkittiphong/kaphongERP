@@ -36,6 +36,18 @@ body {
 				@endif
 			@endif
 
+			@if ($errors->has('csrf'))
+				<div class="alert alert-warning">
+					<i class="icon-warning"></i> {{ $errors->first('csrf') }}
+				</div>
+			@endif
+
+			@if (session('info'))
+				<div class="alert alert-info">
+					<i class="icon-info"></i> {{ session('info') }}
+				</div>
+			@endif
+
 			<!-- Simple login form -->
 			<form method="post" action="/user/signin_process">
 				@csrf			

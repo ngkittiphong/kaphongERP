@@ -37,11 +37,16 @@ class UserProfile extends Component
         'deleteUser' => 'deleteUser'
     ];
 
-    public function mount()
+    public function mount($user = null)
     {
         \Log::info("UserProfile Component Mounted");
         $this->userTypes = UserType::all();
         $this->userStatuses = UserStatus::all();
+        
+        if ($user) {
+            $this->user = $user;
+            $this->loadProfile($user->id);
+        }
     }
 
     public function loadProfile($userId)
@@ -101,6 +106,11 @@ class UserProfile extends Component
         $this->dispatch('addUser');
     }
 
+    public function openChangePasswordModal()
+    {
+        $this->displayChangePasswordModal();
+    }
+
     public function displayChangePasswordModal()
     {
         \Log::info("Livewire Event Received: showChangePasswordModal");
@@ -118,9 +128,9 @@ class UserProfile extends Component
 
     public function changePassword()
     {
-
         if (!$this->user) {
-            throw new \Exception('User not found');
+            $this->addError('form', 'User not found');
+            return;
         }
 
         // Create a Request instance with the password data
@@ -130,7 +140,7 @@ class UserProfile extends Component
         ]);
 
         // Instantiate the controller and call its changePassword method
-        $controller = new UserController();
+        $controller = app(\App\Http\Controllers\UserController::class);
         $response = $controller->changePassword($request, $this->user->id);
         
         if ($response->status() === 200) {
@@ -158,6 +168,12 @@ class UserProfile extends Component
         }
             
 
+    }
+
+    public function closeEditProfileForm()
+    {
+        $this->showEditProfileForm = false;
+        $this->resetErrorBag();
     }
 
     public function displayEditProfileForm()
@@ -198,7 +214,7 @@ class UserProfile extends Component
         $request = new Request($requestData);
 
         // Instantiate the controller and call its store method
-        $controller = new UserController();
+        $controller = app(\App\Http\Controllers\UserController::class);
         $response = $controller->store($request);
        
         if ($response->status() === 201) {
@@ -271,7 +287,7 @@ class UserProfile extends Component
                 ]);
 
         // Instantiate the controller and call its update method
-        $controller = new UserController();
+        $controller = app(\App\Http\Controllers\UserController::class);
         $response = $controller->update($request, $this->user->id);
                
         if ($response->status() === 200) {
