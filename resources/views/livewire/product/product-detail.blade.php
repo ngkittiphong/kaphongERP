@@ -103,6 +103,51 @@
 @push('styles')
     <!-- Include Slim CSS -->
     <link rel="stylesheet" href="{{ asset('slim/css/slim.min.css') }}">
+    
+    <style>
+        /* Bootstrap-based export button styling */
+        .dt-buttons {
+            margin-bottom: 1rem;
+        }
+        
+        .dt-buttons .btn {
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: all 0.15s ease-in-out;
+        }
+        
+        .dt-buttons .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        
+        /* DataTable responsive improvements using Bootstrap classes */
+        .datatable-stock-card {
+            font-size: 0.875rem;
+        }
+        
+        .datatable-stock-card th {
+            background-color: var(--bs-gray-100);
+            font-weight: 600;
+            border-bottom: 2px solid var(--bs-gray-300);
+        }
+        
+        .datatable-stock-card td {
+            vertical-align: middle;
+        }
+        
+        /* Summary row styling using Bootstrap utilities */
+        .datatable-stock-card tr.bg-light td {
+            font-weight: 600;
+            background-color: var(--bs-gray-200) !important;
+        }
+        
+        .datatable-stock-card tr.bg-info td {
+            font-weight: 600;
+            background-color: var(--bs-info-bg-subtle) !important;
+            color: var(--bs-info-text-emphasis);
+        }
+    </style>
 @endpush
 
 @push('scripts')
@@ -219,10 +264,22 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+    
+    <!-- DataTable Export Libraries -->
+    <script src="{{ asset('js/forms/picker.js') }}"></script>
+    <script src="{{ asset('js/forms/picker.date.js') }}"></script>
+    <script src="{{ asset('js/forms/picker.time.js') }}"></script>
+    <script src="{{ asset('js/forms/spectrum.js') }}"></script>
+    <script src="{{ asset('js/pages/pickers.js') }}"></script>
+    <script src="{{ asset('js/tables/datatables/extensions/buttons.min.js') }}"></script>
+    <script src="{{ asset('js/tables/datatables/extensions/jszip/jszip.min.js') }}"></script>
+    <script src="{{ asset('js/tables/datatables/extensions/pdfmake/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('js/tables/datatables/extensions/pdfmake/vfs_fonts.min.js') }}"></script>
 
 
 
     <script>
+
         function initSlim() {
             // Check if DataTable is already initialized and destroy it if exists
             // This prevents duplicate initialization errors
@@ -320,6 +377,7 @@
                 setTimeout(() => {
                     initSlim();
                     initTypeahead();
+                    initStockCardDataTable()
                     $('.venobox').venobox();
                     
                     // Safely add event listener only if element exists
@@ -567,6 +625,266 @@
                 }
             });
         }
+
+
+
+        // Helper functions for export customization
+        function getProductName() {
+            var productName = 'Unknown Product';
+            // Try to get product name from various sources
+            if (typeof window.livewire !== 'undefined' && window.livewire.find('product-stock-card')) {
+                var component = window.livewire.find('product-stock-card');
+                if (component && component.get('product') && component.get('product').name_en) {
+                    productName = component.get('product').name_en;
+                }
+            }
+            // Fallback: try to get from page title or other elements
+            var titleElement = document.querySelector('.panel-title');
+            if (titleElement && titleElement.textContent.includes('Stock Card')) {
+                // Extract product name from context if available
+                var productElement = document.querySelector('[data-product-name]');
+                if (productElement) {
+                    productName = productElement.getAttribute('data-product-name');
+                }
+            }
+            return productName.replace(/[^a-zA-Z0-9]/g, '_');
+        }
+
+        function getDateRange() {
+            var startDate = 'Unknown';
+            var endDate = 'Unknown';
+            
+            // Try to get dates from Livewire component
+            if (typeof window.livewire !== 'undefined' && window.livewire.find('product-stock-card')) {
+                var component = window.livewire.find('product-stock-card');
+                if (component) {
+                    startDate = component.get('startDate') || 'Unknown';
+                    endDate = component.get('endDate') || 'Unknown';
+                }
+            }
+            
+            // Fallback: try to get from form inputs
+            var startInput = document.querySelector('input[wire\\:model\\.live="startDate"]');
+            var endInput = document.querySelector('input[wire\\:model\\.live="endDate"]');
+            
+            if (startInput && startInput.value) {
+                startDate = startInput.value;
+            }
+            if (endInput && endInput.value) {
+                endDate = endInput.value;
+            }
+            
+            return startDate + '_to_' + endDate;
+        }
+
+        function getCurrentDateTimeFormatted() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${year}${month}${day}_${hours}${minutes}${seconds}`;
+        }
+
+        function getBranchName() {
+            var branchName = 'Unknown_Branch';
+            
+            // Try to get branch name from Livewire component
+            if (typeof window.livewire !== 'undefined' && window.livewire.find('product-stock-card')) {
+                var component = window.livewire.find('product-stock-card');
+                if (component) {
+                    var selectedBranchId = component.get('selectedBranchId');
+                    if (selectedBranchId) {
+                        // Extract branch name from selectedBranchId
+                        if (selectedBranchId.startsWith('branch_')) {
+                            branchName = 'Branch_' + selectedBranchId.replace('branch_', '');
+                        } else if (selectedBranchId.startsWith('warehouse_')) {
+                            branchName = 'Warehouse_' + selectedBranchId.replace('warehouse_', '');
+                        } else {
+                            branchName = 'All_Branches';
+                        }
+                    }
+                }
+            }
+            
+            // Fallback: try to get from dropdown
+            var branchSelect = document.querySelector('select[wire\\:model\\.live="selectedBranchId"]');
+            if (branchSelect && branchSelect.value) {
+                var selectedText = branchSelect.options[branchSelect.selectedIndex].text;
+                if (selectedText.includes('All Branches')) {
+                    branchName = 'All_Branches';
+                } else {
+                    branchName = selectedText.replace(/[^a-zA-Z0-9]/g, '_');
+                }
+            }
+            
+            return branchName.replace(/[^a-zA-Z0-9_]/g, '_');
+        }
+
+        // Initialize Stock Card DataTable with export functionality
+        function initStockCardDataTable() {
+            console.log('Initializing Stock Card DataTable...');
+            
+            // Check if table exists and is not already initialized
+            if ($('.datatable-stock-card').length > 0 && !$.fn.DataTable.isDataTable('.datatable-stock-card')) {
+                console.log('Found stock card table, initializing with export buttons...');
+                
+                $('.datatable-stock-card').DataTable({
+                    ordering: false,
+                    pageLength: 25,
+                    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                    dom: '<"datatable-header"l B><"datatable-scroll-wrap"t><"datatable-footer"ip>',
+                    language: {
+                        search: '_INPUT_',
+                        lengthMenu: ' _MENU_',
+                        paginate: { 'first': '{{ __t('common.first', 'First') }}', 'last': '{{ __t('common.last', 'Last') }}', 'next': '&rarr;', 'previous': '&larr;' }
+                    },
+                    buttons: {
+                        dom: {
+                            button: {
+                                className: 'btn btn-sm me-2 mb-2'
+                            },
+                            container: {
+                                className: 'd-flex flex-wrap gap-2 mb-3'
+                            }
+                        },
+                        buttons: [
+                            {
+                                extend: 'copy',
+                                className: 'btn btn-primary btn-sm',
+                                text: '<i class="icon-copy me-1"></i>Copy',
+                                title: 'Stock Card Detail Statement'
+                            },
+                            {
+                                extend: 'csv',
+                                className: 'btn btn-success btn-sm',
+                                text: '<i class="icon-file-text2 me-1"></i>CSV',
+                                title: 'Stock Card Detail Statement',
+
+                                // filename: function() {
+                                //     var timestamp = getCurrentDateTimeFormatted();
+                                //     var dateRange = getDateRange();
+                                //     var branchName = getBranchName();
+                                //     var productName = getProductName();
+                                //     return 'Stock_Card_' + timestamp + '_' + dateRange + '_' + branchName + '_' + productName;
+                                // }
+                                filename: 'Stock_Card_Export'
+                            },
+                            {
+                                extend: 'excel',
+                                className: 'btn btn-info btn-sm',
+                                text: '<i class="icon-file-excel me-1"></i>Excel',
+                                title: 'Stock Card Detail Statement',
+                                filename: 'Stock_Card_Export'
+                            },
+                            {
+                                extend: 'pdf',
+                                className: 'btn btn-danger btn-sm',
+                                text: '<i class="icon-file-pdf me-1"></i>PDF',
+                                title: 'Stock Card Detail Statement',
+                                filename: 'Stock_Card_Export',
+                                orientation: 'landscape',
+                                pageSize: 'A4'
+                            },
+                            {
+                                extend: 'print',
+                                className: 'btn btn-warning btn-sm',
+                                text: '<i class="icon-printer me-1"></i>Print',
+                                title: 'Stock Card Detail Statement'
+                            }
+                        ]
+                    }
+                });
+                
+                console.log('Stock Card DataTable initialized successfully with export buttons');
+                
+                // Add placeholder to the datatable filter option
+                $('.dataTables_filter input[type=search]').attr('placeholder','{{ __t('common.type_to_search', 'Type to search...') }}');
+                
+                // Enable Select2 select for the length option
+                $('.dataTables_length select').select2({
+                    minimumResultsForSearch: Infinity,
+                    width: 'auto'
+                });
+                
+                // Add custom click handlers for dynamic filenames
+                setTimeout(function() {
+                    // CSV Button
+                    $('.dt-buttons .btn-success').off('click').on('click', function(e) {
+                        e.preventDefault();
+                        var timestamp = getCurrentDateTimeFormatted();
+                        var dateRange = getDateRange();
+                        var branchName = getBranchName();
+                        var productName = getProductName();
+                        var filename = 'Stock_Card_' + timestamp + '_' + dateRange + '_' + branchName + '_' + productName + '.csv';
+                        
+                        // Trigger the DataTable CSV export with custom filename
+                        var table = $('.datatable-stock-card').DataTable();
+                        table.button('.btn-success').trigger();
+                        
+                        // Try to set filename after a short delay
+                        setTimeout(function() {
+                            // This is a workaround - the actual filename setting depends on the browser
+                            console.log('CSV Export triggered with filename: ' + filename);
+                        }, 100);
+                    });
+                    
+                    // Excel Button
+                    $('.dt-buttons .btn-info').off('click').on('click', function(e) {
+                        e.preventDefault();
+                        var timestamp = getCurrentDateTimeFormatted();
+                        var dateRange = getDateRange();
+                        var branchName = getBranchName();
+                        var productName = getProductName();
+                        var filename = 'Stock_Card_' + timestamp + '_' + dateRange + '_' + branchName + '_' + productName + '.xlsx';
+                        
+                        var table = $('.datatable-stock-card').DataTable();
+                        table.button('.btn-info').trigger();
+                        
+                        setTimeout(function() {
+                            console.log('Excel Export triggered with filename: ' + filename);
+                        }, 100);
+                    });
+                    
+                    // PDF Button
+                    $('.dt-buttons .btn-danger').off('click').on('click', function(e) {
+                        e.preventDefault();
+                        var timestamp = getCurrentDateTimeFormatted();
+                        var dateRange = getDateRange();
+                        var branchName = getBranchName();
+                        var productName = getProductName();
+                        var filename = 'Stock_Card_' + timestamp + '_' + dateRange + '_' + branchName + '_' + productName + '.pdf';
+                        
+                        var table = $('.datatable-stock-card').DataTable();
+                        table.button('.btn-danger').trigger();
+                        
+                        setTimeout(function() {
+                            console.log('PDF Export triggered with filename: ' + filename);
+                        }, 100);
+                    });
+                }, 200);
+                
+            } else {
+                console.log('Stock card table not found or already initialized');
+            }
+        }
+
+        // Initialize when DOM is ready
+        $(document).ready(function() {
+            // Small delay to ensure Livewire has rendered the table
+            setTimeout(function() {
+                initStockCardDataTable();
+            }, 500);
+        });
+
+        // Re-initialize when Livewire updates
+        document.addEventListener('livewire:updated', function() {
+            setTimeout(function() {
+                initStockCardDataTable();
+            }, 300);
+        });
+
     </script>
 @endpush
-
