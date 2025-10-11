@@ -3,7 +3,7 @@
         <div class="col-md-12">
             <div class="row p-l-10 p-r-10 panel panel-flat">
                 <div class="panel-heading">
-                    <h4 class="panel-title">{{ __t('product.add_new_product', 'Add New Product') }}</h4>
+                    <h4 class="panel-title">{{ __t('product.add_new_product', 'Add New Product') }} @if($candidateProductNo)<span class="text-muted">({{ $candidateProductNo }})</span>@endif</h4>
                 </div>
                 <form wire:submit.prevent="{{ $product ? 'updateProduct' : 'createProduct' }}" id="addProductForm" onsubmit="console.log('🚀 Form submitted, product exists:', {{ $product ? 'true' : 'false' }});">
                     <div class="row">

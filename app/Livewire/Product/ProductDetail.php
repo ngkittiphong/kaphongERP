@@ -48,6 +48,7 @@ class ProductDetail extends Component
     public $buy_description;
     public $sale_price;
     public $sale_vat_id;
+    public $candidateProductNo;
     public $sale_withholding_id;
     public $sale_description;
     public $minimum_quantity;
@@ -168,8 +169,11 @@ class ProductDetail extends Component
             'product_group_id', 'product_group_name', 'product_status_id', 'unit_name', 
             'buy_price', 'buy_vat_id', 'buy_withholding_id', 'buy_description',
             'sale_price', 'sale_vat_id', 'sale_withholding_id', 'sale_description',
-            'minimum_quantity', 'maximum_quantity', 'product_cover_img'
+            'minimum_quantity', 'maximum_quantity', 'product_cover_img', 'candidateProductNo'
         ]);
+        
+        // Generate candidate product number
+        $this->candidateProductNo = Product::generateProductNumber();
         
         // Set default values
         $this->buy_price = 0.00;

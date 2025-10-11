@@ -1,5 +1,9 @@
 # KaphongERP Project Context
 
+## ⚠️ IMPORTANT: COMMIT POLICY
+**DO NOT commit any code changes until explicitly asked to do so.**
+Only make code modifications and wait for user's explicit commit request.
+
 ## Framework Versions
 - Laravel 11.31+
 - Livewire 3.5+
@@ -46,7 +50,4 @@ This is a Laravel ERP system with:
 - Livewire for dynamic components
 - Laravel Pail for logging
 - Faker for test data generation
-
-
-DO NOT commit code untill I ask for it.
 

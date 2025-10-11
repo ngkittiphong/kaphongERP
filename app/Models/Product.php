@@ -19,6 +19,7 @@ class Product extends Model
 
     // Mass-assignable attributes
     protected $fillable = [
+        'product_no',
         'product_type_id',
         'product_group_id',
         'product_status_id',
@@ -122,6 +123,54 @@ class Product extends Model
         return $this->belongsToMany(Warehouse::class, 'warehouses_products')
                     ->withPivot(['balance', 'avr_buy_price', 'avr_sale_price', 'avr_remain_price'])
                     ->withTimestamps();
+    }
+
+    /**
+     * Generate a unique product number
+     * Format: PD + YYYY + MM + ID (same logic as UserProfile)
+     */
+    public static function generateProductNumber(int $maxAttempts = 5): string
+    {
+        $year = now()->format('Y'); // 4-digit year (e.g., 2025)
+        $month = now()->format('m'); // 2-digit month (e.g., 01, 12)
+        
+        // Get the next available ID from the database
+        $nextId = static::max('id') + 1;
+        
+        // Ensure the ID is 5 digits with leading zeros
+        $productId = str_pad($nextId, 5, '0', STR_PAD_LEFT);
+        
+        // Generate the final product number
+        $candidate = "PD{$year}{$month}{$productId}"; // e.g., PD20250100001
+        
+        // Double-check uniqueness (shouldn't be necessary with database IDs, but safety first)
+        for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
+            if (!static::where('product_no', $candidate)->exists()) {
+                return $candidate;
+            }
+            // If somehow it exists, increment and try again
+            $nextId++;
+            $productId = str_pad($nextId, 5, '0', STR_PAD_LEFT);
+            $candidate = "PD{$year}{$month}{$productId}";
+        }
+        
+        // Fallback: use timestamp-based ID if all else fails
+        $fallbackId = str_pad(now()->timestamp % 100000, 5, '0', STR_PAD_LEFT);
+        return "PD{$year}{$month}{$fallbackId}";
+    }
+
+    /**
+     * Boot method to auto-generate product_no before creating (same logic as UserProfile)
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (Product $product) {
+            if (!empty($product->product_no)) {
+                return;
+            }
+
+            $product->product_no = static::generateProductNumber();
+        });
     }
 }
 
