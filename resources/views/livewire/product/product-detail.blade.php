@@ -306,25 +306,18 @@
                 return;
             }
 
-            const list = @json($productGroups->pluck('name'));
-            console.log(list);
-
-            $('.typeahead')
-            // remove any old instance/data
-            // .each(function() {
-            //     const $input = $("#product_group_name");
-            //     $input.data('typeahead', null);
-            // })
-            // re-init
+            // Product Group Typeahead
+            const productGroupList = @json($productGroups->pluck('name'));
+            console.log('Product Group List:', productGroupList);
 
             $("#product_group_name").typeahead({
-                    source: list,
+                    source: productGroupList,
                     minLength: 1,
                     autoSelect: true,
-                    items: list.length,
+                    items: productGroupList.length,
                     
                     afterSelect(item) {
-                        console.log('Selected:', item);
+                        console.log('Selected Product Group:', item);
                         
                         // Update the input field value
                         $("#product_group_name").val(item);
@@ -341,6 +334,37 @@
                     if ($("#product_group_name").val().length === 0) {
                         // direct lookup on the underlying instance
                         $("#product_group_name").data('typeahead').lookup();
+                    }
+                });
+
+            // Unit Name Typeahead
+            const unitNameList = @json($unitNames);
+            console.log('Unit Name List:', unitNameList);
+
+            $("#unit_name").typeahead({
+                    source: unitNameList,
+                    minLength: 1,
+                    autoSelect: true,
+                    items: unitNameList.length,
+                    
+                    afterSelect(item) {
+                        console.log('Selected Unit Name:', item);
+                        
+                        // Update the input field value
+                        $("#unit_name").val(item);
+                        
+                        // Update Livewire component property directly without network request
+                        // This updates the component's data without triggering a roundtrip to the server
+                        @this.unit_name = item;
+                        
+                        console.log('Updated Livewire unit_name property directly:', item);
+                    }
+                });
+
+                $("#unit_name").on('focus keyup', function(e) {
+                    if ($("#unit_name").val().length === 0) {
+                        // direct lookup on the underlying instance
+                        $("#unit_name").data('typeahead').lookup();
                     }
                 });
             

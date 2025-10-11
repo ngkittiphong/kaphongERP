@@ -34,7 +34,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="name">{{ __t('product.product_name', 'Product Name') }} *</label>
+                                <label for="name">{{ __t('product.product_name', 'Product Name') }} <span style="color: red;">*</span></label>
                                 <input type="text" class="form-control" id="name" wire:model="name" required>
                                 @error('name') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
@@ -52,7 +52,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="product_type_id">{{ __t('product.product_type', 'Product Type') }} *</label>
+                                <label for="product_type_id">{{ __t('product.product_type', 'Product Type') }} <span style="color: red;">*</span></label>
                                 <select class="form-control" id="product_type_id" wire:model="product_type_id" required>
                                     <option value="">{{ __t('product.select_type', 'Select Type') }}</option>
                                     @foreach($productTypes as $type)
@@ -65,7 +65,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="product_group_name">{{ __t('product.product_group', 'Product Group') }} *</label>
+                                <label for="product_group_name">{{ __t('product.product_group', 'Product Group') }} <span style="color: red;">*</span></label>
                                 <input
                                 type="text"
                                 id="product_group_name"
@@ -78,7 +78,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="product_status_id">{{ __t('product.product_status', 'Product Status') }} *</label>
+                                <label for="product_status_id">{{ __t('product.product_status', 'Product Status') }} <span style="color: red;">*</span></label>
                                 <select class="form-control" id="product_status_id" wire:model="product_status_id" required>
                                     <option value="">{{ __t('product.select_status', 'Select Status') }}</option>
                                     @foreach($productStatuses as $status)
@@ -94,8 +94,15 @@
                         <!-- Pricing Information -->
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="unit_name">{{ __t('product.unit_name', 'Unit Name') }} *</label>
-                                <input type="text" class="form-control" id="unit_name" wire:model="unit_name" required>
+                                <label for="unit_name">{{ __t('product.unit_name', 'Unit Name') }} <span style="color: red;">*</span></label>
+                                <input
+                                type="text"
+                                id="unit_name"
+                                class="form-control typeahead"
+                                wire:model.defer="unit_name"
+                                value="{{ $product && $product->unit_name ? $product->unit_name : '' }}"
+                                required
+                              />
                                 @error('unit_name') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
 
@@ -132,7 +139,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="sale_price">{{ __t('product.sale_price', 'Sale Price') }} ({{ currency_symbol() }}) *</label>
+                                <label for="sale_price">{{ __t('product.sale_price', 'Sale Price') }} ({{ currency_symbol() }}) <span style="color: red;">*</span></label>
                                 <input type="number" step="0.01" class="form-control" id="sale_price" wire:model="sale_price" required value="{{ $product ? $product->sale_price : 0.00 }}">
                                 @error('sale_price') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
@@ -196,7 +203,18 @@
                     </div>
 
                     <div class="panel-footer">
-                        <button type="submit" class="btn btn-primary">{{ $product ? __t('product.update_product', 'Update Product') : __t('product.add_new_product', 'Add new Product') }}</button>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="icon-checkmark"></i> {{ $product ? __t('product.update_product', 'Update Product') : __t('product.add_new_product', 'Add new Product') }}
+                                </button>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <button type="button" class="btn btn-default" wire:click="cancelEditProduct">
+                                    <i class="icon-cross"></i> {{ __t('common.cancel', 'Cancel') }}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>

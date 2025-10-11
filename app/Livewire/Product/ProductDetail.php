@@ -25,6 +25,7 @@ class ProductDetail extends Component
     public $productStatuses = [];
     public $vats = [];
     public $withholdings = [];
+    public $unitNames = [];
     
     // Warehouse product data
     public $warehouseProducts = [];
@@ -95,6 +96,13 @@ class ProductDetail extends Component
         $this->productStatuses = ProductStatus::where('id', '!=', 0)->get(); // Exclude Delete status (ID 0)
         $this->vats = Vat::all();
         $this->withholdings = Withholding::all();
+        $this->unitNames = Product::whereNotNull('unit_name')
+            ->where('unit_name', '!=', '')
+            ->distinct()
+            ->pluck('unit_name')
+            ->sort()
+            ->values()
+            ->toArray();
     }
 
     public function loadProduct($productId)
@@ -213,6 +221,62 @@ class ProductDetail extends Component
         $this->maximum_quantity = $this->product->maximum_quantity;
         $this->product_cover_img = $this->product->product_cover_img;
         $this->dispatch('addProduct');
+    }
+
+    /**
+     * Cancel edit product form
+     */
+    public function cancelEditProduct()
+    {
+        \Log::info("Livewire Event Received: cancelEditProduct");
+        $this->showAddEditProductForm = false;
+        $this->resetErrorBag();
+        
+        // Reset form fields to original product values
+        if ($this->product) {
+            $this->name = $this->product->name;
+            $this->sku_number = $this->product->sku_number;
+            $this->serial_number = $this->product->serial_number;
+            $this->product_type_id = $this->product->product_type_id;
+            $this->product_group_id = $this->product->product_group_id;
+            $this->product_group_name = $this->product->group ? $this->product->group->name : '';
+            $this->product_status_id = $this->product->product_status_id;
+            $this->unit_name = $this->product->unit_name;
+            $this->buy_price = $this->product->buy_price;
+            $this->buy_vat_id = $this->product->buy_vat_id;
+            $this->buy_withholding_id = $this->product->buy_withholding_id;
+            $this->buy_description = $this->product->buy_description;
+            $this->sale_price = $this->product->sale_price;
+            $this->sale_vat_id = $this->product->sale_vat_id;
+            $this->sale_withholding_id = $this->product->sale_withholding_id;
+            $this->sale_description = $this->product->sale_description;
+            $this->minimum_quantity = $this->product->minimum_quantity;
+            $this->maximum_quantity = $this->product->maximum_quantity;
+            $this->product_cover_img = $this->product->product_cover_img;
+        }
+        
+        \Log::info("Edit product form cancelled, returning to product detail view");
+    }
+
+    /**
+     * Cancel add product form
+     */
+    public function cancelAddProduct()
+    {
+        \Log::info("Livewire Event Received: cancelAddProduct");
+        $this->showAddEditProductForm = false;
+        $this->resetErrorBag();
+        
+        // Reset all form fields to empty/default values
+        $this->reset([
+            'name', 'sku_number', 'serial_number', 'product_type_id', 
+            'product_group_id', 'product_group_name', 'product_status_id', 'unit_name', 
+            'buy_price', 'buy_vat_id', 'buy_withholding_id', 'buy_description',
+            'sale_price', 'sale_vat_id', 'sale_withholding_id', 'sale_description',
+            'minimum_quantity', 'maximum_quantity', 'product_cover_img', 'candidateProductNo'
+        ]);
+        
+        \Log::info("Add product form cancelled, returning to product list view");
     }
 
     public function createProduct()
