@@ -30,7 +30,7 @@ return new class extends Migration
             $table->text('sale_description')->nullable();
             $table->integer('minimum_quantity')->nullable();
             $table->integer('maximum_quantity')->nullable();
-            $table->unsignedInteger('product_status_id')->nullable();
+            $table->integer('product_status_id')->default(1);
             $table->dateTime('date_create')->useCurrent();
             
             // Foreign keys

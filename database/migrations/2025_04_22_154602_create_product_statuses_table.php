@@ -12,7 +12,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('product_statuses', function (Blueprint $table) {
-            $table->increments('id');
+            $table->integer('id')->autoIncrement();
             $table->string('name', 50);
             $table->string('sign', 200)->nullable();
             $table->string('color', 50)->nullable();
