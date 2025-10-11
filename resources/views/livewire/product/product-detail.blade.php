@@ -289,11 +289,158 @@
             
         }
 
+        function normalizeImageSource(source) {
+            if (!source) {
+                return null;
+            }
+
+            const hasCanvasSupport = typeof HTMLCanvasElement !== 'undefined';
+            const hasImageSupport = typeof HTMLImageElement !== 'undefined';
+
+            if (hasCanvasSupport && source instanceof HTMLCanvasElement) {
+                try {
+                    return source.toDataURL('image/png');
+                } catch (error) {
+                    console.error('Failed to convert Slim canvas to data URL:', error);
+                    return null;
+                }
+            }
+
+            if (hasImageSupport && source instanceof HTMLImageElement) {
+                return source.src || null;
+            }
+
+            if (typeof source === 'string' && source.trim() !== '') {
+                return source;
+            }
+
+            if (hasCanvasSupport && typeof source?.toDataURL === 'function') {
+                try {
+                    return source.toDataURL('image/png');
+                } catch (error) {
+                    console.error('Failed to convert canvas-like object to data URL:', error);
+                }
+            }
+
+            if (typeof source?.src === 'string' && source.src.trim() !== '') {
+                return source.src;
+            }
+
+            return null;
+        }
+
+        function extractImage(data) {
+            if (!data || typeof data !== 'object') {
+                return null;
+            }
+
+            const sections = [data.output, data.input, data];
+
+            for (const section of sections) {
+                if (!section || typeof section !== 'object') {
+                    continue;
+                }
+
+                const candidates = [
+                    section.image,
+                    section.canvas,
+                    section.data,
+                    section.dataUrl,
+                    section.src,
+                    section.file
+                ];
+
+                for (const candidate of candidates) {
+                    const normalized = normalizeImageSource(candidate);
+                    if (normalized) {
+                        return normalized;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        function collectSlimDatasets(controller) {
+            const datasets = [];
+
+            if (!controller) {
+                return datasets;
+            }
+
+            const possibleCollections = [controller.data, controller._data];
+
+            for (const collection of possibleCollections) {
+                if (!collection) {
+                    continue;
+                }
+
+                if (Array.isArray(collection)) {
+                    datasets.push(...collection);
+                } else {
+                    datasets.push(collection);
+                }
+            }
+
+            return datasets;
+        }
+
+        function getSlimResultImage(slimElement) {
+            if (!slimElement) {
+                return null;
+            }
+
+            const possibleDatasets = [];
+
+            if (slimElement.slim) {
+                possibleDatasets.push(...collectSlimDatasets(slimElement.slim));
+            }
+
+            if (typeof Slim !== 'undefined' && typeof Slim.getImages === 'function') {
+                try {
+                    const images = Slim.getImages(slimElement);
+                    if (images) {
+                        if (Array.isArray(images)) {
+                            possibleDatasets.push(...images);
+                        } else {
+                            possibleDatasets.push(images);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error calling Slim.getImages:', error);
+                }
+            }
+
+            for (const dataset of possibleDatasets) {
+                const extracted = extractImage(dataset);
+                if (extracted) {
+                    return extracted;
+                }
+            }
+
+            const resultImage = slimElement.querySelector('.slim-result img.in');
+            if (resultImage && resultImage.src) {
+                return resultImage.src;
+            }
+
+            const fallbackImage = slimElement.querySelector('.slim-area img');
+            if (fallbackImage && fallbackImage.src) {
+                return fallbackImage.src;
+            }
+
+            return null;
+        }
+
         function setAvatarFromSlim() {
             const slim = document.getElementById('slim-image');
-            if (slim) {
-                const resultImage = document.querySelector('#slim-image .slim-result img.in');
-                const base64Data = resultImage.src;
+            if (!slim) {
+                return;
+            }
+
+            const base64Data = getSlimResultImage(slim);
+            console.log('Slim product image data:', base64Data);
+
+            if (base64Data) {
                 @this.set('product_cover_img', base64Data);
             }
         }
