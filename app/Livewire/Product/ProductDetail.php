@@ -681,6 +681,9 @@ class ProductDetail extends Component
             $result = $this->getProductService()->softDeleteProduct($this->product);
 
             if ($result['success']) {
+                // Reset product detail view
+                $this->resetProductDetailView();
+                
                 // Dispatch refresh event to update the product list
                 $this->dispatch('refreshProductList');
                 
@@ -731,6 +734,41 @@ class ProductDetail extends Component
         }
 
         \Log::info("🔄 ProductDetail: Refresh completed successfully");
+    }
+
+    /**
+     * Reset product detail view after deletion
+     */
+    private function resetProductDetailView()
+    {
+        \Log::info("🔄 ProductDetail: Resetting product detail view after deletion", [
+            'product_id' => $this->productId,
+            'product_name' => $this->product ? $this->product->name : 'none'
+        ]);
+
+        // Reset all product-related properties
+        $this->productId = null;
+        $this->product = null;
+        $this->warehouseProducts = collect();
+        $this->totalQuantity = 0;
+        $this->averageSalePrice = 0;
+        $this->averageBuyPrice = 0;
+        $this->totalValue = 0;
+        
+        // Reset form-related properties
+        $this->showAddEditProductForm = false;
+        
+        // Reset stock modal properties
+        $this->selectedWarehouseId = null;
+        $this->selectedWarehouseName = null;
+        $this->operationType = null;
+        $this->quantity = null;
+        $this->unitPrice = null;
+        $this->salePrice = null;
+        $this->detail = null;
+        $this->currentStock = null;
+
+        \Log::info("🔄 ProductDetail: Product detail view reset completed");
     }
 
     

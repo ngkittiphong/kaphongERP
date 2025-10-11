@@ -15,21 +15,39 @@ use Illuminate\Support\Facades\Log;
 class ProductService
 {
     /**
+     * Get the Delete status ID
+     */
+    private function getDeleteStatusId()
+    {
+        static $deleteStatusId = null;
+        
+        if ($deleteStatusId === null) {
+            $deleteStatus = ProductStatus::where('name', 'Delete')->first();
+            $deleteStatusId = $deleteStatus ? $deleteStatus->id : 0;
+        }
+        
+        return $deleteStatusId;
+    }
+    /**
      * Get all products with relationships (excluding deleted products)
      */
     public function getAllProducts()
     {
         Log::info('ProductService@getAllProducts: Starting to retrieve all products');
         
+        // Get Delete status to exclude it properly
+        $deleteStatusId = $this->getDeleteStatusId();
+        
         // Force fresh query without any caching
         $products = Product::with(['type', 'group', 'status'])
-            ->where('product_status_id', '!=', 0) // Exclude deleted products (status 0)
+            ->where('product_status_id', '!=', $deleteStatusId) // Exclude deleted products
             ->get();
             
         Log::info('ProductService@getAllProducts: Retrieved products successfully', [
             'count' => $products->count(),
             'product_ids' => $products->pluck('id')->toArray(),
-            'deleted_products_count' => Product::where('product_status_id', 0)->count()
+            'delete_status_id' => $deleteStatusId,
+            'deleted_products_count' => Product::where('product_status_id', $deleteStatusId)->count()
         ]);
         return $products;
     }
@@ -258,9 +276,20 @@ class ProductService
             DB::beginTransaction();
             Log::info('ProductService@softDeleteProduct: Database transaction started');
 
-            // Change product status to delete (status 0)
-            Log::info('ProductService@softDeleteProduct: Updating product status to delete');
-            $product->update(['product_status_id' => 0]);
+            // Find the Delete status by name
+            $deleteStatus = ProductStatus::where('name', 'Delete')->first();
+            
+            if (!$deleteStatus) {
+                throw new \Exception('Delete status not found in database');
+            }
+
+            // Change product status to delete
+            Log::info('ProductService@softDeleteProduct: Updating product status to delete', [
+                'status_id' => $deleteStatus->id,
+                'status_name' => $deleteStatus->name
+            ]);
+            
+            $product->update(['product_status_id' => $deleteStatus->id]);
             Log::info('ProductService@softDeleteProduct: Product status updated successfully');
 
             DB::commit();
@@ -269,7 +298,7 @@ class ProductService
             Log::info('ProductService@softDeleteProduct: Product soft deleted successfully', [
                 'product_id' => $product->id,
                 'product_name' => $product->name,
-                'new_status' => 'Delete'
+                'new_status' => $deleteStatus->name
             ]);
 
             return [
@@ -340,14 +369,23 @@ class ProductService
     public function searchProducts(string $query)
     {
         Log::info('ProductService@searchProducts: Starting product search', ['query' => $query]);
+        
+        // Get Delete status to exclude it properly
+        $deleteStatusId = $this->getDeleteStatusId();
+        
         $products = Product::with(['type', 'group', 'status'])
-            ->where('name', 'like', "%{$query}%")
-            ->orWhere('sku_number', 'like', "%{$query}%")
+            ->where('product_status_id', '!=', $deleteStatusId) // Exclude deleted products
+            ->where(function($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('sku_number', 'like', "%{$query}%");
+            })
             ->get();
+            
         Log::info('ProductService@searchProducts: Search completed', [
             'query' => $query,
             'results_count' => $products->count(),
-            'product_ids' => $products->pluck('id')->toArray()
+            'product_ids' => $products->pluck('id')->toArray(),
+            'delete_status_id' => $deleteStatusId
         ]);
         return $products;
     }
@@ -385,13 +423,20 @@ class ProductService
     public function getProductsByGroup(int $groupId)
     {
         Log::info('ProductService@getProductsByGroup: Getting products by group', ['group_id' => $groupId]);
+        
+        // Get Delete status to exclude it properly
+        $deleteStatusId = $this->getDeleteStatusId();
+        
         $products = Product::with(['type', 'group', 'status'])
             ->where('product_group_id', $groupId)
+            ->where('product_status_id', '!=', $deleteStatusId) // Exclude deleted products
             ->get();
+            
         Log::info('ProductService@getProductsByGroup: Products retrieved by group', [
             'group_id' => $groupId,
             'products_count' => $products->count(),
-            'product_ids' => $products->pluck('id')->toArray()
+            'product_ids' => $products->pluck('id')->toArray(),
+            'delete_status_id' => $deleteStatusId
         ]);
         return $products;
     }
