@@ -4,6 +4,9 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 {{ __t('product.stock_card_detail_statement', 'Stock Card Detail Statement') }}
+                @if($product)
+                    <span data-product-name="{{ $product->name_en }}" style="display: none;"></span>
+                @endif
             </h4>
         </div>
         <div class="panel-body">
@@ -217,10 +220,3 @@
         @endif
     </div>
 </div>
-
-@push('scripts')
-    <script src="{{ asset('js/forms/picker.js') }}"></script>
-    <script src="{{ asset('js/forms/picker.date.js') }}"></script>
-    <script src="{{ asset('js/pages/pickers.js') }}"></script>
-    <script src="{{ asset('js/tables/datatables/extensions/buttons.min.js') }}"></script>
-@endpush

@@ -40,22 +40,6 @@
 
         });
 
-        // Basic initialization
-        $('.datatable-stock-card').DataTable({
-                ordering: false,
-                buttons: {
-                        dom: {
-                                button: {
-                                        className: 'btn'
-                                }
-                        },
-                        buttons: [
-                                {extend: 'copy', className: 'copyButton' },
-                                {extend: 'csv', className: 'csvButton' },
-                                {extend: 'print', className: 'printButton' }
-                        ]
-                }
-        });
         $('.datatable-warehouse').DataTable({
                 ordering: false,
                 buttons: {
