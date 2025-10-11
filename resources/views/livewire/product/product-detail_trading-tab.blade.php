@@ -11,7 +11,7 @@
                             {{ __t('product.sale_price', 'Sale Price') }} :
                         </div>
                         <div class="col-md-8 col-xs-8 text-left">
-                            {{ $product->sale_price }}
+                            {{ currency($product->sale_price) }}
                         </div>
                     </span>
                 </div>
@@ -59,7 +59,7 @@
                             {{ __t('product.buy_price', 'Buy Price') }} :
                         </div>
                         <div class="col-md-8 col-xs-8 text-left">
-                            {{ $product->buy_price }}
+                            {{ currency($product->buy_price) }}
                         </div>
                     </span>
                 </div>

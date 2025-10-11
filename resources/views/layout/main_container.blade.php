@@ -32,19 +32,19 @@
                             <div class="row text-center p-t-20">
                                 <div class="col-md-6 col-sm-12 hidden-sm">
                                     <h6 class="panel-title text-uppercase text-muted">{{ __t('dashboard.total_earnings_this_year', 'Total earnings this year') }}</h6>	
-                                    <h1 class="panel-title text-uppercase text-size-huge text-semibold">$45,723</h1>	
+                                    <h1 class="panel-title text-uppercase text-size-huge text-semibold">{{ currency(45723) }}</h1>	
                                     <div class="row m-t-20">
                                         <div class="col-md-4 col-sm-4 col-xs-4">
                                             <h6 class="panel-title text-uppercase text-muted">{{ __t('dashboard.america', 'America') }}</h6>	
-                                            <h5 class="panel-title text-uppercase text-size-extralarge">$12,411</h5>	
+                                            <h5 class="panel-title text-uppercase text-size-extralarge">{{ currency(12411) }}</h5>	
                                         </div>
                                         <div class="col-md-4 col-sm-4 col-xs-4">
                                             <h6 class="panel-title text-uppercase text-muted">{{ __t('dashboard.europe', 'Europe') }}</h6>	
-                                            <h5 class="panel-title text-uppercase text-size-extralarge">$24,212</h5>	
+                                            <h5 class="panel-title text-uppercase text-size-extralarge">{{ currency(24212) }}</h5>	
                                         </div>
                                         <div class="col-md-4 col-sm-4 col-xs-4">
                                             <h6 class="panel-title text-uppercase text-muted">{{ __t('dashboard.asia', 'Asia') }}</h6>	
-                                            <h5 class="panel-title text-uppercase text-size-extralarge">$9,100</h5>	
+                                            <h5 class="panel-title text-uppercase text-size-extralarge">{{ currency(9100) }}</h5>	
                                         </div>
                                     </div>
                                 </div>
@@ -81,7 +81,7 @@
                     <div class="panel panel-flat no-border m-t-20">	
                         <div class="row">
                             <div class="col-md-6 col-sm-6 col-xs-6 text-right p-t-20">
-                                <h2 class="no-margin text-semibold text-purple-darker p-t-5">$34,356</h2>
+                                <h2 class="no-margin text-semibold text-purple-darker p-t-5">{{ currency(34356) }}</h2>
                                 <p class="text-muted text-uppercase">{{ __t('dashboard.expected_sales', 'Expected Sales') }}</p>
                             </div>						
                             <div class="col-md-6 col-sm-6 col-xs-6 text-left p-10 p-r-20">

@@ -139,7 +139,7 @@
                                             {{ __t('product.average_sale_price', 'Average Sale Price') }} :
                                         </div>
                                         <div class="col-md-5 col-xs-5 text-left">
-                                            ${{ number_format($averageSalePrice, 2) }}
+                                            {{ currency($averageSalePrice) }}
                                         </div>
                                     </span>
                                 </div>
@@ -149,7 +149,7 @@
                                             {{ __t('product.average_buy_price', 'Average Buy Price') }} :
                                         </div>
                                         <div class="col-md-5 col-xs-5 text-left">
-                                            ${{ number_format($averageBuyPrice, 2) }}
+                                            {{ currency($averageBuyPrice) }}
                                         </div>
                                     </span>
                                 </div>
@@ -159,7 +159,7 @@
                                             {{ __t('product.total_value', 'Total Value') }} :
                                         </div>
                                         <div class="col-md-5 col-xs-5 text-left">
-                                            ${{ number_format($totalValue, 2) }}
+                                            {{ currency($totalValue) }}
                                         </div>
                                     </span>
                                 </div>
@@ -201,7 +201,7 @@
                                                 {{ __t('product.average_sale_price', 'Average Sale Price') }} :
                                             </div>
                                             <div class="col-md-5 col-xs-5 text-left">
-                                                ${{ number_format($warehouseProduct->avr_sale_price, 2) }}
+                                                {{ currency($warehouseProduct->avr_sale_price) }}
                                             </div>
                                         </span>
                                     </div>
@@ -211,7 +211,7 @@
                                                 {{ __t('product.average_buy_price', 'Average Buy Price') }} :
                                             </div>
                                             <div class="col-md-5 col-xs-5 text-left">
-                                                ${{ number_format($warehouseProduct->avr_buy_price, 2) }}
+                                                {{ currency($warehouseProduct->avr_buy_price) }}
                                             </div>
                                         </span>
                                     </div>
@@ -221,7 +221,7 @@
                                                 {{ __t('product.total_value', 'Total Value') }} :
                                             </div>
                                             <div class="col-md-5 col-xs-5 text-left">
-                                                ${{ number_format($warehouseProduct->balance * $warehouseProduct->avr_remain_price, 2) }}
+                                                {{ currency($warehouseProduct->balance * $warehouseProduct->avr_remain_price) }}
                                                 <!-- Debug: Balance={{ $warehouseProduct->balance }}, Price={{ $warehouseProduct->avr_remain_price }} -->
                                             </div>
                                         </span>
@@ -295,7 +295,7 @@
                                                                 {{ __t('product.average_sale_price', 'Average Sale Price') }} :
                                                             </div>
                                                             <div class="col-md-5 col-xs-5 text-left">
-                                                                ${{ number_format($warehouseProduct->avr_sale_price, 2) }}
+                                                                {{ currency($warehouseProduct->avr_sale_price) }}
                                                             </div>
                                                         </span>
                                                     </div>
@@ -305,7 +305,7 @@
                                                                 {{ __t('product.average_buy_price', 'Average Buy Price') }} :
                                                             </div>
                                                             <div class="col-md-5 col-xs-5 text-left">
-                                                                ${{ number_format($warehouseProduct->avr_buy_price, 2) }}
+                                                                {{ currency($warehouseProduct->avr_buy_price) }}
                                                             </div>
                                                         </span>
                                                     </div>
@@ -315,7 +315,7 @@
                                                                 {{ __t('product.total_value', 'Total Value') }} :
                                                             </div>
                                                             <div class="col-md-5 col-xs-5 text-left">
-                                                                ${{ number_format($warehouseProduct->balance * $warehouseProduct->avr_remain_price, 2) }}
+                                                                {{ currency($warehouseProduct->balance * $warehouseProduct->avr_remain_price) }}
                                                                 <!-- Debug: Balance={{ $warehouseProduct->balance }}, Price={{ $warehouseProduct->avr_remain_price }} -->
                                                             </div>
                                                         </span>
@@ -364,7 +364,7 @@
                                             {{ __t('product.sale_price', 'Sale Price') }} :
                                         </div>
                                         <div class="col-md-5 col-xs-5 text-left">
-                                            ${{ number_format($subUnit->sale_price ?? $product->sale_price, 2) }}
+                                            {{ currency($subUnit->sale_price ?? $product->sale_price) }}
                                         </div>
                                     </span>
                                 </div>
@@ -374,7 +374,7 @@
                                             {{ __t('product.buy_price', 'Buy Price') }} :
                                         </div>
                                         <div class="col-md-5 col-xs-5 text-left">
-                                            ${{ number_format($subUnit->buy_price ?? $product->buy_price, 2) }}
+                                            {{ currency($subUnit->buy_price ?? $product->buy_price) }}
                                         </div>
                                     </span>
                                 </div>
@@ -427,7 +427,7 @@
                                                             {{ __t('product.sale_price', 'Sale Price') }} :
                                                         </div>
                                                         <div class="col-md-5 col-xs-5 text-left">
-                                                            ${{ number_format($subUnit->sale_price ?? $product->sale_price, 2) }}
+                                                            {{ currency($subUnit->sale_price ?? $product->sale_price) }}
                                                         </div>
                                                     </span>
                                                 </div>
@@ -437,7 +437,7 @@
                                                             {{ __t('product.buy_price', 'Buy Price') }} :
                                                         </div>
                                                         <div class="col-md-5 col-xs-5 text-left">
-                                                            ${{ number_format($subUnit->buy_price ?? $product->buy_price, 2) }}
+                                                            {{ currency($subUnit->buy_price ?? $product->buy_price) }}
                                                         </div>
                                                     </span>
                                                 </div>
@@ -537,7 +537,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="unitPrice">{{ __t('product.unit_price', 'Unit Price') }} ($):</label>
+                                <label for="unitPrice">{{ __t('product.unit_price', 'Unit Price') }} ({{ currency_symbol() }}):</label>
                                 <input type="number" wire:model.defer="unitPrice" class="form-control" id="unitPrice"
                                        min="0" step="0.01" placeholder="{{ __t('product.enter_unit_price', 'Enter unit price') }}">
                                 @error('unitPrice') <span class="text-danger">{{ $message }}</span> @enderror
@@ -545,7 +545,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="salePrice">{{ __t('product.sale_price', 'Sale Price') }} ($):</label>
+                                <label for="salePrice">{{ __t('product.sale_price', 'Sale Price') }} ({{ currency_symbol() }}):</label>
                                 <input type="number" wire:model.defer="salePrice" class="form-control" id="salePrice"
                                        min="0" step="0.01" placeholder="{{ __t('product.enter_sale_price', 'Enter sale price') }}">
                                 @error('salePrice') <span class="text-danger">{{ $message }}</span> @enderror

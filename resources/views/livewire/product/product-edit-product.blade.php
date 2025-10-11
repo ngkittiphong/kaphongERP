@@ -100,7 +100,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="buy_price">{{ __t('product.buy_price', 'Buy Price') }}</label>
+                                <label for="buy_price">{{ __t('product.buy_price', 'Buy Price') }} ({{ currency_symbol() }})</label>
                                 <input type="number" step="0.01" class="form-control" id="buy_price" wire:model="buy_price" value="{{ $product ? $product->buy_price : 0.00 }}">
                                 @error('buy_price') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
@@ -132,7 +132,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="sale_price">{{ __t('product.sale_price', 'Sale Price') }} *</label>
+                                <label for="sale_price">{{ __t('product.sale_price', 'Sale Price') }} ({{ currency_symbol() }}) *</label>
                                 <input type="number" step="0.01" class="form-control" id="sale_price" wire:model="sale_price" required value="{{ $product ? $product->sale_price : 0.00 }}">
                                 @error('sale_price') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
