@@ -68,6 +68,18 @@
                         </div>
                     </span>
                 </div>
+                
+                @if($totalQuantity == 0)
+                    <div class='row'>
+                        <span href="#" class="list-group-item p-l-20">
+                            <div class="col-md-12 col-xs-12 text-center">
+                                <button class="btn btn-primary btn-sm" wire:click="openStockInModal">
+                                    <i class="icon-plus2"></i> {{ __t('product.stock_in_operation', 'Stock in operation') }}
+                                </button>
+                            </div>
+                        </span>
+                    </div>
+                @endif
 
                 {{-- <div class='row'>
                     <span href="#" class="list-group-item p-l-20">
