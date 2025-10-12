@@ -226,6 +226,46 @@ class TranslationSeeder extends Seeder
             'common.all_rights_reserved' => [
                 'en' => 'All rights reserved',
                 'th' => 'สงวนลิขสิทธิ์'
+            ],
+            'common.change_password' => [
+                'en' => 'Change Password',
+                'th' => 'เปลี่ยนรหัสผ่าน'
+            ],
+            'common.create_success' => [
+                'en' => 'Created successfully',
+                'th' => 'สร้างสำเร็จ'
+            ],
+            'common.delete_success' => [
+                'en' => 'Deleted successfully',
+                'th' => 'ลบสำเร็จ'
+            ],
+            'common.description' => [
+                'en' => 'Description',
+                'th' => 'คำอธิบาย'
+            ],
+            'common.detail' => [
+                'en' => 'Detail',
+                'th' => 'รายละเอียด'
+            ],
+            'common.from_date' => [
+                'en' => 'From Date',
+                'th' => 'จากวันที่'
+            ],
+            'common.note' => [
+                'en' => 'Note',
+                'th' => 'หมายเหตุ'
+            ],
+            'common.to_date' => [
+                'en' => 'To Date',
+                'th' => 'ถึงวันที่'
+            ],
+            'common.update_success' => [
+                'en' => 'Updated successfully',
+                'th' => 'อัปเดตสำเร็จ'
+            ],
+            'common.view_details' => [
+                'en' => 'View Details',
+                'th' => 'ดูรายละเอียด'
             ]
         ];
 
@@ -250,6 +290,22 @@ class TranslationSeeder extends Seeder
             'profile.new_nickname' => [
                 'en' => 'New Nickname',
                 'th' => 'ชื่อเล่นใหม่'
+            ],
+            'profile.click_or_drag_sign' => [
+                'en' => 'Click or drag signature',
+                'th' => 'คลิกหรือลากลายเซ็น'
+            ],
+            'profile.confirm_password' => [
+                'en' => 'Confirm Password',
+                'th' => 'ยืนยันรหัสผ่าน'
+            ],
+            'profile.current_password' => [
+                'en' => 'Current Password',
+                'th' => 'รหัสผ่านปัจจุบัน'
+            ],
+            'profile.new_password' => [
+                'en' => 'New Password',
+                'th' => 'รหัสผ่านใหม่'
             ]
         ];
 
@@ -758,6 +814,70 @@ class TranslationSeeder extends Seeder
             'product.remaining' => [
                 'en' => 'Remaining',
                 'th' => 'คงเหลือ'
+            ],
+            'product.avg_buy_price' => [
+                'en' => 'Average Buy Price',
+                'th' => 'ราคาซื้อเฉลี่ย'
+            ],
+            'product.avg_sale_price' => [
+                'en' => 'Average Sale Price',
+                'th' => 'ราคาขายเฉลี่ย'
+            ],
+            'product.document_number' => [
+                'en' => 'Document Number',
+                'th' => 'หมายเลขเอกสาร'
+            ],
+            'product.error_loading_product_details' => [
+                'en' => 'Error loading product details',
+                'th' => 'ข้อผิดพลาดในการโหลดรายละเอียดสินค้า'
+            ],
+            'product.new_stock' => [
+                'en' => 'New Stock',
+                'th' => 'สต็อกใหม่'
+            ],
+            'product.no_product_details_found' => [
+                'en' => 'No product details found',
+                'th' => 'ไม่พบรายละเอียดสินค้า'
+            ],
+            'product.operation' => [
+                'en' => 'Operation',
+                'th' => 'การดำเนินการ'
+            ],
+            'product.price' => [
+                'en' => 'Price',
+                'th' => 'ราคา'
+            ],
+            'product.product_buy_details' => [
+                'en' => 'Product Buy Details',
+                'th' => 'รายละเอียดการซื้อสินค้า'
+            ],
+            'product.product_image' => [
+                'en' => 'Product Image',
+                'th' => 'รูปภาพสินค้า'
+            ],
+            'product.product_sale_details' => [
+                'en' => 'Product Sale Details',
+                'th' => 'รายละเอียดการขายสินค้า'
+            ],
+            'product.products' => [
+                'en' => 'Products',
+                'th' => 'สินค้า'
+            ],
+            'product.select_warehouse' => [
+                'en' => 'Select Warehouse',
+                'th' => 'เลือกคลังสินค้า'
+            ],
+            'product.stock_in_operation' => [
+                'en' => 'Stock in operation',
+                'th' => 'การรับเข้าสต็อก'
+            ],
+            'product.total_qty' => [
+                'en' => 'Total Quantity',
+                'th' => 'จำนวนรวม'
+            ],
+            'product.type' => [
+                'en' => 'Type',
+                'th' => 'ประเภท'
             ]
         ];
 
@@ -1038,6 +1158,30 @@ class TranslationSeeder extends Seeder
             'branch.update_branch' => [
                 'en' => 'Update Branch',
                 'th' => 'อัปเดตสาขา'
+            ],
+            'branch.address' => [
+                'en' => 'Address',
+                'th' => 'ที่อยู่'
+            ],
+            'branch.branch_code' => [
+                'en' => 'Branch Code',
+                'th' => 'รหัสสาขา'
+            ],
+            'branch.branch_details' => [
+                'en' => 'Branch Details',
+                'th' => 'รายละเอียดสาขา'
+            ],
+            'branch.email' => [
+                'en' => 'Email',
+                'th' => 'อีเมล'
+            ],
+            'branch.head_office' => [
+                'en' => 'Head Office',
+                'th' => 'สำนักงานใหญ่'
+            ],
+            'branch.phone_country_code_placeholder' => [
+                'en' => 'Enter country code',
+                'th' => 'ป้อนรหัสประเทศ'
             ]
         ];
 
@@ -1114,6 +1258,10 @@ class TranslationSeeder extends Seeder
             'user.force_password_change' => [
                 'en' => 'Force user to change password on next login',
                 'th' => 'บังคับให้ผู้ใช้เปลี่ยนรหัสผ่านในการเข้าสู่ระบบครั้งถัดไป'
+            ],
+            'user.default_icon' => [
+                'en' => 'Default Icon',
+                'th' => 'ไอคอนเริ่มต้น'
             ]
         ];
 
@@ -1530,6 +1678,98 @@ class TranslationSeeder extends Seeder
             'warehouse.quality_control_rejects' => [
                 'en' => 'Quality control rejects',
                 'th' => 'การปฏิเสธการควบคุมคุณภาพ'
+            ],
+            'warehouse.average_remain_price' => [
+                'en' => 'Average Remain Price',
+                'th' => 'ราคาเฉลี่ยคงเหลือ'
+            ],
+            'warehouse.balance' => [
+                'en' => 'Balance',
+                'th' => 'ยอดคงเหลือ'
+            ],
+            'warehouse.cancellation_reason' => [
+                'en' => 'Cancellation Reason',
+                'th' => 'เหตุผลการยกเลิก'
+            ],
+            'warehouse.creation_date' => [
+                'en' => 'Creation Date',
+                'th' => 'วันที่สร้าง'
+            ],
+            'warehouse.deactivate_warehouse' => [
+                'en' => 'Deactivate Warehouse',
+                'th' => 'ปิดใช้งานคลังสินค้า'
+            ],
+            'warehouse.edit_warehouse' => [
+                'en' => 'Edit Warehouse',
+                'th' => 'แก้ไขคลังสินค้า'
+            ],
+            'warehouse.enter_price' => [
+                'en' => 'Enter Price',
+                'th' => 'ป้อนราคา'
+            ],
+            'warehouse.enter_warehouse_name' => [
+                'en' => 'Enter Warehouse Name',
+                'th' => 'ป้อนชื่อคลังสินค้า'
+            ],
+            'warehouse.from' => [
+                'en' => 'From',
+                'th' => 'จาก'
+            ],
+            'warehouse.inventory' => [
+                'en' => 'Inventory',
+                'th' => 'สินค้าคงคลัง'
+            ],
+            'warehouse.movements' => [
+                'en' => 'Movements',
+                'th' => 'การเคลื่อนไหว'
+            ],
+            'warehouse.products_to_transfer' => [
+                'en' => 'Products to Transfer',
+                'th' => 'สินค้าที่จะโอนย้าย'
+            ],
+            'warehouse.provide_cancellation_reason' => [
+                'en' => 'Provide Cancellation Reason',
+                'th' => 'ระบุเหตุผลการยกเลิก'
+            ],
+            'warehouse.reactivate_warehouse' => [
+                'en' => 'Reactivate Warehouse',
+                'th' => 'เปิดใช้งานคลังสินค้า'
+            ],
+            'warehouse.select_branch' => [
+                'en' => 'Select Branch',
+                'th' => 'เลือกสาขา'
+            ],
+            'warehouse.select_status' => [
+                'en' => 'Select Status',
+                'th' => 'เลือกสถานะ'
+            ],
+            'warehouse.select_user' => [
+                'en' => 'Select User',
+                'th' => 'เลือกผู้ใช้'
+            ],
+            'warehouse.stock_movement' => [
+                'en' => 'Stock Movement',
+                'th' => 'การเคลื่อนไหวสต็อก'
+            ],
+            'warehouse.transfer_details' => [
+                'en' => 'Transfer Details',
+                'th' => 'รายละเอียดการโอนย้าย'
+            ],
+            'warehouse.transfer_in_transit_note' => [
+                'en' => 'Transfer In Transit Note',
+                'th' => 'หมายเหตุการโอนย้ายระหว่างทาง'
+            ],
+            'warehouse.user_creator' => [
+                'en' => 'User Creator',
+                'th' => 'ผู้สร้าง'
+            ],
+            'warehouse.view_transfer' => [
+                'en' => 'View Transfer',
+                'th' => 'ดูการโอนย้าย'
+            ],
+            'warehouse.warehouse_details' => [
+                'en' => 'Warehouse Details',
+                'th' => 'รายละเอียดคลังสินค้า'
             ]
         ];
 
@@ -1538,6 +1778,18 @@ class TranslationSeeder extends Seeder
             'category.add_new_category' => [
                 'en' => 'Add new category',
                 'th' => 'เพิ่มหมวดหมู่ใหม่'
+            ]
+        ];
+
+        // Transfer translations
+        $transferTranslations = [
+            'transfer.date' => [
+                'en' => 'Date',
+                'th' => 'วันที่'
+            ],
+            'transfer.transfer_slip_number' => [
+                'en' => 'Transfer Slip Number',
+                'th' => 'หมายเลขใบโอนย้าย'
             ]
         ];
 
@@ -1594,6 +1846,46 @@ class TranslationSeeder extends Seeder
             'auth.register_now' => [
                 'en' => 'Register now',
                 'th' => 'สมัครสมาชิกตอนนี้'
+            ],
+            'auth.change_password_notice' => [
+                'en' => 'Change Password Notice',
+                'th' => 'แจ้งเตือนการเปลี่ยนรหัสผ่าน'
+            ],
+            'auth.change_password_required' => [
+                'en' => 'Password change required',
+                'th' => 'จำเป็นต้องเปลี่ยนรหัสผ่าน'
+            ],
+            'auth.current_password' => [
+                'en' => 'Current Password',
+                'th' => 'รหัสผ่านปัจจุบัน'
+            ],
+            'auth.current_password_incorrect' => [
+                'en' => 'Current password is incorrect',
+                'th' => 'รหัสผ่านปัจจุบันไม่ถูกต้อง'
+            ],
+            'auth.new_password' => [
+                'en' => 'New Password',
+                'th' => 'รหัสผ่านใหม่'
+            ],
+            'auth.password_changed_successfully' => [
+                'en' => 'Password changed successfully',
+                'th' => 'เปลี่ยนรหัสผ่านสำเร็จ'
+            ],
+            'auth.session_timeout' => [
+                'en' => 'Session Timeout',
+                'th' => 'หมดเวลาการเข้าสู่ระบบ'
+            ],
+            'auth.sign_out' => [
+                'en' => 'Sign Out',
+                'th' => 'ออกจากระบบ'
+            ],
+            'auth.timeout_message' => [
+                'en' => 'Your session has expired. Please sign in again.',
+                'th' => 'เซสชันของคุณหมดอายุแล้ว กรุณาเข้าสู่ระบบอีกครั้ง'
+            ],
+            'auth.update_password' => [
+                'en' => 'Update Password',
+                'th' => 'อัปเดตรหัสผ่าน'
             ]
         ];
 
@@ -1750,7 +2042,8 @@ class TranslationSeeder extends Seeder
             $warehouseTranslations,
             $settingTranslations,
             $authTranslations,
-            $categoryTranslations
+            $categoryTranslations,
+            $transferTranslations
         );
 
         // Insert translations
