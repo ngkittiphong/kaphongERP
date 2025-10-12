@@ -1,6 +1,7 @@
 <!-- resources/views/livewire/user-profile.blade.php -->
 <!-----------------------------  Start Product Detail    -------------------------->
 
+
 <div class="row p-l-10 p-r-10">
     <!-- 1) Show Loading Spinner (centered) when busy -->
     <div wire:loading.flex class="d-flex align-items-center justify-content-center w-100"
@@ -281,16 +282,12 @@
     <script>
 
         function initSlim() {
-            // Check if DataTable is already initialized and destroy it if exists
-            // This prevents duplicate initialization errors
             console.log('slim script reload');
-            // Remove old script if exists
             const oldScript = document.getElementById('slim-script');
             if (oldScript) {
                 oldScript.remove();
             }
 
-            // Create and append new script using Alpine
             const script = document.createElement('script');
             script.id = 'slim-script';
             script.src = "{{ asset('slim/js/slim.kickstart.min.js') }}";
@@ -306,75 +303,205 @@
                 return;
             }
 
-            // Product Group Typeahead
             const productGroupList = @json($productGroups->pluck('name'));
             console.log('Product Group List:', productGroupList);
 
             $("#product_group_name").typeahead({
-                    source: productGroupList,
-                    minLength: 1,
-                    autoSelect: true,
-                    items: productGroupList.length,
-                    
-                    afterSelect(item) {
-                        console.log('Selected Product Group:', item);
-                        
-                        // Update the input field value
-                        $("#product_group_name").val(item);
-                        
-                        // Update Livewire component property directly without network request
-                        // This updates the component's data without triggering a roundtrip to the server
-                        @this.product_group_name = item;
-                        
-                        console.log('Updated Livewire property directly:', item);
-                    }
-                });
+                source: productGroupList,
+                minLength: 1,
+                autoSelect: true,
+                items: productGroupList.length,
+                afterSelect(item) {
+                    console.log('Selected Product Group:', item);
+                    $("#product_group_name").val(item);
+                    @this.product_group_name = item;
+                    console.log('Updated Livewire property directly:', item);
+                }
+            });
 
-                $("#product_group_name").on('focus keyup', function(e) {
-                    if ($("#product_group_name").val().length === 0) {
-                        // direct lookup on the underlying instance
-                        $("#product_group_name").data('typeahead').lookup();
-                    }
-                });
+            $("#product_group_name").on('focus keyup', function() {
+                if ($("#product_group_name").val().length === 0) {
+                    $("#product_group_name").data('typeahead').lookup();
+                }
+            });
 
-            // Unit Name Typeahead
             const unitNameList = @json($unitNames);
             console.log('Unit Name List:', unitNameList);
 
             $("#unit_name").typeahead({
-                    source: unitNameList,
-                    minLength: 1,
-                    autoSelect: true,
-                    items: unitNameList.length,
-                    
-                    afterSelect(item) {
-                        console.log('Selected Unit Name:', item);
-                        
-                        // Update the input field value
-                        $("#unit_name").val(item);
-                        
-                        // Update Livewire component property directly without network request
-                        // This updates the component's data without triggering a roundtrip to the server
-                        @this.unit_name = item;
-                        
-                        console.log('Updated Livewire unit_name property directly:', item);
-                    }
-                });
+                source: unitNameList,
+                minLength: 1,
+                autoSelect: true,
+                items: unitNameList.length,
+                afterSelect(item) {
+                    console.log('Selected Unit Name:', item);
+                    $("#unit_name").val(item);
+                    @this.unit_name = item;
+                    console.log('Updated Livewire unit_name property directly:', item);
+                }
+            });
 
-                $("#unit_name").on('focus keyup', function(e) {
-                    if ($("#unit_name").val().length === 0) {
-                        // direct lookup on the underlying instance
-                        $("#unit_name").data('typeahead').lookup();
+            $("#unit_name").on('focus keyup', function() {
+                if ($("#unit_name").val().length === 0) {
+                    $("#unit_name").data('typeahead').lookup();
+                }
+            });
+        }
+
+        function normalizeImageSource(source) {
+            if (!source) {
+                return null;
+            }
+
+            const hasCanvasSupport = typeof HTMLCanvasElement !== 'undefined';
+            const hasImageSupport = typeof HTMLImageElement !== 'undefined';
+
+            if (hasCanvasSupport && source instanceof HTMLCanvasElement) {
+                try {
+                    return source.toDataURL('image/png');
+                } catch (error) {
+                    console.error('Failed to convert Slim canvas to data URL:', error);
+                    return null;
+                }
+            }
+
+            if (hasImageSupport && source instanceof HTMLImageElement) {
+                return source.src || null;
+            }
+
+            if (typeof source === 'string' && source.trim() !== '') {
+                return source;
+            }
+
+            if (hasCanvasSupport && typeof source?.toDataURL === 'function') {
+                try {
+                    return source.toDataURL('image/png');
+                } catch (error) {
+                    console.error('Failed to convert canvas-like object to data URL:', error);
+                }
+            }
+
+            if (typeof source?.src === 'string' && source.src.trim() !== '') {
+                return source.src;
+            }
+
+            return null;
+        }
+
+        function extractImage(data) {
+            if (!data || typeof data !== 'object') {
+                return null;
+            }
+
+            const sections = [data.output, data.input, data];
+
+            for (const section of sections) {
+                if (!section || typeof section !== 'object') {
+                    continue;
+                }
+
+                const candidates = [
+                    section.image,
+                    section.canvas,
+                    section.data,
+                    section.dataUrl,
+                    section.src,
+                    section.file
+                ];
+
+                for (const candidate of candidates) {
+                    const normalized = normalizeImageSource(candidate);
+                    if (normalized) {
+                        return normalized;
                     }
-                });
-            
+                }
+            }
+
+            return null;
+        }
+
+        function collectSlimDatasets(controller) {
+            const datasets = [];
+
+            if (!controller) {
+                return datasets;
+            }
+
+            const possibleCollections = [controller.data, controller._data];
+
+            for (const collection of possibleCollections) {
+                if (!collection) {
+                    continue;
+                }
+
+                if (Array.isArray(collection)) {
+                    datasets.push(...collection);
+                } else {
+                    datasets.push(collection);
+                }
+            }
+
+            return datasets;
+        }
+
+        function getSlimResultImage(slimElement) {
+            if (!slimElement) {
+                return null;
+            }
+
+            const possibleDatasets = [];
+
+            if (slimElement.slim) {
+                possibleDatasets.push(...collectSlimDatasets(slimElement.slim));
+            }
+
+            if (typeof Slim !== 'undefined' && typeof Slim.getImages === 'function') {
+                try {
+                    const images = Slim.getImages(slimElement);
+                    if (images) {
+                        if (Array.isArray(images)) {
+                            possibleDatasets.push(...images);
+                        } else {
+                            possibleDatasets.push(images);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error calling Slim.getImages:', error);
+                }
+            }
+
+            for (const dataset of possibleDatasets) {
+                const extracted = extractImage(dataset);
+                if (extracted) {
+                    return extracted;
+                }
+            }
+
+            const resultImage = slimElement.querySelector('.slim-result img.in');
+            if (resultImage && resultImage.src) {
+                return resultImage.src;
+            }
+
+            const fallbackImage = slimElement.querySelector('.slim-area img');
+            if (fallbackImage && fallbackImage.src) {
+                return fallbackImage.src;
+            }
+
+            return null;
         }
 
         function setAvatarFromSlim() {
             const slim = document.getElementById('slim-image');
-            if (slim) {
-                const resultImage = document.querySelector('#slim-image .slim-result img.in');
-                const base64Data = resultImage.src;
+            if (!slim) {
+                return;
+            }
+
+            // const base64Data = getSlimResultImage(slim);
+            // console.log('Slim product image data:', base64Data);
+            const resultImage = document.querySelector('#slim-image .slim-result img.in');
+            const base64Data = resultImage.src;
+
+            if (base64Data) {
                 @this.set('product_cover_img', base64Data);
             }
         }
@@ -401,7 +528,7 @@
                 setTimeout(() => {
                     initSlim();
                     initTypeahead();
-                    initStockCardDataTable()
+                    scheduleStockCardInit('productSelected event', 400);
                     $('.venobox').venobox();
                     
                     // Safely add event listener only if element exists
@@ -747,45 +874,140 @@
             return branchName.replace(/[^a-zA-Z0-9_]/g, '_');
         }
 
+        function destroyStockCardDataTable() {
+            if (typeof $.fn.DataTable === 'undefined') {
+                return;
+            }
+
+            var $table = $('.datatable-stock-card');
+            
+            if ($table.length === 0) {
+                return;
+            }
+
+            // Check if DataTable is already initialized
+            if ($.fn.DataTable.isDataTable($table)) {
+                try {
+                    console.log('Destroying existing DataTable...');
+                    // Use default destroy to keep the original table so Livewire can patch it
+                    $table.DataTable().destroy();
+                } catch (error) {
+                    console.log('Error destroying DataTable:', error);
+                }
+            } else {
+                console.log('Destroy skipped: stock card table is not an initialized DataTable.');
+            }
+
+            // Clean up Select2 instances safely
+            if ($.fn.select2) {
+                try {
+                    var $wrapper = $table.closest('.dataTables_wrapper');
+                    if ($wrapper.length) {
+                        var $lengthSelect = $wrapper.find('.dataTables_length select');
+                        if ($lengthSelect.length) {
+                            $lengthSelect.each(function() {
+                                var $select = $(this);
+                                if ($select.hasClass('select2-hidden-accessible')) {
+                                    try {
+                                        $select.select2('destroy');
+                                    } catch (destroyError) {
+                                        console.log('Select2 destroy error (cleanup):', destroyError);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                } catch (select2Error) {
+                    console.log('Error destroying Select2:', select2Error);
+                }
+            }
+
+            // Clean up any remaining DataTable classes and attributes
+            $table.removeClass('dataTable no-footer');
+            $table.removeAttr('id');
+            $table.find('thead th').removeAttr('tabindex');
+            $table.find('tbody td').removeAttr('tabindex');
+
+            // Remove any DataTable wrapper elements
+            var $wrapper = $table.closest('.dataTables_wrapper');
+            if ($wrapper.length) {
+                // Move table back to original position
+                $wrapper.before($table);
+                $wrapper.remove();
+            }
+
+            // Clear any DataTable data attributes
+            $table.removeData();
+        }
+
+        // Flag to prevent multiple initializations
+        var isStockCardDataTableInitializing = false;
+
         // Initialize Stock Card DataTable with export functionality
         function initStockCardDataTable() {
             console.log('Initializing Stock Card DataTable...');
-            
-            // Check if table exists and is not already initialized
-            if ($('.datatable-stock-card').length > 0 && !$.fn.DataTable.isDataTable('.datatable-stock-card')) {
-                console.log('Found stock card table, initializing with export buttons...');
-                
-                $('.datatable-stock-card').DataTable({
-                    ordering: false,
-                    pageLength: 25,
-                    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-                    dom: '<"datatable-header"l B><"datatable-scroll-wrap"t><"datatable-footer"ip>',
-                    language: {
-                        search: '_INPUT_',
-                        lengthMenu: ' _MENU_',
-                        paginate: { 'first': '{{ __t('common.first', 'First') }}', 'last': '{{ __t('common.last', 'Last') }}', 'next': '&rarr;', 'previous': '&larr;' }
-                    },
-                    buttons: {
-                        dom: {
-                            button: {
-                                className: 'btn btn-sm me-2 mb-2'
-                            },
-                            container: {
-                                className: 'd-flex flex-wrap gap-2 mb-3'
-                            }
+
+            // Prevent multiple simultaneous initializations
+            if (isStockCardDataTableInitializing) {
+                console.log('DataTable initialization already in progress, skipping...');
+                return;
+            }
+
+            isStockCardDataTableInitializing = true;
+
+            destroyStockCardDataTable();
+
+            var $table = $('.datatable-stock-card');
+
+            if ($table.length === 0) {
+                console.log('No stock card table available to initialize. Skipping DataTable setup.');
+                isStockCardDataTableInitializing = false;
+                return;
+            }
+
+            console.log('Found stock card table, initializing with export buttons...');
+
+            var hasDataAttr = $table.data('has-data');
+            var hasData = hasDataAttr === 1 || hasDataAttr === '1' || hasDataAttr === true;
+
+            if (!hasData) {
+                console.log('Stock card table rendered without data. Skipping DataTable initialization.');
+                isStockCardDataTableInitializing = false;
+                return;
+            }
+
+            try {
+                var dataTable = $table.DataTable({
+                ordering: false,
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                dom: '<"datatable-header"l B><"datatable-scroll-wrap"t><"datatable-footer"ip>',
+                language: {
+                    search: '_INPUT_',
+                    lengthMenu: ' _MENU_',
+                    paginate: { 'first': '{{ __t('common.first', 'First') }}', 'last': '{{ __t('common.last', 'Last') }}', 'next': '&rarr;', 'previous': '&larr;' }
+                },
+                buttons: {
+                    dom: {
+                        button: {
+                            className: 'btn btn-sm me-2 mb-2'
                         },
-                        buttons: [
-                            {
-                                extend: 'copy',
-                                className: 'btn btn-primary btn-sm',
-                                text: '<i class="icon-copy me-1"></i>Copy',
-                                title: 'Stock Card Detail Statement'
-                            },
-                            {
-                                extend: 'csv',
-                                className: 'btn btn-success btn-sm',
-                                text: '<i class="icon-file-text2 me-1"></i>CSV',
-                                title: 'Stock Card Detail Statement',
+                        container: {
+                            className: 'd-flex flex-wrap gap-2 mb-3'
+                        }
+                    },
+                    buttons: [
+                        {
+                            extend: 'copy',
+                            className: 'btn btn-primary btn-sm',
+                            text: '<i class="icon-copy me-1"></i>Copy',
+                            title: 'Stock Card Detail Statement'
+                        },
+                        {
+                            extend: 'csv',
+                            className: 'btn btn-success btn-sm',
+                            text: '<i class="icon-file-text2 me-1"></i>CSV',
+                            title: 'Stock Card Detail Statement',
 
                                 // filename: function() {
                                 //     var timestamp = getCurrentDateTimeFormatted();
@@ -794,121 +1016,176 @@
                                 //     var productName = getProductName();
                                 //     return 'Stock_Card_' + timestamp + '_' + dateRange + '_' + branchName + '_' + productName;
                                 // }
-                                filename: 'Stock_Card_Export'
-                            },
-                            {
-                                extend: 'excel',
-                                className: 'btn btn-info btn-sm',
-                                text: '<i class="icon-file-excel me-1"></i>Excel',
-                                title: 'Stock Card Detail Statement',
-                                filename: 'Stock_Card_Export'
-                            },
-                            {
-                                extend: 'pdf',
-                                className: 'btn btn-danger btn-sm',
-                                text: '<i class="icon-file-pdf me-1"></i>PDF',
-                                title: 'Stock Card Detail Statement',
-                                filename: 'Stock_Card_Export',
-                                orientation: 'landscape',
-                                pageSize: 'A4'
-                            },
-                            {
-                                extend: 'print',
-                                className: 'btn btn-warning btn-sm',
-                                text: '<i class="icon-printer me-1"></i>Print',
-                                title: 'Stock Card Detail Statement'
-                            }
-                        ]
+                            filename: 'Stock_Card_Export'
+                        },
+                        {
+                            extend: 'excel',
+                            className: 'btn btn-info btn-sm',
+                            text: '<i class="icon-file-excel me-1"></i>Excel',
+                            title: 'Stock Card Detail Statement',
+                            filename: 'Stock_Card_Export'
+                        },
+                        {
+                            extend: 'pdf',
+                            className: 'btn btn-danger btn-sm',
+                            text: '<i class="icon-file-pdf me-1"></i>PDF',
+                            title: 'Stock Card Detail Statement',
+                            filename: 'Stock_Card_Export',
+                            orientation: 'landscape',
+                            pageSize: 'A4'
+                        },
+                        {
+                            extend: 'print',
+                            className: 'btn btn-warning btn-sm',
+                            text: '<i class="icon-printer me-1"></i>Print',
+                            title: 'Stock Card Detail Statement'
+                        }
+                    ]
+                }
+            });
+
+            console.log('Stock Card DataTable initialized successfully with export buttons');
+
+            var $filterInput = $('.dataTables_filter input[type=search]');
+            if ($filterInput.length) {
+                $filterInput.attr('placeholder','{{ __t('common.type_to_search', 'Type to search...') }}');
+            }
+
+            var $lengthSelect = $('.dataTables_length select');
+            if ($lengthSelect.length && $.fn.select2) {
+                $lengthSelect.each(function() {
+                    var $select = $(this);
+
+                    if ($select.hasClass('select2-hidden-accessible')) {
+                        try {
+                            $select.select2('destroy');
+                        } catch (destroyError) {
+                            console.log('Select2 destroy error (init):', destroyError);
+                        }
+                    }
+
+                    try {
+                        $select.select2({
+                            minimumResultsForSearch: Infinity,
+                            width: 'auto'
+                        });
+                    } catch (initError) {
+                        console.log('Select2 init error:', initError);
                     }
                 });
-                
-                console.log('Stock Card DataTable initialized successfully with export buttons');
-                
-                // Add placeholder to the datatable filter option
-                $('.dataTables_filter input[type=search]').attr('placeholder','{{ __t('common.type_to_search', 'Type to search...') }}');
-                
-                // Enable Select2 select for the length option
-                $('.dataTables_length select').select2({
-                    minimumResultsForSearch: Infinity,
-                    width: 'auto'
-                });
-                
-                // Add custom click handlers for dynamic filenames
-                setTimeout(function() {
-                    // CSV Button
-                    $('.dt-buttons .btn-success').off('click').on('click', function(e) {
+            }
+
+            // Add custom click handlers for dynamic filenames
+            setTimeout(function() {
+                var csvButton = dataTable.button('.btn-success');
+                if (csvButton && csvButton.length) {
+                    $(csvButton.node()).off('click').on('click', function(e) {
                         e.preventDefault();
                         var timestamp = getCurrentDateTimeFormatted();
                         var dateRange = getDateRange();
                         var branchName = getBranchName();
                         var productName = getProductName();
                         var filename = 'Stock_Card_' + timestamp + '_' + dateRange + '_' + branchName + '_' + productName + '.csv';
-                        
-                        // Trigger the DataTable CSV export with custom filename
-                        var table = $('.datatable-stock-card').DataTable();
-                        table.button('.btn-success').trigger();
-                        
-                        // Try to set filename after a short delay
+
+                        csvButton.trigger();
+
                         setTimeout(function() {
-                            // This is a workaround - the actual filename setting depends on the browser
                             console.log('CSV Export triggered with filename: ' + filename);
                         }, 100);
                     });
-                    
-                    // Excel Button
-                    $('.dt-buttons .btn-info').off('click').on('click', function(e) {
+                }
+
+                var excelButton = dataTable.button('.btn-info');
+                if (excelButton && excelButton.length) {
+                    $(excelButton.node()).off('click').on('click', function(e) {
                         e.preventDefault();
                         var timestamp = getCurrentDateTimeFormatted();
                         var dateRange = getDateRange();
                         var branchName = getBranchName();
                         var productName = getProductName();
                         var filename = 'Stock_Card_' + timestamp + '_' + dateRange + '_' + branchName + '_' + productName + '.xlsx';
-                        
-                        var table = $('.datatable-stock-card').DataTable();
-                        table.button('.btn-info').trigger();
-                        
+
+                        excelButton.trigger();
+
                         setTimeout(function() {
                             console.log('Excel Export triggered with filename: ' + filename);
                         }, 100);
                     });
-                    
-                    // PDF Button
-                    $('.dt-buttons .btn-danger').off('click').on('click', function(e) {
+                }
+
+                var pdfButton = dataTable.button('.btn-danger');
+                if (pdfButton && pdfButton.length) {
+                    $(pdfButton.node()).off('click').on('click', function(e) {
                         e.preventDefault();
                         var timestamp = getCurrentDateTimeFormatted();
                         var dateRange = getDateRange();
                         var branchName = getBranchName();
                         var productName = getProductName();
                         var filename = 'Stock_Card_' + timestamp + '_' + dateRange + '_' + branchName + '_' + productName + '.pdf';
-                        
-                        var table = $('.datatable-stock-card').DataTable();
-                        table.button('.btn-danger').trigger();
-                        
+
+                        pdfButton.trigger();
+
                         setTimeout(function() {
                             console.log('PDF Export triggered with filename: ' + filename);
                         }, 100);
                     });
-                }, 200);
-                
-            } else {
-                console.log('Stock card table not found or already initialized');
+                }
+            }, 200);
+            } catch (error) {
+                console.error('DataTable initialization failed:', error);
+                isStockCardDataTableInitializing = false;
+                return;
             }
+            
+            // Reset the flag when initialization is complete
+            isStockCardDataTableInitializing = false;
         }
 
-        // Initialize when DOM is ready
-        $(document).ready(function() {
-            // Small delay to ensure Livewire has rendered the table
+        function scheduleStockCardInit(reason, delay) {
+            var actualDelay = typeof delay === 'number' ? delay : 300;
+            console.log('Scheduling stock card DataTable init (' + reason + ') in ' + actualDelay + 'ms');
             setTimeout(function() {
                 initStockCardDataTable();
-            }, 500);
-        });
+            }, actualDelay);
+        }
 
-        // Re-initialize when Livewire updates
-        document.addEventListener('livewire:updated', function() {
-            setTimeout(function() {
-                initStockCardDataTable();
-            }, 300);
-        });
+        if (typeof document !== 'undefined') {
+            document.addEventListener('DOMContentLoaded', function() {
+                scheduleStockCardInit('DOMContentLoaded', 500);
+            });
+
+            document.addEventListener('livewire:load', function() {
+                if (typeof Livewire !== 'undefined' && Livewire.hook) {
+                    Livewire.hook('message.sent', function() {
+                        destroyStockCardDataTable();
+                    });
+
+                    Livewire.hook('message.processed', function(message, component) {
+                        try {
+                            var componentName = component?.fingerprint?.name || 'unknown';
+                            var hasTableInComponent = false;
+
+                            if (component && component.el && typeof component.el.querySelector === 'function') {
+                                hasTableInComponent = !!component.el.querySelector('.datatable-stock-card');
+                            }
+
+                            var hasTableInDocument = !!document.querySelector('.datatable-stock-card');
+
+                            if (hasTableInComponent || hasTableInDocument) {
+                                scheduleStockCardInit('Livewire message.processed (' + componentName + ')', 350);
+                            }
+                        } catch (hookError) {
+                            console.error('Error in Livewire message.processed hook for stock card init:', hookError);
+                        }
+                    });
+                } else {
+                    console.warn('Livewire.hook not available; falling back to livewire:updated event for stock card init.');
+                    document.addEventListener('livewire:updated', function() {
+                        scheduleStockCardInit('fallback livewire:updated', 350);
+                    });
+                }
+            });
+        }
 
     </script>
 @endpush

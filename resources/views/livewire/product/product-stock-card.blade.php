@@ -141,10 +141,29 @@
                     </div>
                 </div>
 
-                <!-- Stock Movements Table -->
-                <div class="table-responsive">
-                    <table class="table datatable-stock-card">
-                        <thead>
+                @php
+                    $hasStockMovements = count($stockMovements) > 0;
+                    $stockCardSignature = md5(json_encode([
+                        'productId' => $product->id ?? 'none',
+                        'filters' => [
+                            'startDate' => $startDate ?? null,
+                            'endDate' => $endDate ?? null,
+                            'branch' => $selectedBranchId ?? null,
+                        ],
+                        'metrics' => [
+                            'incoming' => $incomingStock,
+                            'outgoing' => $outgoingStock,
+                            'remaining' => $remainingStock,
+                            'unit' => $unitName,
+                        ],
+                        'movements' => $stockMovements,
+                    ]));
+                @endphp
+
+                <div wire:key="stock-card-{{ $stockCardSignature }}">
+                    <div class="table-responsive">
+                        <table class="table datatable-stock-card" data-has-data="{{ $hasStockMovements ? '1' : '0' }}">
+                            <thead>
                             <tr>
                                 <th>{{ __t('product.move', 'Move') }}</th>
                                 <th>{{ __t('product.date', 'Date') }}</th>
@@ -156,57 +175,56 @@
                                 <th>{{ __t('product.unit', 'Unit') }}</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @forelse($stockMovements as $movement)
-                                <tr style="background-color:{{ $movement['color'] }}">
-                                    <td>{{ $movement['type'] == 'in' ? __t('product.in', 'In') : __t('product.out', 'Out') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($movement['date'])->format('d/m/Y') }}</td>
-                                    <td>
-                                        <a href="#" title="{{ __t('product.view_document', 'View Document') }}">{{ $movement['document_no'] }}</a>
-                                    </td>
-                                    <td>{{ $movement['detail'] }}</td>
-                                    <td>{{ $movement['warehouse'] }}</td>
-                                    <td>{{ $movement['quantity_in'] > 0 ? number_format($movement['quantity_in']) : '-' }}</td>
-                                    <td>{{ $movement['quantity_out'] > 0 ? number_format($movement['quantity_out']) : '-' }}</td>
-                                    <td>{{ $movement['unit'] }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="8" class="text-center">
-                                        <div class="alert alert-info">
-                                            <i class="icon-info22"></i> {{ __t('product.no_stock_movements_found', 'No stock movements found for the selected period.') }}
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforelse
+                            <tbody>
+                                @if($hasStockMovements)
+                                    @foreach($stockMovements as $movement)
+                                        <tr style="background-color:{{ $movement['color'] }}">
+                                            <td>{{ $movement['type'] == 'in' ? __t('product.in', 'In') : __t('product.out', 'Out') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($movement['date'])->format('d/m/Y') }}</td>
+                                            <td>
+                                                <a href="#" title="{{ __t('product.view_document', 'View Document') }}">{{ $movement['document_no'] }}</a>
+                                            </td>
+                                            <td>{{ $movement['detail'] }}</td>
+                                            <td>{{ $movement['warehouse'] }}</td>
+                                            <td>{{ $movement['quantity_in'] > 0 ? number_format($movement['quantity_in']) : '-' }}</td>
+                                            <td>{{ $movement['quantity_out'] > 0 ? number_format($movement['quantity_out']) : '-' }}</td>
+                                            <td>{{ $movement['unit'] }}</td>
+                                        </tr>
+                                    @endforeach
 
-                            @if(count($stockMovements) > 0)
-                                <!-- Summary Row -->
-                                <tr class="bg-light">
-                                    <td></td>
-                                    <td><strong>{{ __t('product.total', 'Total') }}</strong></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td><strong>{{ number_format($incomingStock) }}</strong></td>
-                                    <td><strong>{{ number_format($outgoingStock) }}</strong></td>
-                                    <td><strong>{{ $unitName }}</strong></td>
-                                </tr>
-                                
-                                <!-- Remaining Stock Row -->
-                                <tr class="bg-info">
-                                    <td></td>
-                                    <td><strong>{{ __t('product.remaining', 'Remaining') }}</strong></td>
-                                    <td><strong>{{ number_format($remainingStock) }}</strong></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td><strong>{{ $unitName }}</strong></td>
-                                </tr>
-                            @endif
-                        </tbody>
-                    </table>
+                                    <!-- Summary Row -->
+                                    <tr class="bg-light">
+                                        <td></td>
+                                        <td><strong>{{ __t('product.total', 'Total') }}</strong></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><strong>{{ number_format($incomingStock) }}</strong></td>
+                                        <td><strong>{{ number_format($outgoingStock) }}</strong></td>
+                                        <td><strong>{{ $unitName }}</strong></td>
+                                    </tr>
+                                    
+                                    <!-- Remaining Stock Row -->
+                                    <tr class="bg-info">
+                                        <td></td>
+                                        <td><strong>{{ __t('product.remaining', 'Remaining') }}</strong></td>
+                                        <td><strong>{{ number_format($remainingStock) }}</strong></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><strong>{{ $unitName }}</strong></td>
+                                    </tr>
+                                @else
+                                    <tr class="stock-card-empty">
+                                        <td colspan="8" class="text-center text-muted">
+                                            <i class="icon-info22"></i> {{ __t('product.no_stock_movements_found', 'No stock movements found for the selected period.') }}
+                                        </td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         @else

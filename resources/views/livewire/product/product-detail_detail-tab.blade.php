@@ -1,4 +1,4 @@
-<div class="tab-pane active" id="tab-detail">
+<div class="tab-pane active" id="tab-detail" wire:key="product-detail-tab-{{ $product->id ?? 'none' }}">
 
     <div class="row col-md-12 col-xs-12">
         <div class="col-md-4 col-xs-12">
