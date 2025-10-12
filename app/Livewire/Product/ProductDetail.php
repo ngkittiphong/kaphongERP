@@ -10,6 +10,7 @@ use App\Models\ProductStatus;
 use App\Models\Vat;
 use App\Models\Withholding;
 use App\Models\WarehouseProduct;
+use App\Models\Warehouse;
 use App\Livewire\Product\ProductStockCard;
 use App\Services\InventoryService;
 use App\Services\ProductService;
@@ -26,6 +27,7 @@ class ProductDetail extends Component
     public $vats = [];
     public $withholdings = [];
     public $unitNames = [];
+    public $warehouses = [];
     
     // Warehouse product data
     public $warehouseProducts = [];
@@ -67,6 +69,7 @@ class ProductDetail extends Component
     public $salePrice = 0;
     public $detail = '';
     public $currentStock = 0;
+    public $isStockInModal = false; // Flag to indicate if this is a stock-in modal for new products
 
     protected $listeners = [
         'ProductSelected' => 'loadProduct',
@@ -103,6 +106,13 @@ class ProductDetail extends Component
             ->sort()
             ->values()
             ->toArray();
+            
+        // Load warehouses for stock-in modal
+        $this->warehouses = Warehouse::with('branch')
+            ->whereHas('status', function($query) {
+                $query->where('name', 'Active');
+            })
+            ->get();
     }
 
     public function loadProduct($productId)
@@ -417,6 +427,7 @@ class ProductDetail extends Component
         $this->selectedWarehouseId = $warehouseId;
         $this->selectedWarehouseName = $warehouseName;
         $this->showStockModal = true;
+        $this->isStockInModal = false; // This is regular stock adjustment
         $this->resetStockModalFields();
         
         // Get current stock for the warehouse
@@ -443,11 +454,45 @@ class ProductDetail extends Component
     }
 
     /**
+     * Open stock-in modal for products with no warehouse data
+     */
+    public function openStockInModal()
+    {
+        \Log::info("🚀 [STOCK IN MODAL] Opening stock-in modal for new product");
+        
+        $this->selectedWarehouseId = null;
+        $this->selectedWarehouseName = '';
+        $this->showStockModal = true;
+        $this->isStockInModal = true; // This is stock-in modal for new products
+        $this->resetStockModalFields();
+        
+        // Set operation type to stock_in automatically
+        $this->operationType = 'stock_in';
+        
+        // Set current stock to 0 since product has no warehouse data
+        $this->currentStock = 0;
+        
+        $this->unitName = $this->product->unit_name ?? 'pcs';
+        
+        // Pre-fill prices with product's current prices
+        $this->unitPrice = $this->product->buy_price ?? 0;
+        $this->salePrice = $this->product->sale_price ?? 0;
+        
+        \Log::info("🚀 [STOCK IN MODAL] Modal state set - showModal: {$this->showStockModal}, operationType: '{$this->operationType}', currentStock: {$this->currentStock}");
+        \Log::info("🚀 [STOCK IN MODAL] Pre-filled prices - unitPrice: {$this->unitPrice}, salePrice: {$this->salePrice}");
+        
+        $this->dispatch('showStockModal');
+    }
+
+    /**
      * Reset stock modal fields
      */
     public function resetStockModalFields()
     {
-        $this->operationType = '';
+        // Don't reset operationType if this is a stock-in modal
+        if (!$this->isStockInModal) {
+            $this->operationType = '';
+        }
         $this->quantity = 0;
         // Keep the pre-filled prices from product data
         $this->unitPrice = $this->product->buy_price ?? 0;
@@ -468,6 +513,22 @@ class ProductDetail extends Component
     }
 
     /**
+     * Handle warehouse selection change in stock-in modal
+     */
+    public function updatedSelectedWarehouseId()
+    {
+        if ($this->isStockInModal && $this->selectedWarehouseId) {
+            \Log::info("🔄 [STOCK IN MODAL] Warehouse selected: " . $this->selectedWarehouseId);
+            
+            // Update selected warehouse name for display
+            $selectedWarehouse = $this->warehouses->firstWhere('id', $this->selectedWarehouseId);
+            if ($selectedWarehouse) {
+                $this->selectedWarehouseName = $selectedWarehouse->name;
+            }
+        }
+    }
+
+    /**
      * Process stock operation
      */
     public function processStockOperation($confirm = false)
@@ -481,13 +542,20 @@ class ProductDetail extends Component
         ]);
 
         try {
-            $this->validate([
+            $validationRules = [
                 'operationType' => 'required|in:stock_in,stock_out,adjustment',
                 'quantity' => 'required|numeric|min:0.01',
                 'unitPrice' => 'nullable|numeric|min:0',
                 'salePrice' => 'nullable|numeric|min:0',
                 'detail' => 'nullable|string|max:255'
-            ]);
+            ];
+            
+            // Add warehouse validation for stock-in modal
+            if ($this->isStockInModal) {
+                $validationRules['selectedWarehouseId'] = 'required|exists:warehouses,id';
+            }
+            
+            $this->validate($validationRules);
             
             \Log::info("🚀 [PROCESS] Validation passed");
         } catch (\Exception $e) {
@@ -506,7 +574,10 @@ class ProductDetail extends Component
 
             $resolvedCurrentStock = 0;
 
-            if ($this->selectedWarehouseId > 0) {
+            if ($this->isStockInModal) {
+                // For stock-in modal, current stock is always 0 since product has no warehouse data
+                $resolvedCurrentStock = 0;
+            } elseif ($this->selectedWarehouseId > 0) {
                 $warehouseProduct = WarehouseProduct::where('warehouse_id', $this->selectedWarehouseId)
                     ->where('product_id', $this->product->id)
                     ->first();
@@ -532,6 +603,13 @@ class ProductDetail extends Component
                 'newStock' => $newStock
             ]);
 
+            // Get warehouse name for confirmation
+            $warehouseName = $this->selectedWarehouseName;
+            if ($this->isStockInModal && $this->selectedWarehouseId) {
+                $selectedWarehouse = $this->warehouses->firstWhere('id', $this->selectedWarehouseId);
+                $warehouseName = $selectedWarehouse ? $selectedWarehouse->name : 'N/A';
+            }
+
             $this->dispatch('confirmStockOperation',
                 operationType: $this->operationType,
                 currentStock: $resolvedCurrentStock,
@@ -539,7 +617,7 @@ class ProductDetail extends Component
                 productName: $this->product->name,
                 productSku: $this->product->sku_number,
                 productImage: asset('assets/images/default_product.png'),
-                warehouseName: $this->selectedWarehouseName,
+                warehouseName: $warehouseName,
                 operationDate: now()->format('d/m/Y'),
                 operationTime: now()->format('H:i:s'),
                 documentNumber: 'STK-' . now()->format('YmdHis'),
@@ -550,7 +628,7 @@ class ProductDetail extends Component
         }
 
         // Additional validation for stock out operations
-        if ($this->operationType === 'stock_out' && $this->selectedWarehouseId > 0) {
+        if ($this->operationType === 'stock_out' && $this->selectedWarehouseId > 0 && !$this->isStockInModal) {
             $warehouseProduct = WarehouseProduct::where('warehouse_id', $this->selectedWarehouseId)
                 ->where('product_id', $this->product->id)
                 ->first();
@@ -564,8 +642,8 @@ class ProductDetail extends Component
         try {
             $inventoryService = new InventoryService();
             
-            // Handle "Total All Warehouses" case
-            if ($this->selectedWarehouseId == 0) {
+            // Handle "Total All Warehouses" case (not applicable for stock-in modal)
+            if ($this->selectedWarehouseId == 0 && !$this->isStockInModal) {
                 $this->processAllWarehousesOperation($inventoryService);
                 return;
             }
@@ -694,6 +772,7 @@ class ProductDetail extends Component
     public function closeStockModal()
     {
         $this->showStockModal = false;
+        $this->isStockInModal = false;
         $this->resetStockModalFields();
         $this->dispatch('hideStockModal');
     }

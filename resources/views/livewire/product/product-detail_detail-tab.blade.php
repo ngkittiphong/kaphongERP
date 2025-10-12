@@ -247,8 +247,8 @@
                                 <h4 class="text-warning">{{ __t('product.no_warehouse_data_found', 'No Warehouse Data Found') }}</h4>
                                 <p>{{ __t('product.no_inventory_data_message', 'This product has no inventory data in any warehouse') }}</p>
                                 <div class="m-t-10">
-                                    <button class="btn btn-primary btn-sm" wire:click="$dispatch('showEditProductForm')">
-                                        <i class="icon-plus2"></i> {{ __t('product.add_warehouse_data', 'Add Warehouse Data') }}
+                                    <button class="btn btn-primary btn-sm" wire:click="openStockInModal">
+                                        <i class="icon-plus2"></i> {{ __t('product.stock_in_operation', 'Stock in operation') }}
                                     </button>
                                 </div>
                             </div>
@@ -474,7 +474,13 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="{{ __t('common.close', 'Close') }}" wire:click="closeStockModal">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title" id="stockAdjustmentModalLabel">{{ __t('product.adjust_stock', 'Adjust Stock') }} - {{ $selectedWarehouseName ?? '' }}</h4>
+                <h4 class="modal-title" id="stockAdjustmentModalLabel">
+                    @if($isStockInModal)
+                        {{ __t('product.stock_in_operation', 'Stock in operation') }} - {{ $product->name ?? 'N/A' }}
+                    @else
+                        {{ __t('product.adjust_stock', 'Adjust Stock') }} - {{ $selectedWarehouseName ?? '' }}
+                    @endif
+                </h4>
             </div>
             <div class="modal-body" style="padding-top: 10px;">
                 <!-- Product Information Section -->
@@ -499,23 +505,46 @@
                     </div>
                 </div>
 
+                <!-- Warehouse Selection Section (only for stock-in modal) -->
+                @if($isStockInModal)
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="selectedWarehouseId">{{ __t('product.select_warehouse', 'Select Warehouse') }}:</label>
+                                <select wire:model.live="selectedWarehouseId" class="form-control" id="selectedWarehouseId">
+                                    <option value="">{{ __t('product.select_warehouse', 'Select Warehouse') }}</option>
+                                    @foreach($warehouses as $warehouse)
+                                        <option value="{{ $warehouse->id }}">{{ $warehouse->name }} @if($warehouse->branch) ({{ $warehouse->branch->name_en }}) @endif</option>
+                                    @endforeach
+                                </select>
+                                @error('selectedWarehouseId') <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Operation Form Section -->
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="operationType">{{ __t('product.operation_type', 'Operation Type') }}:</label>
-                            <select wire:model.live="operationType" class="form-control" id="operationType">
-                                <option value="">{{ __t('product.select_operation', 'Select Operation') }}</option>
-                                <option value="stock_in">{{ __t('product.stock_in', 'Stock In') }}</option>
-                                <option value="stock_out">{{ __t('product.stock_out', 'Stock Out') }}</option>
-                                <option value="adjustment">{{ __t('product.stock_adjustment', 'Stock Adjustment') }}</option>
-                            </select>
+                            @if($isStockInModal)
+                                <input type="text" class="form-control" value="{{ __t('product.stock_in', 'Stock In') }}" readonly>
+                                <input type="hidden" wire:model="operationType" value="stock_in">
+                            @else
+                                <select wire:model.live="operationType" class="form-control" id="operationType">
+                                    <option value="">{{ __t('product.select_operation', 'Select Operation') }}</option>
+                                    <option value="stock_in">{{ __t('product.stock_in', 'Stock In') }}</option>
+                                    <option value="stock_out">{{ __t('product.stock_out', 'Stock Out') }}</option>
+                                    <option value="adjustment">{{ __t('product.stock_adjustment', 'Stock Adjustment') }}</option>
+                                </select>
+                            @endif
                             @error('operationType') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
                     </div>
                 </div>
 
-                @if($operationType)
+                @if($operationType && (!$isStockInModal || $selectedWarehouseId))
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -573,7 +602,15 @@
                             <i class="icon-info22"></i> {{ __t('product.current_stock_information', 'Current Stock Information') }}
                         </h6>
                         <p class="text-muted" style="margin-bottom: 5px;">
-                            <strong>{{ __t('product.warehouse', 'Warehouse') }}:</strong> {{ $selectedWarehouseName ?? 'N/A' }}
+                            <strong>{{ __t('product.warehouse', 'Warehouse') }}:</strong> 
+                            @if($isStockInModal && $selectedWarehouseId)
+                                @php
+                                    $selectedWarehouse = $warehouses->firstWhere('id', $selectedWarehouseId);
+                                @endphp
+                                {{ $selectedWarehouse ? $selectedWarehouse->name : 'N/A' }}
+                            @else
+                                {{ $selectedWarehouseName ?? 'N/A' }}
+                            @endif
                         </p>
                         <p class="text-muted" style="margin-bottom: 5px;">
                             <strong>{{ __t('product.current_remaining', 'Current Remaining') }}:</strong> 
@@ -597,7 +634,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal" wire:click="closeStockModal">{{ __t('common.cancel', 'Cancel') }}</button>
-                @if($operationType)
+                @if($operationType && (!$isStockInModal || $selectedWarehouseId))
                     <button type="button" class="btn btn-primary" wire:click="processStockOperation"
                             wire:loading.attr="disabled">
                         <span wire:loading.remove wire:target="processStockOperation">
