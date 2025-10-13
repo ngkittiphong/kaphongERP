@@ -678,32 +678,12 @@
 
                 @this.on('showSuccessMessage', (data) => {
                     console.log('🚀 [JS] Success message received:', data);
-                    if (typeof Swal !== 'undefined') {
-                        setTimeout(() => {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: data.message || 'Operation completed successfully!',
-                                confirmButtonText: 'OK'
-                            });
-                        }, 300);
-                    } else {
-                        alert('Success: ' + (data.message || 'Operation completed successfully!'));
-                    }
+                    window.showSuccessAlert('Success', data.message || 'Operation completed successfully!');
                 });
 
                 @this.on('showErrorMessage', (data) => {
                     console.log('🚀 [JS] Error message received:', data);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.message || 'An error occurred!',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        setTimeout(() => {
-                            $('#stockAdjustmentModal').modal('show');
-                        }, 200);
-                    });
+                    window.showErrorAlert('Error', data.message || 'An error occurred!');
                 });
             });
 

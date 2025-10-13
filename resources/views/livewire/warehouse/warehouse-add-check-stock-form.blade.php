@@ -281,13 +281,12 @@
 
     // Listen for success message
     window.addEventListener('showSuccessMessage', event => {
-        // You can replace this with a toast notification library
-        alert(event.detail);
+        window.showSuccessAlert('Success', event.detail);
     });
 
     // Listen for error message
     window.addEventListener('showErrorMessage', event => {
-        alert(event.detail);
+        window.showErrorAlert('Error', event.detail);
     });
 </script>
 @endpush

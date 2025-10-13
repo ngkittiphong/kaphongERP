@@ -2073,6 +2073,74 @@ class TranslationSeeder extends Seeder
             ]
         ];
 
+        // Alert translations for SweetAlert standardization
+        $alertTranslations = [
+            'alert.success_title' => [
+                'en' => 'Success',
+                'th' => 'สำเร็จ'
+            ],
+            'alert.error_title' => [
+                'en' => 'Error',
+                'th' => 'ข้อผิดพลาด'
+            ],
+            'alert.warning_title' => [
+                'en' => 'Warning',
+                'th' => 'คำเตือน'
+            ],
+            'alert.info_title' => [
+                'en' => 'Information',
+                'th' => 'ข้อมูล'
+            ],
+            'alert.confirm_title' => [
+                'en' => 'Confirm Action',
+                'th' => 'ยืนยันการดำเนินการ'
+            ],
+            'alert.confirm_message' => [
+                'en' => 'Are you sure you want to continue?',
+                'th' => 'คุณแน่ใจหรือไม่ว่าต้องการดำเนินการต่อ?'
+            ],
+            'alert.confirm_delete_title' => [
+                'en' => 'Delete Confirmation',
+                'th' => 'ยืนยันการลบ'
+            ],
+            'alert.confirm_delete_message' => [
+                'en' => 'Are you sure you want to delete this item? This action cannot be undone!',
+                'th' => 'คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้? การดำเนินการนี้ไม่สามารถยกเลิกได้!'
+            ],
+            'alert.confirm_action' => [
+                'en' => 'Yes, Continue',
+                'th' => 'ใช่, ดำเนินการต่อ'
+            ],
+            'alert.cancel_action' => [
+                'en' => 'Cancel',
+                'th' => 'ยกเลิก'
+            ],
+            'alert.yes' => [
+                'en' => 'Yes',
+                'th' => 'ใช่'
+            ],
+            'alert.no' => [
+                'en' => 'No',
+                'th' => 'ไม่'
+            ],
+            'alert.ok' => [
+                'en' => 'OK',
+                'th' => 'ตกลง'
+            ],
+            'alert.try_again' => [
+                'en' => 'Try Again',
+                'th' => 'ลองอีกครั้ง'
+            ],
+            'alert.close' => [
+                'en' => 'Close',
+                'th' => 'ปิด'
+            ],
+            'alert.dismiss' => [
+                'en' => 'Dismiss',
+                'th' => 'ปิด'
+            ]
+        ];
+
         // Combine all translations
         $allTranslations = array_merge(
             $sidebarTranslations,
@@ -2087,7 +2155,8 @@ class TranslationSeeder extends Seeder
             $settingTranslations,
             $authTranslations,
             $categoryTranslations,
-            $transferTranslations
+            $transferTranslations,
+            $alertTranslations
         );
 
         // Insert translations

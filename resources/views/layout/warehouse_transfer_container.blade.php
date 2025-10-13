@@ -334,19 +334,7 @@
 
         // Listen for success message
         window.addEventListener('showSuccessMessage', event => {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    title: '{{ __t('common.success', 'Success!') }}',
-                    text: event.detail,
-                    icon: 'success',
-                    confirmButtonText: '{{ __t('common.ok', 'OK') }}',
-                    confirmButtonColor: '#007bff',
-                    timer: 3000,
-                    timerProgressBar: true
-                });
-            } else {
-                alert(event.detail);
-            }
+            window.showSuccessAlert('{{ __t('common.success', 'Success!') }}', event.detail);
         });
         
 

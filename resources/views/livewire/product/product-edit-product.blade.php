@@ -237,12 +237,7 @@
 
         // Error message handler
         Livewire.on('showErrorMessage', (data) => {
-            Swal.fire({
-                title: '{{ __t('common.error', 'Error!') }}',
-                text: data.message,
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
+            window.showErrorAlert('{{ __t('common.error', 'Error!') }}', data.message);
         });
     });
 </script>

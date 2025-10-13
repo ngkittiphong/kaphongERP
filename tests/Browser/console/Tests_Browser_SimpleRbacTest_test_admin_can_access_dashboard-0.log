@@ -1,8 +1,0 @@
-[
-    {
-        "level": "SEVERE",
-        "message": "http:\/\/localhost\/_dusk\/logout - Failed to load resource: the server responded with a status of 404 (Not Found)",
-        "source": "network",
-        "timestamp": 1759165842222
-    }
-]

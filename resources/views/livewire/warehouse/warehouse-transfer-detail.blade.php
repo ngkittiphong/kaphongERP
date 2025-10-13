@@ -540,7 +540,7 @@
             productListHtml = '<div>{{ __t('product.error_loading_product_details', 'Error loading product details') }}</div>';
         }
 
-        Swal.fire({
+        window.showSweetAlertConfirm({
             title: 'Confirm Transfer Creation',
             html: `
                 <div style="text-align: left;">
@@ -574,7 +574,6 @@
                 </div>
             `,
             icon: 'question',
-            showCancelButton: true,
             confirmButtonText: 'Create Transfer',
             cancelButtonText: 'Cancel',
             confirmButtonColor: '#007bff',
@@ -582,17 +581,8 @@
             allowOutsideClick: false,
             allowEscapeKey: false,
             width: '700px',
-            didOpen: () => {
-                console.log('🔥 Transfer confirmation dialog opened');
-            }
-        }).then((result) => {
-            console.log('🔥 Transfer confirmation result:', result);
-            if (result.isConfirmed) {
-                console.log('🔥 User confirmed transfer creation');
-                Livewire.dispatch('confirmSubmit', { confirmed: true }, 'warehouse.warehouse-add-transfer-form');
-            } else {
-                console.log('🔥 User cancelled transfer creation');
-            }
+            callbackMethod: 'confirmSubmit',
+            callbackParams: { confirmed: true }
         });
     });
 

@@ -102,3 +102,93 @@ if (!function_exists('currency_name')) {
         return config("currency.currencies.{$currencyCode}.name", config('currency.name', 'Thai Baht'));
     }
 }
+
+if (!function_exists('swal_success')) {
+    /**
+     * Show a success SweetAlert
+     *
+     * @param string $title Alert title
+     * @param string|null $message Alert message
+     * @param array $options Additional options
+     * @return array SweetAlert payload
+     */
+    function swal_success(string $title, ?string $message = null, array $options = []): array
+    {
+        return app(\App\Services\SweetAlertService::class)->success($title, $message, $options);
+    }
+}
+
+if (!function_exists('swal_error')) {
+    /**
+     * Show an error SweetAlert
+     *
+     * @param string $title Alert title
+     * @param string|null $message Alert message
+     * @param array $options Additional options
+     * @return array SweetAlert payload
+     */
+    function swal_error(string $title, ?string $message = null, array $options = []): array
+    {
+        return app(\App\Services\SweetAlertService::class)->error($title, $message, $options);
+    }
+}
+
+if (!function_exists('swal_confirm')) {
+    /**
+     * Show a confirmation SweetAlert
+     *
+     * @param string $title Alert title
+     * @param string|null $message Alert message
+     * @param array $options Additional options
+     * @return array SweetAlert payload
+     */
+    function swal_confirm(string $title, ?string $message = null, array $options = []): array
+    {
+        return app(\App\Services\SweetAlertService::class)->confirm($title, $message, $options);
+    }
+}
+
+if (!function_exists('swal_info')) {
+    /**
+     * Show an info SweetAlert
+     *
+     * @param string $title Alert title
+     * @param string|null $message Alert message
+     * @param array $options Additional options
+     * @return array SweetAlert payload
+     */
+    function swal_info(string $title, ?string $message = null, array $options = []): array
+    {
+        return app(\App\Services\SweetAlertService::class)->info($title, $message, $options);
+    }
+}
+
+if (!function_exists('swal_warning')) {
+    /**
+     * Show a warning SweetAlert
+     *
+     * @param string $title Alert title
+     * @param string|null $message Alert message
+     * @param array $options Additional options
+     * @return array SweetAlert payload
+     */
+    function swal_warning(string $title, ?string $message = null, array $options = []): array
+    {
+        return app(\App\Services\SweetAlertService::class)->warning($title, $message, $options);
+    }
+}
+
+if (!function_exists('swal_question')) {
+    /**
+     * Show a question SweetAlert
+     *
+     * @param string $title Alert title
+     * @param string|null $message Alert message
+     * @param array $options Additional options
+     * @return array SweetAlert payload
+     */
+    function swal_question(string $title, ?string $message = null, array $options = []): array
+    {
+        return app(\App\Services\SweetAlertService::class)->question($title, $message, $options);
+    }
+}

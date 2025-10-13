@@ -596,24 +596,18 @@ class ProductDetail extends Component
                 currency($this->subUnitBuyPrice)
             );
 
-            $this->dispatch('showSweetAlert', [
-                'title' => $successTitle,
-                'text' => $successMessage . ' ' . $pricingSummary,
-                'icon' => 'success',
-                'timer' => 2800,
-                'showConfirmButton' => false,
-                'allowOutsideClick' => false,
-                'allowEscapeKey' => true,
-            ]);
+            $this->dispatch('showSweetAlert', swal_success(
+                $successTitle,
+                $successMessage . ' ' . $pricingSummary,
+                ['timer' => 2800, 'allowOutsideClick' => false, 'allowEscapeKey' => true]
+            ));
 
         } catch (\Exception $e) {
             \Log::error("🚀 [SUB UNIT MODAL] Error saving sub-unit: " . $e->getMessage());
-            $this->dispatch('showSweetAlert', [
-                'title' => __t('common.error', 'Error'),
-                'text' => __t('product.sub_unit_save_failed', 'Failed to save sub-unit. Please check required fields and try again.'),
-                'icon' => 'error',
-                'confirmButtonText' => 'Try Again'
-            ]);
+            $this->dispatch('showSweetAlert', swal_error(
+                __t('common.error', 'Error'),
+                __t('product.sub_unit_save_failed', 'Failed to save sub-unit. Please check required fields and try again.')
+            ));
         }
     }
 
@@ -627,19 +621,11 @@ class ProductDetail extends Component
 
         \Log::info("🚀 [SUB UNIT MODAL] Dispatching showSweetAlertConfirm event");
 
-        $this->dispatch('showSweetAlertConfirm', [
-            'title' => 'Delete Sub-Unit',
-            'text' => "Are you sure you want to delete the sub-unit '{$subUnitName}'? This action cannot be undone!",
-            'icon' => 'warning',
-            'showCancelButton' => true,
-            'confirmButtonText' => 'Yes, Delete It!',
-            'cancelButtonText' => 'Cancel',
-            'confirmButtonColor' => '#dc3545',
-            'cancelButtonColor' => '#6c757d',
-            'allowOutsideClick' => false,
-            'allowEscapeKey' => true,
-            'subUnitId' => $subUnitId
-        ]);
+        $this->dispatch('showSweetAlertConfirm', swal_confirm(
+            __t('alert.confirm_delete_title', 'Delete Sub-Unit'),
+            __t('product.confirm_delete_sub_unit', "Are you sure you want to delete the sub-unit '{$subUnitName}'? This action cannot be undone!"),
+            ['subUnitId' => $subUnitId]
+        ));
     }
 
     public function deleteSubUnit($subUnitId)
@@ -656,19 +642,18 @@ class ProductDetail extends Component
 
             // Show success message using SweetAlert
             \Log::info("🚀 [SUB UNIT MODAL] Dispatching showSweetAlert success event");
-            $this->dispatch('showSweetAlert', [
-                'title' => 'Sub-Unit Deleted!',
-                'text' => 'Sub-unit has been deleted successfully!',
-                'icon' => 'success',
-                'timer' => 3000,
-                'showConfirmButton' => false
-            ]);
+            $this->dispatch('showSweetAlert', swal_success(
+                __t('product.sub_unit_deleted', 'Sub-Unit Deleted!'),
+                __t('product.sub_unit_deleted_successfully', 'Sub-unit has been deleted successfully!'),
+                ['timer' => 3000]
+            ));
 
         } catch (\Exception $e) {
             \Log::error("🚀 [SUB UNIT MODAL] Error deleting sub-unit: " . $e->getMessage());
-            $this->dispatch('showSweetAlert', [
-                'title' => 'Delete Failed!',
-                'html' => '
+            $this->dispatch('showSweetAlert', swal_error(
+                __t('product.delete_failed', 'Delete Failed!'),
+                __t('product.sub_unit_delete_error', 'Failed to delete sub-unit. Please try again.'),
+                ['html' => '
                     <div style="text-align: center;">
                         <p style="margin-bottom: 15px;">Failed to delete sub-unit. Please try again.</p>
                         <div style="background-color: #f8d7da; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545;">
@@ -678,10 +663,8 @@ class ProductDetail extends Component
                             <span style="color: #721c24;">• Try again or contact support</span>
                         </div>
                     </div>
-                ',
-                'icon' => 'error',
-                'confirmButtonText' => 'Try Again'
-            ]);
+                ']
+            ));
         }
     }
 

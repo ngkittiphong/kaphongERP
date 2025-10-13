@@ -141,13 +141,19 @@ class WarehouseAddCheckStockForm extends Component
             $this->dispatch('checkStockReportListUpdated');
             $this->dispatch('checkStockReportSelected', $checkStockReport);
             $this->dispatch('hideAddForm');
-            $this->dispatch('showSuccessMessage', 'Check stock report created successfully with ' . count($this->selectedProducts) . ' products!');
+            $this->dispatch('showSweetAlert', swal_success(
+                __t('alert.success_title', 'Success'),
+                __t('warehouse.check_stock_report_created_successfully', 'Check stock report created successfully with ') . count($this->selectedProducts) . __t('warehouse.products', ' products!')
+            ));
 
             // Reset form
             $this->resetForm();
 
         } catch (\Exception $e) {
-            $this->dispatch('showErrorMessage', 'Error creating check stock report: ' . $e->getMessage());
+            $this->dispatch('showSweetAlert', swal_error(
+                __t('common.error', 'Error'),
+                __t('warehouse.error_creating_check_stock_report', 'Error creating check stock report: ') . $e->getMessage()
+            ));
         }
     }
 

@@ -41,21 +41,12 @@
 @push('scripts')
     <script>
         function confirmDelete(userId) {
-            Swal.fire({
-                title: "Are you sure?",
-                text: "This action cannot be undone!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Livewire.dispatch('deleteUser', {
-                        userId: userId
-                    });
-                }
-            });
+            window.showConfirmDialog(
+                "Are you sure?",
+                "This action cannot be undone!",
+                'deleteUser',
+                { userId: userId }
+            );
         }
         
         // Password change modal functions
@@ -129,11 +120,7 @@
                 },
                 success: function(response) {
                     // Show success message
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: 'Password changed successfully!',
-                    });
+                    window.showSuccessAlert('Success', 'Password changed successfully!');
                     // Close modal
                     $('#passwordChangeModal').modal('hide');
                     // Clear form
@@ -151,11 +138,7 @@
                         }
                     } else {
                         // Display general error
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Failed to change password. Please try again.',
-                        });
+                        window.showErrorAlert('Error', 'Failed to change password. Please try again.');
                     }
                 }
             });
@@ -166,11 +149,7 @@
 
     <script>
         Livewire.on('userCreated', data => {
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: data.message,
-            });
+            window.showSuccessAlert('Success', data.message);
         });
     </script>
 

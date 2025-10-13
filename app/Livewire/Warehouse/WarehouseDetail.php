@@ -550,7 +550,10 @@ class WarehouseDetail extends Component
 
         if (!$this->selectedProduct) {
             \Log::error("🚀 [STOCK MODAL] Product not found with ID: {$productId}");
-            $this->dispatch('showErrorMessage', message: 'Product not found');
+            $this->dispatch('showSweetAlert', swal_error(
+                __t('common.error', 'Error'),
+                __t('warehouse.product_not_found', 'Product not found')
+            ));
             return;
         }
 
@@ -580,7 +583,10 @@ class WarehouseDetail extends Component
 
         if (!$this->selectedProduct) {
             \Log::error("🚀 [TRANSFER FORM] Product not found with ID: {$productId}");
-            $this->dispatch('showErrorMessage', message: 'Product not found');
+            $this->dispatch('showSweetAlert', swal_error(
+                __t('common.error', 'Error'),
+                __t('warehouse.product_not_found', 'Product not found')
+            ));
             return;
         }
 
@@ -665,7 +671,10 @@ class WarehouseDetail extends Component
     public function processProductStockOperation($confirm = false)
     {
         if (!$this->selectedProduct) {
-            $this->dispatch('showErrorMessage', message: 'Product not loaded');
+            $this->dispatch('showSweetAlert', swal_error(
+                __t('common.error', 'Error'),
+                __t('warehouse.product_not_loaded', 'Product not loaded')
+            ));
             return;
         }
 
@@ -679,7 +688,10 @@ class WarehouseDetail extends Component
             ]);
         } catch (\Exception $e) {
             \Log::error("🚀 [PRODUCT EDIT MODAL] Validation failed: " . $e->getMessage());
-            $this->dispatch('showErrorMessage', message: 'Validation failed: ' . $e->getMessage());
+            $this->dispatch('showSweetAlert', swal_error(
+                __t('common.error', 'Error'),
+                __t('warehouse.validation_failed', 'Validation failed: ') . $e->getMessage()
+            ));
             return;
         }
 
@@ -767,13 +779,22 @@ class WarehouseDetail extends Component
                 $this->closeProductEditModal();
                 $this->loadWarehouseInventory();
                 $this->loadWarehouseMovements();
-                $this->dispatch('showSuccessMessage', message: $result['message'] ?? 'Stock updated successfully');
+                $this->dispatch('showSweetAlert', swal_success(
+                    __t('alert.success_title', 'Success'),
+                    $result['message'] ?? __t('warehouse.stock_updated_successfully', 'Stock updated successfully')
+                ));
             } else {
-                $this->dispatch('showErrorMessage', message: 'Stock operation failed');
+                $this->dispatch('showSweetAlert', swal_error(
+                    __t('common.error', 'Error'),
+                    __t('warehouse.stock_operation_failed', 'Stock operation failed')
+                ));
             }
         } catch (\Exception $e) {
             \Log::error("🚀 [PRODUCT EDIT MODAL] Stock operation failed: " . $e->getMessage());
-            $this->dispatch('showErrorMessage', message: 'Stock operation failed: ' . $e->getMessage());
+            $this->dispatch('showSweetAlert', swal_error(
+                __t('common.error', 'Error'),
+                __t('warehouse.stock_operation_failed', 'Stock operation failed: ') . $e->getMessage()
+            ));
         }
     }
 

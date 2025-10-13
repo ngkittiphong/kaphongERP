@@ -40,21 +40,12 @@
 @push('scripts')
     <script>
         function confirmDelete(branchId) {
-            Swal.fire({
-                title: "{{ __t('common.are_you_sure', 'Are you sure?') }}",
-                text: "{{ __t('common.action_cannot_be_undone', 'This action cannot be undone!') }}",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "{{ __t('common.yes_delete_it', 'Yes, delete it!') }}"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Livewire.dispatch('deleteBranch', {
-                        branchId: branchId
-                    });
-                }
-            });
+            window.showConfirmDialog(
+                "{{ __t('common.are_you_sure', 'Are you sure?') }}",
+                "{{ __t('common.action_cannot_be_undone', 'This action cannot be undone!') }}",
+                'deleteBranch',
+                { branchId: branchId }
+            );
         }
     </script>
 
@@ -62,27 +53,15 @@
 
     <script>
         Livewire.on('branchCreated', data => {
-            Swal.fire({
-                icon: 'success',
-                title: '{{ __t('common.create_success', 'Create Success') }}',
-                text: data.message,
-            });
+            window.showSuccessAlert('{{ __t('common.create_success', 'Create Success') }}', data.message);
         });
 
         Livewire.on('branchUpdated', data => {
-            Swal.fire({
-                icon: 'success',
-                title: '{{ __t('common.update_success', 'Update Success') }}',
-                text: data.message,
-            });
+            window.showSuccessAlert('{{ __t('common.update_success', 'Update Success') }}', data.message);
         });
 
         Livewire.on('branchDeleted', data => {
-            Swal.fire({
-                icon: 'success',
-                title: '{{ __t('common.delete_success', 'Delete Success') }}',
-                text: data.message,
-            });
+            window.showSuccessAlert('{{ __t('common.delete_success', 'Delete Success') }}', data.message);
         });
     </script>
 

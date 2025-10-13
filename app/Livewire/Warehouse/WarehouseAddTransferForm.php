@@ -541,7 +541,10 @@ class WarehouseAddTransferForm extends Component
             Log::info('🔥 Dispatching events...');
             $this->dispatch('transferSlipCreated', $transferSlip->id);
             $this->dispatch('transferSlipListUpdated');
-            $this->dispatch('showSuccessMessage', 'Transfer slip created successfully!');
+            $this->dispatch('showSweetAlert', swal_success(
+                __t('alert.success_title', 'Success'),
+                __t('transfer.transfer_slip_created_successfully', 'Transfer slip created successfully!')
+            ));
             Log::info('🔥 Events dispatched successfully');
             
             // Reset form and hide

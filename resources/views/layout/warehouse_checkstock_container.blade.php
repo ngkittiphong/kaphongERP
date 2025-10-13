@@ -203,7 +203,7 @@
 
         // Listen for success message
         window.addEventListener('showSuccessMessage', event => {
-            alert(event.detail);
+            window.showSuccessAlert('Success', event.detail);
         });
 </script>
 @endpush

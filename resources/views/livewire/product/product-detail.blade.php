@@ -710,87 +710,22 @@
 
             // Handle SweetAlert confirmations for sub-units
             @this.on('showSweetAlertConfirm', (data) => {
-                // Check if SweetAlert is available
-                if (typeof Swal === 'undefined') {
-                    console.error('🚀 [JS] SweetAlert is not loaded!');
-                    // Fallback to native confirm
-                    const fallbackData = Array.isArray(data) ? data[0] : (data || {});
-                    if (confirm('Are you sure you want to delete this sub-unit?')) {
-                        @this.call('deleteSubUnit', fallbackData.subUnitId);
-                    }
-                    return;
-                }
-
                 const eventData = Array.isArray(data) ? data[0] : (data || {});
                 const subUnitId = eventData.subUnitId ?? null;
-                const showCancelButton = resolveBoolean(eventData.showCancelButton, true);
-                const allowOutsideClick = resolveBoolean(eventData.allowOutsideClick, false);
-                const allowEscapeKey = resolveBoolean(eventData.allowEscapeKey, true);
-
-                // Remove any existing modals/overlays that might interfere
-                $('.modal-backdrop').remove();
-                $('body').removeClass('modal-open');
                 
-                // Create SweetAlert with proper configuration
-                Swal.fire({
-                    title: eventData.title || 'Delete Sub-Unit',
-                    text: eventData.text || "Are you sure you want to delete this sub-unit? This action cannot be undone!",
-                    html: eventData.html || undefined,
-                    icon: eventData.icon || 'warning',
-                    showCancelButton,
-                    confirmButtonText: eventData.confirmButtonText || 'Yes, Delete It!',
-                    cancelButtonText: eventData.cancelButtonText || 'Cancel',
-                    confirmButtonColor: eventData.confirmButtonColor || '#dc3545',
-                    cancelButtonColor: eventData.cancelButtonColor || '#6c757d',
-                    allowOutsideClick,
-                    allowEscapeKey,
-                    width: eventData.width || '420px',
-                    customClass: {
-                        popup: 'swal-wide'
-                    }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        @this.call('deleteSubUnit', subUnitId);
-                    }
-                }).catch((error) => {
-                    console.error('🚀 [JS] SweetAlert error:', error);
-                    // Fallback to native confirm if SweetAlert fails
-                    if (confirm('Are you sure you want to delete this sub-unit?')) {
-                        @this.call('deleteSubUnit', subUnitId);
-                    }
-                });
+                // Add callback information to the data
+                const dataWithCallback = {
+                    ...eventData,
+                    callbackMethod: 'deleteSubUnit',
+                    callbackParams: { subUnitId: subUnitId }
+                };
+                
+                window.showSweetAlertConfirm(dataWithCallback);
             });
 
             // Handle SweetAlert messages for sub-units
             @this.on('showSweetAlert', (data) => {
-                // Check if SweetAlert is available
-                if (typeof Swal === 'undefined') {
-                    console.error('🚀 [JS] SweetAlert is not loaded for success message!');
-                    const fallback = Array.isArray(data) ? data[0] : (data || {});
-                    // Fallback to native alert
-                    alert((fallback.title || 'Notice') + ': ' + (fallback.html ? fallback.html.replace(/<[^>]*>/g, '') : (fallback.text || '')));
-                    return;
-                }
-
-                const eventData = Array.isArray(data) ? data[0] : (data || {});
-                const showConfirmButton = resolveBoolean(eventData.showConfirmButton, true);
-                const allowOutsideClick = resolveBoolean(eventData.allowOutsideClick, true);
-                const allowEscapeKey = resolveBoolean(eventData.allowEscapeKey, true);
-                const timerValue = eventData.timer !== undefined ? Number(eventData.timer) : undefined;
-                const timer = Number.isNaN(timerValue) ? undefined : timerValue;
-
-                Swal.fire({
-                    title: eventData.title || '{{ __t('common.success', 'Success') }}',
-                    text: eventData.text || undefined,
-                    html: eventData.html || undefined,
-                    icon: eventData.icon || 'success',
-                    timer,
-                    showConfirmButton,
-                    confirmButtonText: eventData.confirmButtonText || 'OK',
-                    allowOutsideClick,
-                    allowEscapeKey,
-                    width: eventData.width || '400px'
-                });
+                window.showSweetAlert(data);
             });
 
             @this.on('refreshDataTable', () => {
