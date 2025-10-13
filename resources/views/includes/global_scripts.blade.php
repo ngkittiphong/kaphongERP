@@ -24,7 +24,8 @@
 <script src="{{ asset('js/forms/switchery.js') }}"></script>
 <script src="{{ asset('js/forms/select2.min.js') }}"></script>	
 <script src="{{ asset('js/core.js') }}"></script>
-<script src="{{ asset('js/sweetalert.js') }}"></script>
+{{-- Removed legacy SweetAlert v1 include to ensure SweetAlert2 is used consistently --}}
+{{-- <script src="{{ asset('js/sweetalert.js') }}"></script> --}}
 
 
 
@@ -77,31 +78,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     $('#change-nickname-modal').modal('hide');
                     
                     // Show success message with SweetAlert2
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: 'Nickname updated successfully!',
-                        timer: 3000,
-                        showConfirmButton: false
-                    });
+                    window.showSuccessAlert('Success!', 'Nickname updated successfully!');
                 } else {
                     // Show error message with SweetAlert2
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.message || 'Error updating nickname',
-                        confirmButtonText: 'OK'
-                    });
+                    window.showErrorAlert('Error', data.message || 'Error updating nickname');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error updating nickname. Please try again.',
-                    confirmButtonText: 'OK'
-                });
+                window.showErrorAlert('Error', 'Error updating nickname. Please try again.');
             });
         });
     }
@@ -162,13 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('change-password-form').reset();
                     
                     // Show success message with SweetAlert2
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: 'Password changed successfully!',
-                        timer: 3000,
-                        showConfirmButton: false
-                    });
+                    window.showSuccessAlert('Success!', 'Password changed successfully!');
                 } else {
                     // Show error messages
                     if (data.errors) {
@@ -186,23 +165,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     } else {
                         // Show error message with SweetAlert2
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.message || 'Error changing password. Please try again.',
-                            confirmButtonText: 'OK'
-                        });
+                        window.showErrorAlert('Error', data.message || 'Error changing password. Please try again.');
                     }
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error changing password. Please try again.',
-                    confirmButtonText: 'OK'
-                });
+                window.showErrorAlert('Error', 'Error changing password. Please try again.');
             });
         });
     }
@@ -212,6 +181,239 @@ document.addEventListener('DOMContentLoaded', function() {
 
 {{-- SweetAlert2 --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- SweetAlert Global Utilities -->
+<script>
+/**
+ * Global SweetAlert utilities for consistent UI alerts across the application
+ * These functions provide standardized interfaces for all SweetAlert interactions
+ */
+
+// Default configuration constants
+window.SWEETALERT_DEFAULTS = {
+    width: '400px',
+    allowOutsideClick: true,
+    allowEscapeKey: true,
+    confirmButtonColor: '#007bff',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'OK',
+    cancelButtonText: 'Cancel'
+};
+
+/**
+ * Normalize boolean values from various sources (strings, numbers, booleans)
+ * @param {*} value - The value to normalize
+ * @param {boolean} defaultValue - Default value if normalization fails
+ * @returns {boolean} Normalized boolean value
+ */
+window.resolveBoolean = function(value, defaultValue = false) {
+    if (typeof value === 'boolean') {
+        return value;
+    }
+    
+    if (typeof value === 'string') {
+        const lowerValue = value.toLowerCase();
+        if (lowerValue === 'true' || lowerValue === '1' || lowerValue === 'yes') {
+            return true;
+        }
+        if (lowerValue === 'false' || lowerValue === '0' || lowerValue === 'no') {
+            return false;
+        }
+    }
+    
+    if (typeof value === 'number') {
+        return value !== 0;
+    }
+    
+    return defaultValue;
+};
+
+/**
+ * Show a SweetAlert with standardized configuration
+ * Handles info, success, error, and warning alerts
+ * @param {Object} data - Alert configuration object
+ */
+window.showSweetAlert = function(data) {
+    // Check if SweetAlert is available
+    if (typeof Swal === 'undefined') {
+        console.error('SweetAlert is not loaded!');
+        // Fallback to native alert
+        const fallback = Array.isArray(data) ? data[0] : (data || {});
+        const message = (fallback.title || 'Notice') + ': ' + 
+                       (fallback.html ? fallback.html.replace(/<[^>]*>/g, '') : (fallback.text || ''));
+        alert(message);
+        return;
+    }
+
+    const eventData = Array.isArray(data) ? data[0] : (data || {});
+    
+    // Normalize boolean values
+    const showConfirmButton = window.resolveBoolean(eventData.showConfirmButton, true);
+    const allowOutsideClick = window.resolveBoolean(eventData.allowOutsideClick, true);
+    const allowEscapeKey = window.resolveBoolean(eventData.allowEscapeKey, true);
+    
+    // Parse timer value
+    const timerValue = eventData.timer !== undefined ? Number(eventData.timer) : undefined;
+    const timer = Number.isNaN(timerValue) ? undefined : timerValue;
+
+    // Remove any existing modals/overlays that might interfere
+    $('.modal-backdrop').remove();
+    $('body').removeClass('modal-open');
+
+    // Create SweetAlert with standardized configuration
+    Swal.fire({
+        title: eventData.title || '{{ __t('alert.success_title', 'Success') }}',
+        text: eventData.text || undefined,
+        html: eventData.html || undefined,
+        icon: eventData.icon || 'success',
+        timer: timer,
+        showConfirmButton: showConfirmButton,
+        confirmButtonText: eventData.confirmButtonText || window.SWEETALERT_DEFAULTS.confirmButtonText,
+        confirmButtonColor: eventData.confirmButtonColor || window.SWEETALERT_DEFAULTS.confirmButtonColor,
+        allowOutsideClick: allowOutsideClick,
+        allowEscapeKey: allowEscapeKey,
+        width: eventData.width || window.SWEETALERT_DEFAULTS.width,
+        customClass: {
+            popup: 'swal-wide'
+        }
+    }).catch((error) => {
+        console.error('SweetAlert error:', error);
+        // Fallback to native alert if SweetAlert fails
+        const message = (eventData.title || 'Notice') + ': ' + 
+                       (eventData.html ? eventData.html.replace(/<[^>]*>/g, '') : (eventData.text || ''));
+        alert(message);
+    });
+};
+
+/**
+ * Show a SweetAlert confirmation dialog with callback support
+ * Handles confirmation dialogs with standardized configuration
+ * @param {Object} data - Alert configuration object with callback information
+ */
+window.showSweetAlertConfirm = function(data) {
+    // Check if SweetAlert is available
+    if (typeof Swal === 'undefined') {
+        console.error('SweetAlert is not loaded!');
+        // Fallback to native confirm
+        const fallback = Array.isArray(data) ? data[0] : (data || {});
+        const message = fallback.text || fallback.title || 'Are you sure?';
+        if (confirm(message)) {
+            // Execute callback if provided
+            if (fallback.callbackMethod && window.Livewire) {
+                window.Livewire.dispatch(fallback.callbackMethod, fallback.callbackParams || {});
+            }
+        }
+        return;
+    }
+
+    const eventData = Array.isArray(data) ? data[0] : (data || {});
+    
+    // Normalize boolean values
+    const showCancelButton = window.resolveBoolean(eventData.showCancelButton, true);
+    const allowOutsideClick = window.resolveBoolean(eventData.allowOutsideClick, false);
+    const allowEscapeKey = window.resolveBoolean(eventData.allowEscapeKey, true);
+
+    // Remove any existing modals/overlays that might interfere
+    $('.modal-backdrop').remove();
+    $('body').removeClass('modal-open');
+    
+    // Create SweetAlert with proper configuration
+    Swal.fire({
+        title: eventData.title || '{{ __t('alert.confirm_title', 'Confirm Action') }}',
+        text: eventData.text || '{{ __t('alert.confirm_message', 'Are you sure you want to continue?') }}',
+        html: eventData.html || undefined,
+        icon: eventData.icon || 'warning',
+        showCancelButton: showCancelButton,
+        confirmButtonText: eventData.confirmButtonText || '{{ __t('alert.confirm_action', 'Yes, Continue') }}',
+        cancelButtonText: eventData.cancelButtonText || window.SWEETALERT_DEFAULTS.cancelButtonText,
+        confirmButtonColor: eventData.confirmButtonColor || '#dc3545',
+        cancelButtonColor: eventData.cancelButtonColor || window.SWEETALERT_DEFAULTS.cancelButtonColor,
+        allowOutsideClick: allowOutsideClick,
+        allowEscapeKey: allowEscapeKey,
+        width: eventData.width || '420px',
+        customClass: {
+            popup: 'swal-wide'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Execute callback if provided
+            if (eventData.callbackMethod && window.Livewire) {
+                window.Livewire.dispatch(eventData.callbackMethod, eventData.callbackParams || {});
+            }
+        }
+    }).catch((error) => {
+        console.error('SweetAlert confirmation error:', error);
+        // Fallback to native confirm if SweetAlert fails
+        const message = eventData.text || eventData.title || 'Are you sure?';
+        if (confirm(message)) {
+            if (eventData.callbackMethod && window.Livewire) {
+                window.Livewire.dispatch(eventData.callbackMethod, eventData.callbackParams || {});
+            }
+        }
+    });
+};
+
+/**
+ * Show a standardized success alert
+ * @param {string} title - Alert title
+ * @param {string} message - Alert message
+ * @param {Object} options - Additional options
+ */
+window.showSuccessAlert = function(title, message, options = {}) {
+    window.showSweetAlert({
+        title: title,
+        text: message,
+        icon: 'success',
+        timer: 3000,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        ...options
+    });
+};
+
+/**
+ * Show a standardized error alert
+ * @param {string} title - Alert title
+ * @param {string} message - Alert message
+ * @param {Object} options - Additional options
+ */
+window.showErrorAlert = function(title, message, options = {}) {
+    window.showSweetAlert({
+        title: title,
+        text: message,
+        icon: 'error',
+        showConfirmButton: true,
+        confirmButtonText: '{{ __t('alert.try_again', 'Try Again') }}',
+        confirmButtonColor: '#dc3545',
+        ...options
+    });
+};
+
+/**
+ * Show a standardized confirmation dialog
+ * @param {string} title - Alert title
+ * @param {string} message - Alert message
+ * @param {Function} onConfirm - Callback function for confirmation
+ * @param {Object} options - Additional options
+ */
+window.showConfirmDialog = function(title, message, onConfirm, options = {}) {
+    window.showSweetAlertConfirm({
+        title: title,
+        text: message,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '{{ __t('alert.confirm_action', 'Yes, Continue') }}',
+        cancelButtonText: '{{ __t('alert.cancel_action', 'Cancel') }}',
+        confirmButtonColor: '#dc3545',
+        width: '420px',
+        allowOutsideClick: false,
+        ...options,
+        callbackMethod: onConfirm
+    });
+};
+
+console.log('SweetAlert utilities loaded successfully');
+</script>
 
 @endunless
 
