@@ -54,7 +54,7 @@ class WarehouseAddCheckStockForm extends Component
 
     public function mount()
     {
-        $this->warehouses = Warehouse::where('warehouse_status_id', 1)->get(); // Active warehouses
+        $this->warehouses = Warehouse::where('warehouse_status_id', '!=', 0)->get(); // Exclude deleted warehouses
         $this->users = User::where('user_status_id', 1)->get(); // Active users
         $this->products = Product::where('product_status_id', 1)->get(); // Active products
         $this->datetime_create = now()->format('Y-m-d\TH:i');

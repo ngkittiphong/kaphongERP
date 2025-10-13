@@ -52,7 +52,7 @@
                                             <i class="icon-pencil6"></i> {{ __t('warehouse.edit_warehouse', 'Edit Warehouse') }}
                                         </button>
                                         <button class="btn btn-danger" onclick="confirmDelete({{ $warehouse->id ?? 0 }})">
-                                            <i class="icon-trash"></i> {{ __t('warehouse.deactivate_warehouse', 'Deactivate Warehouse') }}
+                                            <i class="icon-trash"></i> {{ __t('warehouse.delete_warehouse', 'Delete Warehouse') }}
                                         </button>
                                     @else
                                         <button class="btn btn-success" onclick="confirmReactivate({{ $warehouse->id ?? 0 }})">

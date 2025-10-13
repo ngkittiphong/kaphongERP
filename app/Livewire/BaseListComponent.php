@@ -82,9 +82,9 @@ abstract class BaseListComponent extends Component
         if ($this->model === \App\Models\Product::class) {
             $relationships = ['type', 'group', 'status', 'subUnits', 'inventories'];
         } elseif ($this->model === \App\Models\Warehouse::class) {
-            $relationships = ['branch', 'inventories'];
+            $relationships = ['branch', 'inventories', 'status'];
         } elseif ($this->model === \App\Models\Branch::class) {
-            $relationships = ['company', 'warehouses'];
+            $relationships = ['company', 'warehouses', 'status'];
         } else {
             // Default relationships for other models
             $relationships = [];

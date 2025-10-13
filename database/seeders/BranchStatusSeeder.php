@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class WarehouseStatusesSeeder extends Seeder
+class BranchStatusSeeder extends Seeder
 {
     public function run()
     {
@@ -14,8 +14,8 @@ class WarehouseStatusesSeeder extends Seeder
         DB::statement('SET @@sql_mode = "NO_AUTO_VALUE_ON_ZERO";');
     
         // 2. Insert ID = 0 ถ้ายังไม่มี
-        if (!DB::table('warehouse_statuses')->where('id', 0)->exists()) {
-            DB::table('warehouse_statuses')->insert([
+        if (!DB::table('branch_statuses')->where('id', 0)->exists()) {
+            DB::table('branch_statuses')->insert([
                 'id'    => 0,
                 'name'  => 'Delete',
                 'sign'  => 'DEL',
@@ -24,17 +24,17 @@ class WarehouseStatusesSeeder extends Seeder
         }
     
         // 3. รีเซ็ต Auto Increment ให้เริ่มที่ 1
-        DB::statement("ALTER TABLE warehouse_statuses AUTO_INCREMENT = 1;");
+        DB::statement("ALTER TABLE branch_statuses AUTO_INCREMENT = 1;");
     
         // 4. Insert values อื่นๆ
         $statuses = [
-            ['name' => 'Active', 'sign' => '✔', 'color' => 'green'],
-            ['name' => 'Inactive', 'sign' => '✖', 'color' => 'gray'],
+            ['name' => 'Active', 'sign' => 'ACT', 'color' => 'green'],
+            ['name' => 'Inactive', 'sign' => 'INA', 'color' => 'grey'],
         ];
     
         foreach ($statuses as $status) {
-            if (!DB::table('warehouse_statuses')->where('name', $status['name'])->exists()) {
-                DB::table('warehouse_statuses')->insert($status);
+            if (!DB::table('branch_statuses')->where('name', $status['name'])->exists()) {
+                DB::table('branch_statuses')->insert($status);
             }
         }
     }

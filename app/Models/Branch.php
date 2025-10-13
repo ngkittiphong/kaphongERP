@@ -30,6 +30,7 @@ class Branch extends Model
         'email',
         'is_active',
         'is_head_office',
+        'branch_status_id',
         'latitude',
         'longitude',
         'contact_name',
@@ -72,6 +73,19 @@ class Branch extends Model
     public function warehouses(): HasMany
     {
         return $this->hasMany(Warehouse::class);
+    }
+
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(BranchStatus::class, 'branch_status_id');
+    }
+
+    /**
+     * Scope a query to only include active branches (exclude status 0).
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('branch_status_id', '!=', 0);
     }
 
     /**

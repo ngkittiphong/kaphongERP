@@ -74,8 +74,9 @@ class WarehouseList extends BaseListComponent
             $this->controller = $this->getController();
         }
         
-        // Load warehouses with filtering
-        $query = Warehouse::with(['branch', 'status', 'userCreate']);
+        // Load warehouses with filtering (exclude deleted status 0)
+        $query = Warehouse::with(['branch', 'status', 'userCreate'])
+            ->where('warehouse_status_id', '!=', 0);
         
         if ($this->filter === 'active') {
             $query->whereHas('status', function($q) {
@@ -86,7 +87,7 @@ class WarehouseList extends BaseListComponent
                 $q->where('name', 'Inactive');
             });
         }
-        // If filter is 'all', don't add any where clause
+        // If filter is 'all', don't add any additional where clause
         
         $this->items = $query->orderBy('warehouse_status_id', 'asc')
                             ->orderBy('name')

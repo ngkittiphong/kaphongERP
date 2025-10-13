@@ -13,7 +13,7 @@ class BranchController
      */
     public function index()
     {
-        $branches = Branch::all();
+        $branches = Branch::where('branch_status_id', '!=', 0)->get();
         return $branches; //view('branch.index', compact('branches'));
     }
 
@@ -55,9 +55,11 @@ class BranchController
     {
         $headOffice = Branch::where('is_head_office', true)
             ->where('is_active', true)
+            ->where('branch_status_id', '!=', 0)
             ->first();
         $otherBranches = Branch::where('is_head_office', false)
             ->where('is_active', true)
+            ->where('branch_status_id', '!=', 0)
             ->get();
         return view('setting.setting_company_profile', compact('headOffice', 'otherBranches'));
     }
@@ -139,7 +141,8 @@ class BranchController
             // Soft delete by updating is_active and setting deleted_at
             $branch->update([
                 'is_active' => false,
-                'deleted_at' => now()
+                'deleted_at' => now(),
+                'branch_status_id' => 0
             ]);
 
             return response()->json([

@@ -187,12 +187,12 @@
         function confirmDelete(warehouseId) {
             Swal.fire({
                 title: "Are you sure?",
-                text: "This will deactivate the warehouse. You can reactivate it later if needed.",
+                text: "This will delete the warehouse. This action cannot be undone.",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#d33",
                 cancelButtonColor: "#3085d6",
-                confirmButtonText: "Yes, deactivate it!"
+                confirmButtonText: "Yes, delete it!"
             }).then((result) => {
                 if (result.isConfirmed) {
                     Livewire.dispatch('deleteWarehouse', {
@@ -243,8 +243,8 @@
         Livewire.on('warehouseDeleted', data => {
             Swal.fire({
                 icon: 'success',
-                title: 'Deactivation Success',
-                text: data.message || 'Warehouse deactivated successfully!',
+                title: 'Delete Success',
+                text: data.message || 'Warehouse deleted successfully!',
             });
         });
 

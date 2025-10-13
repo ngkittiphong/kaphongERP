@@ -153,7 +153,7 @@ class WarehouseDetail extends Component
         $this->showAddWarehouseForm = false;
         
         // Load warehouse with relationships (matching branch pattern)
-        $this->warehouse = Warehouse::with(['branch', 'status', 'userCreate', 'inventories', 'warehouseProducts.product'])->find($warehouseId) ?? null;
+        $this->warehouse = Warehouse::with(['branch', 'status', 'userCreate', 'inventories', 'warehouseProducts.product'])->where('warehouse_status_id', '!=', 0)->find($warehouseId) ?? null;
         \Log::info("🔥 Warehouse loaded:", ['name' => $this->warehouse ? $this->warehouse->name : 'null']);
         
         // Load inventory and movement data
@@ -312,26 +312,21 @@ class WarehouseDetail extends Component
     {
         $warehouse = Warehouse::find($warehouseId);
         if ($warehouse) {
-            // Set status to Inactive (assuming status_id 2 is Inactive)
-            $inactiveStatus = WarehouseStatus::where('name', 'Inactive')->first();
-            if ($inactiveStatus) {
-                $warehouse->update(['warehouse_status_id' => $inactiveStatus->id]);
-                
-                session()->flash('message', 'Warehouse deactivated successfully!');
-                
-                // Reload the warehouse data to reflect changes
-                $this->loadWarehouse($warehouseId);
-                
-                // Dispatch events for success dialog and list update
-                $this->dispatch('warehouseDeleted', [
-                    'message' => 'Warehouse deactivated successfully!'
-                ]);
-                $this->dispatch('warehouseListUpdated');
-                
-                \Log::info("📡 Dispatching warehouseDeleted and warehouseListUpdated events");
-            } else {
-                $this->addError('general', 'Failed to deactivate warehouse. Inactive status not found.');
-            }
+            // Set status to Delete (status 0)
+            $warehouse->update(['warehouse_status_id' => 0]);
+            
+            session()->flash('message', 'Warehouse deleted successfully!');
+            
+            // Reload the warehouse data to reflect changes
+            $this->loadWarehouse($warehouseId);
+            
+            // Dispatch events for success dialog and list update
+            $this->dispatch('warehouseDeleted', [
+                'message' => 'Warehouse deleted successfully!'
+            ]);
+            $this->dispatch('warehouseListUpdated');
+            
+            \Log::info("📡 Dispatching warehouseDeleted and warehouseListUpdated events");
         }
     }
 
@@ -518,7 +513,7 @@ class WarehouseDetail extends Component
         // When user selects a different branch, reload warehouse data for that branch
         if ($this->selectedBranchId && $this->warehouse) {
             // Find warehouses for the selected branch
-            $warehouses = Warehouse::where('branch_id', $this->selectedBranchId)->get();
+            $warehouses = Warehouse::where('branch_id', $this->selectedBranchId)->where('warehouse_status_id', '!=', 0)->get();
             
             if ($warehouses->count() > 0) {
                 // Load the first warehouse for the selected branch

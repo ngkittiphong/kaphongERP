@@ -10,6 +10,7 @@ class WarehouseController
     public function index()
     {
         return Warehouse::with(['branch', 'status'])
+            ->where('warehouse_status_id', '!=', 0)
             ->orderBy('warehouse_status_id', 'asc')
             ->orderBy('name')
             ->get();
@@ -81,15 +82,12 @@ class WarehouseController
 
     public function destroy(Warehouse $warehouse)
     {
-        // Soft delete by setting status to Inactive instead of actually deleting
-        $inactiveStatus = \App\Models\WarehouseStatus::where('name', 'Inactive')->first();
-        if ($inactiveStatus) {
-            $warehouse->update(['warehouse_status_id' => $inactiveStatus->id]);
-        }
+        // Soft delete by setting status to Delete (status 0)
+        $warehouse->update(['warehouse_status_id' => 0]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Warehouse deactivated successfully!'
+            'message' => 'Warehouse deleted successfully!'
         ]);
     }
 }

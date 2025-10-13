@@ -113,4 +113,12 @@ class Warehouse extends Model
                     ->withPivot(['balance', 'avr_buy_price', 'avr_sale_price', 'avr_remain_price'])
                     ->withTimestamps();
     }
+
+    /**
+     * Scope a query to only include active warehouses (exclude status 0).
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('warehouse_status_id', '!=', 0);
+    }
 }

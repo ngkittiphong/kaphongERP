@@ -146,9 +146,7 @@ class WarehouseAddTransferForm extends Component
     public function loadDropdownData()
     {
         $this->warehouses = Warehouse::with('branch')
-            ->whereHas('status', function($query) {
-                $query->where('name', 'Active');
-            })
+            ->where('warehouse_status_id', '!=', 0)
             ->get();
             
         $this->products = Product::with(['type', 'group', 'status'])
