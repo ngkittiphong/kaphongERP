@@ -161,14 +161,16 @@
                     <div class="tab-pane" id="tab-warehouse">
                         <div class="row col-md-12 col-xs-12">
                             <div class="table-responsive">
-                                <table class="table datatable-warehouse table-striped">
+                                <table class="table datatable-warehouse-list table-striped" 
+                                       data-has-data="{{ count($warehouses) > 0 ? '1' : '0' }}"
+                                       data-branch-name="{{ $branch->name_en ?? 'Unknown' }}"
+                                       data-company-name="{{ $branch->company->company_name_th ?? 'Unknown' }}">
                                     <thead>
                                         <tr>
                                             <th>#</th>
                                             <th>{{ __t('warehouse.warehouse_name', 'Warehouse Name') }}</th>
                                             <th>{{ __t('warehouse.average_remaining_price', 'Average Remaining Price') }}</th>
                                             <th>{{ __t('common.status', 'Status') }}</th>
-                                            <th>{{ __t('common.action', 'Action') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -182,17 +184,10 @@
                                                         {{ $warehouse->status->name }}
                                                     </span>
                                                 </td>
-                                                <td class="col-md-2">
-                                                    <ul class="icons-list">
-                                                        <li><a href="#" data-toggle="modal"><i class="icon-eye2"></i></a></li>
-                                                        <li><a href="#"><i class="icon-pencil6"></i></a></li>
-                                                        <li><a href="#"><i class="icon-trash text-danger"></i></a></li>
-                                                    </ul>
-                                                </td>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="5" class="text-center">{{ __t('warehouse.no_warehouses_found_for_branch', 'No warehouses found for this branch') }}</td>
+                                                <td colspan="4" class="text-center">{{ __t('warehouse.no_warehouses_found_for_branch', 'No warehouses found for this branch') }}</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
