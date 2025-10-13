@@ -14,6 +14,7 @@ use App\Models\Warehouse;
 use App\Livewire\Product\ProductStockCard;
 use App\Services\InventoryService;
 use App\Services\ProductService;
+use Illuminate\Support\Facades\Schema;
 
 
 class ProductDetail extends Component
@@ -71,6 +72,15 @@ class ProductDetail extends Component
     public $currentStock = 0;
     public $isStockInModal = false; // Flag to indicate if this is a stock-in modal for new products
 
+    // Sub-unit modal properties
+    public $showSubUnitModal = false;
+    public $subUnitId = null; // for edit
+    public $subUnitName = '';
+    public $subUnitBuyPrice = 0;
+    public $subUnitSalePrice = 0;
+    public $subUnitQuantity = 1; // quantity_of_minimum_unit
+    public $subUnitBarcode = '';
+
     protected $listeners = [
         'ProductSelected' => 'loadProduct',
         'showAddEditProductForm' => 'displayAddProductForm',
@@ -79,7 +89,8 @@ class ProductDetail extends Component
         'createProduct' => 'createProduct',
         'updateProduct' => 'updateProduct',
         'deleteProduct' => 'deleteProduct',
-        'processStockOperationConfirmed' => 'processStockOperation'
+        'processStockOperationConfirmed' => 'processStockOperation',
+        'deleteSubUnit' => 'deleteSubUnit'
     ];
 
     public function mount($productId = null)
@@ -482,6 +493,217 @@ class ProductDetail extends Component
         \Log::info("🚀 [STOCK IN MODAL] Pre-filled prices - unitPrice: {$this->unitPrice}, salePrice: {$this->salePrice}");
         
         $this->dispatch('showStockModal');
+    }
+
+    // Sub-unit CRUD methods
+    public function openAddSubUnitModal()
+    {
+        \Log::info("🚀 [SUB UNIT MODAL] Opening add sub-unit modal");
+
+        $this->subUnitId = null;
+        $this->showSubUnitModal = true;
+        $this->resetSubUnitFields();
+
+        \Log::info("🚀 [SUB UNIT MODAL] Modal state set - showModal: {$this->showSubUnitModal}");
+        
+        $this->dispatch('showSubUnitModal');
+    }
+
+    public function openEditSubUnitModal($subUnitId)
+    {
+        \Log::info("🚀 [SUB UNIT MODAL] Opening edit sub-unit modal for ID: {$subUnitId}");
+
+        $subUnit = \App\Models\ProductSubUnit::find($subUnitId);
+        if ($subUnit) {
+            $this->subUnitId = $subUnit->id;
+            $this->subUnitName = $subUnit->name;
+            $this->subUnitBuyPrice = $subUnit->buy_price;
+            $this->subUnitSalePrice = $subUnit->sale_price;
+            $this->subUnitQuantity = $subUnit->quantity_of_minimum_unit;
+            $this->subUnitBarcode = $subUnit->barcode ?? '';
+            $this->showSubUnitModal = true;
+
+            \Log::info("🚀 [SUB UNIT MODAL] Loaded sub-unit data - Name: {$this->subUnitName}, Buy: {$this->subUnitBuyPrice}, Sale: {$this->subUnitSalePrice}");
+        }
+
+        \Log::info("🚀 [SUB UNIT MODAL] Modal state set - showModal: {$this->showSubUnitModal}");
+        
+        $this->dispatch('showSubUnitModal');
+    }
+
+    public function saveSubUnit()
+    {
+        \Log::info("🚀 [SUB UNIT MODAL] Saving sub-unit");
+
+        $validationRules = [
+            'subUnitName' => 'required|string|max:255',
+            'subUnitBuyPrice' => 'required|numeric|min:0',
+            'subUnitSalePrice' => 'required|numeric|min:0',
+            'subUnitQuantity' => 'required|integer|min:1',
+        ];
+
+        $subUnitTableHasBarcode = Schema::hasColumn('product_sub_units', 'barcode');
+
+        if ($subUnitTableHasBarcode) {
+            $validationRules['subUnitBarcode'] = 'nullable|string|max:255';
+        }
+
+        $this->validate($validationRules);
+
+        try {
+            $data = [
+                'product_id' => $this->product->id,
+                'name' => $this->subUnitName,
+                'buy_price' => $this->subUnitBuyPrice,
+                'sale_price' => $this->subUnitSalePrice,
+                'quantity_of_minimum_unit' => $this->subUnitQuantity,
+            ];
+
+            if ($subUnitTableHasBarcode) {
+                $data['barcode'] = $this->subUnitBarcode ?: null;
+            }
+
+            if ($this->subUnitId) {
+                // Update existing sub-unit
+                \App\Models\ProductSubUnit::where('id', $this->subUnitId)->update($data);
+                \Log::info("🚀 [SUB UNIT MODAL] Updated sub-unit ID: {$this->subUnitId}");
+            } else {
+                // Create new sub-unit
+                \App\Models\ProductSubUnit::create($data);
+                \Log::info("🚀 [SUB UNIT MODAL] Created new sub-unit");
+            }
+
+            // Refresh product data
+            $this->loadProduct($this->product->id);
+
+            // Close modal
+            $this->closeSubUnitModal();
+
+            // Show success message using SweetAlert
+            $successTitle = $this->subUnitId
+                ? __t('product.sub_unit_updated', 'Sub-Unit Updated!')
+                : __t('product.sub_unit_created', 'Sub-Unit Created!');
+
+            $successMessage = $this->subUnitId
+                ? __t('product.sub_unit_updated_successfully', 'Sub-unit has been updated successfully.')
+                : __t('product.sub_unit_created_successfully', 'New sub-unit has been created successfully.');
+
+            $pricingSummary = sprintf(
+                '%s %s | %s %s',
+                __t('product.sale_price', 'Sale Price'),
+                currency($this->subUnitSalePrice),
+                __t('product.buy_price', 'Buy Price'),
+                currency($this->subUnitBuyPrice)
+            );
+
+            $this->dispatch('showSweetAlert', [
+                'title' => $successTitle,
+                'text' => $successMessage . ' ' . $pricingSummary,
+                'icon' => 'success',
+                'timer' => 2800,
+                'showConfirmButton' => false,
+                'allowOutsideClick' => false,
+                'allowEscapeKey' => true,
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error("🚀 [SUB UNIT MODAL] Error saving sub-unit: " . $e->getMessage());
+            $this->dispatch('showSweetAlert', [
+                'title' => __t('common.error', 'Error'),
+                'text' => __t('product.sub_unit_save_failed', 'Failed to save sub-unit. Please check required fields and try again.'),
+                'icon' => 'error',
+                'confirmButtonText' => 'Try Again'
+            ]);
+        }
+    }
+
+    public function confirmDeleteSubUnit($subUnitId)
+    {
+        \Log::info("🚀 [SUB UNIT MODAL] Confirming delete for sub-unit ID: {$subUnitId}");
+
+        // Get sub-unit details for better confirmation message
+        $subUnit = \App\Models\ProductSubUnit::find($subUnitId);
+        $subUnitName = $subUnit ? $subUnit->name : 'Unknown';
+
+        \Log::info("🚀 [SUB UNIT MODAL] Dispatching showSweetAlertConfirm event");
+
+        $this->dispatch('showSweetAlertConfirm', [
+            'title' => 'Delete Sub-Unit',
+            'text' => "Are you sure you want to delete the sub-unit '{$subUnitName}'? This action cannot be undone!",
+            'icon' => 'warning',
+            'showCancelButton' => true,
+            'confirmButtonText' => 'Yes, Delete It!',
+            'cancelButtonText' => 'Cancel',
+            'confirmButtonColor' => '#dc3545',
+            'cancelButtonColor' => '#6c757d',
+            'allowOutsideClick' => false,
+            'allowEscapeKey' => true,
+            'subUnitId' => $subUnitId
+        ]);
+    }
+
+    public function deleteSubUnit($subUnitId)
+    {
+        \Log::info("🚀 [SUB UNIT MODAL] Deleting sub-unit ID: {$subUnitId}");
+
+        try {
+            \App\Models\ProductSubUnit::where('id', $subUnitId)->delete();
+            
+            // Refresh product data
+            $this->loadProduct($this->product->id);
+
+            \Log::info("🚀 [SUB UNIT MODAL] Deleted sub-unit successfully");
+
+            // Show success message using SweetAlert
+            \Log::info("🚀 [SUB UNIT MODAL] Dispatching showSweetAlert success event");
+            $this->dispatch('showSweetAlert', [
+                'title' => 'Sub-Unit Deleted!',
+                'text' => 'Sub-unit has been deleted successfully!',
+                'icon' => 'success',
+                'timer' => 3000,
+                'showConfirmButton' => false
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error("🚀 [SUB UNIT MODAL] Error deleting sub-unit: " . $e->getMessage());
+            $this->dispatch('showSweetAlert', [
+                'title' => 'Delete Failed!',
+                'html' => '
+                    <div style="text-align: center;">
+                        <p style="margin-bottom: 15px;">Failed to delete sub-unit. Please try again.</p>
+                        <div style="background-color: #f8d7da; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545;">
+                            <strong>Possible Issues:</strong><br>
+                            <span style="color: #721c24;">• Sub-unit may be in use by other records</span><br>
+                            <span style="color: #721c24;">• Database connection issue</span><br>
+                            <span style="color: #721c24;">• Try again or contact support</span>
+                        </div>
+                    </div>
+                ',
+                'icon' => 'error',
+                'confirmButtonText' => 'Try Again'
+            ]);
+        }
+    }
+
+    public function closeSubUnitModal()
+    {
+        \Log::info("🚀 [SUB UNIT MODAL] Closing sub-unit modal");
+
+        $this->showSubUnitModal = false;
+        $this->resetSubUnitFields();
+        
+        $this->dispatch('closeSubUnitModal');
+    }
+
+    public function resetSubUnitFields()
+    {
+        $this->subUnitId = null;
+        $this->subUnitName = '';
+        $this->subUnitBuyPrice = 0;
+        $this->subUnitSalePrice = 0;
+        $this->subUnitQuantity = 1;
+        $this->subUnitBarcode = '';
+        $this->resetErrorBag();
     }
 
     /**

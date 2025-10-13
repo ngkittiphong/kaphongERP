@@ -266,6 +266,26 @@ class TranslationSeeder extends Seeder
             'common.view_details' => [
                 'en' => 'View Details',
                 'th' => 'ดูรายละเอียด'
+            ],
+            'common.save' => [
+                'en' => 'Save',
+                'th' => 'บันทึก'
+            ],
+            'common.saving' => [
+                'en' => 'Saving',
+                'th' => 'กำลังบันทึก'
+            ],
+            'common.edit' => [
+                'en' => 'Edit',
+                'th' => 'แก้ไข'
+            ],
+            'common.delete' => [
+                'en' => 'Delete',
+                'th' => 'ลบ'
+            ],
+            'common.confirm_delete' => [
+                'en' => 'Are you sure you want to delete this sub-unit?',
+                'th' => 'คุณแน่ใจหรือไม่ว่าต้องการลบหน่วยย่อยนี้?'
             ]
         ];
 
@@ -878,6 +898,30 @@ class TranslationSeeder extends Seeder
             'product.type' => [
                 'en' => 'Type',
                 'th' => 'ประเภท'
+            ],
+            'product.add_sub_unit' => [
+                'en' => 'Add Sub-Unit',
+                'th' => 'เพิ่มหน่วยย่อย'
+            ],
+            'product.edit_sub_unit' => [
+                'en' => 'Edit Sub-Unit',
+                'th' => 'แก้ไขหน่วยย่อย'
+            ],
+            'product.sub_unit_name' => [
+                'en' => 'Sub-Unit Name',
+                'th' => 'ชื่อหน่วยย่อย'
+            ],
+            'product.enter_sub_unit_name' => [
+                'en' => 'Enter sub-unit name',
+                'th' => 'ป้อนชื่อหน่วยย่อย'
+            ],
+            'product.quantity_of_minimum_unit' => [
+                'en' => 'Quantity of Minimum Unit',
+                'th' => 'จำนวนหน่วยขั้นต่ำ'
+            ],
+            'product.enter_barcode' => [
+                'en' => 'Enter barcode (optional)',
+                'th' => 'ป้อนบาร์โค้ด (ไม่บังคับ)'
             ]
         ];
 

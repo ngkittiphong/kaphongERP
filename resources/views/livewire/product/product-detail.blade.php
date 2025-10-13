@@ -122,6 +122,25 @@
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
         }
         
+        /* SweetAlert styling */
+        .swal-wide {
+            width: 500px !important;
+        }
+        
+        /* Ensure SweetAlert is always on top */
+        .swal2-container {
+            z-index: 9999 !important;
+        }
+        
+        .swal2-popup {
+            z-index: 10000 !important;
+        }
+        
+        /* Remove any conflicting modal styles */
+        .modal-backdrop {
+            z-index: 9998 !important;
+        }
+        
         /* DataTable responsive improvements using Bootstrap classes */
         .datatable-stock-card {
             font-size: 0.875rem;
@@ -570,6 +589,23 @@
                 $('body').removeClass('modal-open');
             });
 
+            // Sub-unit modal events
+            @this.on('showSubUnitModal', () => {
+                console.log('🚀 [JS] showSubUnitModal event received');
+                // Add a small delay to ensure Livewire state is updated
+                setTimeout(() => {
+                    $('#subUnitModal').modal('show');
+                }, 100);
+            });
+
+            @this.on('closeSubUnitModal', () => {
+                console.log('🚀 [JS] closeSubUnitModal event received');
+                $('#subUnitModal').modal('hide');
+                // Remove any remaining modal backdrop
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open');
+            });
+
             // Handle modal close events - DISABLED FOR TESTING
             // $('#stockAdjustmentModal').on('hidden.bs.modal', function () {
             //     @this.call('closeStockModal');
@@ -669,6 +705,91 @@
                             $('#stockAdjustmentModal').modal('show');
                         }, 200);
                     }
+                });
+            });
+
+            // Handle SweetAlert confirmations for sub-units
+            @this.on('showSweetAlertConfirm', (data) => {
+                // Check if SweetAlert is available
+                if (typeof Swal === 'undefined') {
+                    console.error('🚀 [JS] SweetAlert is not loaded!');
+                    // Fallback to native confirm
+                    const fallbackData = Array.isArray(data) ? data[0] : (data || {});
+                    if (confirm('Are you sure you want to delete this sub-unit?')) {
+                        @this.call('deleteSubUnit', fallbackData.subUnitId);
+                    }
+                    return;
+                }
+
+                const eventData = Array.isArray(data) ? data[0] : (data || {});
+                const subUnitId = eventData.subUnitId ?? null;
+                const showCancelButton = resolveBoolean(eventData.showCancelButton, true);
+                const allowOutsideClick = resolveBoolean(eventData.allowOutsideClick, false);
+                const allowEscapeKey = resolveBoolean(eventData.allowEscapeKey, true);
+
+                // Remove any existing modals/overlays that might interfere
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open');
+                
+                // Create SweetAlert with proper configuration
+                Swal.fire({
+                    title: eventData.title || 'Delete Sub-Unit',
+                    text: eventData.text || "Are you sure you want to delete this sub-unit? This action cannot be undone!",
+                    html: eventData.html || undefined,
+                    icon: eventData.icon || 'warning',
+                    showCancelButton,
+                    confirmButtonText: eventData.confirmButtonText || 'Yes, Delete It!',
+                    cancelButtonText: eventData.cancelButtonText || 'Cancel',
+                    confirmButtonColor: eventData.confirmButtonColor || '#dc3545',
+                    cancelButtonColor: eventData.cancelButtonColor || '#6c757d',
+                    allowOutsideClick,
+                    allowEscapeKey,
+                    width: eventData.width || '420px',
+                    customClass: {
+                        popup: 'swal-wide'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        @this.call('deleteSubUnit', subUnitId);
+                    }
+                }).catch((error) => {
+                    console.error('🚀 [JS] SweetAlert error:', error);
+                    // Fallback to native confirm if SweetAlert fails
+                    if (confirm('Are you sure you want to delete this sub-unit?')) {
+                        @this.call('deleteSubUnit', subUnitId);
+                    }
+                });
+            });
+
+            // Handle SweetAlert messages for sub-units
+            @this.on('showSweetAlert', (data) => {
+                // Check if SweetAlert is available
+                if (typeof Swal === 'undefined') {
+                    console.error('🚀 [JS] SweetAlert is not loaded for success message!');
+                    const fallback = Array.isArray(data) ? data[0] : (data || {});
+                    // Fallback to native alert
+                    alert((fallback.title || 'Notice') + ': ' + (fallback.html ? fallback.html.replace(/<[^>]*>/g, '') : (fallback.text || '')));
+                    return;
+                }
+
+                const eventData = Array.isArray(data) ? data[0] : (data || {});
+                const showConfirmButton = resolveBoolean(eventData.showConfirmButton, true);
+                const allowOutsideClick = resolveBoolean(eventData.allowOutsideClick, true);
+                const allowEscapeKey = resolveBoolean(eventData.allowEscapeKey, true);
+                const timerValue = eventData.timer !== undefined ? Number(eventData.timer) : undefined;
+                const timer = Number.isNaN(timerValue) ? undefined : timerValue;
+
+                Swal.fire({
+                    title: eventData.title || '{{ __t('common.success', 'Success') }}',
+                    text: eventData.text || undefined,
+                    html: eventData.html || undefined,
+                    icon: eventData.icon || 'success',
+                    timer,
+                    showConfirmButton,
+                    confirmButtonText: eventData.confirmButtonText || 'OK',
+                    allowOutsideClick,
+                    allowEscapeKey,
+                    width: eventData.width || '400px'
                 });
             });
 
@@ -1149,16 +1270,43 @@
             }, actualDelay);
         }
 
+        const resolveBoolean = (value, fallback = false) => {
+            if (value === undefined || value === null) {
+                return fallback;
+            }
+
+            if (typeof value === 'boolean') {
+                return value;
+            }
+
+            if (typeof value === 'number') {
+                return value !== 0;
+            }
+
+            if (typeof value === 'string') {
+                const normalized = value.trim().toLowerCase();
+                if (['false', '0', 'no', 'off', 'n'].includes(normalized)) {
+                    return false;
+                }
+                if (['true', '1', 'yes', 'on', 'y'].includes(normalized)) {
+                    return true;
+                }
+            }
+
+            return Boolean(value);
+        };
+
         if (typeof document !== 'undefined') {
             document.addEventListener('DOMContentLoaded', function() {
                 scheduleStockCardInit('DOMContentLoaded', 500);
             });
 
             document.addEventListener('livewire:load', function() {
-                if (typeof Livewire !== 'undefined' && Livewire.hook) {
-                    Livewire.hook('message.sent', function() {
-                        destroyStockCardDataTable();
-                    });
+
+            if (typeof Livewire !== 'undefined' && Livewire.hook) {
+                Livewire.hook('message.sent', function() {
+                    destroyStockCardDataTable();
+                });
 
                     Livewire.hook('message.processed', function(message, component) {
                         try {

@@ -359,6 +359,40 @@
     <div class="row col-md-12 col-xs-12">
         <div class="panel-heading no-padding-bottom">
             <h4 class="panel-title">{{ __t('product.main_product_unit', 'Main Product Unit') }} : {{ $product->unit_name ?? 'pcs' }}</h4>
+            <button class="btn btn-primary btn-sm pull-right" wire:click="openAddSubUnitModal">
+                <i class="icon-plus2"></i> {{ __t('product.add_sub_unit', 'Add Sub-Unit') }}
+            </button>
+        </div>
+
+        {{-- Main Product Unit Price Display --}}
+        <div class="col-md-4">
+            <div class="panel panel-flat bg-primary-light">
+                <div class="panel-heading text-dark">
+                    <h3 class="text-default panel-title">{{ $product->unit_name ?? 'pcs' }}</h3>
+                </div>
+                <div class="list-group text-default list-group-lg list-group-borderless">
+                    <div class='row'>
+                        <span href="#" class="list-group-item p-l-20">
+                            <div class="col-md-7 col-xs-7 text-bold">
+                                {{ __t('product.sale_price', 'Sale Price') }} :
+                            </div>
+                            <div class="col-md-5 col-xs-5 text-left">
+                                {{ currency($product->sale_price) }}
+                            </div>
+                        </span>
+                    </div>
+                    <div class='row'>
+                        <span href="#" class="list-group-item p-l-20">
+                            <div class="col-md-7 col-xs-7 text-bold">
+                                {{ __t('product.buy_price', 'Buy Price') }} :
+                            </div>
+                            <div class="col-md-5 col-xs-5 text-left">
+                                {{ currency($product->buy_price) }}
+                            </div>
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="row">
@@ -368,6 +402,15 @@
                         <div class="panel panel-flat {{ $index == 0 ? 'bg-slate-lighter' : 'bg-teal-light' }}">
                             <div class="panel-heading text-dark">
                                 <h3 class="text-default panel-title">{{ $subUnit->name }}</h3>
+                                <div class="heading-elements">
+                                    <button class="btn btn-sm btn-primary" wire:click="openEditSubUnitModal({{ $subUnit->id }})" title="{{ __t('common.edit', 'Edit') }}">
+                                        <i class="icon-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" wire:click="confirmDeleteSubUnit({{ $subUnit->id }})" 
+                                            title="{{ __t('common.delete', 'Delete') }}">
+                                        <i class="icon-trash"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="list-group text-default list-group-lg list-group-borderless">
                                 <div class='row'>
@@ -407,15 +450,6 @@
                     </div>
                 @endif
             @empty
-                <div class="col-md-8">
-                    <div class="panel panel-flat bg-info-light">
-                        <div class="panel-body text-center">
-                            <i class="icon-info22 icon-2x text-info"></i>
-                            <h4 class="text-info">{{ __t('product.no_sub_units', 'No Sub-Units') }}</h4>
-                            <p>{{ __t('product.only_main_unit_message', 'This product has only the main unit') }}</p>
-                        </div>
-                    </div>
-                </div>
             @endforelse
             
             @if($product->subUnits->count() > 2)
@@ -431,6 +465,15 @@
                                         <div class="panel panel-flat bg-light-light">
                                             <div class="panel-heading text-dark">
                                                 <h5 class="text-default panel-title">{{ $subUnit->name }}</h5>
+                                                <div class="heading-elements">
+                                                    <button class="btn btn-xs btn-primary" wire:click="openEditSubUnitModal({{ $subUnit->id }})" title="{{ __t('common.edit', 'Edit') }}">
+                                                        <i class="icon-pencil"></i>
+                                                    </button>
+                                                    <button class="btn btn-xs btn-danger" wire:click="confirmDeleteSubUnit({{ $subUnit->id }})" 
+                                                            title="{{ __t('common.delete', 'Delete') }}">
+                                                        <i class="icon-trash"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                             <div class="list-group text-default list-group-lg list-group-borderless">
                                                 <div class='row'>
@@ -661,3 +704,73 @@
         </div>
     </div>
 </div>
+
+{{-- Sub-Unit Modal --}}
+<div wire:ignore.self class="modal fade" id="subUnitModal" tabindex="-1" role="dialog" aria-labelledby="subUnitModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 650px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="subUnitModalLabel">
+                    @if($subUnitId)
+                        {{ __t('product.edit_sub_unit', 'Edit Sub-Unit') }}
+                    @else
+                        {{ __t('product.add_sub_unit', 'Add Sub-Unit') }}
+                    @endif
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" wire:click="closeSubUnitModal">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form wire:submit.prevent="saveSubUnit">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="subUnitName">{{ __t('product.sub_unit_name', 'Sub-Unit Name') }} <span class="text-danger">*</span></label>
+                                <input type="text" wire:model="subUnitName" class="form-control" id="subUnitName" placeholder="{{ __t('product.enter_sub_unit_name', 'Enter sub-unit name') }}">
+                                @error('subUnitName') <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="subUnitQuantity">{{ __t('product.quantity_of_minimum_unit', 'Quantity of Minimum Unit') }} <span class="text-danger">*</span></label>
+                                <input type="number" wire:model="subUnitQuantity" class="form-control" id="subUnitQuantity" min="1" placeholder="1">
+                                @error('subUnitQuantity') <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="subUnitBuyPrice">{{ __t('product.buy_price', 'Buy Price') }} <span class="text-danger">*</span></label>
+                                <input type="number" wire:model="subUnitBuyPrice" class="form-control" id="subUnitBuyPrice" step="0.01" min="0" placeholder="0.00">
+                                @error('subUnitBuyPrice') <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="subUnitSalePrice">{{ __t('product.sale_price', 'Sale Price') }} <span class="text-danger">*</span></label>
+                                <input type="number" wire:model="subUnitSalePrice" class="form-control" id="subUnitSalePrice" step="0.01" min="0" placeholder="0.00">
+                                @error('subUnitSalePrice') <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                    </div>
+                    
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" wire:click="closeSubUnitModal">{{ __t('common.cancel', 'Cancel') }}</button>
+                <button type="button" class="btn btn-primary" wire:click="saveSubUnit" wire:loading.attr="disabled">
+                    <span wire:loading.remove wire:target="saveSubUnit">
+                        <i class="icon-checkmark"></i> {{ __t('common.save', 'Save') }}
+                    </span>
+                    <span wire:loading wire:target="saveSubUnit">
+                        <i class="icon-spinner2 spinner"></i> {{ __t('common.saving', 'Saving') }}...
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
