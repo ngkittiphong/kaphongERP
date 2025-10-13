@@ -69,17 +69,15 @@
                     </span>
                 </div>
                 
-                @if($totalQuantity == 0)
-                    <div class='row'>
-                        <span href="#" class="list-group-item p-l-20">
-                            <div class="col-md-12 col-xs-12 text-center">
-                                <button class="btn btn-primary btn-sm" wire:click="openStockInModal">
-                                    <i class="icon-plus2"></i> {{ __t('product.stock_in_operation', 'Stock in operation') }}
-                                </button>
-                            </div>
-                        </span>
-                    </div>
-                @endif
+                <div class='row'>
+                    <span href="#" class="list-group-item p-l-20">
+                        <div class="col-md-12 col-xs-12 text-left">
+                            <button class="btn btn-primary btn-sm" wire:click="openStockInModal">
+                                <i class="icon-plus2"></i> {{ __t('product.stock_in_operation', 'Stock in operation') }}
+                            </button>
+                        </div>
+                    </span>
+                </div>
 
                 {{-- <div class='row'>
                     <span href="#" class="list-group-item p-l-20">
@@ -359,164 +357,107 @@
     <div class="row col-md-12 col-xs-12">
         <div class="panel-heading no-padding-bottom">
             <h4 class="panel-title">{{ __t('product.main_product_unit', 'Main Product Unit') }} : {{ $product->unit_name ?? 'pcs' }}</h4>
-            <button class="btn btn-primary btn-sm pull-right" wire:click="openAddSubUnitModal">
-                <i class="icon-plus2"></i> {{ __t('product.add_sub_unit', 'Add Sub-Unit') }}
-            </button>
         </div>
 
-        {{-- Main Product Unit Price Display --}}
-        <div class="col-md-4">
-            <div class="panel panel-flat bg-primary-light">
-                <div class="panel-heading text-dark">
-                    <h3 class="text-default panel-title">{{ $product->unit_name ?? 'pcs' }}</h3>
-                </div>
-                <div class="list-group text-default list-group-lg list-group-borderless">
-                    <div class='row'>
-                        <span href="#" class="list-group-item p-l-20">
-                            <div class="col-md-7 col-xs-7 text-bold">
-                                {{ __t('product.sale_price', 'Sale Price') }} :
-                            </div>
-                            <div class="col-md-5 col-xs-5 text-left">
-                                {{ currency($product->sale_price) }}
-                            </div>
-                        </span>
+
+        {{-- Main Unit Table --}}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-flat">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">{{ __t('product.main_unit', 'Main Unit') }}</h4>
                     </div>
-                    <div class='row'>
-                        <span href="#" class="list-group-item p-l-20">
-                            <div class="col-md-7 col-xs-7 text-bold">
-                                {{ __t('product.buy_price', 'Buy Price') }} :
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>{{ __t('product.unit_name', 'Unit Name') }}</th>
+                                        <th class="text-right">{{ __t('product.quantity_of_minimum_unit', 'Qty per main unit') }}</th>
+                                        <th class="text-right">{{ __t('product.sale_price', 'Sale Price') }}</th>
+                                        <th class="text-right">{{ __t('product.buy_price', 'Buy Price') }}</th>
+                                        @if($subUnitTableHasBarcode)
+                                            <th>{{ __t('product.barcode', 'Barcode') }}</th>
+                                        @endif
+                                        <th class="text-nowrap text-right">{{ __t('common.actions', 'Actions') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="active">
+                                        <td>{{ $product->unit_name ?? 'pcs' }}</td>
+                                        <td class="text-right">{{ number_format(1) }}</td>
+                                        <td class="text-right">{{ currency($product->sale_price) }}</td>
+                                        <td class="text-right">{{ currency($product->buy_price) }}</td>
+                                        @if($subUnitTableHasBarcode)
+                                            <td></td>
+                                        @endif
+                                        <td class="text-right text-muted">—</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                             </div>
-                            <div class="col-md-5 col-xs-5 text-left">
-                                {{ currency($product->buy_price) }}
-                            </div>
-                        </span>
                     </div>
                 </div>
             </div>
         </div>
 
+        {{-- Sub-Units Table --}}
         <div class="row">
-            @forelse($product->subUnits as $index => $subUnit)
-                @if($index < 2) {{-- Show only first 2 sub-units to fit the layout --}}
-                    <div class="col-md-4">
-                        <div class="panel panel-flat {{ $index == 0 ? 'bg-slate-lighter' : 'bg-teal-light' }}">
-                            <div class="panel-heading text-dark">
-                                <h3 class="text-default panel-title">{{ $subUnit->name }}</h3>
-                                <div class="heading-elements">
-                                    <button class="btn btn-sm btn-primary" wire:click="openEditSubUnitModal({{ $subUnit->id }})" title="{{ __t('common.edit', 'Edit') }}">
-                                        <i class="icon-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" wire:click="confirmDeleteSubUnit({{ $subUnit->id }})" 
-                                            title="{{ __t('common.delete', 'Delete') }}">
-                                        <i class="icon-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="list-group text-default list-group-lg list-group-borderless">
-                                <div class='row'>
-                                    <span href="#" class="list-group-item p-l-20">
-                                        <div class="col-md-7 col-xs-7 text-bold">
-                                            {{ __t('product.sale_price', 'Sale Price') }} :
-                                        </div>
-                                        <div class="col-md-5 col-xs-5 text-left">
-                                            {{ currency($subUnit->sale_price ?? $product->sale_price) }}
-                                        </div>
-                                    </span>
-                                </div>
-                                <div class='row'>
-                                    <span href="#" class="list-group-item p-l-20">
-                                        <div class="col-md-7 col-xs-7 text-bold">
-                                            {{ __t('product.buy_price', 'Buy Price') }} :
-                                        </div>
-                                        <div class="col-md-5 col-xs-5 text-left">
-                                            {{ currency($subUnit->buy_price ?? $product->buy_price) }}
-                                        </div>
-                                    </span>
-                                </div>
-                                @if($subUnit->barcode)
-                                    <div class='row'>
-                                        <span href="#" class="list-group-item p-l-20">
-                                            <div class="col-md-12 col-xs-12 text-bold">
-                                                {{ __t('product.barcode', 'Barcode') }} :
-                                            </div>
-                                            <div class="col-md-12 col-xs-12 text-left">
-                                                {{ $subUnit->barcode }}
-                                            </div>
-                                        </span>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                @endif
-            @empty
-            @endforelse
-            
-            @if($product->subUnits->count() > 2)
                 <div class="col-md-12">
                     <div class="panel panel-flat">
                         <div class="panel-heading">
-                            <h4 class="panel-title">{{ __t('product.other_sub_units', 'Other Sub-Units') }} ({{ $product->subUnits->count() - 2 }} {{ __t('product.units', 'units') }})</h4>
+                        <h4 class="panel-title">{{ __t('product.sub_units', 'Sub-Units') }}</h4>
                         </div>
                         <div class="panel-body">
-                            <div class="row">
-                                @foreach($product->subUnits->skip(2) as $subUnit)
-                                    <div class="col-md-4">
-                                        <div class="panel panel-flat bg-light-light">
-                                            <div class="panel-heading text-dark">
-                                                <h5 class="text-default panel-title">{{ $subUnit->name }}</h5>
-                                                <div class="heading-elements">
-                                                    <button class="btn btn-xs btn-primary" wire:click="openEditSubUnitModal({{ $subUnit->id }})" title="{{ __t('common.edit', 'Edit') }}">
-                                                        <i class="icon-pencil"></i>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>{{ __t('product.sub_unit_name', 'Sub-Unit Name') }}</th>
+                                        <th class="text-right">{{ __t('product.quantity_of_minimum_unit', 'Qty per main unit') }}</th>
+                                        <th class="text-right">{{ __t('product.sale_price', 'Sale Price') }}</th>
+                                        <th class="text-right">{{ __t('product.buy_price', 'Buy Price') }}</th>
+                                        @if($subUnitTableHasBarcode)
+                                            <th>{{ __t('product.barcode', 'Barcode') }}</th>
+                                        @endif
+                                        <th class="text-nowrap text-right">{{ __t('common.actions', 'Actions') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($product->subUnits as $subUnit)
+                                        <tr>
+                                            <td>{{ $subUnit->name }}</td>
+                                            <td class="text-right">{{ number_format($subUnit->quantity_of_minimum_unit) }}</td>
+                                            <td class="text-right">{{ currency($subUnit->sale_price ?? $product->sale_price) }}</td>
+                                            <td class="text-right">{{ currency($subUnit->buy_price ?? $product->buy_price) }}</td>
+                                            @if($subUnitTableHasBarcode)
+                                                <td>{{ $subUnit->barcode }}</td>
+                                            @endif
+                                            <td class="text-right text-nowrap">
+                                                <button class="btn btn-xs btn-primary" wire:click="openEditSubUnitModal({{ $subUnit->id }})" title="{{ __t('common.edit', 'Edit') }}"><i class="icon-pencil"></i></button>
+                                                <button class="btn btn-xs btn-danger" wire:click="confirmDeleteSubUnit({{ $subUnit->id }})" title="{{ __t('common.delete', 'Delete') }}"><i class="icon-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="{{ $subUnitTableHasBarcode ? 6 : 5 }}" class="text-center text-muted">{{ __t('product.no_sub_units', 'No sub-units found') }}</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="{{ $subUnitTableHasBarcode ? 6 : 5 }}" class="text-right">
+                                            <button class="btn btn-primary btn-sm" wire:click="openAddSubUnitModal">
+                                                <i class="icon-plus2"></i> {{ __t('product.add_sub_unit', 'Add Sub-Unit') }}
                                                     </button>
-                                                    <button class="btn btn-xs btn-danger" wire:click="confirmDeleteSubUnit({{ $subUnit->id }})" 
-                                                            title="{{ __t('common.delete', 'Delete') }}">
-                                                        <i class="icon-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="list-group text-default list-group-lg list-group-borderless">
-                                                <div class='row'>
-                                                    <span href="#" class="list-group-item p-l-20">
-                                                        <div class="col-md-7 col-xs-7 text-bold">
-                                                            {{ __t('product.sale_price', 'Sale Price') }} :
-                                                        </div>
-                                                        <div class="col-md-5 col-xs-5 text-left">
-                                                            {{ currency($subUnit->sale_price ?? $product->sale_price) }}
-                                                        </div>
-                                                    </span>
-                                                </div>
-                                                <div class='row'>
-                                                    <span href="#" class="list-group-item p-l-20">
-                                                        <div class="col-md-7 col-xs-7 text-bold">
-                                                            {{ __t('product.buy_price', 'Buy Price') }} :
-                                                        </div>
-                                                        <div class="col-md-5 col-xs-5 text-left">
-                                                            {{ currency($subUnit->buy_price ?? $product->buy_price) }}
-                                                        </div>
-                                                    </span>
-                                                </div>
-                                                @if($subUnit->barcode)
-                                                    <div class='row'>
-                                                        <span href="#" class="list-group-item p-l-20">
-                                                            <div class="col-md-12 col-xs-12 text-bold">
-                                                                {{ __t('product.barcode', 'Barcode') }} :
-                                                            </div>
-                                                            <div class="col-md-12 col-xs-12 text-left">
-                                                                {{ $subUnit->barcode }}
-                                                            </div>
-                                                        </span>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
                         </div>
                     </div>
                 </div>
-            @endif
+            </div>
         </div>
     </div>
 </div>
