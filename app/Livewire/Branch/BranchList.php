@@ -11,6 +11,7 @@ class BranchList extends BaseListComponent
     protected $listeners = [
         'refreshComponent' => '$refresh',
         'branchListUpdated' => 'refreshList',
+        'branchListRefreshRequested' => 'refreshList',
     ];
 
     protected function getController()

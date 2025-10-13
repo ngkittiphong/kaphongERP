@@ -33,8 +33,10 @@
                     @if ($errors->has('general'))
                         <div class="alert alert-danger alert-dismissible">
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
-                            {{ $errors->first('general') }}
-                        </div>
+                            @foreach ($errors->get('general') as $error)
+                                {{ $error }}<br>
+                            @endforeach
+                        </div>  
                     @endif
                     
                     <form wire:submit.prevent="saveBranch">

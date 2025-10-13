@@ -184,6 +184,85 @@
             }
         };
 
+        function initReorderStateSavingTables() {
+            if ($('.datatable-reorder-state-saving').length === 0) {
+                return;
+            }
+
+            if ($.fn.DataTable.isDataTable('.datatable-reorder-state-saving')) {
+                return;
+            }
+
+            console.log('Found datatable-reorder-state-saving table, initializing...');
+            const productTable = window.DataTableManager.initTable('.datatable-reorder-state-saving', {
+                stateSave: true,
+                fixedColumns: true,
+                scrollResize: true,
+                scrollX: true,
+                scrollCollapse: true,
+                pageLength: 10,
+                order: [[ 0, 'asc' ]]
+            });
+            
+            if (productTable) {
+                console.log('Product table initialized successfully via DataTableManager');
+            } else {
+                console.error('Failed to initialize product table via DataTableManager');
+            }
+        }
+
+        function initInventoryTable() {
+            if ($('#inventoryTable').length === 0) {
+                console.log('Inventory table not found');
+                return;
+            }
+
+            console.log('Found inventory table, initializing...');
+            const inventoryTable = window.DataTableManager.initTable('#inventoryTable', {
+                language: { search: '' } // Hide default search box
+            });
+            
+            if (inventoryTable) {
+                window.DataTableManager.setupExternalSearch('inventoryTable', 'inventorySearchInput', 'clearInventorySearch');
+            }
+        }
+
+        function initMovementsTable() {
+            if ($('#movementsTable').length === 0) {
+                console.log('Movements table not found');
+                return;
+            }
+
+            console.log('Found movements table, initializing...');
+            const movementsTable = window.DataTableManager.initTable('#movementsTable', {
+                language: { search: '' } // Hide default search box
+            });
+            
+            if (movementsTable) {
+                window.DataTableManager.setupExternalSearch('movementsTable', 'movementSearchInput', 'clearMovementFilters');
+                window.DataTableManager.setupDateRangeFilter('movementsTable', 'movementDateFrom', 'movementDateTo', 1);
+            }
+        }
+
+        function applyCommonTableEnhancements() {
+            $('.dataTables_filter input[type=search]').attr('placeholder', '{{ __t("common.find", "Find") }}');
+
+            $('.dataTables_length select').select2({
+                minimumResultsForSearch: Infinity,
+                width: 'auto'
+            });
+
+            $(".lease-order-row").on("click", function() {
+                $(".lease-order-row").removeClass('active');
+                $(this).addClass(' active');
+            });
+        }
+
+        function refreshBranchDatatable() {
+            initReorderStateSavingTables();
+            applyCommonTableEnhancements();
+        }
+
         function initDataTable() {
             console.log('Initializing DataTables...');
             
@@ -192,70 +271,10 @@
                 console.warn('DOM not fully loaded, skipping DataTable initialization');
                 return false;
             }
-            
-            // Initialize standard tables with reorder functionality
-            if ($('.datatable-reorder-state-saving').length > 0 && !$.fn.DataTable.isDataTable('.datatable-reorder-state-saving')) {
-                console.log('Found datatable-reorder-state-saving table, initializing...');
-                const productTable = window.DataTableManager.initTable('.datatable-reorder-state-saving', {
-                    stateSave: true,
-                    fixedColumns: true,
-                    scrollResize: true,
-                    scrollX: true,
-                    scrollCollapse: true,
-                    pageLength: 10,
-                    order: [[ 0, 'asc' ]]
-                });
-                
-                if (productTable) {
-                    console.log('Product table initialized successfully via DataTableManager');
-                } else {
-                    console.error('Failed to initialize product table via DataTableManager');
-                }
-            }
 
-            // Check if inventory table exists and initialize if not already done
-            if ($('#inventoryTable').length > 0) {
-                console.log('Found inventory table, initializing...');
-                const inventoryTable = window.DataTableManager.initTable('#inventoryTable', {
-                    language: { search: '' } // Hide default search box
-                });
-                
-                if (inventoryTable) {
-                    window.DataTableManager.setupExternalSearch('inventoryTable', 'inventorySearchInput', 'clearInventorySearch');
-                }
-            } else {
-                console.log('Inventory table not found');
-            }
-
-            // Check if movements table exists and initialize if not already done
-            if ($('#movementsTable').length > 0) {
-                console.log('Found movements table, initializing...');
-                const movementsTable = window.DataTableManager.initTable('#movementsTable', {
-                    language: { search: '' } // Hide default search box
-                });
-                
-                if (movementsTable) {
-                    window.DataTableManager.setupExternalSearch('movementsTable', 'movementSearchInput', 'clearMovementFilters');
-                    window.DataTableManager.setupDateRangeFilter('movementsTable', 'movementDateFrom', 'movementDateTo', 1);
-                }
-            } else {
-                console.log('Movements table not found');
-            }
-
-            // Add placeholder to default search inputs
-            $('.dataTables_filter input[type=search]').attr('placeholder', '{{ __t("common.find", "Find") }}');
-
-            // Enable Select2 for length options
-            $('.dataTables_length select').select2({
-                minimumResultsForSearch: Infinity,
-                width: 'auto'
-            });
-
-            // Setup row selection for lease orders
-            $(".lease-order-row").on("click", function() {
-                $(".lease-order-row").removeClass('active');
-                $(this).addClass(' active');
-            });
+            refreshBranchDatatable();
+            initInventoryTable();
+            initMovementsTable();
         }
 
         // Global functions for backward compatibility
@@ -321,13 +340,24 @@
             
             Livewire.on('branchListUpdated', () => {
                 setTimeout(() => {
-                    initDataTable();
+                    refreshBranchDatatable();
                 }, 500);
             });
             
             Livewire.on('warehouseListUpdated', () => {
                 setTimeout(() => {
                     initDataTable();
+                }, 500);
+            });
+            Livewire.on('branchCreated', () => {
+                setTimeout(() => {
+                    refreshBranchDatatable();
+                }, 500);
+            });
+
+            Livewire.on('branchUpdated', () => {
+                setTimeout(() => {
+                    refreshBranchDatatable();
                 }, 500);
             });
         });

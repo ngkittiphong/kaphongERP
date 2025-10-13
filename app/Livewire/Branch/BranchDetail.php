@@ -3,6 +3,7 @@
 namespace App\Livewire\Branch;
 
 use Livewire\Component;
+use App\Livewire\Branch\BranchList;
 use App\Models\Branch;
 use App\Models\Company;
 use App\Models\Warehouse;
@@ -325,8 +326,7 @@ class BranchDetail extends Component
             $this->showAddBranchForm = false;
             $this->dispatch('branchCreated');
             $this->dispatch('refreshComponent');
-            
-            
+            $this->dispatch('branchListRefreshRequested')->to(BranchList::class);
         } catch (QueryException $e) {
             $fullSql = $this->formatSqlFromException($e);
             $errorMessage = sprintf(
@@ -394,6 +394,7 @@ class BranchDetail extends Component
             
             // Refresh the branch list component
             $this->dispatch('refreshComponent');
+            $this->dispatch('branchListRefreshRequested')->to(BranchList::class);
             
         } catch (\Illuminate\Database\QueryException $e) {
             // Handle database constraint violations
@@ -419,6 +420,7 @@ class BranchDetail extends Component
                 $this->branch = null;
                 $this->warehouses = [];
                 $this->dispatch('branchListUpdated');
+                $this->dispatch('branchListRefreshRequested')->to(BranchList::class);
             } else {
                 $this->addError('general', 'Failed to delete branch. Please try again.');
             }
