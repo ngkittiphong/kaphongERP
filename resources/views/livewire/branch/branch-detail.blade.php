@@ -151,7 +151,7 @@
     <script src="{{ asset('js/tables/datatables/extensions/buttons.min.js') }}"></script>
     <script src="{{ asset('js/tables/datatables/extensions/jszip/jszip.min.js') }}"></script>
     <script src="{{ asset('js/tables/datatables/extensions/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('js/tables/datatables/extensions/pdfmake/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('js/tables/datatables/extensions/pdfmake/vfs_fonts.min.js') }}"></script>
     
     <script>
         function confirmDelete(branchId) {
@@ -243,40 +243,58 @@
         }, 1000);
 
         // Helper functions for export customization
-        function getCurrentDateTimeFormatted() {
-            var now = new Date();
-            var year = now.getFullYear();
-            var month = String(now.getMonth() + 1).padStart(2, '0');
-            var day = String(now.getDate()).padStart(2, '0');
-            var hours = String(now.getHours()).padStart(2, '0');
-            var minutes = String(now.getMinutes()).padStart(2, '0');
-            var seconds = String(now.getSeconds()).padStart(2, '0');
-            return year + month + day + '_' + hours + minutes + seconds;
-        }
+        // function getCurrentDateTimeFormatted() {
+        //     var now = new Date();
+        //     var year = now.getFullYear();
+        //     var month = (now.getMonth() + 1).toString();
+        //     var day = now.getDate().toString();
+        //     var hours = now.getHours().toString();
+        //     var minutes = now.getMinutes().toString();
+        //     var seconds = now.getSeconds().toString();
+            
+        //     // Manual padding to avoid padStart issues
+        //     month = month.length < 2 ? '0' + month : month;
+        //     day = day.length < 2 ? '0' + day : day;
+        //     hours = hours.length < 2 ? '0' + hours : hours;
+        //     minutes = minutes.length < 2 ? '0' + minutes : minutes;
+        //     seconds = seconds.length < 2 ? '0' + seconds : seconds;
+            
+        //     return year + month + day + '_' + hours + minutes + seconds;
+        // }
 
-        function getBranchName() {
-            var branchName = 'Unknown Branch';
-            var $table = $('.datatable-warehouse-list');
-            if ($table.length) {
-                var dataBranchName = $table.data('branch-name');
-                if (dataBranchName && dataBranchName !== 'Unknown') {
-                    branchName = dataBranchName;
-                }
-            }
-            return branchName.replace(/[^a-zA-Z0-9]/g, '_');
-        }
+        // function getBranchName() {
+        //     try {
+        //         var branchName = 'Unknown_Branch';
+        //         var $table = $('.datatable-warehouse-list');
+        //         if ($table.length) {
+        //             var dataBranchName = $table.data('branch-name');
+        //             if (dataBranchName && dataBranchName !== 'Unknown') {
+        //                 branchName = dataBranchName;
+        //             }
+        //         }
+        //         return branchName.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
+        //     } catch (error) {
+        //         console.error('Error getting branch name:', error);
+        //         return 'Unknown_Branch';
+        //     }
+        // }
 
-        function getCompanyName() {
-            var companyName = 'Unknown Company';
-            var $table = $('.datatable-warehouse-list');
-            if ($table.length) {
-                var dataCompanyName = $table.data('company-name');
-                if (dataCompanyName && dataCompanyName !== 'Unknown') {
-                    companyName = dataCompanyName;
-                }
-            }
-            return companyName.replace(/[^a-zA-Z0-9]/g, '_');
-        }
+        // function getCompanyName() {
+        //     try {
+        //         var companyName = 'Unknown_Company';
+        //         var $table = $('.datatable-warehouse-list');
+        //         if ($table.length) {
+        //             var dataCompanyName = $table.data('company-name');
+        //             if (dataCompanyName && dataCompanyName !== 'Unknown') {
+        //                 companyName = dataCompanyName;
+        //             }
+        //         }
+        //         return companyName.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
+        //     } catch (error) {
+        //         console.error('Error getting company name:', error);
+        //         return 'Unknown_Company';
+        //     }
+        // }
 
         // Destroy Warehouse DataTable safely
         function destroyWarehouseDataTable() {
@@ -412,23 +430,64 @@
                                 className: 'btn btn-success btn-sm',
                                 text: '<i class="icon-file-text2 me-1"></i>CSV',
                                 title: 'Warehouse List',
-                                filename: 'Warehouse_List_Export'
+                                filename: 'Warehouse_List'
                             },
                             {
                                 extend: 'excel',
                                 className: 'btn btn-info btn-sm',
                                 text: '<i class="icon-file-excel me-1"></i>Excel',
                                 title: 'Warehouse List',
-                                filename: 'Warehouse_List_Export'
+                                filename: 'Warehouse_List'
                             },
                             {
                                 extend: 'pdf',
                                 className: 'btn btn-danger btn-sm',
                                 text: '<i class="icon-file-pdf me-1"></i>PDF',
                                 title: 'Warehouse List',
-                                filename: 'Warehouse_List_Export',
+                                filename: 'Warehouse_List',
                                 orientation: 'landscape',
-                                pageSize: 'A4'
+                                pageSize: 'A4',
+                                // customize: function(doc) {
+                                //     // Ensure styles object and defaults exist before assignment
+                                //     doc.styles = doc.styles || {};
+                                //     doc.defaultStyle = doc.defaultStyle || {};
+
+                                //     // Prepare style buckets the export relies on
+                                //     doc.styles.tableHeader = doc.styles.tableHeader || {};
+                                //     doc.styles.tableBodyEven = doc.styles.tableBodyEven || {};
+                                //     doc.styles.tableBodyOdd = doc.styles.tableBodyOdd || {};
+
+                                //     // Configure PDF to avoid font loading issues
+                                //     doc.defaultStyle.fontSize = 8;
+                                //     doc.defaultStyle.font = 'Roboto';
+
+                                //     doc.styles.tableHeader.fontSize = 8;
+                                //     doc.styles.tableHeader.font = 'Roboto';
+
+                                //     doc.styles.tableBodyEven.fontSize = 8;
+                                //     doc.styles.tableBodyEven.font = 'Roboto';
+
+                                //     doc.styles.tableBodyOdd.fontSize = 8;
+                                //     doc.styles.tableBodyOdd.font = 'Roboto';
+                                    
+                                //     // Set page margins
+                                //     doc.pageMargins = [40, 60, 40, 60];
+                                    
+                                //     // Add header
+                                //     doc.content.splice(0, 0, {
+                                //         text: 'Warehouse List',
+                                //         style: 'header',
+                                //         alignment: 'center',
+                                //         margin: [0, 0, 0, 20]
+                                //     });
+                                    
+                                //     // Define header style
+                                //     doc.styles.header = {
+                                //         fontSize: 16,
+                                //         bold: true,
+                                //         alignment: 'center'
+                                //     };
+                                // }
                             },
                             {
                                 extend: 'print',
@@ -471,59 +530,8 @@
                     });
                 }
 
-                // Add custom click handlers for dynamic filenames
-                setTimeout(function() {
-                    var csvButton = dataTable.button('.btn-success');
-                    if (csvButton && csvButton.length) {
-                        $(csvButton.node()).off('click').on('click', function(e) {
-                            e.preventDefault();
-                            var timestamp = getCurrentDateTimeFormatted();
-                            var companyName = getCompanyName();
-                            var branchName = getBranchName();
-                            var filename = 'Warehouse_List_' + timestamp + '_' + companyName + '_' + branchName + '.csv';
-
-                            csvButton.trigger();
-
-                            setTimeout(function() {
-                                console.log('CSV Export triggered with filename: ' + filename);
-                            }, 100);
-                        });
-                    }
-
-                    var excelButton = dataTable.button('.btn-info');
-                    if (excelButton && excelButton.length) {
-                        $(excelButton.node()).off('click').on('click', function(e) {
-                            e.preventDefault();
-                            var timestamp = getCurrentDateTimeFormatted();
-                            var companyName = getCompanyName();
-                            var branchName = getBranchName();
-                            var filename = 'Warehouse_List_' + timestamp + '_' + companyName + '_' + branchName + '.xlsx';
-
-                            excelButton.trigger();
-
-                            setTimeout(function() {
-                                console.log('Excel Export triggered with filename: ' + filename);
-                            }, 100);
-                        });
-                    }
-
-                    var pdfButton = dataTable.button('.btn-danger');
-                    if (pdfButton && pdfButton.length) {
-                        $(pdfButton.node()).off('click').on('click', function(e) {
-                            e.preventDefault();
-                            var timestamp = getCurrentDateTimeFormatted();
-                            var companyName = getCompanyName();
-                            var branchName = getBranchName();
-                            var filename = 'Warehouse_List_' + timestamp + '_' + companyName + '_' + branchName + '.pdf';
-
-                            pdfButton.trigger();
-
-                            setTimeout(function() {
-                                console.log('PDF Export triggered with filename: ' + filename);
-                            }, 100);
-                        });
-                    }
-                }, 200);
+                // Simple export without custom filename handlers
+                console.log('Export buttons initialized successfully');
             } catch (error) {
                 console.error('DataTable initialization failed:', error);
                 isWarehouseDataTableInitializing = false;

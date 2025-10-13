@@ -1196,62 +1196,62 @@
                 });
             }
 
-            // Add custom click handlers for dynamic filenames
-            setTimeout(function() {
-                var csvButton = dataTable.button('.btn-success');
-                if (csvButton && csvButton.length) {
-                    $(csvButton.node()).off('click').on('click', function(e) {
-                        e.preventDefault();
-                        var timestamp = getCurrentDateTimeFormatted();
-                        var dateRange = getDateRange();
-                        var branchName = getBranchName();
-                        var productName = getProductName();
-                        var filename = 'Stock_Card_' + timestamp + '_' + dateRange + '_' + branchName + '_' + productName + '.csv';
+            // // Add custom click handlers for dynamic filenames
+            // setTimeout(function() {
+            //     var csvButton = dataTable.button('.btn-success');
+            //     if (csvButton && csvButton.length) {
+            //         $(csvButton.node()).off('click').on('click', function(e) {
+            //             e.preventDefault();
+            //             var timestamp = getCurrentDateTimeFormatted();
+            //             var dateRange = getDateRange();
+            //             var branchName = getBranchName();
+            //             var productName = getProductName();
+            //             var filename = 'Stock_Card_' + timestamp + '_' + dateRange + '_' + branchName + '_' + productName + '.csv';
 
-                        csvButton.trigger();
+            //             csvButton.trigger();
 
-                        setTimeout(function() {
-                            console.log('CSV Export triggered with filename: ' + filename);
-                        }, 100);
-                    });
-                }
+            //             setTimeout(function() {
+            //                 console.log('CSV Export triggered with filename: ' + filename);
+            //             }, 100);
+            //         });
+            //     }
 
-                var excelButton = dataTable.button('.btn-info');
-                if (excelButton && excelButton.length) {
-                    $(excelButton.node()).off('click').on('click', function(e) {
-                        e.preventDefault();
-                        var timestamp = getCurrentDateTimeFormatted();
-                        var dateRange = getDateRange();
-                        var branchName = getBranchName();
-                        var productName = getProductName();
-                        var filename = 'Stock_Card_' + timestamp + '_' + dateRange + '_' + branchName + '_' + productName + '.xlsx';
+            //     var excelButton = dataTable.button('.btn-info');
+            //     if (excelButton && excelButton.length) {
+            //         $(excelButton.node()).off('click').on('click', function(e) {
+            //             e.preventDefault();
+            //             var timestamp = getCurrentDateTimeFormatted();
+            //             var dateRange = getDateRange();
+            //             var branchName = getBranchName();
+            //             var productName = getProductName();
+            //             var filename = 'Stock_Card_' + timestamp + '_' + dateRange + '_' + branchName + '_' + productName + '.xlsx';
 
-                        excelButton.trigger();
+            //             excelButton.trigger();
 
-                        setTimeout(function() {
-                            console.log('Excel Export triggered with filename: ' + filename);
-                        }, 100);
-                    });
-                }
+            //             setTimeout(function() {
+            //                 console.log('Excel Export triggered with filename: ' + filename);
+            //             }, 100);
+            //         });
+            //     }
 
-                var pdfButton = dataTable.button('.btn-danger');
-                if (pdfButton && pdfButton.length) {
-                    $(pdfButton.node()).off('click').on('click', function(e) {
-                        e.preventDefault();
-                        var timestamp = getCurrentDateTimeFormatted();
-                        var dateRange = getDateRange();
-                        var branchName = getBranchName();
-                        var productName = getProductName();
-                        var filename = 'Stock_Card_' + timestamp + '_' + dateRange + '_' + branchName + '_' + productName + '.pdf';
+            //     var pdfButton = dataTable.button('.btn-danger');
+            //     if (pdfButton && pdfButton.length) {
+            //         $(pdfButton.node()).off('click').on('click', function(e) {
+            //             e.preventDefault();
+            //             var timestamp = getCurrentDateTimeFormatted();
+            //             var dateRange = getDateRange();
+            //             var branchName = getBranchName();
+            //             var productName = getProductName();
+            //             var filename = 'Stock_Card_' + timestamp + '_' + dateRange + '_' + branchName + '_' + productName + '.pdf';
 
-                        pdfButton.trigger();
+            //             pdfButton.trigger();
 
-                        setTimeout(function() {
-                            console.log('PDF Export triggered with filename: ' + filename);
-                        }, 100);
-                    });
-                }
-            }, 200);
+            //             setTimeout(function() {
+            //                 console.log('PDF Export triggered with filename: ' + filename);
+            //             }, 100);
+            //         });
+            //     }
+            // }, 200);
             } catch (error) {
                 console.error('DataTable initialization failed:', error);
                 isStockCardDataTableInitializing = false;
