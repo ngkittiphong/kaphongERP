@@ -85,6 +85,9 @@
 								   name="new_password" 
 								   autocomplete="new-password"
 								   required>
+							<div class="help-block text-muted">
+								<small><i class="icon-info"></i> {{ __t('auth.password_requirement_hint', 'Password must be at least 8 characters') }}</small>
+							</div>
 							<div class="text-danger" id="new-password-error"></div>
 						</div>
 						<div class="form-group">

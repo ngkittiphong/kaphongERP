@@ -1930,6 +1930,10 @@ class TranslationSeeder extends Seeder
             'auth.update_password' => [
                 'en' => 'Update Password',
                 'th' => 'อัปเดตรหัสผ่าน'
+            ],
+            'auth.password_requirement_hint' => [
+                'en' => 'Password must be at least 8 characters',
+                'th' => 'รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร'
             ]
         ];
 

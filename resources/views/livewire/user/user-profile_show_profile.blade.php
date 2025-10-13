@@ -77,6 +77,9 @@
                     <div class="form-group">
                         <label for="new_password">{{ __t('user.new_password', 'New Password') }}</label>
                         <input type="password" class="form-control" id="new_password" name="new_password" autocomplete="new-password">
+                        <div class="help-block text-muted">
+                            <small><i class="icon-info"></i> {{ __t('auth.password_requirement_hint', 'Password must be at least 8 characters') }}</small>
+                        </div>
                         <div class="text-danger" id="new_password_error"></div>
                     </div>
                     
@@ -126,6 +129,9 @@
                         <div class="form-group">
                             <label for="new_password">{{ __t('user.new_password', 'New Password') }}</label>
                             <input type="password" class="form-control" id="new_password" name="new_password" wire:model="new_password" autocomplete="new-password">
+                            <div class="help-block text-muted">
+                                <small><i class="icon-info"></i> {{ __t('auth.password_requirement_hint', 'Password must be at least 8 characters') }}</small>
+                            </div>
                             @error('new_password') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
                         

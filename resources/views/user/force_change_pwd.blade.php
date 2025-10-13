@@ -92,6 +92,9 @@
                         <div class="form-control-feedback">
                             <i class="icon-lock2 text-muted"></i>
                         </div>
+                        <div class="help-block text-muted">
+                            <small><i class="icon-info"></i> {{ __t('auth.password_requirement_hint', 'Password must be at least 8 characters') }}</small>
+                        </div>
                         @error('new_password')
                             <span class="help-block text-danger">{{ $message }}</span>
                         @enderror
