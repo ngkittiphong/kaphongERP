@@ -125,6 +125,22 @@ class ProductDetail extends Component
                 $query->where('name', 'Active');
             })
             ->get();
+            
+        // Set default VAT and Withholding values for new products
+        if (!$productId) {
+            $defaultVat = Vat::where('name', 'VAT 0%')->first();
+            $defaultWithholding = Withholding::where('name', 'WH 0%')->first();
+            
+            if ($defaultVat) {
+                $this->buy_vat_id = $defaultVat->id;
+                $this->sale_vat_id = $defaultVat->id;
+            }
+            
+            if ($defaultWithholding) {
+                $this->buy_withholding_id = $defaultWithholding->id;
+                $this->sale_withholding_id = $defaultWithholding->id;
+            }
+        }
     }
 
     public function loadProduct($productId)

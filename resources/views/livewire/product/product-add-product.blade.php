@@ -112,10 +112,9 @@
 
                             <div class="form-group">
                                 <label for="buy_vat_id">{{ __t('product.buy_vat', 'Buy VAT') }}</label>
-                                <select class="form-control" id="buy_vat_id" wire:model="buy_vat_id">
-                                    <option value="">{{ __t('product.select_vat', 'Select VAT') }}</option>
+                                <select class="form-control" id="buy_vat_id" wire:model="buy_vat_id" required>
                                     @foreach($vats as $vat)
-                                        <option value="{{ $vat->id }}" {{ $product && $product->buy_vat_id == $vat->id ? 'selected' : '' }}>
+                                        <option value="{{ $vat->id }}" {{ $vat->name === 'VAT 0%' ? 'selected' : '' }}>
                                             {{ $vat->name }}
                                         </option>
                                     @endforeach
@@ -125,10 +124,9 @@
 
                             <div class="form-group">
                                 <label for="buy_withholding_id">{{ __t('product.buy_withholding', 'Buy Withholding') }}</label>
-                                <select class="form-control" id="buy_withholding_id" wire:model="buy_withholding_id">
-                                    <option value="">{{ __t('product.select_withholding', 'Select Withholding') }}</option>
+                                <select class="form-control" id="buy_withholding_id" wire:model="buy_withholding_id" required>
                                     @foreach($withholdings as $withholding)
-                                        <option value="{{ $withholding->id }}" {{ $product && $product->buy_withholding_id == $withholding->id ? 'selected' : '' }}>
+                                        <option value="{{ $withholding->id }}" {{ $withholding->name === 'WH 0%' ? 'selected' : '' }}>
                                             {{ $withholding->name }}
                                         </option>
                                     @endforeach
@@ -144,10 +142,9 @@
 
                             <div class="form-group">
                                 <label for="sale_vat_id">{{ __t('product.sale_vat', 'Sale VAT') }}</label>
-                                <select class="form-control" id="sale_vat_id" wire:model="sale_vat_id">
-                                    <option value="">{{ __t('product.select_vat', 'Select VAT') }}</option>
+                                <select class="form-control" id="sale_vat_id" wire:model="sale_vat_id" required>
                                     @foreach($vats as $vat)
-                                        <option value="{{ $vat->id }}" {{ $product && $product->sale_vat_id == $vat->id ? 'selected' : '' }}>
+                                        <option value="{{ $vat->id }}" {{ $vat->name === 'VAT 0%' ? 'selected' : '' }}>
                                             {{ $vat->name }}
                                         </option>
                                     @endforeach
@@ -157,10 +154,9 @@
 
                             <div class="form-group">
                                 <label for="sale_withholding_id">{{ __t('product.sale_withholding', 'Sale Withholding') }}</label>
-                                <select class="form-control" id="sale_withholding_id" wire:model="sale_withholding_id">
-                                    <option value="">{{ __t('product.select_withholding', 'Select Withholding') }}</option>
+                                <select class="form-control" id="sale_withholding_id" wire:model="sale_withholding_id" required>
                                     @foreach($withholdings as $withholding)
-                                        <option value="{{ $withholding->id }}" {{ $product && $product->sale_withholding_id == $withholding->id ? 'selected' : '' }}>
+                                        <option value="{{ $withholding->id }}" {{ $withholding->name === 'WH 0%' ? 'selected' : '' }}>
                                             {{ $withholding->name }}
                                         </option>
                                     @endforeach
