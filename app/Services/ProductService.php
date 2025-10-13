@@ -206,7 +206,7 @@ class ProductService
 
             // Validate required fields
             Log::info('ProductService@updateProduct: Starting validation');
-            $this->validateProductData($data, 'update');
+            $this->validateProductData($data, 'update', $product);
             Log::info('ProductService@updateProduct: Validation passed');
 
             // Update the product
@@ -444,11 +444,11 @@ class ProductService
     /**
      * Validate product data
      */
-    private function validateProductData(array $data, string $operation = 'create')
+    private function validateProductData(array $data, string $operation = 'create', Product $product = null)
     {
         $rules = [
             'name' => 'required|string|max:255',
-            'sku_number' => 'nullable|string|max:255',
+            'sku_number' => 'required|string|max:255',
             'serial_number' => 'nullable|string|max:255',
             'product_type_id' => 'required|exists:product_types,id',
             'product_status_id' => 'required|exists:product_statuses,id',
@@ -470,6 +470,13 @@ class ProductService
             $rules['product_group_name'] = 'required|string|max:255';
         } else {
             $rules['product_group_id'] = 'required|exists:product_groups,id';
+        }
+
+        // Add unique validation for SKU number
+        if ($operation === 'create') {
+            $rules['sku_number'] .= '|unique:products,sku_number';
+        } else {
+            $rules['sku_number'] .= '|unique:products,sku_number,' . $product->id;
         }
 
         $validator = validator($data, $rules);

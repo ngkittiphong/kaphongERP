@@ -211,6 +211,7 @@ class ProductDetail extends Component
         // Set default values
         $this->buy_price = 0.00;
         $this->sale_price = 0.00;
+        $this->product_status_id = 1; // Set default to Active status
         
         $this->product = null;
         $this->dispatch('addProduct');

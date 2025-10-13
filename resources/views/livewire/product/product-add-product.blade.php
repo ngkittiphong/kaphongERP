@@ -40,8 +40,8 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="sku_number">{{ __t('product.sku_number', 'SKU Number') }}</label>
-                                <input type="text" class="form-control" id="sku_number" wire:model="sku_number">
+                                <label for="sku_number">{{ __t('product.sku_number', 'SKU Number') }} <span style="color: red;">*</span></label>
+                                <input type="text" class="form-control" id="sku_number" wire:model="sku_number" required>
                                 @error('sku_number') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
 
