@@ -4,7 +4,7 @@
     <!-- Filter Buttons -->
     <div class="panel-body">
         <div class="btn-group" role="group">
-            <button type="button" class="btn btn-sm {{ $filter === 'all' ? 'btn-primary' : 'btn-default' }}" 
+            {{-- <button type="button" class="btn btn-sm {{ $filter === 'all' ? 'btn-primary' : 'btn-default' }}" 
                     wire:click="setFilter('all')">
                 {{ __t('warehouse.all_warehouses', 'All Warehouses') }}
             </button>
@@ -15,7 +15,7 @@
             <button type="button" class="btn btn-sm {{ $filter === 'inactive' ? 'btn-danger' : 'btn-default' }}" 
                     wire:click="setFilter('inactive')">
                 {{ __t('warehouse.deactivated_only', 'Deactivated Only') }}
-            </button>
+            </button> --}}
         </div>
     </div>
 
@@ -69,5 +69,5 @@
         </table>
     </div>
 
-    
+    <x-datatable-scripts listUpdatedEvent="warehouseListUpdated" />
 </div>

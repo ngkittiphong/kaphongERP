@@ -319,10 +319,22 @@
                     inventoryDT = $table.DataTable({
                         autoWidth: true,
                         colReorder: true,
-                        dom: '<"datatable-header"lf><"datatable-scroll"t><"datatable-footer"ip>', // Added 'f' back to show search
+                        dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>', // Standard layout with search and length
                         lengthMenu: [10, 25, 50],
                         searching: true,
-                        language: { search: '', lengthMenu: '_MENU_', paginate: { first: 'First', last: 'Last', next: '→', previous: '←' } }
+                        language: { 
+                            search: '_INPUT_', 
+                            lengthMenu: '_MENU_', 
+                            paginate: { 
+                                first: '{{ __t("common.first", "First") }}', 
+                                last: '{{ __t("common.last", "Last") }}', 
+                                next: '&rarr;', 
+                                previous: '&larr;' 
+                            } 
+                        },
+                        stateSave: true,
+                        pageLength: 10,
+                        order: [[ 0, 'asc' ]]
                     });
                     console.log('✅ DataTable initialized successfully:', inventoryDT);
                 } catch (error) {
@@ -347,10 +359,22 @@
                 movementsDT = $table.DataTable({
                     autoWidth: true,
                     colReorder: true,
-                    dom: '<"datatable-header"lf><"datatable-scroll"t><"datatable-footer"ip>', // Added 'f' back to show search
+                    dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>', // Standard layout with search and length
                     lengthMenu: [10, 25, 50],
                     searching: true,
-                    language: { search: '', lengthMenu: '_MENU_', paginate: { first: 'First', last: 'Last', next: '→', previous: '←' } }
+                    language: { 
+                        search: '_INPUT_', 
+                        lengthMenu: '_MENU_', 
+                        paginate: { 
+                            first: '{{ __t("common.first", "First") }}', 
+                            last: '{{ __t("common.last", "Last") }}', 
+                            next: '&rarr;', 
+                            previous: '&larr;' 
+                        } 
+                    },
+                    stateSave: true,
+                    pageLength: 10,
+                    order: [[ 0, 'asc' ]]
                 });
 
                 // DataTable search is now handled by default search box
@@ -388,7 +412,7 @@
                 initMovementsTable();
 
                 // Placeholder text
-                $('.dataTables_filter input[type=search]').attr('placeholder', 'Search...');
+                $('.dataTables_filter input[type=search]').attr('placeholder', '{{ __t("common.find", "Find") }}');
                 // Length select
                 $('.dataTables_length select').select2({ minimumResultsForSearch: Infinity, width: 'auto' });
                 console.log('🔧 initTables complete');

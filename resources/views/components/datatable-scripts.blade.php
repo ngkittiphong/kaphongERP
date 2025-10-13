@@ -243,7 +243,7 @@
             }
 
             // Add placeholder to default search inputs
-            $('.dataTables_filter input[type=search]').attr('placeholder', '{{ __("Find") }}');
+            $('.dataTables_filter input[type=search]').attr('placeholder', '{{ __t("common.find", "Find") }}');
 
             // Enable Select2 for length options
             $('.dataTables_length select').select2({
@@ -318,13 +318,25 @@
                     initDataTable();
                 }, 500);
             });
+            
+            Livewire.on('branchListUpdated', () => {
+                setTimeout(() => {
+                    initDataTable();
+                }, 500);
+            });
+            
+            Livewire.on('warehouseListUpdated', () => {
+                setTimeout(() => {
+                    initDataTable();
+                }, 500);
+            });
         });
 
-        // Reinitialize on Livewire updates for warehouse and product data changes
+        // Reinitialize on Livewire updates for warehouse, product, and branch data changes
         document.addEventListener('livewire:updated', (event) => {
-            // Reinitialize if the update is related to warehouse or product data
+            // Reinitialize if the update is related to warehouse, product, or branch data
             if (event.detail && event.detail.component && 
-                (event.detail.component.includes('warehouse') || event.detail.component.includes('product'))) {
+                (event.detail.component.includes('warehouse') || event.detail.component.includes('product') || event.detail.component.includes('branch'))) {
                 console.log('Livewire update detected for component:', event.detail.component);
                 setTimeout(() => {
                     tryInitDataTable();
@@ -339,15 +351,15 @@
             }, 1000);
         });
 
-        // Additional refresh handling for product components
+        // Additional refresh handling for product and branch components
         document.addEventListener('livewire:updated', (event) => {
-            // Check if this is a product component update that might need datatable refresh
-            if (event.detail && event.detail.component && event.detail.component.includes('product')) {
-                console.log('Product component updated, checking for datatable refresh...');
+            // Check if this is a product or branch component update that might need datatable refresh
+            if (event.detail && event.detail.component && (event.detail.component.includes('product') || event.detail.component.includes('branch'))) {
+                console.log('Product/Branch component updated, checking for datatable refresh...');
                 setTimeout(() => {
                     // Check if datatable needs reinitialization
                     if ($('.datatable-reorder-state-saving').length > 0) {
-                        console.log('Reinitializing product datatable after update...');
+                        console.log('Reinitializing datatable after update...');
                         tryInitDataTable();
                     }
                 }, 300);
