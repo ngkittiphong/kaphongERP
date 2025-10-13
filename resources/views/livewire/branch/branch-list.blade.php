@@ -1,6 +1,15 @@
- <!------------- Start Product List ---->
+<!------------- Start Product List ---->
 
- <div class="table-responsive">
+<!-- Error Messages Display -->
+@if ($errors->has('general'))
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <h4><i class="icon fa fa-ban"></i> {{ __t('common.error', 'Error') }}!</h4>
+        {{ $errors->first('general') }}
+    </div>
+@endif
+
+<div class="table-responsive">
      <table class="table table-hover datatable-reorder-state-saving datatable-fixed-left">
          <thead>
              <tr>

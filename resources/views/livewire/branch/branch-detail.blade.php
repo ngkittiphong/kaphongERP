@@ -16,6 +16,15 @@
 
     <!-- 2) Hide the Form While Loading -->
     <div wire:loading.remove>
+        <!-- Error Messages Display -->
+        @if ($errors->has('general'))
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h4><i class="icon fa fa-ban"></i> {{ __t('common.error', 'Error') }}!</h4>
+                {{ $errors->first('general') }}
+            </div>
+        @endif
+
         @if ($showAddBranchForm)
             @include('livewire.branch.branch-detail_addbranch')
         @elseif($showEditBranchForm && $branch)

@@ -118,6 +118,10 @@ abstract class BaseListComponent extends Component
             if ($response->getData()->success) {
                 $this->loadItems();
                 $this->dispatch($this->eventPrefix . 'Deleted');
+            } else {
+                // Display the actual error message from the controller
+                $errorMessage = $response->getData()->message ?? 'Failed to delete item. Please try again.';
+                $this->addError('general', $errorMessage);
             }
         }
     }

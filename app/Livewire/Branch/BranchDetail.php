@@ -422,7 +422,9 @@ class BranchDetail extends Component
                 $this->dispatch('branchListUpdated');
                 $this->dispatch('branchListRefreshRequested')->to(BranchList::class);
             } else {
-                $this->addError('general', 'Failed to delete branch. Please try again.');
+                // Display the actual error message from the controller
+                $errorMessage = $response->getData()->message ?? 'Failed to delete branch. Please try again.';
+                $this->addError('general', $errorMessage);
             }
         }
     }
