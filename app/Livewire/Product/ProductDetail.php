@@ -80,6 +80,7 @@ class ProductDetail extends Component
     public $subUnitSalePrice = 0;
     public $subUnitQuantity = 1; // quantity_of_minimum_unit
     public $subUnitBarcode = '';
+    public $subUnitTableHasBarcode = false; // exposed to view for conditional barcode column
 
     protected $listeners = [
         'ProductSelected' => 'loadProduct',
@@ -144,6 +145,9 @@ class ProductDetail extends Component
         $this->loadWarehouseProductData();
         
         $this->dispatch('productSelected', product: $this->product);
+
+        // Determine if barcode column exists for sub-units table once per load
+        $this->subUnitTableHasBarcode = Schema::hasColumn('product_sub_units', 'barcode');
     }
     
     /**
