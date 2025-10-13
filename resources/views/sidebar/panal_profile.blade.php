@@ -1,6 +1,13 @@
 @push('styles')
     <!-- Include Slim CSS -->
     <link rel="stylesheet" href="{{ asset('slim/css/slim.min.css') }}">
+    <style>
+        /* Hide Slim's inline delete control; use dedicated button instead */
+        #slim-avatar_panel .slim-btn-remove,
+        #slim-sign_panel .slim-btn-remove {
+            display: none !important;
+        }
+    </style>
 @endpush
 
 <div role="tabpanel" class="tab-pane profile fade" id="profile">
@@ -23,6 +30,7 @@
                     data-save-initial-image="true"
                     data-will-request="handleRequest"
                     data-did-upload="handleUpload"
+                    data-button-remove-enable="false"
                     {{-- data-did-remove="handleAvatarDelete" --}}
                     data-did-receive-server-error="handleServerError"
                     style="
