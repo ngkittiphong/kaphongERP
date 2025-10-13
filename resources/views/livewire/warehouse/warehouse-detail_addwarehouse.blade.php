@@ -41,16 +41,8 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="control-label">{{ __t('warehouse.user_creator', 'User Creator') }} <span class="text-danger">*</span></label>
-                                    <select class="form-control" wire:model="user_create_id" required>
-                                        <option value="">{{ __t('warehouse.select_user', 'Select User') }}</option>
-                                        @foreach(\App\Models\User::all() as $user)
-                                            <option value="{{ $user->id }}">{{ $user->username }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('user_create_id') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
+                                {{-- Hidden field for user creator - automatically set to current user --}}
+                                <input type="hidden" wire:model="user_create_id">
                             </div>
                         </div>
 
@@ -63,46 +55,26 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="control-label">{{ __t('warehouse.creation_date', 'Creation Date') }} <span class="text-danger">*</span></label>
-                                    <input type="datetime-local" class="form-control" wire:model="date_create" required>
-                                    @error('date_create') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
+                                {{-- Hidden field for creation date - automatically set to today --}}
+                                <input type="hidden" wire:model="date_create">
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="control-label">{{ __t('common.status', 'Status') }} <span class="text-danger">*</span></label>
-                                    <select class="form-control" wire:model="warehouse_status_id" required>
-                                        <option value="">{{ __t('warehouse.select_status', 'Select Status') }}</option>
-                                        @foreach($warehouse_statuses as $status)
-                                            <option value="{{ $status->id }}">{{ $status->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('warehouse_status_id') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
+                                {{-- Hidden field for status - automatically set to active --}}
+                                <input type="hidden" wire:model="warehouse_status_id">
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="control-label">{{ __t('warehouse.average_remain_price', 'Average Remain Price') }}</label>
-                                    <input type="number" class="form-control" wire:model="avr_remain_price" placeholder="{{ __t('warehouse.enter_price', '0.00') }}" step="0.01" min="0">
-                                    @error('avr_remain_price') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
+                                {{-- Hidden field for average remain price - automatically set to 0 --}}
+                                <input type="hidden" wire:model="avr_remain_price">
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" wire:model="main_warehouse" value="1">
-                                            {{ __t('warehouse.main_warehouse', 'Main Warehouse') }}
-                                        </label>
-                                    </div>
-                                </div>
+                                {{-- Hidden field for main warehouse - automatically set to false --}}
+                                <input type="hidden" wire:model="main_warehouse">
                             </div>
                         </div>
 

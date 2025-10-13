@@ -185,11 +185,17 @@ class WarehouseDetail extends Component
             'branch_id', 'user_create_id', 'main_warehouse', 'name', 'date_create', 'warehouse_status_id', 'avr_remain_price'
         ]);
         
-        // Set default values
-        $this->user_create_id = auth()->id() ?? 1;
-        $this->date_create = now()->format('Y-m-d\TH:i');
-        $this->main_warehouse = false;
-        $this->avr_remain_price = 0.00;
+        // Set forced values for hidden fields
+        $this->user_create_id = auth()->id() ?? 1; // Force current user
+        $this->date_create = now()->format('Y-m-d\TH:i'); // Force today's date
+        $this->main_warehouse = false; // Force not selected
+        $this->avr_remain_price = 0.00; // Force 0
+        
+        // Force Active status (ID 1)
+        $activeStatus = \App\Models\WarehouseStatus::where('name', 'Active')->first();
+        if ($activeStatus) {
+            $this->warehouse_status_id = $activeStatus->id;
+        }
     }
 
     public function displayEditWarehouseForm()
