@@ -88,6 +88,7 @@
                             <div class="list-group list-group-lg list-group-borderless">
                             <!-- Username field -->
                             <div class="form-group has-feedback has-feedback-left">
+                                <label class="control-label">{{ __t('user.username', 'Username') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('username') is-invalid @enderror" wire:model="username" placeholder="{{ __t('user.username', 'Username') }}"
                                     required>
                                 <div class="form-control-feedback">
@@ -100,6 +101,7 @@
 
                             <!-- Email field -->
                             <div class="form-group has-feedback has-feedback-left">
+                                <label class="control-label">{{ __t('user.email', 'Email') }} <span class="text-danger">*</span></label>
                                 <input type="email" class="form-control @error('email') is-invalid @enderror" wire:model="email" placeholder="{{ __t('user.email', 'Email') }}"
                                     required>
                                 <div class="form-control-feedback">
@@ -112,6 +114,7 @@
 
                             <!-- Password field -->
                             <div class="form-group has-feedback has-feedback-left">
+                                <label class="control-label">{{ __t('user.password', 'Password') }} <span class="text-danger">*</span></label>
                                 <input type="password" class="form-control @error('password') is-invalid @enderror" wire:model="password" placeholder="{{ __t('user.password', 'Password') }}"
                                     autocomplete="new-password" required>
                                 <div class="form-control-feedback">
@@ -124,6 +127,7 @@
                             
                             <!-- Password Confirmation field -->
                             <div class="form-group has-feedback has-feedback-left">
+                                <label class="control-label">{{ __t('user.confirm_password', 'Confirm password') }} <span class="text-danger">*</span></label>
                                 <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" wire:model="password_confirmation"
                                     placeholder="{{ __t('user.confirm_password', 'Confirm password') }}" autocomplete="new-password" required>
                                 <div class="form-control-feedback">
@@ -151,9 +155,9 @@
                                 </div>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <label class="control-label">Full Name (TH)</label>
+                                        <label class="control-label">Full Name (TH) <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control @error('fullname_th') is-invalid @enderror" placeholder="{{ __t('user.fullname_th', 'ชื่อ - นามสกุล') }}"
-                                            wire:model="fullname_th">
+                                            wire:model="fullname_th" required>
                                         @error('fullname_th')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -190,9 +194,9 @@
 
                             <!-- Nickname field -->
                             <div class="form-group">
-                                <label class="control-label">{{ __t('user.nickname', 'Nickname') }}</label>
+                                <label class="control-label">{{ __t('user.nickname', 'Nickname') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('nickname') is-invalid @enderror" wire:model="nickname"
-                                    placeholder="{{ __t('user.nickname', 'Nickname') }}">
+                                    placeholder="{{ __t('user.nickname', 'Nickname') }}" required>
                                 @error('nickname')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror

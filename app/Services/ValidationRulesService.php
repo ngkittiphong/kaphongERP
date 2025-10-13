@@ -47,9 +47,9 @@ class ValidationRulesService
             'user_status_id' => 'required|exists:user_statuses,id',
             
             // Profile fields
-            'nickname' => 'nullable|string|max:100',
+            'nickname' => 'required|string|max:100',
             'card_id_no' => 'nullable|string|max:100',
-            'fullname_th' => 'nullable|string|max:255',
+            'fullname_th' => 'required|string|max:255',
             'fullname_en' => 'nullable|string|max:255',
             'prefix_en' => 'nullable|string|max:50',
             'prefix_th' => 'nullable|string|max:50',
@@ -75,9 +75,9 @@ class ValidationRulesService
             'user_status_id' => 'required|exists:user_statuses,id',
             
             // Profile fields
-            'nickname' => 'nullable|string|max:100',
+            'nickname' => 'required|string|max:100',
             'card_id_no' => 'nullable|string|max:100',
-            'fullname_th' => 'nullable|string|max:255',
+            'fullname_th' => 'required|string|max:255',
             'fullname_en' => 'nullable|string|max:255',
             'prefix_en' => 'nullable|string|max:50',
             'prefix_th' => 'nullable|string|max:50',
@@ -134,8 +134,10 @@ class ValidationRulesService
             'user_type_id.exists' => 'The selected user type is invalid.',
             'user_status_id.required' => 'The user status field is required.',
             'user_status_id.exists' => 'The selected user status is invalid.',
+            'nickname.required' => 'The nickname field is required.',
             'nickname.max' => 'The nickname may not be greater than 100 characters.',
             'card_id_no.max' => 'The card ID number may not be greater than 100 characters.',
+            'fullname_th.required' => 'The full name in Thai field is required.',
             'fullname_th.max' => 'The full name in Thai may not be greater than 255 characters.',
             'fullname_en.max' => 'The full name in English may not be greater than 255 characters.',
             'prefix_en.max' => 'The prefix in English may not be greater than 50 characters.',

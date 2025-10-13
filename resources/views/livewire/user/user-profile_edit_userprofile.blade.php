@@ -107,9 +107,9 @@
                     </div>
                     <div class="col-md-9">
                         <div class="form-group">
-                            <label class="control-label">Full Name (Thai)</label>
+                            <label class="control-label">Full Name (Thai) <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('fullname_th') is-invalid @enderror" wire:model="fullname_th"
-                                value="{{ $user->profile->fullname_th ?? '' }}">
+                                value="{{ $user->profile->fullname_th ?? '' }}" required>
                             @error('fullname_th')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -146,9 +146,9 @@
 
                 <!-- Nickname field -->
                 <div class="form-group">
-                    <label class="control-label">{{ __t('user.nickname', 'Nickname') }}</label>
+                    <label class="control-label">{{ __t('user.nickname', 'Nickname') }} <span class="text-danger">*</span></label>
                     <input type="text" class="form-control @error('nickname') is-invalid @enderror" wire:model="nickname" 
-                        value="{{ $user->profile->nickname ?? '' }}">
+                        value="{{ $user->profile->nickname ?? '' }}" required>
                     @error('nickname')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
