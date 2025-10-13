@@ -83,7 +83,7 @@
                                             {{ __t('branch.company', 'บริษัท') }} :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
-                                            {{ $branch->company->name_th ?? 'N/A' }}
+                                            {{ $branch->company->company_name_th ?? 'N/A' }}
                                         </div>
                                     </span>
                                 </div>

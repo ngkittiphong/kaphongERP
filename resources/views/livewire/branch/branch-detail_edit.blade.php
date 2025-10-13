@@ -34,15 +34,9 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="edit_company_id">{{ __t('branch.company', 'Company') }} <span class="text-danger">*</span></label>
-                                    <select wire:model="company_id" class="form-control" id="edit_company_id">
-                                        <option value="">{{ __t('branch.select_company', 'Select Company') }}</option>
-                                        @foreach($companies as $company)
-                                            <option value="{{ $company->id }}" {{ $company->id == $branch->company_id ? 'selected' : '' }}>
-                                                {{ $company->name_th }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <label for="edit_company_name">{{ __t('branch.company', 'Company') }} <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="edit_company_name" value="{{ $companyNameTh }}" readonly>
+                                    <input type="hidden" wire:model="company_id">
                                     @error('company_id') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
@@ -198,7 +192,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <div class="checkbox">
+                                    <div class="checkbox" style="display: none;">
                                         <label>
                                             <input type="checkbox" wire:model.live="is_active" {{ $is_active ? 'checked' : '' }}> {{ __t('branch.active_branch', 'Active Branch') }}
                                         </label>
@@ -207,7 +201,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <div class="checkbox">
+                                    <div class="checkbox" style="display: none;">
                                         <label>
                                             <input type="checkbox" wire:model.live="is_head_office" {{ $is_head_office ? 'checked' : '' }}> {{ __t('branch.head_office', 'Head Office') }}
                                         </label>

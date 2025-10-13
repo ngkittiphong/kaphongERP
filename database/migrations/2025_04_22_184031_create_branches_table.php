@@ -15,6 +15,7 @@ return new class extends Migration
             $table->increments('id');
             $table->unsignedInteger('company_id');
             $table->string('branch_code', 15);
+            $table->string('branch_no', 20)->nullable();
             $table->string('name_th', 200)->nullable();
             $table->string('name_en', 200)->nullable();
             $table->text('address_th')->nullable();
@@ -43,7 +44,9 @@ return new class extends Migration
                   ->onDelete('cascade');
             $table->unique(['company_id', 'branch_code']);
             $table->unique('branch_code'); // Global unique constraint for branch_code
+            $table->unique('branch_no'); // Global unique constraint for branch_no
             $table->index('company_id');
+            $table->index('branch_no'); // Add index for query performance
         });
     }
 

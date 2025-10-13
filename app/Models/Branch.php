@@ -15,6 +15,7 @@ class Branch extends Model
     protected $fillable = [
         'company_id',
         'branch_code',
+        'branch_no',
         'name_th',
         'name_en',
         'address_th',
@@ -47,6 +48,16 @@ class Branch extends Model
                 $branch->branch_code = static::generateBranchCode();
                 \Log::debug('Auto-generated branch code during creation', [
                     'branch_code' => $branch->branch_code,
+                    'branch_name' => $branch->name_en ?? $branch->name_th ?? 'Unknown'
+                ]);
+            }
+            
+            // Auto-generate branch_no if not provided
+            if (empty($branch->branch_no)) {
+                $branch->branch_no = static::generateBranchNo($branch->company_id);
+                \Log::debug('Auto-generated branch number during creation', [
+                    'branch_no' => $branch->branch_no,
+                    'company_id' => $branch->company_id,
                     'branch_name' => $branch->name_en ?? $branch->name_th ?? 'Unknown'
                 ]);
             }
@@ -114,6 +125,68 @@ class Branch extends Model
             'max_attempts' => $maxAttempts,
             'fallback_code' => $fallbackCandidate,
             'date_pattern' => $datePattern
+        ]);
+        
+        return $fallbackCandidate;
+    }
+
+    /**
+     * Generate a unique branch number.
+     * Format: BR + YYYY + MM + CC + SSS
+     * Where CC is 2-digit company_id and SSS is 3-digit sequential branch number in that company
+     * Includes retry logic to handle duplicates
+     */
+    public static function generateBranchNo(?int $companyId = null, int $maxAttempts = 5): string
+    {
+        $prefix = 'BR';
+        $year = now()->format('Y'); // 4-digit year (e.g., 2025)
+        $month = now()->format('m'); // 2-digit month (e.g., 01, 12)
+        
+        // Use provided company_id or default to 1 if not provided
+        $companyId = $companyId ?? 1;
+        $companyIdPadded = str_pad($companyId, 2, '0', STR_PAD_LEFT);
+        
+        // Count existing branches in this company
+        $branchSequence = static::where('company_id', $companyId)->count() + 1;
+        
+        // Try to generate a unique branch number
+        for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
+            // Ensure the branch sequence is 3 digits with leading zeros
+            $branchSequencePadded = str_pad($branchSequence, 3, '0', STR_PAD_LEFT);
+            $candidate = $prefix . $year . $month . $companyIdPadded . $branchSequencePadded; // e.g., BR20251001001
+            
+            // Check if this branch number already exists
+            if (!static::where('branch_no', $candidate)->exists()) {
+                \Log::debug('Generated unique branch number', [
+                    'branch_no' => $candidate,
+                    'attempt' => $attempt + 1,
+                    'year' => $year,
+                    'month' => $month,
+                    'company_id' => $companyId,
+                    'sequence' => $branchSequence
+                ]);
+                return $candidate;
+            }
+            
+            // If it exists, increment and try again
+            $branchSequence++;
+            \Log::warning('Branch number collision detected, retrying', [
+                'collision_number' => $candidate,
+                'attempt' => $attempt + 1,
+                'next_sequence' => $branchSequence
+            ]);
+        }
+        
+        // If we've exhausted all attempts, use timestamp-based fallback
+        $fallbackSequence = str_pad(now()->timestamp % 1000, 3, '0', STR_PAD_LEFT);
+        $fallbackCandidate = $prefix . $year . $month . $companyIdPadded . $fallbackSequence;
+        
+        \Log::error('Failed to generate unique branch number after max attempts', [
+            'max_attempts' => $maxAttempts,
+            'fallback_number' => $fallbackCandidate,
+            'year' => $year,
+            'month' => $month,
+            'company_id' => $companyId
         ]);
         
         return $fallbackCandidate;
