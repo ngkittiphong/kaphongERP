@@ -356,17 +356,13 @@
 
     <div class="row col-md-12 col-xs-12">
         <div class="panel-heading no-padding-bottom">
-            <h4 class="panel-title">{{ __t('product.main_product_unit', 'Main Product Unit') }} : {{ $product->unit_name ?? 'pcs' }}</h4>
+            <h4 class="panel-title">{{ __t('product.product_units', 'Product Units') }}</h4>
         </div>
 
-
-        {{-- Main Unit Table --}}
+        {{-- Combined Units Table --}}
         <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-flat">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">{{ __t('product.main_unit', 'Main Unit') }}</h4>
-                    </div>
                     <div class="panel-body">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
@@ -383,8 +379,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {{-- Main Unit Row --}}
                                     <tr class="active">
-                                        <td>{{ $product->unit_name ?? 'pcs' }}</td>
+                                        <td>
+                                            <strong>{{ $product->unit_name ?? 'pcs' }}</strong>
+                                            <span class="badge bg-primary ml-2">{{ __t('product.main_unit', 'Main Unit') }}</span>
+                                        </td>
                                         <td class="text-right">{{ number_format(1) }}</td>
                                         <td class="text-right">{{ currency($product->sale_price) }}</td>
                                         <td class="text-right">{{ currency($product->buy_price) }}</td>
@@ -393,37 +393,8 @@
                                         @endif
                                         <td class="text-right text-muted">—</td>
                                     </tr>
-                                </tbody>
-                            </table>
-                            </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Sub-Units Table --}}
-        <div class="row">
-                <div class="col-md-12">
-                    <div class="panel panel-flat">
-                        <div class="panel-heading">
-                        <h4 class="panel-title">{{ __t('product.sub_units', 'Sub-Units') }}</h4>
-                        </div>
-                        <div class="panel-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>{{ __t('product.sub_unit_name', 'Sub-Unit Name') }}</th>
-                                        <th class="text-right">{{ __t('product.quantity_of_minimum_unit', 'Qty per main unit') }}</th>
-                                        <th class="text-right">{{ __t('product.sale_price', 'Sale Price') }}</th>
-                                        <th class="text-right">{{ __t('product.buy_price', 'Buy Price') }}</th>
-                                        @if($subUnitTableHasBarcode)
-                                            <th>{{ __t('product.barcode', 'Barcode') }}</th>
-                                        @endif
-                                        <th class="text-nowrap text-right">{{ __t('common.actions', 'Actions') }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                                    
+                                    {{-- Sub-Units Rows --}}
                                     @forelse($product->subUnits as $subUnit)
                                         <tr>
                                             <td>{{ $subUnit->name }}</td>
@@ -449,7 +420,7 @@
                                         <td colspan="{{ $subUnitTableHasBarcode ? 6 : 5 }}" class="text-right">
                                             <button class="btn btn-primary btn-sm" wire:click="openAddSubUnitModal">
                                                 <i class="icon-plus2"></i> {{ __t('product.add_sub_unit', 'Add Sub-Unit') }}
-                                                    </button>
+                                            </button>
                                         </td>
                                     </tr>
                                 </tfoot>
