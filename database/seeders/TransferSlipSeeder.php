@@ -10,6 +10,7 @@ use App\Models\Warehouse;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\MoveType;
+use App\Models\Company;
 
 class TransferSlipSeeder extends Seeder
 {
@@ -43,6 +44,13 @@ class TransferSlipSeeder extends Seeder
         $moveTypes = MoveType::all();
         if ($moveTypes->isEmpty()) {
             $this->command->error('No move types found. Please run MoveTypeSeeder first.');
+            return;
+        }
+
+        // Get company with ID 1
+        $company = Company::find(1);
+        if (!$company) {
+            $this->command->error('Company with ID 1 not found. Please run CompanyBranchSeeder first.');
             return;
         }
 
@@ -89,9 +97,9 @@ class TransferSlipSeeder extends Seeder
                 'user_request_id' => $requestUser->id,
                 'user_receive_id' => $receiveUser->id,
                 'transfer_slip_number' => $transferSlipNumber,
-                'company_name' => 'Company ' . ($i + 1),
+                'company_name' => $company->company_name_th,
                 'company_address' => 'Address ' . ($i + 1) . ', City, Country',
-                'tax_id' => '1234567890' . str_pad($i, 3, '0', STR_PAD_LEFT),
+                'tax_id' => $company->tax_no,
                 'tel' => '0' . rand(100000000, 999999999),
                 'date_request' => $dateRequest,
                 'user_request_name' => $requestUser->name ?? 'User ' . $requestUser->id,
