@@ -1145,21 +1145,6 @@
                             text: '<i class="icon-file-excel me-1"></i>Excel',
                             title: 'Stock Card Detail Statement',
                             filename: 'Stock_Card_Export'
-                        },
-                        {
-                            extend: 'pdf',
-                            className: 'btn btn-danger btn-sm',
-                            text: '<i class="icon-file-pdf me-1"></i>PDF',
-                            title: 'Stock Card Detail Statement',
-                            filename: 'Stock_Card_Export',
-                            orientation: 'landscape',
-                            pageSize: 'A4'
-                        },
-                        {
-                            extend: 'print',
-                            className: 'btn btn-warning btn-sm',
-                            text: '<i class="icon-printer me-1"></i>Print',
-                            title: 'Stock Card Detail Statement'
                         }
                     ]
                 }
