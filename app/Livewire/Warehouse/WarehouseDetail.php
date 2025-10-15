@@ -13,10 +13,12 @@ use App\Models\Product;
 use App\Http\Controllers\WarehouseController;
 use App\Services\InventoryService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class WarehouseDetail extends Component
 {
     public $warehouse;
+    public $warehouseId; // Store warehouse ID for proper hydration
     public $showAddWarehouseForm = false;
     public $showEditWarehouseForm = false;
     
@@ -25,6 +27,10 @@ class WarehouseDetail extends Component
     
     public $branches = [];
     public $warehouse_statuses = [];
+    
+    // Main warehouse change tracking
+    public $originalMainWarehouse = false;
+    public $pendingMainWarehouseChange = false;
     
     // Inventory and movement data
     public $warehouseInventory = [];
@@ -89,6 +95,48 @@ class WarehouseDetail extends Component
         'avr_remain_price' => 'nullable|numeric|min:0',
     ];
 
+    public function getRules()
+    {
+        \Log::info("🔍 getRules called", [
+            'main_warehouse' => $this->main_warehouse,
+            'originalMainWarehouse' => $this->originalMainWarehouse,
+            'pendingMainWarehouseChange' => $this->pendingMainWarehouseChange
+        ]);
+        
+        $rules = $this->rules;
+
+        // Add custom validation for main warehouse uniqueness per branch
+        // Only apply this validation if the user is trying to set it as main and it wasn't originally main,
+        // AND they haven't already confirmed the change (pendingMainWarehouseChange is false after confirmation)
+        if ($this->main_warehouse && !$this->originalMainWarehouse && !$this->pendingMainWarehouseChange) {
+            \Log::info("🚨 Applying main warehouse validation");
+            $rules['main_warehouse'] = [
+                'boolean',
+                function ($attribute, $value, $fail) {
+                    $existingMainWarehouse = Warehouse::where('branch_id', $this->branch_id)
+                        ->where('main_warehouse', 1)
+                        ->where('id', '!=', $this->warehouse->id)
+                        ->first();
+                    
+                    if ($existingMainWarehouse) {
+                        $fail(__t('warehouse.main_warehouse_validation_error', 'There is already a main warehouse') . " '{$existingMainWarehouse->name}' " . __t('warehouse.only_one_main_warehouse_per_branch', 'in this branch. Only one main warehouse per branch is allowed.'));
+                    }
+                }
+            ];
+        }
+        
+        // If the user has confirmed the main warehouse change, bypass the validation
+        if ($this->main_warehouse && $this->pendingMainWarehouseChange) {
+            \Log::info("✅ Bypassing main warehouse validation - user confirmed change");
+            // Remove any existing main_warehouse validation rules
+            unset($rules['main_warehouse']);
+            $rules['main_warehouse'] = ['boolean'];
+        }
+        
+        \Log::info("🔍 Final rules for main_warehouse:", ['rules' => $rules['main_warehouse'] ?? 'not set']);
+        return $rules;
+    }
+
     protected $messages = [
         'branch_id.required' => 'Please select a branch.',
         'branch_id.exists' => 'The selected branch does not exist.',
@@ -128,6 +176,8 @@ class WarehouseDetail extends Component
             $this->warehouse = null;
             $this->selectedBranchId = null;
         }
+        
+        // Note: Event listeners are handled via JavaScript dispatch in Livewire 3.x
     }
 
     public function loadWarehouse($data = null)
@@ -149,12 +199,21 @@ class WarehouseDetail extends Component
         
         \Log::info("🔥 Extracted warehouseId: {$warehouseId}");
         
+        // Store the warehouse ID for proper hydration (matching Product Detail pattern)
+        $this->warehouseId = $warehouseId;
+        
         $this->showEditWarehouseForm = false;
         $this->showAddWarehouseForm = false;
         
         // Load warehouse with relationships (matching branch pattern)
         $this->warehouse = Warehouse::with(['branch', 'status', 'userCreate', 'inventories', 'warehouseProducts.product'])->where('warehouse_status_id', '!=', 0)->find($warehouseId) ?? null;
         \Log::info("🔥 Warehouse loaded:", ['name' => $this->warehouse ? $this->warehouse->name : 'null']);
+        
+        // Store original main warehouse status for change tracking
+        if ($this->warehouse) {
+            $this->originalMainWarehouse = (bool) $this->warehouse->main_warehouse;
+            \Log::info("🔥 Original main warehouse status:", ['main_warehouse' => $this->originalMainWarehouse]);
+        }
         
         // Load inventory and movement data
         if ($this->warehouse) {
@@ -226,6 +285,57 @@ class WarehouseDetail extends Component
         ]);
     }
 
+    public function handleMainWarehouseChange()
+    {
+        // If this warehouse is already the main warehouse, prevent unchecking
+        if ($this->warehouse && $this->warehouse->main_warehouse) {
+            \Log::info("🚫 Attempted to uncheck main warehouse checkbox - prevented");
+            // Reset the checkbox to checked state
+            $this->main_warehouse = true;
+            return;
+        }
+
+        // If trying to check main warehouse and it wasn't originally main
+        if ($this->main_warehouse && !$this->originalMainWarehouse) {
+            \Log::info("🚨 User trying to set main warehouse - checking for existing main warehouse");
+            
+            // Check if there's already a main warehouse in this branch
+            $existingMainWarehouse = Warehouse::where('branch_id', $this->branch_id)
+                ->where('main_warehouse', 1)
+                ->where('id', '!=', $this->warehouse->id)
+                ->first();
+            
+            if ($existingMainWarehouse) {
+                \Log::info("🚨 Found existing main warehouse:", ['name' => $existingMainWarehouse->name]);
+                
+                // Set global JavaScript variables for the alert
+                $this->js("window.currentWarehouseName = '{$this->warehouse->name}';");
+                $this->js("window.existingMainWarehouseName = '{$existingMainWarehouse->name}';");
+                
+                // Dispatch event to show confirmation dialog
+                $this->dispatch('confirmMainWarehouse');
+                \Log::info("📡 Dispatched confirmMainWarehouse event");
+                $this->pendingMainWarehouseChange = true;
+                
+                // Temporarily uncheck the checkbox until user confirms
+                $this->main_warehouse = false;
+            } else {
+                \Log::info("✅ No existing main warehouse found - allowing change");
+            }
+        }
+    }
+
+    public function confirmMainWarehouseChange()
+    {
+        \Log::info("✅ confirmMainWarehouseChange called!");
+        \Log::info("✅ Before setting - pendingMainWarehouseChange: " . ($this->pendingMainWarehouseChange ? 'true' : 'false'));
+        $this->main_warehouse = true;
+        $this->pendingMainWarehouseChange = true; // Explicitly set it to true
+        \Log::info("✅ After setting - pendingMainWarehouseChange: " . ($this->pendingMainWarehouseChange ? 'true' : 'false'));
+        \Log::info("✅ Main warehouse set to true: " . ($this->main_warehouse ? 'true' : 'false'));
+        \Log::info("✅ pendingMainWarehouseChange remains true for validation bypass");
+    }
+
     public function handleRefreshComponent()
     {
         \Log::info("🔥 WarehouseDetail::handleRefreshComponent called - NOT refreshing to prevent double calls");
@@ -272,35 +382,56 @@ class WarehouseDetail extends Component
 
     public function updateWarehouse()
     {
+        \Log::info("🚀 updateWarehouse method called!");
+        
         if (!$this->warehouse) {
+            \Log::info("❌ No warehouse selected");
             return;
         }
 
-        $this->validate();
-
+        \Log::info("🔍 About to validate with rules");
+        $this->validate($this->getRules());
+        
         try {
-            // Update the warehouse directly
-            $this->warehouse->update([
-                'branch_id' => $this->branch_id,
-                'user_create_id' => $this->user_create_id,
-                'main_warehouse' => $this->main_warehouse ?? false,
-                'name' => $this->name,
-                'date_create' => $this->date_create,
-                'warehouse_status_id' => $this->warehouse_status_id,
-                'avr_remain_price' => $this->avr_remain_price ?? 0.00,
-            ]);
+            DB::transaction(function () {
+                // If this warehouse is being set as the main warehouse,
+                // disable the previously main warehouse in the same branch
+                if ($this->main_warehouse && !$this->originalMainWarehouse) {
+                    Warehouse::where('branch_id', $this->branch_id)
+                        ->where('main_warehouse', 1)
+                        ->where('id', '!=', $this->warehouse->id)
+                        ->update(['main_warehouse' => 0]);
+                    \Log::info("✅ Disabled previous main warehouse in branch {$this->branch_id}");
+                }
+
+                // Update the warehouse directly
+                $this->warehouse->update([
+                    'branch_id' => $this->branch_id,
+                    'user_create_id' => $this->user_create_id,
+                    'main_warehouse' => $this->main_warehouse ?? false,
+                    'name' => $this->name,
+                    'date_create' => $this->date_create,
+                    'warehouse_status_id' => $this->warehouse_status_id,
+                    'avr_remain_price' => $this->avr_remain_price ?? 0.00,
+                ]);
+                \Log::info("✅ Current warehouse updated: {$this->warehouse->name}");
+            });
 
             // Success - show message and refresh
-            session()->flash('message', 'Warehouse updated successfully!');
+            session()->flash('message', __t('warehouse.warehouse_updated_successfully', 'Warehouse updated successfully!'));
             \Log::info("✅ Warehouse updated successfully!");
             $this->showEditWarehouseForm = false;
             
+            // Reset the pending main warehouse change flag after successful update
+            $this->pendingMainWarehouseChange = false;
+            \Log::info("✅ pendingMainWarehouseChange reset to false after successful update");
+        
             // Reload the warehouse data to reflect changes
             $this->loadWarehouse($this->warehouse->id);
             
             // Dispatch events for success dialog and list update
             $this->dispatch('warehouseUpdated', [
-                'message' => 'Warehouse updated successfully!',
+                'message' => __t('warehouse.warehouse_updated_successfully', 'Warehouse updated successfully!'),
                 'warehouse' => $this->warehouse
             ]);
             $this->dispatch('warehouseListUpdated');
@@ -309,7 +440,7 @@ class WarehouseDetail extends Component
             
         } catch (\Exception $e) {
             // Handle errors
-            $this->addError('general', 'Failed to update warehouse: ' . $e->getMessage());
+            $this->addError('general', __t('warehouse.failed_to_update_warehouse', 'Failed to update warehouse') . ': ' . $e->getMessage());
             \Log::error("❌ Warehouse update failed: " . $e->getMessage());
         }
     }
@@ -780,6 +911,27 @@ class WarehouseDetail extends Component
 
     public function render()
     {
+        \Log::info("🎨 WarehouseDetail::render called", [
+            'warehouseId' => $this->warehouseId,
+            'warehouse_exists' => $this->warehouse ? 'yes' : 'no',
+            'warehouse_name' => $this->warehouse ? $this->warehouse->name : 'null'
+        ]);
+
+        // Reload warehouse if warehouseId is set (for proper Livewire hydration)
+        if ($this->warehouseId) {
+            $this->warehouse = Warehouse::with(['branch', 'status', 'userCreate', 'inventories', 'warehouseProducts.product'])
+                ->where('warehouse_status_id', '!=', 0)
+                ->find($this->warehouseId);
+            
+            \Log::info("🎨 Warehouse reloaded in render:", ['name' => $this->warehouse ? $this->warehouse->name : 'null']);
+            
+            // Reload inventory and movement data if warehouse is loaded
+            if ($this->warehouse) {
+                $this->loadWarehouseInventory();
+                $this->loadWarehouseMovements();
+            }
+        }
+        
         return view('livewire.warehouse.warehouse-detail');
     }
 }

@@ -1335,6 +1335,110 @@ class TranslationSeeder extends Seeder
                 'en' => 'Main Warehouse',
                 'th' => 'คลังสินค้าหลัก'
             ],
+            'warehouse.update_warehouse' => [
+                'en' => 'Update Warehouse',
+                'th' => 'อัปเดตคลังสินค้า'
+            ],
+            'warehouse.change_main_warehouse' => [
+                'en' => 'Change Main Warehouse?',
+                'th' => 'เปลี่ยนคลังสินค้าหลัก?'
+            ],
+            'warehouse.change_main_warehouse_from_to' => [
+                'en' => 'Change main warehouse from',
+                'th' => 'เปลี่ยนคลังสินค้าหลักจาก'
+            ],
+            'warehouse.to' => [
+                'en' => 'to',
+                'th' => 'เป็น'
+            ],
+            'warehouse.yes_change_it' => [
+                'en' => 'Yes, change it!',
+                'th' => 'ใช่ เปลี่ยนเลย!'
+            ],
+            'warehouse.cancel' => [
+                'en' => 'Cancel',
+                'th' => 'ยกเลิก'
+            ],
+            'warehouse.warehouse_updated_successfully' => [
+                'en' => 'Warehouse updated successfully!',
+                'th' => 'อัปเดตคลังสินค้าสำเร็จ!'
+            ],
+            'warehouse.warehouse_created_successfully' => [
+                'en' => 'Warehouse created successfully!',
+                'th' => 'สร้างคลังสินค้าสำเร็จ!'
+            ],
+            'warehouse.warehouse_deleted_successfully' => [
+                'en' => 'Warehouse deleted successfully!',
+                'th' => 'ลบคลังสินค้าสำเร็จ!'
+            ],
+            'warehouse.main_warehouse_validation_error' => [
+                'en' => 'There is already a main warehouse',
+                'th' => 'มีคลังสินค้าหลักอยู่แล้ว'
+            ],
+            'warehouse.only_one_main_warehouse_per_branch' => [
+                'en' => 'in this branch. Only one main warehouse per branch is allowed.',
+                'th' => 'ในสาขานี้ อนุญาตให้มีคลังสินค้าหลักได้เพียงหนึ่งแห่งต่อสาขา'
+            ],
+            'warehouse.warehouse_name_label' => [
+                'en' => 'Warehouse Name',
+                'th' => 'ชื่อคลังสินค้า'
+            ],
+            'warehouse.status_label' => [
+                'en' => 'Status',
+                'th' => 'สถานะ'
+            ],
+            'warehouse.branch_label' => [
+                'en' => 'Branch',
+                'th' => 'สาขา'
+            ],
+            'warehouse.created_date_label' => [
+                'en' => 'Created Date',
+                'th' => 'วันที่สร้าง'
+            ],
+            'warehouse.created_by_label' => [
+                'en' => 'Created By',
+                'th' => 'ผู้สร้าง'
+            ],
+            'warehouse.average_remaining_price_label' => [
+                'en' => 'Average Remaining Price',
+                'th' => 'ราคาเฉลี่ยคงเหลือ'
+            ],
+            'warehouse.main_warehouse_info_tooltip' => [
+                'en' => 'This warehouse is currently the main warehouse for this branch. To change the main warehouse, please edit another warehouse and set it as the main warehouse instead.',
+                'th' => 'คลังสินค้านี้เป็นคลังสินค้าหลักของสาขานี้อยู่แล้ว หากต้องการเปลี่ยนคลังสินค้าหลัก กรุณาแก้ไขคลังสินค้าอื่นและตั้งให้เป็นคลังสินค้าหลักแทน'
+            ],
+            'warehouse.main_warehouse_info_title' => [
+                'en' => 'Main Warehouse Information',
+                'th' => 'ข้อมูลคลังสินค้าหลัก'
+            ],
+            'warehouse.update_success' => [
+                'en' => 'Update Success',
+                'th' => 'อัปเดตสำเร็จ'
+            ],
+            'warehouse.update_fail' => [
+                'en' => 'Update Failed',
+                'th' => 'อัปเดตไม่สำเร็จ'
+            ],
+            'warehouse.create_success' => [
+                'en' => 'Create Success',
+                'th' => 'สร้างสำเร็จ'
+            ],
+            'warehouse.delete_success' => [
+                'en' => 'Delete Success',
+                'th' => 'ลบสำเร็จ'
+            ],
+            'warehouse.error' => [
+                'en' => 'Error',
+                'th' => 'ข้อผิดพลาด'
+            ],
+            'warehouse.an_error_occurred' => [
+                'en' => 'An error occurred!',
+                'th' => 'เกิดข้อผิดพลาด!'
+            ],
+            'warehouse.failed_to_update_warehouse' => [
+                'en' => 'Failed to update warehouse',
+                'th' => 'ไม่สามารถอัปเดตคลังสินค้าได้'
+            ],
             'warehouse.branch' => [
                 'en' => 'Branch',
                 'th' => 'สาขา'

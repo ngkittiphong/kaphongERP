@@ -66,12 +66,12 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            Warehouse Name :
+                                            {{ __t('warehouse.warehouse_name_label', 'Warehouse Name') }} :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
                                             {{ $warehouse->name ?? 'N/A' }}
                                             @if($warehouse && $warehouse->main_warehouse)
-                                                (Main Warehouse)
+                                                <span class="badge badge-primary">{{ __t('warehouse.main_warehouse_badge', 'Main Warehouse') }}</span>
                                             @endif
                                         </div>
                                     </span>
@@ -79,7 +79,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            Status :
+                                            {{ __t('warehouse.status_label', 'Status') }} :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
                                             <span class="badge bg-{{ $warehouse->status->name === 'Active' ? 'success' : 'danger' }}">
@@ -91,7 +91,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            Branch :
+                                            {{ __t('warehouse.branch_label', 'Branch') }} :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
                                             {{ $warehouse->branch->name_en ?? 'N/A' }}
@@ -101,7 +101,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            Created Date :
+                                            {{ __t('warehouse.created_date_label', 'Created Date') }} :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
                                             {{ $warehouse->date_create ? $warehouse->date_create->format('Y-m-d H:i') : 'N/A' }}
@@ -111,7 +111,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            Created By :
+                                            {{ __t('warehouse.created_by_label', 'Created By') }} :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
                                             {{ $warehouse->userCreate->username ?? 'N/A' }}
@@ -121,7 +121,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            Average Remaining Price :
+                                            {{ __t('warehouse.average_remaining_price_label', 'Average Remaining Price') }} :
                                         </div>
                             <div class="col-md-8 col-xs-8 text-left">
                                 {{ number_format($this->getCalculatedAverageRemainingPrice(), 2) }} THB

@@ -227,24 +227,24 @@
         Livewire.on('warehouseCreated', data => {
             Swal.fire({
                 icon: 'success',
-                title: 'Create Success',
-                text: data.message || 'Warehouse created successfully!',
+                title: '{{ __t("warehouse.create_success", "Create Success") }}',
+                text: data.message || '{{ __t("warehouse.warehouse_created_successfully", "Warehouse created successfully!") }}',
             });
         });
 
         Livewire.on('warehouseUpdated', data => {
             Swal.fire({
                 icon: 'success',
-                title: 'Update Success',
-                text: data.message || 'Warehouse updated successfully!',
+                title: '{{ __t("warehouse.update_success", "Update Success") }}',
+                text: data.message || '{{ __t("warehouse.warehouse_updated_successfully", "Warehouse updated successfully!") }}',
             });
         });
 
         Livewire.on('warehouseDeleted', data => {
             Swal.fire({
                 icon: 'success',
-                title: 'Delete Success',
-                text: data.message || 'Warehouse deleted successfully!',
+                title: '{{ __t("warehouse.delete_success", "Delete Success") }}',
+                text: data.message || '{{ __t("warehouse.warehouse_deleted_successfully", "Warehouse deleted successfully!") }}',
             });
         });
 
@@ -253,6 +253,36 @@
                 icon: 'success',
                 title: 'Reactivation Success',
                 text: data.message || 'Warehouse reactivated successfully!',
+            });
+        });
+
+        Livewire.on('confirmMainWarehouse', () => {
+            console.log('🚨 confirmMainWarehouse event received!');
+            
+            // Get warehouse names from global variables set by Livewire component
+            const currentWarehouseName = window.currentWarehouseName || 'Current Warehouse';
+            const existingMainWarehouseName = window.existingMainWarehouseName || 'Existing Main Warehouse';
+            
+            console.log('🚨 Warehouse names:', { currentWarehouseName, existingMainWarehouseName });
+            
+            Swal.fire({
+                title: '{{ __t("warehouse.change_main_warehouse", "Change Main Warehouse?") }}',
+                html: `{{ __t("warehouse.change_main_warehouse_from_to", "Change main warehouse from") }} <strong>"${existingMainWarehouseName}"</strong> {{ __t("warehouse.to", "to") }} <strong>"${currentWarehouseName}"</strong>?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '{{ __t("warehouse.yes_change_it", "Yes, change it!") }}',
+                cancelButtonText: '{{ __t("warehouse.cancel", "Cancel") }}'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    console.log('✅ User confirmed main warehouse change');
+                    @this.call('confirmMainWarehouseChange');
+                } else {
+                    console.log('❌ User cancelled main warehouse change');
+                    // Reset the checkbox to unchecked state
+                    @this.set('main_warehouse', false);
+                }
             });
         });
     </script>
@@ -720,8 +750,8 @@
                     console.log('🚀 [JS] Error message received:', data);
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error',
-                        text: data.message || 'An error occurred!',
+                        title: '{{ __t("warehouse.error", "Error") }}',
+                        text: data.message || '{{ __t("warehouse.an_error_occurred", "An error occurred!") }}',
                         confirmButtonText: 'OK'
                     }).then(() => {
                         setTimeout(() => {
@@ -756,7 +786,38 @@
             console.log('Livewire component:', @this);
             console.log('Event listeners registered:', typeof @this.on === 'function');
         };
+
+        // Initialize tooltips when the page loads
+        $(document).ready(function() {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        // Re-initialize tooltips after Livewire updates
+        document.addEventListener('livewire:updated', function() {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
     </script>
+
+    <style>
+    .disabled-checkbox {
+        opacity: 0.5;
+        cursor: not-allowed !important;
+    }
+
+    .disabled-checkbox:disabled {
+        background-color: #f5f5f5;
+        border-color: #ddd;
+    }
+
+    .tooltip {
+        font-size: 12px;
+    }
+
+    .tooltip-inner {
+        max-width: 300px;
+        text-align: left;
+    }
+    </style>
 @endpush
 
 @push('scripts')

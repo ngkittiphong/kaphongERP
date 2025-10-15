@@ -5,14 +5,6 @@
             <div class="row p-l-10 p-r-10 panel panel-flat">
                 <div class="panel-heading">
                     <h4 class="panel-title">{{ __t('warehouse.edit_warehouse', 'Edit Warehouse') }}</h4>
-                    <div class="elements">
-                        <button class="btn btn-success" wire:click="updateWarehouse">
-                            <i class="icon-checkmark"></i> Update Warehouse
-                        </button>
-                        <button class="btn btn-default" wire:click="cancelForm">
-                            <i class="icon-cross"></i> Cancel
-                        </button>
-                    </div>
                     <a class="elements-toggle"><i class="icon-more"></i></a>
                 </div>
                 <div class="panel-body">
@@ -41,7 +33,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
+                                <div class="form-group" style="display: none;">
                                     <label class="control-label">{{ __t('warehouse.user_creator', 'User Creator') }} <span class="text-danger">*</span></label>
                                     <select class="form-control" wire:model="user_create_id" required>
                                         <option value="">{{ __t('warehouse.select_user', 'Select User') }}</option>
@@ -63,7 +55,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
+                                <div class="form-group" style="display: none;">
                                     <label class="control-label">{{ __t('warehouse.creation_date', 'Creation Date') }} <span class="text-danger">*</span></label>
                                     <input type="datetime-local" class="form-control" wire:model="date_create" required>
                                     @error('date_create') <span class="text-danger">{{ $message }}</span> @enderror
@@ -76,7 +68,7 @@
                                 <div class="form-group">
                                     <label class="control-label">{{ __t('common.status', 'Status') }} <span class="text-danger">*</span></label>
                                     <select class="form-control" wire:model="warehouse_status_id" required>
-                                        <option value="">Select Status</option>
+                                        <option value="">{{ __t('warehouse.select_status', 'Select Status') }}</option>
                                         @foreach($warehouse_statuses as $status)
                                             <option value="{{ $status->id }}">{{ $status->name }}</option>
                                         @endforeach
@@ -85,7 +77,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
+                                <div class="form-group" style="display: none;">
                                     <label class="control-label">{{ __t('warehouse.average_remain_price', 'Average Remain Price') }}</label>
                                     <input type="number" class="form-control" wire:model="avr_remain_price" placeholder="{{ __t('warehouse.enter_price', '0.00') }}" step="0.01" min="0">
                                     @error('avr_remain_price') <span class="text-danger">{{ $message }}</span> @enderror
@@ -98,8 +90,20 @@
                                 <div class="form-group">
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox" wire:model="main_warehouse" value="1">
+                                            <input type="checkbox" 
+                                                   wire:model.live="main_warehouse" 
+                                                   wire:change="handleMainWarehouseChange" 
+                                                   value="1"
+                                                   {{ $warehouse && $warehouse->main_warehouse ? 'disabled' : '' }}
+                                                   class="{{ $warehouse && $warehouse->main_warehouse ? 'disabled-checkbox' : '' }}">
                                             {{ __t('warehouse.main_warehouse', 'Main Warehouse') }}
+                                            @if($warehouse && $warehouse->main_warehouse)
+                                                <i class="icon-info22" 
+                                                   data-toggle="tooltip" 
+                                                   data-placement="top" 
+                                                   title="{{ __t('warehouse.main_warehouse_info_tooltip', 'This warehouse is currently the main warehouse for this branch. To change the main warehouse, please edit another warehouse and set it as the main warehouse instead.') }}"
+                                                   data-original-title="{{ __t('warehouse.main_warehouse_info_title', 'Main Warehouse Information') }}"></i>
+                                            @endif
                                         </label>
                                     </div>
                                 </div>
@@ -110,10 +114,10 @@
                             <div class="col-md-12">
                                 <div class="form-group text-right">
                                     <button type="submit" class="btn btn-success">
-                                        <i class="icon-checkmark"></i> Update Warehouse
+                                        <i class="icon-checkmark"></i> {{ __t('warehouse.update_warehouse', 'Update Warehouse') }}
                                     </button>
                                     <button type="button" class="btn btn-default" wire:click="cancelForm">
-                                        <i class="icon-cross"></i> Cancel
+                                        <i class="icon-cross"></i> {{ __t('warehouse.cancel', 'Cancel') }}
                                     </button>
                                 </div>
                             </div>

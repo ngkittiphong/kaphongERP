@@ -14,14 +14,14 @@
 
     <div class="container-fluid page-people">
         <div class="row">
-            <div class="col-lg-3 col-md-4 col-sm-4 secondary-sidebar">
-                <div class="sidebar-content" style="height: 100vh">
-                    @livewire('warehouse.warehouse-list') 
-                </div>
+        <div class="col-lg-4 col-md-4 col-sm-4 secondary-sidebar">
+            <div class="sidebar-content" style="height: 100vh">
+                @livewire('warehouse.warehouse-list') 
             </div>
-            <div class="col-lg-9 col-md-9 col-sm-9">
-                @livewire('warehouse.warehouse-detail')
-            </div>
+        </div>
+        <div class="col-lg-8 col-md-8 col-sm-8">
+            @livewire('warehouse.warehouse-detail')
+        </div>
         </div> 
     </div>
     
