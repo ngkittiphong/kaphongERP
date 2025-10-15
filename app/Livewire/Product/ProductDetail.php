@@ -787,7 +787,7 @@ class ProductDetail extends Component
         try {
             $validationRules = [
                 'operationType' => 'required|in:stock_in,stock_out,adjustment',
-                'quantity' => 'required|numeric|min:0.01',
+                'quantity' => 'required|integer|min:1',
                 'unitPrice' => 'nullable|numeric|min:0',
                 'salePrice' => 'nullable|numeric|min:0',
                 'detail' => 'nullable|string|max:255'

@@ -516,8 +516,17 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="quantity">{{ __t('product.quantity', 'Quantity') }}:</label>
-                                <input type="number" wire:model.defer="quantity" class="form-control" id="quantity"
-                                       min="0" step="0.01" placeholder="{{ __t('product.enter_quantity', 'Enter quantity') }}">
+                                <input type="number" 
+                                       wire:model.lazy="quantity" 
+                                       class="form-control" 
+                                       id="quantity"
+                                       min="1" 
+                                       step="1" 
+                                       pattern="[0-9]+"
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                       inputmode="numeric"
+                                       title="Only integer numbers allowed"
+                                       placeholder="{{ __t('product.enter_quantity', 'Enter quantity') }}">
                                 @error('quantity') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                         </div>

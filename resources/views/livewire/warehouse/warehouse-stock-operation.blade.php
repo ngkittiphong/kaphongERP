@@ -99,10 +99,28 @@
                 <div class="col-md-6">
                     @if($operationType === 'adjustment')
                         <label class="form-label">New Quantity</label>
-                        <input type="number" wire:model="newQuantity" class="form-control" min="0" placeholder="Enter new quantity">
+                        <input type="number" 
+                               wire:model="newQuantity" 
+                               class="form-control" 
+                               min="0" 
+                               step="1" 
+                               pattern="[0-9]+"
+                               inputmode="numeric"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                               title="Only integer numbers allowed"
+                               placeholder="Enter new quantity">
                     @else
                         <label class="form-label">Quantity</label>
-                        <input type="number" wire:model="quantity" class="form-control" min="1" placeholder="Enter quantity">
+                        <input type="number" 
+                               wire:model="quantity" 
+                               class="form-control" 
+                               min="1" 
+                               step="1" 
+                               pattern="[0-9]+"
+                               inputmode="numeric"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                               title="Only integer numbers allowed"
+                               placeholder="Enter quantity">
                     @endif
                 </div>
 
