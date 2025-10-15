@@ -65,12 +65,6 @@
                     </button>
                 </div>
                 
-                <!-- Delete Avatar Button -->
-                <div class="text-center m-t-10">
-                    <button type="button" class="btn btn-sm btn-danger" onclick="handleAvatarDelete()">
-                        <i class="icon-trash"></i> Delete Avatar
-                    </button>
-                </div>
                 
                 <h4 class="no-margin-bottom m-t-10">{{ Auth::user()->profile->fullname_th ?? Auth::user()->username }}</h4>
                 <div class="text-light text-size-small text-white">{{ Auth::user()->profile->nickname ?? '' }}</div>
@@ -275,70 +269,6 @@ function handleServerError(error, defaultError) {
     });
 }
 
-function handleAvatarDelete() {
-    console.debug('[handleAvatarDelete] called');
-    
-    // Show confirmation dialog
-    Swal.fire({
-        title: 'Delete Avatar?',
-        text: 'Are you sure you want to remove your avatar?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Make AJAX request to delete avatar
-            fetch('/upload/avatar/delete', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update the avatar image to default
-                    const avatarImg = document.querySelector('#slim-avatar_panel img');
-                    if (avatarImg) {
-                        avatarImg.src = '{{ asset("assets/images/faces/face_default.png") }}';
-                    }
-                    
-                    // Show success message
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: 'Avatar deleted successfully!',
-                        timer: 1500,
-                        showConfirmButton: false
-                    }).then(() => {
-                        // Refresh the page to update all avatar instances
-                        window.location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.message || 'Failed to delete avatar',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error deleting avatar:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to delete avatar. Please try again.',
-                    confirmButtonText: 'OK'
-                });
-            });
-        }
-    });
-}
 
 function handleSignatureDelete() {
     console.debug('[handleSignatureDelete] called');
