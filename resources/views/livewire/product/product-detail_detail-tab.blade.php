@@ -517,14 +517,14 @@
                             <div class="form-group">
                                 <label for="quantity">{{ __t('product.quantity', 'Quantity') }}:</label>
                                 <input type="number" 
-                                       wire:model.lazy="quantity" 
+                                       wire:model.defer="quantity" 
                                        class="form-control" 
                                        id="quantity"
                                        min="1" 
                                        step="1" 
-                                       pattern="[0-9]+"
-                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                        inputmode="numeric"
+                                       onkeydown="if (event.key === '.' || event.key === 'Decimal') event.preventDefault();"
+                                       onpaste="if (!/^\d+$/.test((event.clipboardData || window.clipboardData).getData('text'))) event.preventDefault();                                       
                                        title="Only integer numbers allowed"
                                        placeholder="{{ __t('product.enter_quantity', 'Enter quantity') }}">
                                 @error('quantity') <span class="text-danger">{{ $message }}</span> @enderror
