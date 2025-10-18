@@ -15,14 +15,19 @@
 <div class="tab-pane active" id="tab-detail">
     <div class="col-md-4 col-xs-12">
         <div class="text-center">
-            <div id="slim-avatar" class="slim" data-size="300,300" data-ratio="1:1" data-shape="circle"
+            <div id="slim-avatar" 
+                class="slim" 
+                data-size="300,300" 
+                data-ratio="1:1" 
+                data-shape="circle"
                 data-instant-edit="true"
+                data-max-file-size="5"
                 style="
-                width: 200px; 
-                height: 200px;
-                margin: 0 auto;
-                border-radius: 50%;
-                overflow: hidden;">
+                    width: 200px; 
+                    height: 200px;
+                    margin: 0 auto;
+                    border-radius: 50%;
+                    overflow: hidden;">
                 <!-- Default avatar image -->
                 @if ($user->profile && $user->profile->avatar)
                     <img src="{{ $user->profile->avatar }}" alt="{{ $user->username }}'s Avatar" class="img-fluid" />

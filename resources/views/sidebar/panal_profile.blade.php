@@ -24,7 +24,7 @@
                     data-instant-edit="true"
                     data-service="{{ route('upload.avatar') }}"
                     data-token="{{ csrf_token() }}"
-                    data-max-file-size="2"
+                    data-max-file-size="5"
                     data-label="{{ __t('profile.click_or_drag_photo', 'Click or drag your photo') }}"
                     {{-- data-push="true" [auto upload]--}}
                     data-save-initial-image="true"
@@ -91,7 +91,7 @@
             data-instant-edit="true"
             data-service="{{ route('upload.signature') }}"
             data-token="{{ csrf_token() }}"
-            data-max-file-size="2"
+            data-max-file-size="5"
             data-label="{{ __t('profile.click_or_drag_sign', 'Click or drag your sign') }}"
             data-save-initial-image="true"
              data-will-request="handleRequestSign"
