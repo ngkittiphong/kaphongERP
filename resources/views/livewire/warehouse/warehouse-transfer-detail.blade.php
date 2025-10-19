@@ -478,6 +478,16 @@
         }, 100);
     });
 
+    // Listen for new product row added
+    Livewire.on('transferProductAdded', () => {
+        console.log('Typeahead: New product row added, re-initializing...');
+        setTimeout(() => {
+            if (productDataset.length > 0) {
+                initTypeahead();
+            }
+        }, 100);
+    });
+
     // Listen for transfer confirmation event
     Livewire.on('confirmTransferCreation', (event) => {
         console.log('🔥 Transfer confirmation event received:', event);
