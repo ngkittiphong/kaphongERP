@@ -36,7 +36,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Transfer Date <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" wire:model="dateRequest">
+                                    <input type="date" class="form-control" wire:model="dateRequest" readonly>
                                     @error('dateRequest') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
@@ -86,7 +86,7 @@
                             </div>
                         </div>
                         
-                        <div class="row">
+                        <div class="row" style="display: none;">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Tax ID</label>
@@ -103,7 +103,7 @@
                             </div>
                         </div>
                         
-                        <div class="row">
+                        <div class="row" style="display: none;">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label">Company Address</label>
