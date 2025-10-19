@@ -22,10 +22,11 @@ class UserAccessManager extends Component
     public array $assignedRoles = [];
     public array $assignedPermissions = [];
 
-    public array $protectedRoles = ['admin1'];
+    public array $protectedRoles = [];
 
     public function mount(?int $userId = null): void
     {
+        $this->loadProtectedRoles();
         $this->refreshLookups();
 
         if ($userId) {
@@ -62,9 +63,14 @@ class UserAccessManager extends Component
             'assignedRoles.*' => ['string', Rule::exists('roles', 'name')],
         ]);
 
-        if ($this->user->username === 'admin1' && ! in_array('admin1', $this->assignedRoles, true)) {
-            $this->assignedRoles[] = 'admin1';
-        }
+        // // Ensure admin users keep their admin roles
+        // if ($this->user->username === 'admin1' && ! in_array('super_admin', $this->assignedRoles, true)) {
+        //     $this->assignedRoles[] = 'super_admin';
+        // } elseif ($this->user->username === 'admin2' && ! in_array('product_admin', $this->assignedRoles, true)) {
+        //     $this->assignedRoles[] = 'product_admin';
+        // } elseif ($this->user->username === 'admin3' && ! in_array('warehouse_admin', $this->assignedRoles, true)) {
+        //     $this->assignedRoles[] = 'warehouse_admin';
+        // }
 
         $this->assignedRoles = array_values(array_unique($this->assignedRoles));
 
@@ -100,6 +106,14 @@ class UserAccessManager extends Component
     public function render()
     {
         return view('livewire.user.user-access-manager');
+    }
+
+    private function loadProtectedRoles(): void
+    {
+        // Load admin roles from database
+        $this->protectedRoles = Role::whereIn('name', ['super_admin'])
+            ->pluck('name')
+            ->toArray();
     }
 
     private function refreshLookups(): void

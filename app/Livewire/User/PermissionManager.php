@@ -21,10 +21,11 @@ class PermissionManager extends Component
     public $selectedPermissions = [];
 
     public $confirmingDeletion = false;
-    public $protectedRoles = ['admin1', 'admin2', 'admin3'];
+    public $protectedRoles = [];
 
     public function mount(): void
     {
+        $this->loadProtectedRoles();
         $this->loadAll();
     }
 
@@ -142,8 +143,13 @@ class PermissionManager extends Component
             return;
         }
 
-        if ($user->username === 'admin1' && ! in_array('admin1', $roles, true)) {
-            $roles[] = 'admin1';
+        // Ensure admin users keep their admin roles
+        if ($user->username === 'admin1' && ! in_array('super_admin', $roles, true)) {
+            $roles[] = 'super_admin';
+        } elseif ($user->username === 'admin2' && ! in_array('product_admin', $roles, true)) {
+            $roles[] = 'product_admin';
+        } elseif ($user->username === 'admin3' && ! in_array('warehouse_admin', $roles, true)) {
+            $roles[] = 'warehouse_admin';
         }
 
         $user->syncRoles($roles);
@@ -153,6 +159,14 @@ class PermissionManager extends Component
         $this->loadAll();
 
         session()->flash('permissionMessage', __('User roles updated.'));
+    }
+
+    private function loadProtectedRoles(): void
+    {
+        // Load admin roles from database
+        $this->protectedRoles = Role::whereIn('name', ['super_admin', 'product_admin', 'warehouse_admin'])
+            ->pluck('name')
+            ->toArray();
     }
 
     private function loadAll(): void

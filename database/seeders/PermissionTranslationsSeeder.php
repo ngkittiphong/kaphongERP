@@ -117,6 +117,22 @@ class PermissionTranslationsSeeder extends Seeder
                 'en' => 'Email',
                 'th' => 'อีเมล',
             ],
+            'permissions.no_permission_title' => [
+                'en' => 'Access Restricted',
+                'th' => 'ไม่สามารถเข้าถึงได้',
+            ],
+            'permissions.no_permission_message' => [
+                'en' => 'Your account does not have the permissions required to view this page.',
+                'th' => 'บัญชีของคุณยังไม่มีสิทธิ์สำหรับหน้าเพจนี้',
+            ],
+            'permissions.no_permission_hint' => [
+                'en' => 'Please contact an administrator if you believe this is an error.',
+                'th' => 'กรุณาติดต่อผู้ดูแลระบบหากคิดว่าเกิดความผิดพลาด',
+            ],
+            'permissions.logout_button' => [
+                'en' => 'Sign out',
+                'th' => 'ออกจากระบบ',
+            ],
         ];
 
         $translationService = app(TranslationService::class);

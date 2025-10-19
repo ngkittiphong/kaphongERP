@@ -47,6 +47,8 @@ Route::get('/menu/menu_user', function () {
     return view('menu.menu_user');
 })->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class, 'permission:menu.user_management']);
 
+Route::view('/no-permission', 'errors.no-permission')->name('no-permission')->middleware('auth');
+
 Route::get('/menu/menu_permissions', function () {
     return view('menu.menu_permissions');
 })->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class, 'permission:menu.user_permissions']);

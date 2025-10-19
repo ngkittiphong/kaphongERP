@@ -23,18 +23,12 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (UnauthorizedException $exception, $request) {
-            if (auth()->check()) {
-                auth()->logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-            }
-
             if ($request->expectsJson()) {
                 return response()->json([
                     'message' => 'Access denied.',
-                ], 401);
+                ], 403);
             }
 
-            return redirect()->route('login')->with('error', __('You do not have permission to access that page.'));
+            return redirect()->route('no-permission');
         });
     })->create();

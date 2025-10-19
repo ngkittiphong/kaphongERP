@@ -55,12 +55,12 @@ class User extends Authenticatable
     // 🔹 Role Checking Methods
     public function isAdmin()
     {
-        return $this->hasRole('admin1') || ($this->type && $this->type->name === 'Admin');
+        return $this->hasRole('super_admin') || ($this->type && $this->type->name === 'Admin');
     }
 
     public function isUser()
     {
-        return $this->hasAnyRole(['admin1', 'admin2', 'admin3']) || ($this->type && $this->type->name === 'User');
+        return $this->hasAnyRole(['super_admin']) || ($this->type && $this->type->name === 'User');
     }
 
     /**

@@ -34,12 +34,14 @@ class RolePermissionSeeder extends Seeder
         }
 
         $roleDefinitions = [
-            'super_admin' => $permissions,
-            'product_admin' => [
+            'super_admin' => $permissions, // Full admin access (was admin1)
+            'product_admin' => [ // Was admin2
                 'menu.dashboard',
                 'menu.products',
+                'menu.warehouse',
+                'menu.branch',
             ],
-            'warehouse_admin' => [
+            'warehouse_admin' => [ // Was admin3
                 'menu.dashboard',
                 'menu.warehouse',
             ],
@@ -53,13 +55,35 @@ class RolePermissionSeeder extends Seeder
             $role->syncPermissions($rolePermissions);
         }
 
-        $users = User::whereIn('username', array_keys($roleDefinitions))
+        // Assign roles to admin users
+        $adminUsers = User::whereIn('username', ['admin1', 'admin2', 'admin3'])
             ->get()
             ->keyBy('username');
 
-        foreach ($roleDefinitions as $roleName => $rolePermissions) {
-            if (isset($users[$roleName])) {
-                $users[$roleName]->syncRoles($roleName);
+        // Assign super_admin role to admin1 user
+        if (isset($adminUsers['admin1'])) {
+            $adminUsers['admin1']->syncRoles(['super_admin']);
+        }
+
+        // Assign product_admin role to admin2 user
+        if (isset($adminUsers['admin2'])) {
+            $adminUsers['admin2']->syncRoles(['product_admin']);
+        }
+
+        // Assign warehouse_admin role to admin3 user
+        if (isset($adminUsers['admin3'])) {
+            $adminUsers['admin3']->syncRoles(['warehouse_admin']);
+        }
+
+        // Assign super_admin role to all users with Admin user type
+        $adminTypeUsers = User::whereHas('type', function ($query) {
+            $query->where('name', 'Admin');
+        })->get();
+
+        foreach ($adminTypeUsers as $user) {
+            // Only assign if user doesn't already have a specific admin role
+            if (!$user->hasAnyRole(['super_admin', 'product_admin', 'warehouse_admin'])) {
+                $user->syncRoles(['super_admin']);
             }
         }
     }
