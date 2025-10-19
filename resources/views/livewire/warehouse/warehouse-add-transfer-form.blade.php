@@ -26,7 +26,7 @@
                         </div>
                         
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-6" style="display: none;">
                                 <div class="form-group">
                                     <label class="control-label">Company Name <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" wire:model="companyName" readonly>
