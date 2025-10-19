@@ -11,7 +11,7 @@ use App\Http\Controllers\LanguageController;
 //------------------Root Route--------------------------------
 Route::get('/', function () {
     return view('index');
-})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class, 'permission:menu.dashboard']);
 
 //------------------User Route--------------------------------
 Route::get('/user/login', function () {
@@ -45,39 +45,43 @@ Route::post('/user/change-password', [UserController::class, 'forceChangePasswor
 //------------------Menu Route--------------------------------
 Route::get('/menu/menu_user', function () {
     return view('menu.menu_user');
-})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class, 'permission:menu.user_management']);
+
+Route::get('/menu/menu_permissions', function () {
+    return view('menu.menu_permissions');
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class, 'permission:menu.user_permissions']);
 
 Route::get('/menu/menu_product', function () {
     return view('menu.menu_product');
-})->name('menu.menu_product')->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
+})->name('menu.menu_product')->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class, 'permission:menu.products']);
 
 Route::get('/menu/menu_category', function () {
     return view('menu.menu_category');
-})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class, 'permission:menu.products']);
 
 Route::get('/menu/menu_transfer', function () {
     return view('menu.menu_transfer');
-})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class, 'permission:menu.products']);
 
 Route::get('/menu/menu_branch', function () {
     return view('menu.menu_branch');
-})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class, 'permission:menu.branch']);
 
 Route::get('/menu/menu_warehouse', function () {
     return view('menu.menu_warehouse');
-})->name('menu.menu_warehouse')->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
+})->name('menu.menu_warehouse')->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class, 'permission:menu.warehouse']);
 
 Route::get('/menu/menu_warehouse_checkstock', function () {
     return view('menu.menu_warehouse_checkstock');
-})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class, 'permission:menu.warehouse']);
 
 Route::get('/menu/menu_warehouse_transfer', function () {
     return view('menu.menu_warehouse_transfer');
-})->name('menu.menu_warehouse_transfer')->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
+})->name('menu.menu_warehouse_transfer')->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class, 'permission:menu.warehouse']);
 
 Route::get('/menu/menu_warehouse_stock', function () {
     return view('menu.menu_warehouse_stock');
-})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
+})->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class, 'permission:menu.warehouse']);
 
 //------------------Setting Route--------------------------------
 Route::get('/setting/company_profile', [BranchController::class, 'getHeadOffice'])->name('setting.company_profile');
@@ -128,10 +132,11 @@ Route::post('/users/update-nickname', [UserController::class, 'updateNickname'])
 Route::post('/users/change-password', [UserController::class, 'changePasswordProfile'])->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class]);
 
 //------------------Branch Route--------------------------------
-Route::resource('branches', BranchController::class);
+Route::resource('branches', BranchController::class)
+    ->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class, 'permission:menu.branch']);
 
 //------------------Inventory Route--------------------------------
-Route::prefix('inventory')->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class])->group(function () {
+Route::prefix('inventory')->middleware(['auth', \App\Http\Middleware\ForcePasswordChange::class, 'permission:menu.warehouse'])->group(function () {
     Route::post('/stock-in', [InventoryController::class, 'stockIn'])->name('inventory.stock-in');
     Route::post('/stock-out', [InventoryController::class, 'stockOut'])->name('inventory.stock-out');
     Route::post('/stock-adjustment', [InventoryController::class, 'stockAdjustment'])->name('inventory.stock-adjustment');
@@ -178,4 +183,3 @@ Route::get('/debug/set-locale/{locale}', function($locale) {
         'test_translation' => __t('menu.main', 'Main')
     ]);
 });
-

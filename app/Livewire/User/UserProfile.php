@@ -78,7 +78,10 @@ class UserProfile extends Component
             $this->description = $this->user->profile->description;
         }
 
-        //$this->dispatch('refreshComponent');
+        if ($this->user) {
+            $this->dispatch('accessUserSelected', $this->user->id);
+        }
+
         $this->showAddUserForm = false; // Hide form when selecting an existing user
     }
 
@@ -298,6 +301,7 @@ class UserProfile extends Component
             $this->user = User::with('profile')->find($this->user->id);
             \Log::debug('After update - user_type_id', ['user_type_id' => $this->user->user_type_id]);
             $this->dispatch('refreshComponent');
+            $this->dispatch('accessUserSelected', $this->user->id);
         } else {
             // Get error message from response
             $errorData = json_decode($response->getContent(), true);
@@ -348,6 +352,7 @@ class UserProfile extends Component
             $this->dispatch('refreshUserList'); // Refresh list
             $this->dispatch('refreshComponent'); // Refresh list
             $this->user = null; // Clear selected user
+            $this->dispatch('accessUserSelected', 0);
 
         } catch (\Exception $e) {
             \Log::error("Error deleting user: " . $e->getMessage());

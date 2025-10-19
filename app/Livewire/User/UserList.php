@@ -27,6 +27,7 @@ class UserList extends Component
         \Log::info("selectUser");
         $this->selectedUserId = $userId;
         $this->dispatch('ProfileSelected', userId: $userId);
+        $this->dispatch('accessUserSelected', $userId);
     }
 
     public function loadUsers()

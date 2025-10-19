@@ -26,8 +26,13 @@
                 <div class="tab-content">
                     @include('livewire.user.user-profile_tab_detail')
                     <div class="tab-pane" id="tab-access">
-                        {{-- Access --}}
-                        Access detail statement
+                        @if ($user)
+                            @livewire('user.user-access-manager', ['userId' => $user->id], key('user-access-' . $user->id))
+                        @else
+                            <div class="text-muted p-15">
+                                {{ __('Select a user to edit access settings.') }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

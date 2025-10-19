@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory, Notifiable, SoftDeletes, HasRoles;
 
     protected $fillable = [
         'username',
@@ -54,12 +55,20 @@ class User extends Authenticatable
     // 🔹 Role Checking Methods
     public function isAdmin()
     {
-        return $this->type->name === 'Admin';
+        return $this->hasRole('admin1') || ($this->type && $this->type->name === 'Admin');
     }
 
     public function isUser()
     {
-        return $this->type->name === 'User';
+        return $this->hasAnyRole(['admin1', 'admin2', 'admin3']) || ($this->type && $this->type->name === 'User');
+    }
+
+    /**
+     * Helper to centralize menu permission checks.
+     */
+    public function hasMenuAccess(string $permission): bool
+    {
+        return $this->can($permission);
     }
 
     // 🔹 Scope to Fetch Active Users

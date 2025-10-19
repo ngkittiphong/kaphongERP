@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             UserStatusesSeeder::class,
             WarehouseStatusesSeeder::class,
             AdminUsersSeeder::class,
+            RolePermissionSeeder::class,
             ProductTypeSeeder::class,
             ProductStatusSeeder::class,
             ProductGroupSeeder::class,
@@ -38,6 +39,7 @@ class DatabaseSeeder extends Seeder
             CheckStockDetailSeeder::class,
             TranslationSeeder::class,
             CompleteWarehouseProductSeeder::class,
+            PermissionTranslationsSeeder::class,
         ]);
     }
 }
