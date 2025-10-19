@@ -21,9 +21,9 @@ $(function() {
 			buttons: [
 				{extend: 'copy', className: 'copyButton' },
 				{extend: 'csv', className: 'csvButton' },
-				{extend: 'excel', className: 'excelButton' },
-				{extend: 'pdf', className: 'pdfButton' },
-				{extend: 'print', className: 'printButton' }
+				{extend: 'excel', className: 'excelButton' }
+				// {extend: 'pdf', className: 'pdfButton' },
+				// {extend: 'print', className: 'printButton' }
 			]
 		}
 	});

@@ -438,63 +438,63 @@
                                 text: '<i class="icon-file-excel me-1"></i>Excel',
                                 title: 'Warehouse List',
                                 filename: 'Warehouse_List'
-                            },
-                            {
-                                extend: 'pdf',
-                                className: 'btn btn-danger btn-sm',
-                                text: '<i class="icon-file-pdf me-1"></i>PDF',
-                                title: 'Warehouse List',
-                                filename: 'Warehouse_List',
-                                orientation: 'landscape',
-                                pageSize: 'A4',
-                                // customize: function(doc) {
-                                //     // Ensure styles object and defaults exist before assignment
-                                //     doc.styles = doc.styles || {};
-                                //     doc.defaultStyle = doc.defaultStyle || {};
-
-                                //     // Prepare style buckets the export relies on
-                                //     doc.styles.tableHeader = doc.styles.tableHeader || {};
-                                //     doc.styles.tableBodyEven = doc.styles.tableBodyEven || {};
-                                //     doc.styles.tableBodyOdd = doc.styles.tableBodyOdd || {};
-
-                                //     // Configure PDF to avoid font loading issues
-                                //     doc.defaultStyle.fontSize = 8;
-                                //     doc.defaultStyle.font = 'Roboto';
-
-                                //     doc.styles.tableHeader.fontSize = 8;
-                                //     doc.styles.tableHeader.font = 'Roboto';
-
-                                //     doc.styles.tableBodyEven.fontSize = 8;
-                                //     doc.styles.tableBodyEven.font = 'Roboto';
-
-                                //     doc.styles.tableBodyOdd.fontSize = 8;
-                                //     doc.styles.tableBodyOdd.font = 'Roboto';
-                                    
-                                //     // Set page margins
-                                //     doc.pageMargins = [40, 60, 40, 60];
-                                    
-                                //     // Add header
-                                //     doc.content.splice(0, 0, {
-                                //         text: 'Warehouse List',
-                                //         style: 'header',
-                                //         alignment: 'center',
-                                //         margin: [0, 0, 0, 20]
-                                //     });
-                                    
-                                //     // Define header style
-                                //     doc.styles.header = {
-                                //         fontSize: 16,
-                                //         bold: true,
-                                //         alignment: 'center'
-                                //     };
-                                // }
-                            },
-                            {
-                                extend: 'print',
-                                className: 'btn btn-warning btn-sm',
-                                text: '<i class="icon-printer me-1"></i>Print',
-                                title: 'Warehouse List'
                             }
+                            // {
+                            //     extend: 'pdf',
+                            //     className: 'btn btn-danger btn-sm',
+                            //     text: '<i class="icon-file-pdf me-1"></i>PDF',
+                            //     title: 'Warehouse List',
+                            //     filename: 'Warehouse_List',
+                            //     orientation: 'landscape',
+                            //     pageSize: 'A4',
+                            //     // customize: function(doc) {
+                            //     //     // Ensure styles object and defaults exist before assignment
+                            //     //     doc.styles = doc.styles || {};
+                            //     //     doc.defaultStyle = doc.defaultStyle || {};
+
+                            //     //     // Prepare style buckets the export relies on
+                            //     //     doc.styles.tableHeader = doc.styles.tableHeader || {};
+                            //     //     doc.styles.tableBodyEven = doc.styles.tableBodyEven || {};
+                            //     //     doc.styles.tableBodyOdd = doc.styles.tableBodyOdd || {};
+
+                            //     //     // Configure PDF to avoid font loading issues
+                            //     //     doc.defaultStyle.fontSize = 8;
+                            //     //     doc.defaultStyle.font = 'Roboto';
+
+                            //     //     doc.styles.tableHeader.fontSize = 8;
+                            //     //     doc.styles.tableHeader.font = 'Roboto';
+
+                            //     //     doc.styles.tableBodyEven.fontSize = 8;
+                            //     //     doc.styles.tableBodyEven.font = 'Roboto';
+
+                            //     //     doc.styles.tableBodyOdd.fontSize = 8;
+                            //     //     doc.styles.tableBodyOdd.font = 'Roboto';
+                                    
+                            //     //     // Set page margins
+                            //     //     doc.pageMargins = [40, 60, 40, 60];
+                                    
+                            //     //     // Add header
+                            //     //     doc.content.splice(0, 0, {
+                            //     //         text: 'Warehouse List',
+                            //     //         style: 'header',
+                            //     //         alignment: 'center',
+                            //     //         margin: [0, 0, 0, 20]
+                            //     //     });
+                                    
+                            //     //     // Define header style
+                            //     //     doc.styles.header = {
+                            //     //         fontSize: 16,
+                            //     //         bold: true,
+                            //     //         alignment: 'center'
+                            //     //     };
+                            //     // }
+                            // },
+                            // {
+                            //     extend: 'print',
+                            //     className: 'btn btn-warning btn-sm',
+                            //     text: '<i class="icon-printer me-1"></i>Print',
+                            //     title: 'Warehouse List'
+                            // }
                         ]
                     }
                 });
