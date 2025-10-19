@@ -596,9 +596,9 @@ class WarehouseAddTransferForm extends Component
                 'destination' => $destinationWarehouse ? $destinationWarehouse->name : 'NOT FOUND'
             ]);
             
-            // Get pending status
-            $pendingStatus = TransferSlipStatus::where('name', 'Pending')->first();
-            Log::info('🔥 Pending status found:', ['status_id' => $pendingStatus ? $pendingStatus->id : 'NOT FOUND']);
+            // Get In Transit status (bypassing Approved)
+            $inTransitStatus = TransferSlipStatus::where('name', 'In Transit')->first();
+            Log::info('🔥 In Transit status found:', ['status_id' => $inTransitStatus ? $inTransitStatus->id : 'NOT FOUND']);
             
             // Create transfer slip
             Log::info('🔥 Creating transfer slip with data:', [
@@ -608,7 +608,7 @@ class WarehouseAddTransferForm extends Component
                 'warehouse_origin_id' => $this->warehouseOriginId,
                 'warehouse_destination_id' => $this->warehouseDestinationId,
                 'total_quantity' => $this->getTotalQuantity(),
-                'transfer_slip_status_id' => $pendingStatus->id,
+                'transfer_slip_status_id' => $inTransitStatus->id,
             ]);
             
             $transferSlip = TransferSlip::create([
@@ -629,7 +629,7 @@ class WarehouseAddTransferForm extends Component
                 'warehouse_destination_id' => $this->warehouseDestinationId,
                 'warehouse_destination_name' => $destinationWarehouse->name,
                 'total_quantity' => $this->getTotalQuantity(),
-                'transfer_slip_status_id' => $pendingStatus->id,
+                'transfer_slip_status_id' => $inTransitStatus->id,
                 'description' => $this->description,
                 'note' => $this->note,
             ]);
@@ -652,6 +652,11 @@ class WarehouseAddTransferForm extends Component
                 ]);
                 Log::info("🔥 Detail created for product {$index}");
             }
+            
+            // Since we're creating the transfer with "In Transit" status, 
+            // we need to reduce stock in the sender warehouse immediately
+            Log::info('🔥 Reducing sender warehouse stock for In Transit status...');
+            $this->reduceSenderWarehouseStock($transferSlip);
             
             DB::commit();
             Log::info('🔥 Database transaction committed successfully');
@@ -682,6 +687,57 @@ class WarehouseAddTransferForm extends Component
         } finally {
             $this->isSubmitting = false;
             Log::info('🔥 Submit method completed, isSubmitting set to false');
+        }
+    }
+
+    /**
+     * Reduce stock in sender warehouse when creating transfer with In Transit status
+     */
+    private function reduceSenderWarehouseStock($transferSlip)
+    {
+        Log::info("🔥 reduceSenderWarehouseStock called for new transfer", [
+            'transfer_slip_id' => $transferSlip->id
+        ]);
+        
+        if (!$transferSlip->transferSlipDetails) {
+            Log::warning("🔥 No transfer slip details found");
+            return;
+        }
+
+        $senderWarehouseId = $transferSlip->warehouse_origin_id;
+        
+        foreach ($transferSlip->transferSlipDetails as $detail) {
+            try {
+                // Use InventoryService for stock out operation
+                $inventoryService = app(\App\Services\InventoryService::class);
+                
+                $result = $inventoryService->stockOut([
+                    'warehouse_id' => $senderWarehouseId,
+                    'product_id' => $detail->product_id,
+                    'quantity' => $detail->quantity,
+                    'unit_price' => $detail->cost_per_unit ?? 0,
+                    'sale_price' => $detail->cost_per_unit ?? 0,
+                    'detail' => "Transfer to Warehouse #{$transferSlip->warehouse_destination_id} - Transfer Slip #{$transferSlip->transfer_slip_number}",
+                    'transfer_slip_id' => $transferSlip->id,
+                    'date_activity' => now(),
+                ]);
+                
+                Log::info("Reduced sender warehouse stock using InventoryService", [
+                    'warehouse_id' => $senderWarehouseId,
+                    'product_id' => $detail->product_id,
+                    'quantity_reduced' => $detail->quantity,
+                    'new_balance' => $result['new_balance'],
+                    'inventory_id' => $result['inventory_id']
+                ]);
+                
+            } catch (\Exception $e) {
+                Log::error("Failed to reduce sender warehouse stock", [
+                    'warehouse_id' => $senderWarehouseId,
+                    'product_id' => $detail->product_id,
+                    'error' => $e->getMessage()
+                ]);
+                throw $e;
+            }
         }
     }
 

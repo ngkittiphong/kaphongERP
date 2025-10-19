@@ -19,10 +19,6 @@ class TransferStatusTranslationSeeder extends Seeder
                 'en' => 'Pending',
                 'th' => 'รอจัดสินค้า'
             ],
-            'transfer_status.approved' => [
-                'en' => 'Approved', 
-                'th' => 'อนุมัติการโอนสินค้า'
-            ],
             'transfer_status.in_transit' => [
                 'en' => 'In Transit',
                 'th' => 'สินค้าพร้อมส่ง'

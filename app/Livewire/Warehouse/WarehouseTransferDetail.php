@@ -376,8 +376,7 @@ class WarehouseTransferDetail extends Component
         $currentStatus = $this->transferSlip->status->name;
         
         return match($currentStatus) {
-            'Pending' => \App\Models\TransferSlipStatus::whereIn('name', ['Approved', 'Cancelled'])->get(),
-            'Approved' => \App\Models\TransferSlipStatus::whereIn('name', ['In Transit', 'Cancelled'])->get(),
+            'Pending' => \App\Models\TransferSlipStatus::whereIn('name', ['In Transit', 'Cancelled'])->get(),
             'In Transit' => \App\Models\TransferSlipStatus::whereIn('name', ['Delivered', 'Cancelled'])->get(),
             'Delivered' => \App\Models\TransferSlipStatus::whereIn('name', ['Completed'])->get(),
             'Completed' => collect(), // No status changes allowed - final status
@@ -404,13 +403,13 @@ class WarehouseTransferDetail extends Component
         }
 
         $currentStatus = $this->transferSlip->status->name;
-        $canCancel = in_array($currentStatus, ['Pending', 'Approved', 'In Transit']);
+        $canCancel = in_array($currentStatus, ['Pending', 'In Transit']);
         
         Log::info("🔥 canCancelTransfer check", [
             'transfer_slip_id' => $this->transferSlip->id,
             'current_status' => $currentStatus,
             'can_cancel' => $canCancel,
-            'allowed_statuses' => ['Pending', 'Approved', 'In Transit']
+            'allowed_statuses' => ['Pending', 'In Transit']
         ]);
         
         return $canCancel;
@@ -421,11 +420,6 @@ class WarehouseTransferDetail extends Component
      */
     private function handleInventoryUpdates($oldStatus, $newStatus)
     {
-        // Approved → In Transit: Reduce stock in sender warehouse
-        if ($oldStatus === 'Approved' && $newStatus === 'In Transit') {
-            $this->reduceSenderWarehouseStock();
-        }
-        
         // In Transit → Delivered: Add stock to receiver warehouse
         if ($oldStatus === 'In Transit' && $newStatus === 'Delivered') {
             $this->addReceiverWarehouseStock();
@@ -592,7 +586,6 @@ class WarehouseTransferDetail extends Component
     {
         return match($statusName) {
             'Pending' => 'warning',
-            'Approved' => 'primary',
             'In Transit' => 'info', 
             'Delivered' => 'success',
             'Completed' => 'success',
@@ -605,7 +598,6 @@ class WarehouseTransferDetail extends Component
     {
         return match($statusName) {
             'Pending' => 'text-warning',
-            'Approved' => 'text-primary',
             'In Transit' => 'text-info',
             'Delivered' => 'text-success', 
             'Completed' => 'text-success',
@@ -618,7 +610,6 @@ class WarehouseTransferDetail extends Component
     {
         return match($statusName) {
             'Pending' => 'clock',
-            'Approved' => 'checkmark2',
             'In Transit' => 'truck',
             'Delivered' => 'checkmark-circle',
             'Completed' => 'checkmark-circle2',

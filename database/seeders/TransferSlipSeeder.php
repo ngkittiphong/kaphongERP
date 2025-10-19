@@ -60,10 +60,10 @@ class TransferSlipSeeder extends Seeder
         // Define status distribution for realistic scenarios
         $statusDistribution = [
             'Pending' => 5,      // 25% - New requests
-            'Approved' => 4,     // 20% - Approved but not yet shipped
-            'In Transit' => 3,   // 15% - Currently being transported
+            'In Transit' => 4,   // 20% - Currently being transported
             'Delivered' => 3,    // 15% - Arrived but not yet completed
             'Completed' => 5,    // 25% - Fully processed
+            'Cancelled' => 3,    // 15% - Cancelled transfers
         ];
 
         $this->command->info('Starting TransferSlipSeeder with new TF pattern...');
