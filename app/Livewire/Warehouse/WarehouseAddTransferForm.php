@@ -197,6 +197,9 @@ class WarehouseAddTransferForm extends Component
         if (count($this->transferProducts) > 1) {
             unset($this->transferProducts[$index]);
             $this->transferProducts = array_values($this->transferProducts);
+            
+            // Dispatch event to re-initialize typeahead after product removal
+            $this->dispatch('transferProductRemoved');
         }
     }
 

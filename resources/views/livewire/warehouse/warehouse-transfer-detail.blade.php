@@ -335,6 +335,73 @@
 </div>
 
 @push('scripts')
+<style>
+    /* Ensure consistent width for typeahead inputs */
+    .product-typeahead {
+        width: 100% !important;
+        min-width: 200px !important;
+    }
+
+    .product-typeahead.tt-input {
+        width: 100% !important;
+        min-width: 200px !important;
+        background-color: #fff !important;
+    }
+
+    /* Typeahead wrapper container */
+    .twitter-typeahead {
+        width: 100% !important;
+        display: block !important;
+    }
+
+    /* Ensure the input field maintains its original width */
+    input.product-typeahead {
+        width: 100% !important;
+        min-width: 200px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Typeahead dropdown styles */
+    .tt-menu {
+        position: absolute !important;
+        top: auto !important;
+        bottom: calc(100% + 6px) !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 99999 !important;
+        width: 100% !important;
+        max-height: 260px !important;
+        overflow-y: auto !important;
+        background: #ffffff !important;
+        border: 1px solid #ddd !important;
+        border-radius: 4px !important;
+        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .tt-suggestion {
+        padding: 8px 12px !important;
+        cursor: pointer !important;
+        color: #333 !important;
+        line-height: 1.4 !important;
+        border-bottom: 1px solid #f0f0f0 !important;
+        background: #fff !important;
+    }
+
+    .tt-suggestion:last-child {
+        border-bottom: none !important;
+    }
+
+    .tt-suggestion:hover,
+    .tt-suggestion.tt-cursor {
+        background-color: #f5f5f5 !important;
+    }
+
+    .tt-highlight {
+        font-weight: 600 !important;
+        color: #2c3e50 !important;
+    }
+</style>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.3.1/typeahead.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -426,6 +493,21 @@
                 if (!this.value) {
                     Livewire.dispatch('clearProductSearch');
                 }
+            }).on('focus', function() {
+                // Re-initialize typeahead when input gains focus
+                console.log('Typeahead: Input focused, ensuring typeahead is active');
+                const $this = window.jQuery(this);
+                if (!$this.data('tt-initialized')) {
+                    console.log('Typeahead: Re-initializing on focus');
+                    setTimeout(() => {
+                        if (productDataset.length > 0) {
+                            initTypeahead();
+                        }
+                    }, 50);
+                }
+            }).on('blur', function() {
+                // Keep typeahead active but don't destroy it
+                console.log('Typeahead: Input blurred');
             });
 
             $input.data('tt-initialized', true);
@@ -452,6 +534,20 @@
     };
 
     document.addEventListener('livewire:initialized', () => {
+
+    // Add global focus listener for all product typeahead inputs
+    $(document).on('focus', 'input.product-typeahead', function() {
+        console.log('Typeahead: Global focus event on product input');
+        const $this = window.jQuery(this);
+        if (!$this.data('tt-initialized')) {
+            console.log('Typeahead: Re-initializing on global focus');
+            setTimeout(() => {
+                if (productDataset.length > 0) {
+                    initTypeahead();
+                }
+            }, 50);
+        }
+    });
 
     // Listen for when the transfer form is ready
     Livewire.on('transferFormReady', (event) => {
@@ -481,6 +577,16 @@
     // Listen for new product row added
     Livewire.on('transferProductAdded', () => {
         console.log('Typeahead: New product row added, re-initializing...');
+        setTimeout(() => {
+            if (productDataset.length > 0) {
+                initTypeahead();
+            }
+        }, 100);
+    });
+
+    // Listen for product row removed
+    Livewire.on('transferProductRemoved', () => {
+        console.log('Typeahead: Product row removed, re-initializing...');
         setTimeout(() => {
             if (productDataset.length > 0) {
                 initTypeahead();

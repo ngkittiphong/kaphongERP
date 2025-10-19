@@ -336,6 +336,30 @@
         background-color: #fff !important;
     }
 
+    /* Ensure consistent width for typeahead inputs */
+    .product-typeahead {
+        width: 100% !important;
+        min-width: 200px !important;
+    }
+
+    .product-typeahead.tt-input {
+        width: 100% !important;
+        min-width: 200px !important;
+    }
+
+    /* Typeahead wrapper container */
+    .twitter-typeahead {
+        width: 100% !important;
+        display: block !important;
+    }
+
+    /* Ensure the input field maintains its original width */
+    input.product-typeahead {
+        width: 100% !important;
+        min-width: 200px !important;
+        box-sizing: border-box !important;
+    }
+
     .table-responsive {
         overflow: visible !important;
     }
