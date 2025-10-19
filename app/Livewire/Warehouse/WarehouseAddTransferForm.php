@@ -81,18 +81,16 @@ class WarehouseAddTransferForm extends Component
         'description' => 'nullable|string|max:1000',
         'note' => 'nullable|string|max:1000',
         'transferProducts' => 'required|array|min:1',
-        'transferProducts.*.product_id' => 'required|exists:products,id',
-        'transferProducts.*.quantity' => 'required|numeric|min:0.01',
-        'transferProducts.*.cost_per_unit' => 'required|numeric|min:0',
+        'transferProducts.*.product_id' => 'nullable|exists:products,id',
+        'transferProducts.*.quantity' => 'nullable|numeric|min:1',
+        'transferProducts.*.cost_per_unit' => 'nullable|numeric|min:0',
     ];
 
     protected $messages = [
         'warehouseDestinationId.different' => 'Destination warehouse must be different from origin warehouse.',
         'transferProducts.required' => 'At least one product must be added to the transfer.',
-        'transferProducts.*.product_id.required' => 'Please select a product.',
-        'transferProducts.*.quantity.required' => 'Quantity is required.',
-        'transferProducts.*.quantity.min' => 'Quantity must be greater than 0.',
-        'transferProducts.*.cost_per_unit.required' => 'Cost per unit is required.',
+        'transferProducts.*.product_id.exists' => 'Please select a valid product.',
+        'transferProducts.*.quantity.min' => 'Quantity must be at least 1.',
         'transferProducts.*.cost_per_unit.min' => 'Cost per unit must be 0 or greater.',
     ];
 
@@ -535,10 +533,13 @@ class WarehouseAddTransferForm extends Component
             throw $e;
         }
         
-        // Filter out empty products
+        // Filter out empty products (products without product_id)
         $this->transferProducts = array_filter($this->transferProducts, function($product) {
-            return !empty($product['product_id']);
+            return !empty($product['product_id']) && !empty($product['product_name']);
         });
+        
+        // Re-index the array after filtering
+        $this->transferProducts = array_values($this->transferProducts);
         
         Log::info('🔥 Filtered products:', ['products' => $this->transferProducts]);
         
@@ -548,7 +549,7 @@ class WarehouseAddTransferForm extends Component
             return;
         }
         
-        // Validate available quantities
+        // Validate available quantities only for products that have been selected
         $insufficientStockProducts = [];
         foreach ($this->transferProducts as $index => $product) {
             $availableQuantity = $this->getAvailableQuantity($this->warehouseOriginId, $product['product_id']);
