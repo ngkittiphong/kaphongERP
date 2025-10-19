@@ -4,9 +4,9 @@
         <li class="list-title">{{ __t('menu.main', 'Main') }}</li>
         @can('menu.dashboard')
             <li>
-                <a href="index2.htm#"><i class="icon-display4"></i><span class="list-label"> {{ __t('menu.dashboards', 'Dashboards') }}</span></a>
+                <a href="/"><i class="icon-display4"></i><span class="list-label"> {{ __t('menu.dashboards', 'Dashboards') }}</span></a>
                 <ul>
-                    <li><a href="index2.htm">{{ __t('menu.analytical_dashboard', 'Analytical dashboard') }}</a></li>								
+                    <li><a href="/">{{ __t('menu.main_dashboard', 'Main dashboard') }}</a></li>								
                 </ul>
             </li>
         @endcan
