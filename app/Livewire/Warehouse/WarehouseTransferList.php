@@ -109,8 +109,8 @@ class WarehouseTransferList extends BaseListComponent
             if ($transferSlip) {
                 $this->selectedTransferSlip = $transferSlip;
                 \Log::info("🔥 About to dispatch transferSlipSelected event");
-                $this->dispatch('transferSlipSelected', $this->selectedTransferSlip);
-                \Log::info("🔥 transferSlipSelected event dispatched");
+                $this->dispatch('transferSlipSelected', $this->selectedTransferSlip, 'warehouse.warehouse-transfer-detail');
+                \Log::info("🔥 transferSlipSelected event dispatched to warehouse.warehouse-transfer-detail");
             }
         } catch (\Exception $e) {
             \Log::error("🔥 Error in selectTransferSlip: " . $e->getMessage());

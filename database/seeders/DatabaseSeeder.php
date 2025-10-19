@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             CompleteWarehouseProductSeeder::class,
             InventorySeeder::class,
             TransferSlipStatusSeeder::class,
+            TransferStatusTranslationSeeder::class,
             TransferSlipSeeder::class,
             StockCheckerSeeder::class,
             CheckStockReportSeeder::class,

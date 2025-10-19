@@ -48,7 +48,7 @@
                                                     <span class="text-primary">
                                                         <i
                                                             class="icon-{{ $this->getStatusIcon($transferSlip->status->name ?? '') }} position-left"></i>
-                                                        ({{ $transferSlip->status->name ?? 'N/A' }})
+                                                        ({{ $transferSlip->status->translated_name ?? 'N/A' }})
                                                     </span>
                                                 </h4>
                                             </div>
@@ -59,7 +59,7 @@
                                                             data-toggle="dropdown" aria-haspopup="true"
                                                             aria-expanded="false">
                                                             <i class="icon-cog position-left"></i>
-                                                            Change Status
+                                                            {{ __t('transfer.change_status', 'Change Status') }}
                                                         </button>
                                                         <div class="dropdown-menu dropdown-menu-right"
                                                             style="min-width: 200px;">
@@ -70,7 +70,7 @@
                                                                     <i class="icon-{{ $this->getStatusIcon($status->name) }} position-left text-{{ $this->getStatusColor($status->name) }}"
                                                                         style="margin-right: 8px;"></i>
                                                                     <span
-                                                                        style="display: inline-block; vertical-align: middle;">{{ $status->name }}</span>
+                                                                        style="display: inline-block; vertical-align: middle;">{{ $status->translated_name }}</span>
                                                                 </a>
                                                             @endforeach
                                                         </div>
@@ -78,9 +78,9 @@
                                                     
                                                     @if ($this->canCancelTransfer())
                                                         <button type="button" class="btn btn-danger"
-                                                            wire:click="showCancelModal">
+                                                            wire:click="openCancelModal">
                                                             <i class="icon-cross position-left"></i>
-                                                            Cancel Transfer
+                                                            {{ __t('transfer.cancel_transfer', 'Cancel Transfer') }}
                                                         </button>
                                                     @endif
                                                     
@@ -253,14 +253,35 @@
                     <div class="modal-header">
                         <h5 class="modal-title">
                             <i class="icon-warning text-warning position-left"></i>
-                            Confirm Status Change
+                            {{ __t('common.confirm_status_change', 'Confirm Status Change') }}
                         </h5>
                     </div>
                     <div class="modal-body">
-                        <p>Are you sure you want to change the status of transfer slip
-                            <strong>{{ $transferSlip->transfer_slip_number }}</strong> to
-                            <strong>{{ $selectedStatusName }}</strong>?
+                        <p>{{ __t('common.confirm_status_change_message', 'Are you sure you want to change the status of transfer slip') }}
+                            <strong>{{ $transferSlip->transfer_slip_number }}</strong> {{ __t('common.to', 'to') }}
+                            <strong>{{ $this->selectedStatusTranslatedName }}</strong>?
                         </p>
+                        
+                        @if ($selectedStatusName === 'Cancelled')
+                            <div class="form-group">
+                                <label for="cancellationReason" class="control-label">{{ __t('warehouse.cancellation_reason', 'Cancellation Reason') }} <span
+                                        class="text-danger">*</span></label>
+                                <textarea class="form-control" id="cancellationReason" wire:model="cancellationReason" rows="3"
+                                    placeholder="{{ __t('warehouse.provide_cancellation_reason', 'Please provide a reason for cancelling this transfer...') }}" required></textarea>
+                                @error('cancellationReason')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            
+                            @if ($transferSlip->status->name === 'In Transit')
+                                <div class="alert alert-warning">
+                                    <i class="icon-warning position-left"></i>
+                                    <strong>{{ __t('common.note', 'Note') }}:</strong> {{ __t('warehouse.transfer_in_transit_note', 'This transfer is currently in transit. Cancelling will restore') }}
+                                    the inventory to the sender warehouse.
+                                </div>
+                            @endif
+                        @endif
+                        
                         @if ($selectedStatusName === 'Delivered')
                             <div class="alert alert-info">
                                 <i class="icon-info position-left"></i>
@@ -269,13 +290,15 @@
                         @endif
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" wire:click="cancelStatusChange">
+                        <button type="button" class="btn btn-default" wire:click="cancelStatusChange"
+                                onclick="console.log('🔥 Cancel button clicked');">
                             <i class="icon-cross position-left"></i>
-                            Cancel
+                            {{ __t('common.cancel', 'Cancel') }}
                         </button>
-                        <button type="button" class="btn btn-primary" wire:click="confirmStatusUpdate">
+                        <button type="button" class="btn btn-primary" wire:click="confirmStatusUpdate"
+                                onclick="console.log('🔥 Confirm Change button clicked');">
                             <i class="icon-check position-left"></i>
-                            Confirm Change
+                            {{ __t('common.confirm_change', 'Confirm Change') }}
                         </button>
                     </div>
                 </div>
@@ -286,7 +309,7 @@
     <!-- Cancellation Modal -->
     @if ($showCancelModal)
         <div class="modal fade in" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1"
-            role="dialog">
+            role="dialog" id="cancelModal">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -323,7 +346,8 @@
                             <i class="icon-cross position-left"></i>
                             Cancel
                         </button>
-                        <button type="button" class="btn btn-danger" wire:click="cancelTransfer">
+                        <button type="button" class="btn btn-danger" wire:click="cancelTransfer"
+                                onclick="console.log('🔥 Cancel Transfer confirmation clicked');">
                             <i class="icon-cross position-left"></i>
                             Cancel Transfer
                         </button>
