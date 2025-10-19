@@ -57,6 +57,7 @@ class WarehouseAddTransferForm extends Component
     // Form state
     public $showForm = false;
     public $isSubmitting = false;
+    public $originWarehouseSelected = false;
     
     protected $listeners = [
         'showAddForm' => 'showAddForm',
@@ -115,6 +116,31 @@ class WarehouseAddTransferForm extends Component
         $this->dispatch('transferFormReady', [
             'productData' => $this->productTypeaheadDataset
         ]);
+    }
+
+    public function updatedWarehouseOriginId($value)
+    {
+        $this->resetErrorBag(['warehouseOriginId']);
+
+        if (empty($value)) {
+            $this->originWarehouseSelected = false;
+        }
+    }
+
+    public function proceedToProductSelection()
+    {
+        Log::info('🔥 proceedToProductSelection called', ['warehouseOriginId' => $this->warehouseOriginId]);
+
+        $this->resetErrorBag(['warehouseOriginId']);
+
+        if (empty($this->warehouseOriginId)) {
+            Log::warning('🔥 proceedToProductSelection blocked: origin warehouse missing');
+            $this->addError('warehouseOriginId', 'Please select an origin warehouse before proceeding.');
+            return;
+        }
+
+        $this->originWarehouseSelected = true;
+        Log::info('🔥 Origin warehouse confirmed, product selection unlocked');
     }
 
     public function loadCompanyProfile()
@@ -335,6 +361,7 @@ class WarehouseAddTransferForm extends Component
         if (isset($data['warehouseId'])) {
             $this->warehouseOriginId = $data['warehouseId'];
             Log::info('🔥 Preselected origin warehouse:', ['warehouseId' => $data['warehouseId']]);
+            $this->originWarehouseSelected = true;
         }
         
         // Preselect the product in the first transfer product row
@@ -386,6 +413,7 @@ class WarehouseAddTransferForm extends Component
         $this->transferProducts = [];
         $this->addEmptyProduct();
         $this->isSubmitting = false;
+        $this->originWarehouseSelected = false;
     }
 
     public function showTransferConfirmation()
@@ -431,6 +459,10 @@ class WarehouseAddTransferForm extends Component
             'warehouseDestinationId' => $this->warehouseDestinationId,
             'transferProducts' => $this->transferProducts
         ]);
+        if (!$this->originWarehouseSelected) {
+            Log::info('Origin warehouse not confirmed yet, skipping submission');
+            return;
+        }
         
         try {
             Log::info('🔥 Starting validation...');
@@ -572,3 +604,4 @@ class WarehouseAddTransferForm extends Component
         return view('livewire.warehouse.warehouse-add-transfer-form');
     }
 }
+

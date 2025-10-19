@@ -63,13 +63,19 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Origin Warehouse <span class="text-danger">*</span></label>
-                                    <select class="form-control" wire:model="warehouseOriginId">
+                                    <select class="form-control" wire:model.lazy="warehouseOriginId" @if($originWarehouseSelected) disabled @endif>
                                         <option value="">Select Origin Warehouse</option>
                                         @foreach($warehouses as $warehouse)
                                             <option value="{{ $warehouse->id }}">{{ $warehouse->name }} ({{ $warehouse->branch->name ?? 'N/A' }})</option>
                                         @endforeach
                                     </select>
                                     @error('warehouseOriginId') <span class="text-danger">{{ $message }}</span> @enderror
+                                    @if($originWarehouseSelected)
+                                        <small class="text-muted">
+                                            <i class="icon-lock position-left"></i>
+                                            Origin warehouse is locked after selection
+                                        </small>
+                                    @endif
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -134,13 +140,25 @@
                         </div>
                         
                         <!-- Product Transfer Details -->
+                        @if($originWarehouseSelected)
                         <div class="row">
                             <div class="col-md-12">
                                 <h6 class="text-semibold">Product Transfer Details</h6>
                                 <hr>
                             </div>
                         </div>
+                        @else
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="alert alert-info">
+                                    <i class="icon-info position-left"></i>
+                                    Please select an origin warehouse to add products for transfer.
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                         
+                        @if($originWarehouseSelected)
                         <div class="row" style="overflow: visible;">
                             <div class="col-md-12" style="overflow: visible;">
                                 <div class="table-responsive" style="overflow: visible;">
@@ -246,6 +264,7 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
                     </div>
                     
                     <div class="panel-footer">
@@ -254,14 +273,25 @@
                                     @if($isSubmitting) disabled @endif>
                                 Cancel
                             </button>
-                            <button type="submit" class="btn btn-primary" 
-                                    @if($isSubmitting) disabled @endif>
-                                @if($isSubmitting)
-                                    <i class="icon-spinner2 spinner"></i> Creating...
-                                @else
-                                    <i class="icon-checkmark"></i> Create Transfer
-                                @endif
-                            </button>
+                            @if($originWarehouseSelected)
+                                <button type="submit" class="btn btn-primary" 
+                                        @if($isSubmitting) disabled @endif>
+                                    @if($isSubmitting)
+                                        <i class="icon-spinner2 spinner"></i> Creating...
+                                    @else
+                                        <i class="icon-checkmark"></i> Create Transfer
+                                    @endif
+                                </button>
+                            @else
+                                <button type="button"
+                                        class="btn btn-info"
+                                        wire:click="proceedToProductSelection"
+                                        wire:loading.attr="disabled"
+                                        wire:target="proceedToProductSelection"
+                                        @if(!$warehouseOriginId) disabled @endif>
+                                    <i class="icon-arrow-right5"></i> Next
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </form>
@@ -367,8 +397,20 @@
     .panel-body {
         overflow: visible !important;
     }
+
+    /* Disabled select field styling */
+    select:disabled {
+        background-color: #f5f5f5 !important;
+        color: #6c757d !important;
+        cursor: not-allowed !important;
+        opacity: 0.7 !important;
+    }
+
+    select:disabled option {
+        background-color: #f5f5f5 !important;
+        color: #6c757d !important;
+    }
 </style>
 @endpush
-
 
 
