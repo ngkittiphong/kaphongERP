@@ -212,6 +212,7 @@ class WarehouseAddTransferForm extends Component
                 'unit_name' => '',
                 'cost_per_unit' => 0,
                 'cost_total' => 0,
+                'available_quantity' => 0,
             ];
             
             $this->dispatch('transferProductAdded');
@@ -229,6 +230,22 @@ class WarehouseAddTransferForm extends Component
         }
     }
 
+    /**
+     * Get available quantity for a product in a specific warehouse
+     */
+    public function getAvailableQuantity($warehouseId, $productId)
+    {
+        if (empty($warehouseId) || empty($productId)) {
+            return 0;
+        }
+
+        $warehouseProduct = \App\Models\WarehouseProduct::where('warehouse_id', $warehouseId)
+            ->where('product_id', $productId)
+            ->first();
+
+        return $warehouseProduct ? $warehouseProduct->balance : 0;
+    }
+
 
     public function updatedTransferProducts($value, $index)
     {
@@ -236,6 +253,35 @@ class WarehouseAddTransferForm extends Component
             $this->selectProduct($index);
         } elseif (str_contains($index, '.quantity') || str_contains($index, '.cost_per_unit')) {
             $this->calculateProductTotal($index);
+            
+            // Validate quantity against available stock
+            if (str_contains($index, '.quantity')) {
+                $this->validateQuantity($index);
+            }
+        }
+    }
+
+    /**
+     * Validate quantity against available stock
+     */
+    public function validateQuantity($index)
+    {
+        $productIndex = explode('.', $index)[0];
+        $product = $this->transferProducts[$productIndex] ?? null;
+        
+        if (!$product || empty($product['product_id'])) {
+            return;
+        }
+        
+        $availableQuantity = $this->getAvailableQuantity($this->warehouseOriginId, $product['product_id']);
+        $requestedQuantity = $product['quantity'] ?? 0;
+        
+        // Clear previous quantity errors
+        $this->resetErrorBag(["transferProducts.{$productIndex}.quantity"]);
+        
+        if ($requestedQuantity > $availableQuantity) {
+            $this->addError("transferProducts.{$productIndex}.quantity", 
+                "Requested quantity ({$requestedQuantity}) exceeds available stock ({$availableQuantity})");
         }
     }
 
@@ -284,6 +330,11 @@ class WarehouseAddTransferForm extends Component
             $this->transferProducts[$index]['product_search'] = $product->name . ' (' . $product->sku_number . ')';
             $this->transferProducts[$index]['unit_name'] = $product->unit_name;
             $this->transferProducts[$index]['cost_per_unit'] = $product->buy_price ?? 0;
+            
+            // Get available quantity from origin warehouse
+            $availableQuantity = $this->getAvailableQuantity($this->warehouseOriginId, $product->id);
+            $this->transferProducts[$index]['available_quantity'] = $availableQuantity;
+            
             $this->calculateProductTotal($index . '.quantity');
         }
         
@@ -317,6 +368,11 @@ class WarehouseAddTransferForm extends Component
                 $this->transferProducts[$productIndex]['product_description'] = $product->buy_description ?? '';
                 $this->transferProducts[$productIndex]['unit_name'] = $product->unit_name;
                 $this->transferProducts[$productIndex]['cost_per_unit'] = $product->buy_price ?? 0;
+                
+                // Get available quantity from origin warehouse
+                $availableQuantity = $this->getAvailableQuantity($this->warehouseOriginId, $product->id);
+                $this->transferProducts[$productIndex]['available_quantity'] = $availableQuantity;
+                
                 $this->calculateProductTotal($productIndex . '.quantity');
             }
         }
@@ -375,12 +431,18 @@ class WarehouseAddTransferForm extends Component
                 $this->transferProducts[0]['unit_name'] = $product->unit_name;
                 $this->transferProducts[0]['cost_per_unit'] = $product->buy_price ?? 0;
                 $this->transferProducts[0]['quantity'] = 1; // Default quantity
+                
+                // Get available quantity from origin warehouse
+                $availableQuantity = $this->getAvailableQuantity($this->warehouseOriginId, $product->id);
+                $this->transferProducts[0]['available_quantity'] = $availableQuantity;
+                
                 $this->calculateProductTotal('0.quantity');
                 
                 Log::info('🔥 Preselected product:', [
                     'productId' => $product->id,
                     'productName' => $product->name,
-                    'sku' => $product->sku_number
+                    'sku' => $product->sku_number,
+                    'availableQuantity' => $availableQuantity
                 ]);
             }
         }
@@ -483,6 +545,29 @@ class WarehouseAddTransferForm extends Component
         if (empty($this->transferProducts)) {
             Log::error('🔥 No products found after filtering');
             $this->addError('transferProducts', 'At least one product must be added to the transfer.');
+            return;
+        }
+        
+        // Validate available quantities
+        $insufficientStockProducts = [];
+        foreach ($this->transferProducts as $index => $product) {
+            $availableQuantity = $this->getAvailableQuantity($this->warehouseOriginId, $product['product_id']);
+            $requestedQuantity = $product['quantity'] ?? 0;
+            
+            if ($availableQuantity <= 0) {
+                $insufficientStockProducts[] = $product['product_name'] ?? 'Unknown Product';
+                $this->addError("transferProducts.{$index}.product_id", 
+                    "Insufficient stock for {$product['product_name']}. Available: {$availableQuantity}");
+            } elseif ($requestedQuantity > $availableQuantity) {
+                $insufficientStockProducts[] = $product['product_name'] ?? 'Unknown Product';
+                $this->addError("transferProducts.{$index}.quantity", 
+                    "Requested quantity ({$requestedQuantity}) exceeds available stock ({$availableQuantity}) for {$product['product_name']}");
+            }
+        }
+        
+        if (!empty($insufficientStockProducts)) {
+            Log::error('🔥 Insufficient stock detected:', ['products' => $insufficientStockProducts]);
+            $this->addError('general', 'Cannot proceed with transfer. Some products have insufficient stock in the origin warehouse.');
             return;
         }
         

@@ -185,6 +185,21 @@
                                                               wire:model.defer="transferProducts.{{ $index }}.product_search"
                                                               autocomplete="off">
                                                    </div>
+                                                   
+                                                   @if(!empty($transferProducts[$index]['product_id']))
+                                                       <div class="mt-1">
+                                                           <span class="badge badge-info">
+                                                               Available: {{ $transferProducts[$index]['available_quantity'] ?? 0 }} {{ $transferProducts[$index]['unit_name'] ?? 'units' }}
+                                                           </span>
+                                                       </div>
+                                                       
+                                                       @if(($transferProducts[$index]['available_quantity'] ?? 0) <= 0)
+                                                           <div class="alert alert-warning mt-1 mb-0" style="padding: 8px 12px; font-size: 12px;">
+                                                               <i class="icon-warning position-left"></i>
+                                                               <strong>Warning:</strong> This product has no available stock in the origin warehouse.
+                                                           </div>
+                                                       @endif
+                                                   @endif
                                                     
                                                     @error('transferProducts.'.$index.'.product_id') 
                                                         <span class="text-danger small">{{ $message }}</span> 
@@ -193,7 +208,18 @@
                                                 <td>
                                                     <input type="number" class="form-control" 
                                                            wire:model="transferProducts.{{ $index }}.quantity" 
-                                                           step="0.01" min="0.01">
+                                                           step="1" min="1"                                pattern="[0-9]+"
+                                                           inputmode="numeric"
+                                                           oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                                           max="{{ !empty($transferProducts[$index]['product_id']) ? ($transferProducts[$index]['available_quantity'] ?? 0) : '' }}">
+                                                    
+                                                    @if(!empty($transferProducts[$index]['product_id']) && ($transferProducts[$index]['quantity'] ?? 0) > ($transferProducts[$index]['available_quantity'] ?? 0))
+                                                        <div class="alert alert-danger mt-1 mb-0" style="padding: 6px 10px; font-size: 11px;">
+                                                            <i class="icon-warning position-left"></i>
+                                                            <strong>Exceeds Available:</strong> Requested {{ $transferProducts[$index]['quantity'] ?? 0 }} but only {{ $transferProducts[$index]['available_quantity'] ?? 0 }} available
+                                                        </div>
+                                                    @endif
+                                                    
                                                     @error('transferProducts.'.$index.'.quantity') 
                                                         <span class="text-danger small">{{ $message }}</span> 
                                                     @enderror
@@ -409,6 +435,42 @@
     select:disabled option {
         background-color: #f5f5f5 !important;
         color: #6c757d !important;
+    }
+
+    /* Available quantity badge styling */
+    .badge-info {
+        background-color: #5bc0de !important;
+        color: #fff !important;
+        font-size: 11px !important;
+        padding: 4px 8px !important;
+    }
+
+    /* Warning alert styling for insufficient stock */
+    .alert-warning {
+        background-color: #fcf8e3 !important;
+        border-color: #faebcc !important;
+        color: #8a6d3b !important;
+        border-radius: 4px !important;
+        margin-top: 4px !important;
+        margin-bottom: 0 !important;
+    }
+
+    .alert-warning .icon-warning {
+        color: #f0ad4e !important;
+    }
+
+    /* Alert danger styling for quantity validation */
+    .alert-danger {
+        background-color: #f2dede !important;
+        border-color: #ebccd1 !important;
+        color: #a94442 !important;
+        border-radius: 4px !important;
+        margin-top: 4px !important;
+        margin-bottom: 0 !important;
+    }
+
+    .alert-danger .icon-warning {
+        color: #d9534f !important;
     }
 </style>
 @endpush
