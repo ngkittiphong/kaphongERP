@@ -82,7 +82,13 @@ class TransferSlipSeeder extends Seeder
             // Calculate dates based on status for realistic workflow
             $dateRequest = now()->subDays(rand(1, 30));
             $dateReceive = null;
+            $dateDeliver = null;
             $userReceiveName = null;
+            
+            // Set deliver date for In Transit status
+            if ($statusName === 'In Transit') {
+                $dateDeliver = $dateRequest->copy()->addDays(rand(1, 3)); // 1-3 days after request
+            }
             
             // Set receive date and user based on status
             if (in_array($statusName, ['Delivered', 'Completed'])) {
@@ -105,6 +111,7 @@ class TransferSlipSeeder extends Seeder
                 'user_request_name' => $requestUser->name ?? 'User ' . $requestUser->id,
                 'deliver_name' => 'Delivery Person ' . ($i + 1),
                 'date_receive' => $dateReceive,
+                'date_deliver' => $dateDeliver,
                 'user_receive_name' => $userReceiveName,
                 'warehouse_origin_id' => $originWarehouse->id,
                 'warehouse_origin_name' => $originWarehouse->name,

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('tel', 30)->nullable(); // VARCHAR(30)
             $table->datetime('date_request'); // DATETIME
             $table->string('user_request_name', 150); // VARCHAR(150)
+            $table->datetime('date_deliver')->nullable(); // DATETIME
             $table->string('deliver_name', 150)->nullable(); // VARCHAR(150)
             $table->datetime('date_receive')->nullable(); // DATETIME
             $table->string('user_receive_name', 150)->nullable(); // VARCHAR(150)

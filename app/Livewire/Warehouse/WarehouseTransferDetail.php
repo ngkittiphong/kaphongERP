@@ -111,13 +111,23 @@ class WarehouseTransferDetail extends Component
             try {
                 DB::beginTransaction();
                 
-                // Update transfer slip status
+                // Update transfer slip status based on the new status
                 $updateData = [
                     'transfer_slip_status_id' => $statusId,
-                    'user_receive_id' => auth()->id(),
-                    'user_receive_name' => auth()->user()->username,
-                    'date_receive' => now(),
                 ];
+                
+                // Handle In Transit status
+                if ($newStatus === 'In Transit') {
+                    $updateData['deliver_name'] = auth()->user()->username ?? 'Unknown';
+                    $updateData['date_deliver'] = now();
+                }
+                
+                // Handle Delivered status
+                if ($newStatus === 'Delivered') {
+                    $updateData['user_receive_id'] = auth()->id();
+                    $updateData['user_receive_name'] = auth()->user()->username ?? 'Unknown';
+                    $updateData['date_receive'] = now();
+                }
                 
                 // If changing to Cancelled status, add cancellation reason to note
                 if ($newStatus === 'Cancelled' && !empty($this->cancellationReason)) {
@@ -423,6 +433,11 @@ class WarehouseTransferDetail extends Component
         // In Transit → Delivered: Add stock to receiver warehouse
         if ($oldStatus === 'In Transit' && $newStatus === 'Delivered') {
             $this->addReceiverWarehouseStock();
+        }
+        
+        // In Transit → Cancelled: Restore stock to sender warehouse
+        if ($oldStatus === 'In Transit' && $newStatus === 'Cancelled') {
+            $this->restoreSenderWarehouseStock();
         }
     }
 

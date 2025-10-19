@@ -18,6 +18,7 @@ class TransferSlip extends Model
         'tel',
         'date_request',
         'user_request_name',
+        'date_deliver',
         'deliver_name',
         'date_receive',
         'user_receive_name',
@@ -34,6 +35,7 @@ class TransferSlip extends Model
     protected $casts = [
         'date_request' => 'datetime',
         'date_receive' => 'datetime',
+        'date_deliver' => 'datetime',
     ];
 
     /**

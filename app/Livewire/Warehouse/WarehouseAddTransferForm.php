@@ -621,8 +621,9 @@ class WarehouseAddTransferForm extends Component
                 'tel' => $this->tel,
                 'date_request' => $this->dateRequest,
                 'user_request_name' => $this->userRequestName,
-                'deliver_name' => $this->deliverName,
+                'deliver_name' => auth()->user()->username ?? 'Unknown', // Set current user as deliverer
                 'date_receive' => null,
+                'date_deliver' => now(), // Set delivery date since we're creating with In Transit status
                 'user_receive_name' => auth()->user()->username ?? 'Unknown',
                 'warehouse_origin_id' => $this->warehouseOriginId,
                 'warehouse_origin_name' => $originWarehouse->name,
