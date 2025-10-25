@@ -160,6 +160,15 @@
 
                     <div class="tab-pane" id="tab-warehouse">
                         <div class="row col-md-12 col-xs-12">
+                            <!-- Add Warehouse Button -->
+                            <div class="panel-heading no-padding-bottom">
+                                <div class="elements">
+                                    <button class="btn btn-primary" data-toggle="modal" data-target="#addWarehouseModal">
+                                        <i class="icon-plus-circle2"></i> {{ __t('warehouse.add_warehouse', 'Add Warehouse') }}
+                                    </button>
+                                </div>
+                            </div>
+                            
                             <div class="table-responsive">
                                 <table class="table datatable-warehouse-list table-striped" 
                                        data-has-data="{{ count($warehouses) > 0 ? '1' : '0' }}"
@@ -241,4 +250,8 @@
         </div>
     </div>
 </div>
+
+<!-- Include Warehouse Add Modal -->
+@include('livewire.branch.branch-warehouse-add-modal')
+
 <!------------------------------------  End Branch Detail ------------------------->

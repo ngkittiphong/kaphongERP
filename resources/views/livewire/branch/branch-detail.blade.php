@@ -643,8 +643,30 @@
                     console.log('Component refresh requested, scheduling warehouse DataTable init...');
                     scheduleWarehouseInit('component refresh', 500);
                 });
+
+                // Listen for warehouse creation to refresh datatable
+                @this.on('warehouseCreated', () => {
+                    console.log('Warehouse created, refreshing datatable...');
+                    scheduleWarehouseInit('warehouse created', 500);
+                });
             });
         }
 
     </script>
+
+    <script>
+        // Handle Add Warehouse modal events
+        document.addEventListener('livewire:init', () => {
+            console.log('🔄 Setting up warehouse modal listeners...');
+            
+            // Auto-hide modal after successful creation
+            Livewire.on('warehouseCreated', () => {
+                console.log('📢 warehouseCreated event received, hiding modal...');
+                setTimeout(() => {
+                    $('#addWarehouseModal').modal('hide');
+                }, 500);
+            });
+        });
+    </script>
 @endpush
+

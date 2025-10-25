@@ -1455,6 +1455,18 @@ class TranslationSeeder extends Seeder
                 'en' => 'Add new warehouse',
                 'th' => 'เพิ่มคลังสินค้าใหม่'
             ],
+            'warehouse.add_warehouse' => [
+                'en' => 'Add Warehouse',
+                'th' => 'เพิ่มคลังสินค้า'
+            ],
+            'warehouse.enter_warehouse_name' => [
+                'en' => 'Enter warehouse name',
+                'th' => 'กรอกชื่อคลังสินค้า'
+            ],
+            'warehouse.warehouse_created_successfully' => [
+                'en' => 'Warehouse created successfully',
+                'th' => 'เพิ่มคลังสินค้าสำเร็จ'
+            ],
             'warehouse.check_stock_work_list' => [
                 'en' => 'Check stock work list',
                 'th' => 'รายการงานตรวจสอบสต็อก'

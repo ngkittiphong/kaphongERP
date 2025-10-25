@@ -28,15 +28,21 @@ class BranchDetail extends Component
     public $companies = [];
     public $companyNameTh;
     public $warehouses = [];
+    
+    // Warehouse form properties
+    public $showAddWarehouseForm = false;
+    public $warehouseName = '';
 
     protected $listeners = [
         'BranchSelected' => 'loadBranch',
         'showAddBranchForm' => 'displayAddBranchForm',
         'showEditBranchForm' => 'displayEditBranchForm',
+        'showAddWarehouseForm' => 'displayAddWarehouseForm',
         'refreshComponent' => '$refresh',
         'createBranch' => 'createBranch',
         'deleteBranch' => 'deleteBranch',
-        'cancelForm' => 'cancelForm'
+        'cancelForm' => 'cancelForm',
+        'cancelWarehouseForm' => 'cancelWarehouseForm'
     ];
 
     protected function rules()
@@ -63,6 +69,7 @@ class BranchDetail extends Component
             'contact_name' => 'nullable|string|max:100',
             'contact_email' => 'nullable|email|max:100',
             'contact_mobile' => 'nullable|string|max:20',
+            'warehouseName' => 'required|string|max:255',
         ];
 
         // Add unique constraints for create operation
@@ -210,6 +217,60 @@ class BranchDetail extends Component
             'fax', 'website', 'email', 'is_head_office', 'branch_status_id', 'latitude', 'longitude',
             'contact_name', 'contact_email', 'contact_mobile', 'candidateBranchCode'
         ]);
+    }
+
+    public function displayAddWarehouseForm()
+    {
+        \Log::info("Livewire Event Received: showAddWarehouseForm");
+        $this->showAddWarehouseForm = true;
+        $this->warehouseName = '';
+        $this->resetErrorBag();
+    }
+
+    public function cancelWarehouseForm()
+    {
+        $this->showAddWarehouseForm = false;
+        $this->warehouseName = '';
+        $this->resetErrorBag();
+    }
+
+    public function createWarehouse()
+    {
+        if (!$this->branch) {
+            $this->addError('general', 'No branch selected. Please select a branch first.');
+            return;
+        }
+
+        $this->validate(['warehouseName' => 'required|string|max:255']);
+
+        try {
+            $warehouse = Warehouse::create([
+                'branch_id' => $this->branch->id,
+                'name' => $this->warehouseName,
+                'warehouse_status_id' => 1, // Active
+                'main_warehouse' => false,
+                'user_create_id' => auth()->id(),
+                'date_create' => now(),
+                'avr_remain_price' => 0.00,
+            ]);
+
+            // Refresh warehouses collection
+            $this->warehouses = $this->branch->fresh()->warehouses;
+
+            // Success - show message and close form
+            session()->flash('message', __t('warehouse.warehouse_created_successfully', 'Warehouse created successfully!'));
+            \Log::info("✅ Warehouse created successfully!");
+            
+            $this->showAddWarehouseForm = false;
+            $this->warehouseName = '';
+            
+            // Dispatch event to refresh datatable
+            $this->dispatch('warehouseCreated');
+            
+        } catch (\Exception $e) {
+            $this->addError('general', 'Failed to create warehouse: ' . $e->getMessage());
+            \Log::error("❌ Warehouse creation failed: " . $e->getMessage());
+        }
     }
 
     /**
