@@ -19,11 +19,11 @@ class BranchDetail extends Component
     public $showEditBranchForm = false;
     
     // Branch form fields
-    public $company_id, $branch_code, $branch_no, $name_th, $name_en, $address_th, $address_en;
+    public $company_id, $branch_code, $name_th, $name_en, $address_th, $address_en;
     public $bill_address_th, $bill_address_en, $post_code, $phone_country_code, $phone_number;
     public $fax, $website, $email, $is_active, $is_head_office, $latitude, $longitude;
     public $contact_name, $contact_email, $contact_mobile;
-    public $candidateBranchNo;
+    public $candidateBranchCode;
     
     public $companies = [];
     public $companyNameTh;
@@ -44,7 +44,6 @@ class BranchDetail extends Component
         $rules = [
             'company_id' => 'required|exists:companies,id',
             'branch_code' => 'required|string|max:50',
-            'branch_no' => 'nullable|string|max:20',
             'name_th' => 'required|string|max:255',
             'name_en' => 'nullable|string|max:255',
             'address_th' => 'nullable|string',
@@ -110,7 +109,6 @@ class BranchDetail extends Component
             $company = Company::find($this->company_id);
             $this->companyNameTh = $company?->company_name_th;
             $this->branch_code = $this->branch->branch_code;
-            $this->branch_no = $this->branch->branch_no;
             $this->name_th = $this->branch->name_th;
             $this->name_en = $this->branch->name_en;
             $this->address_th = $this->branch->address_th;
@@ -140,10 +138,10 @@ class BranchDetail extends Component
         \Log::info("Livewire Event Received: showAddBranchForm");
         $this->showAddBranchForm = true;
         $this->reset([
-            'company_id', 'branch_code', 'branch_no', 'name_th', 'name_en', 'address_th', 'address_en',
+            'company_id', 'branch_code', 'name_th', 'name_en', 'address_th', 'address_en',
             'bill_address_th', 'bill_address_en', 'post_code', 'phone_country_code', 'phone_number',
             'fax', 'website', 'email', 'is_active', 'is_head_office', 'latitude', 'longitude',
-            'contact_name', 'contact_email', 'contact_mobile', 'candidateBranchNo', 'companyNameTh'
+            'contact_name', 'contact_email', 'contact_mobile', 'candidateBranchCode', 'companyNameTh'
         ]);
         $this->resetErrorBag();
         $this->branch = null;
@@ -156,10 +154,13 @@ class BranchDetail extends Component
         $company = Company::find(1);
         $this->companyNameTh = $company?->company_name_th;
 
-        // Generate initial candidate branch number for forced company_id=1
-        $this->candidateBranchNo = Branch::generateBranchNo($this->company_id);
-        \Log::debug('Generated initial candidate branch number', [
-            'candidate_branch_no' => $this->candidateBranchNo
+        // Generate initial candidate branch code for forced company_id=1 and prefill input (editable)
+        $this->candidateBranchCode = Branch::generateBranchCode($this->company_id);
+        if (empty($this->branch_code)) {
+            $this->branch_code = $this->candidateBranchCode;
+        }
+        \Log::debug('Generated initial candidate branch code', [
+            'candidate_branch_code' => $this->candidateBranchCode
         ]);
         
         $this->dispatch('addBranch');
@@ -174,7 +175,6 @@ class BranchDetail extends Component
         if ($this->branch) {
             $this->company_id = $this->branch->company_id;
             $this->branch_code = $this->branch->branch_code;
-            $this->branch_no = $this->branch->branch_no;
             $this->name_th = $this->branch->name_th;
             $this->name_en = $this->branch->name_en;
             $this->address_th = $this->branch->address_th;
@@ -205,29 +205,35 @@ class BranchDetail extends Component
         $this->showEditBranchForm = false;
         $this->resetErrorBag();
         $this->reset([
-            'company_id', 'branch_code', 'branch_no', 'name_th', 'name_en', 'address_th', 'address_en',
+            'company_id', 'branch_code', 'name_th', 'name_en', 'address_th', 'address_en',
             'bill_address_th', 'bill_address_en', 'post_code', 'phone_country_code', 'phone_number',
             'fax', 'website', 'email', 'is_active', 'is_head_office', 'latitude', 'longitude',
-            'contact_name', 'contact_email', 'contact_mobile', 'candidateBranchNo'
+            'contact_name', 'contact_email', 'contact_mobile', 'candidateBranchCode'
         ]);
     }
 
     /**
-     * Called when company_id is updated - regenerate candidate branch number
+     * Called when company_id is updated - regenerate candidate branch code
      */
     public function updatedCompanyId()
     {
         if ($this->company_id) {
-            $this->candidateBranchNo = Branch::generateBranchNo($this->company_id);
-            \Log::debug('Generated candidate branch number for selected company', [
+            $this->candidateBranchCode = Branch::generateBranchCode($this->company_id);
+            if ($this->showAddBranchForm && empty($this->branch_code)) {
+                $this->branch_code = $this->candidateBranchCode;
+            }
+            \Log::debug('Generated candidate branch code for selected company', [
                 'company_id' => $this->company_id,
-                'candidate_branch_no' => $this->candidateBranchNo
+                'candidate_branch_code' => $this->candidateBranchCode
             ]);
         } else {
             // If no company selected, generate with default company_id = 1
-            $this->candidateBranchNo = Branch::generateBranchNo(1);
-            \Log::debug('Generated candidate branch number with default company', [
-                'candidate_branch_no' => $this->candidateBranchNo
+            $this->candidateBranchCode = Branch::generateBranchCode(1);
+            if ($this->showAddBranchForm && empty($this->branch_code)) {
+                $this->branch_code = $this->candidateBranchCode;
+            }
+            \Log::debug('Generated candidate branch code with default company', [
+                'candidate_branch_code' => $this->candidateBranchCode
             ]);
         }
     }
@@ -242,10 +248,9 @@ class BranchDetail extends Component
 
         // Handle duplicate entry errors
         if ($errorCode === '23000') { // Integrity constraint violation
-            if (strpos($errorMessage, 'branches_company_id_branch_code_unique') !== false) {
-                $this->addError('branch_code', 'This branch code already exists for this company.');
-            } elseif (strpos($errorMessage, 'branches_branch_no_unique') !== false) {
-                $this->addError('branch_no', 'This branch number already exists.');
+            if (strpos($errorMessage, 'branches_company_id_branch_code_unique') !== false
+                || strpos($errorMessage, 'branches_branch_code_unique') !== false) {
+                $this->addError('branch_code', 'This branch code already exists.');
             } elseif (strpos($errorMessage, 'branches_email_unique') !== false) {
                 $this->addError('email', 'This email address is already in use.');
             } elseif (strpos($errorMessage, 'branches_contact_email_unique') !== false) {
@@ -298,7 +303,6 @@ class BranchDetail extends Component
             $branch = Branch::create([
                 'company_id' => $this->company_id,
                 'branch_code' => $this->branch_code,
-                'branch_no' => $this->branch_no, // Will be auto-generated if empty
                 'name_th' => $this->name_th,
                 'name_en' => $this->name_en,
                 'address_th' => $this->address_th,
@@ -359,7 +363,6 @@ class BranchDetail extends Component
             $this->branch->update([
                 'company_id' => $this->company_id,
                 'branch_code' => $this->branch_code,
-                'branch_no' => $this->branch_no,
                 'name_th' => $this->name_th,
                 'name_en' => $this->name_en,
                 'address_th' => $this->address_th,

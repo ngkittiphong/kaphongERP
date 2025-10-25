@@ -112,7 +112,7 @@
                                                         <div class='row'>
                                                             <span href="#" class="list-group-item p-l-20">
                                                                 <div class="col-md-3 col-xs-3 text-bold">
-                                                                    {{ __t('setting.branch_no', 'Branch No.') }} :
+                                                                    {{ __t('setting.branch_code', 'Branch Code') }} :
                                                                 </div>
                                                                 <div class="col-md-8 col-xs-8 text-left">
                                                                     {{ $headOffice->branch_code }} (สาขาหลัก)
@@ -288,7 +288,7 @@
                                                                 <div class='row'>
                                                                     <span href="#" class="list-group-item p-l-20">
                                                                         <div class="col-md-3 col-xs-3 text-bold">
-                                                                            {{ __t('setting.branch_no', 'Branch No.') }} :
+                                                                            {{ __t('setting.branch_code', 'Branch Code') }} :
                                                                         </div>
                                                                         <div class="col-md-8 col-xs-8 text-left">
                                                                             {{ $branch->branch_code }}

@@ -67,7 +67,7 @@
                                 <div class='row'>
                                     <span href="#" class="list-group-item p-l-20">
                                         <div class="col-md-3 col-xs-3 text-bold">
-                                            {{ __t('branch.branch_no', 'เลขที่สาขา') }} :
+                                            {{ __t('branch.branch_code', 'Branch Code') }} :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
                                             {{ $branch->branch_code ?? 'N/A' }} 

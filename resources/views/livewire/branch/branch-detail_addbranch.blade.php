@@ -6,8 +6,8 @@
                 <div class="panel-heading">
                     <h4 class="panel-title">
                         {{ __t('branch.add_new_branch', 'Add New Branch') }}
-                        @if($candidateBranchNo)
-                            <span class="text-muted">({{ $candidateBranchNo }})</span>
+                        @if($candidateBranchCode)
+                            <span class="text-muted">({{ $candidateBranchCode }})</span>
                         @endif
                     </h4>
                 </div>
