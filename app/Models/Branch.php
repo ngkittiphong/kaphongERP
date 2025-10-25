@@ -56,6 +56,32 @@ class Branch extends Model
                 $branch->branch_status_id = 1;
             }
         });
+
+        static::created(function ($branch) {
+            // Automatically create main warehouse for the new branch
+            try {
+                Warehouse::create([
+                    'branch_id' => $branch->id,
+                    'name' => 'คลัง' . $branch->name_th,
+                    'main_warehouse' => true,
+                    'warehouse_status_id' => 1, // Active status
+                    'date_create' => now(),
+                    'user_create_id' => auth()->id(),
+                ]);
+
+                \Log::info('Main warehouse created automatically for branch', [
+                    'branch_id' => $branch->id,
+                    'branch_name_th' => $branch->name_th,
+                    'warehouse_name' => 'คลัง' . $branch->name_th
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Failed to create main warehouse for branch', [
+                    'branch_id' => $branch->id,
+                    'branch_name_th' => $branch->name_th,
+                    'error' => $e->getMessage()
+                ]);
+            }
+        });
     }
 
     public function company(): BelongsTo
