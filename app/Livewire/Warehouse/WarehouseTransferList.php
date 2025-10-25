@@ -68,7 +68,11 @@ class WarehouseTransferList extends BaseListComponent
         // Apply status filter
         if ($this->filter === 'pending') {
             $query->whereHas('status', function($q) {
-                $q->whereIn('name', ['Pending', 'Approved', 'In Transit']);
+                $q->where('name', 'Pending');
+            });
+        } elseif ($this->filter === 'in_transit') {
+            $query->whereHas('status', function($q) {
+                $q->where('name', 'In Transit');
             });
         } elseif ($this->filter === 'completed') {
             $query->whereHas('status', function($q) {
@@ -177,5 +181,26 @@ class WarehouseTransferList extends BaseListComponent
             'Returned' => 'secondary',
             default => 'secondary'
         };
+    }
+
+    public function getTranslatedStatusName($statusName)
+    {
+        $statusKeyMap = [
+            'Pending' => 'transfer_status.pending',
+            'Approved' => 'transfer_status.approved',
+            'In Transit' => 'transfer_status.in_transit',
+            'Delivered' => 'transfer_status.delivered',
+            'Completed' => 'transfer_status.completed',
+            'Cancelled' => 'transfer_status.cancelled',
+            'Returned' => 'transfer_status.returned',
+        ];
+
+        $translationKey = $statusKeyMap[$statusName] ?? null;
+        
+        if ($translationKey) {
+            return __t($translationKey, $statusName);
+        }
+        
+        return $statusName;
     }
 }

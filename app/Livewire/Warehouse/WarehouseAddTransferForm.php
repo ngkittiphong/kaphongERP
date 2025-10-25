@@ -596,9 +596,9 @@ class WarehouseAddTransferForm extends Component
                 'destination' => $destinationWarehouse ? $destinationWarehouse->name : 'NOT FOUND'
             ]);
             
-            // Get In Transit status (bypassing Approved)
-            $inTransitStatus = TransferSlipStatus::where('name', 'In Transit')->first();
-            Log::info('🔥 In Transit status found:', ['status_id' => $inTransitStatus ? $inTransitStatus->id : 'NOT FOUND']);
+            // Get Pending status for new transfers
+            $pendingStatus = TransferSlipStatus::where('name', 'Pending')->first();
+            Log::info('🔥 Pending status found:', ['status_id' => $pendingStatus ? $pendingStatus->id : 'NOT FOUND']);
             
             // Create transfer slip
             Log::info('🔥 Creating transfer slip with data:', [
@@ -608,12 +608,12 @@ class WarehouseAddTransferForm extends Component
                 'warehouse_origin_id' => $this->warehouseOriginId,
                 'warehouse_destination_id' => $this->warehouseDestinationId,
                 'total_quantity' => $this->getTotalQuantity(),
-                'transfer_slip_status_id' => $inTransitStatus->id,
+                'transfer_slip_status_id' => $pendingStatus->id,
             ]);
             
             $transferSlip = TransferSlip::create([
                 'user_request_id' => auth()->id(),
-                'user_receive_id' => auth()->id(), // Set to current user as default
+                'user_receive_id' => null, // Will be set when transfer is received
                 'transfer_slip_number' => $this->transferSlipNumber,
                 'company_name' => $this->companyName,
                 'company_address' => $this->companyAddress,
@@ -621,16 +621,16 @@ class WarehouseAddTransferForm extends Component
                 'tel' => $this->tel,
                 'date_request' => $this->dateRequest,
                 'user_request_name' => $this->userRequestName,
-                'deliver_name' => auth()->user()->username ?? 'Unknown', // Set current user as deliverer
+                'deliver_name' => null, // Will be set when transfer is delivered
                 'date_receive' => null,
-                'date_deliver' => now(), // Set delivery date since we're creating with In Transit status
-                'user_receive_name' => auth()->user()->username ?? 'Unknown',
+                'date_deliver' => null, // Will be set when transfer is delivered
+                'user_receive_name' => null, // Will be set when transfer is received
                 'warehouse_origin_id' => $this->warehouseOriginId,
                 'warehouse_origin_name' => $originWarehouse->name,
                 'warehouse_destination_id' => $this->warehouseDestinationId,
                 'warehouse_destination_name' => $destinationWarehouse->name,
                 'total_quantity' => $this->getTotalQuantity(),
-                'transfer_slip_status_id' => $inTransitStatus->id,
+                'transfer_slip_status_id' => $pendingStatus->id,
                 'description' => $this->description,
                 'note' => $this->note,
             ]);
@@ -654,10 +654,10 @@ class WarehouseAddTransferForm extends Component
                 Log::info("🔥 Detail created for product {$index}");
             }
             
-            // Since we're creating the transfer with "In Transit" status, 
-            // we need to reduce stock in the sender warehouse immediately
-            Log::info('🔥 Reducing sender warehouse stock for In Transit status...');
-            $this->reduceSenderWarehouseStock($transferSlip);
+            // Since we're creating the transfer with "Pending" status, 
+            // we don't reduce stock yet - it will be reduced when status changes to "In Transit"
+            Log::info('🔥 Transfer created with Pending status - no stock reduction needed yet...');
+            // $this->reduceSenderWarehouseStock($transferSlip); // Commented out for Pending status
             
             DB::commit();
             Log::info('🔥 Database transaction committed successfully');
@@ -692,7 +692,7 @@ class WarehouseAddTransferForm extends Component
     }
 
     /**
-     * Reduce stock in sender warehouse when creating transfer with In Transit status
+     * Reduce stock in sender warehouse when transfer status changes to In Transit
      */
     private function reduceSenderWarehouseStock($transferSlip)
     {

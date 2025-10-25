@@ -6,19 +6,23 @@
         <div class="btn-group btn-group-sm" role="group">
             <button type="button" class="btn {{ $filter === 'all' ? 'btn-primary' : 'btn-default' }}" 
                     wire:click="setFilter('all')">
-                All
+                {{ __t('common.all', 'All') }}
             </button>
             <button type="button" class="btn {{ $filter === 'pending' ? 'btn-warning' : 'btn-default' }}" 
                     wire:click="setFilter('pending')">
-                Pending
+                {{ __t('transfer_status.pending', 'Pending') }}
+            </button>
+            <button type="button" class="btn {{ $filter === 'in_transit' ? 'btn-info' : 'btn-default' }}" 
+                    wire:click="setFilter('in_transit')">
+                {{ __t('transfer_status.in_transit', 'In Transit') }}
             </button>
             <button type="button" class="btn {{ $filter === 'completed' ? 'btn-success' : 'btn-default' }}" 
                     wire:click="setFilter('completed')">
-                Done
+                {{ __t('common.done', 'Done') }}
             </button>
             <button type="button" class="btn {{ $filter === 'cancelled' ? 'btn-danger' : 'btn-default' }}" 
                     wire:click="setFilter('cancelled')">
-                Cancel
+                {{ __t('transfer_status.cancelled', 'Cancel') }}
             </button>
         </div>
     </div>
@@ -66,7 +70,7 @@
                                         
                                         <div class="text-bold {{ $this->getStatusTextColor($transferSlip->status->name ?? '') }}" style="font-size: 11px;">
                                             <i class="icon-{{ $this->getStatusIcon($transferSlip->status->name ?? '') }} position-left" style="font-size: 10px;"></i>
-                                            {{ $transferSlip->status->name ?? 'N/A' }}
+                                            {{ $this->getTranslatedStatusName($transferSlip->status->name ?? '') }}
                                         </div>
                                     </div>
                                 </div>

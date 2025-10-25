@@ -126,14 +126,14 @@
                                                     <h4 class="panel-title">
                                                         <span
                                                             class="text-primary">{{ $transferSlip->warehouse_origin_name ?? ($transferSlip->warehouseOrigin->name ?? 'N/A') }}</span>
-                                                        - Outbound
+                                                        - {{ __t('transfer.outbound', 'Outbound') }}
                                                     </h4>
                                                 </div>
                                                 <div class="panel-body">
                                                     <div class="row">
                                                         <div
                                                             class="col-md-4 col-xs-6 col-lg-4 text-left text-size-extralarge">
-                                                            Pick Date:
+                                                            {{ __t('transfer.pick_date', 'Pick Date') }}:
                                                         </div>
                                                         <div
                                                             class="col-md-8 col-xs-6 col-lg-8 text-left text-size-extralarge">
@@ -143,7 +143,7 @@
                                                     <div class="row">
                                                         <div
                                                             class="col-md-4 col-xs-6 col-lg-4 text-left text-size-extralarge">
-                                                            Picker:
+                                                            {{ __t('transfer.picker', 'Picker') }}:
                                                         </div>
                                                         <div
                                                             class="col-md-8 col-xs-6 col-lg-8 text-left text-size-extralarge">
@@ -159,14 +159,14 @@
                                                     <h4 class="panel-title">
                                                         <span
                                                             class="text-primary">{{ $transferSlip->warehouse_destination_name ?? ($transferSlip->warehouseDestination->name ?? 'N/A') }}</span>
-                                                        - Inbound
+                                                        - {{ __t('transfer.inbound', 'Inbound') }}
                                                     </h4>
                                                 </div>
                                                 <div class="panel-body">
                                                     <div class="row">
                                                         <div
                                                             class="col-md-4 col-xs-6 col-lg-4 text-left text-size-extralarge">
-                                                            Receive Date:
+                                                            {{ __t('transfer.receive_date', 'Receive Date') }}:
                                                         </div>
                                                         <div
                                                             class="col-md-8 col-xs-6 col-lg-8 text-left text-size-extralarge">
@@ -176,7 +176,7 @@
                                                     <div class="row">
                                                         <div
                                                             class="col-md-4 col-xs-6 col-lg-4 text-left text-size-extralarge">
-                                                            Receiver:
+                                                            {{ __t('transfer.receiver', 'Receiver') }}:
                                                         </div>
                                                         <div
                                                             class="col-md-8 col-xs-6 col-lg-8 text-left text-size-extralarge">
@@ -681,18 +681,18 @@
         }
 
         Swal.fire({
-            title: 'Confirm Transfer Creation',
+            title: '{{ __t("transfer.confirm_transfer_creation", "Confirm Transfer Creation") }}',
             html: `
                 <div style="text-align: left;">
                     <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                        <h5 style="margin: 0 0 10px 0; color: #495057;">{{ __t('warehouse.transfer_details', 'Transfer Details') }}</h5>
+                        <h5 style="margin: 0 0 10px 0; color: #495057;">{{ __t('transfer.transfer_details', 'Transfer Details') }}</h5>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-                            <div><strong>{{ __t('warehouse.from', 'From') }}:</strong> ${transferData.originWarehouse}</div>
-                            <div><strong>To:</strong> ${transferData.destinationWarehouse}</div>
+                            <div><strong>{{ __t('transfer.from', 'From') }}:</strong> ${transferData.originWarehouse}</div>
+                            <div><strong>{{ __t('transfer.to', 'To') }}:</strong> ${transferData.destinationWarehouse}</div>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-                            <div><strong>{{ __t('product.products', 'Products') }}:</strong> ${transferData.productCount}</div>
-                            <div><strong>{{ __t('product.total_qty', 'Total Qty') }}:</strong> ${transferData.totalQuantity}</div>
+                            <div><strong>{{ __t('transfer.items', 'Items') }}:</strong> ${transferData.productCount}</div>
+                            <div><strong>{{ __t('transfer.total_qty', 'Total Qty') }}:</strong> ${transferData.totalQuantity}</div>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                             <div><strong>{{ __t('transfer.transfer_slip_number', 'Transfer Slip Number') }}:</strong> <span style="color: #007bff; font-weight: bold;">${transferData.transferSlipNumber}</span></div>
@@ -702,21 +702,21 @@
                     
                     <div style="background-color: #e8f4fd; padding: 10px; border-radius: 6px; text-align: center; margin-bottom: 15px;">
                         <p style="margin: 0; font-weight: bold; color: #495057;">
-                            Total Cost: 
+                            {{ __t('transfer.total_cost', 'Total Cost') }}: 
                             <span style="color: #007bff; font-size: 1.2em;">$${transferData.totalCost.toFixed(2)}</span>
                         </p>
                     </div>
 
                     <div style="max-height: 200px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 4px; padding: 10px;">
-                        <h6 style="margin: 0 0 10px 0; color: #495057;">{{ __t('warehouse.products_to_transfer', 'Products to Transfer') }}:</h6>
+                        <h6 style="margin: 0 0 10px 0; color: #495057;">{{ __t('transfer.products_to_transfer', 'Products to be transferred') }}:</h6>
                         ${productListHtml}
                     </div>
                 </div>
             `,
             icon: 'question',
             showCancelButton: true,
-            confirmButtonText: 'Create Transfer',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: '{{ __t("transfer.create_transfer", "Create Transfer") }}',
+            cancelButtonText: '{{ __t("common.cancel", "Cancel") }}',
             confirmButtonColor: '#007bff',
             cancelButtonColor: '#6c757d',
             allowOutsideClick: false,

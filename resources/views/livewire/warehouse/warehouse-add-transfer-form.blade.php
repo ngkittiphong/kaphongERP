@@ -6,11 +6,11 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">
                             <i class="icon-plus-circle2 position-left"></i>
-                            Add New Product Transfer
+                            {{ __t('transfer.add_new_product_transfer', 'Add New Product Transfer') }}
                         </h3>
                         <div class="heading-elements">
                             <button type="button" class="btn btn-sm btn-default" wire:click="hideForm">
-                                <i class="icon-cross2"></i> Cancel
+                                <i class="icon-cross2"></i> {{ __t('common.cancel', 'Cancel') }}
                             </button>
                         </div>
                     </div>
@@ -20,7 +20,7 @@
                         <!-- Transfer Information -->
                         <div class="row">
                             <div class="col-md-12">
-                                <h6 class="text-semibold">Transfer Information</h6>
+                                <h6 class="text-semibold">{{ __t('transfer.transfer_information', 'Transfer Information') }}</h6>
                                 <hr>
                             </div>
                         </div>
@@ -35,7 +35,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label">Transfer Date <span class="text-danger">*</span></label>
+                                    <label class="control-label">{{ __t('transfer.transfer_date', 'Transfer Date') }} <span class="text-danger">*</span></label>
                                     <input type="date" class="form-control" wire:model="dateRequest" readonly>
                                     @error('dateRequest') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
@@ -45,15 +45,15 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label">Requested By <span class="text-danger">*</span></label>
+                                    <label class="control-label">{{ __t('transfer.requested_by', 'Requested By') }} <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" wire:model="userRequestName" readonly>
                                     @error('userRequestName') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label">Deliver Name</label>
-                                    <input type="text" class="form-control" wire:model="deliverName" placeholder="Enter deliver name">
+                                    <label class="control-label">{{ __t('transfer.deliver_name', 'Deliver Name') }}</label>
+                                    <input type="text" class="form-control" wire:model="deliverName" placeholder="{{ __t('transfer.enter_deliver_name', 'Enter deliver name') }}">
                                     @error('deliverName') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
@@ -62,9 +62,9 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label">Origin Warehouse <span class="text-danger">*</span></label>
+                                    <label class="control-label">{{ __t('transfer.origin_warehouse', 'Origin Warehouse') }} <span class="text-danger">*</span></label>
                                     <select class="form-control" wire:model.lazy="warehouseOriginId" @if($originWarehouseSelected) disabled @endif>
-                                        <option value="">Select Origin Warehouse</option>
+                                        <option value="">{{ __t('transfer.select_origin_warehouse', 'Select Origin Warehouse') }}</option>
                                         @foreach($warehouses as $warehouse)
                                             <option value="{{ $warehouse->id }}">{{ $warehouse->name }} ({{ $warehouse->branch->name ?? 'N/A' }})</option>
                                         @endforeach
@@ -73,16 +73,16 @@
                                     @if($originWarehouseSelected)
                                         <small class="text-muted">
                                             <i class="icon-lock position-left"></i>
-                                            Origin warehouse is locked after selection
+                                            {{ __t('transfer.origin_warehouse_locked', 'Origin warehouse is locked after selection') }}
                                         </small>
                                     @endif
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label">Destination Warehouse <span class="text-danger">*</span></label>
+                                    <label class="control-label">{{ __t('transfer.destination_warehouse', 'Destination Warehouse') }} <span class="text-danger">*</span></label>
                                     <select class="form-control" wire:model="warehouseDestinationId">
-                                        <option value="">Select Destination Warehouse</option>
+                                        <option value="">{{ __t('transfer.select_destination_warehouse', 'Select Destination Warehouse') }}</option>
                                         @foreach($warehouses as $warehouse)
                                             <option value="{{ $warehouse->id }}">{{ $warehouse->name }} ({{ $warehouse->branch->name ?? 'N/A' }})</option>
                                         @endforeach
@@ -122,8 +122,8 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label class="control-label">Description</label>
-                                    <textarea class="form-control" wire:model="description" rows="2" placeholder="Enter transfer description"></textarea>
+                                    <label class="control-label">{{ __t('transfer.description', 'Description') }}</label>
+                                    <textarea class="form-control" wire:model="description" rows="2" placeholder="{{ __t('transfer.enter_transfer_description', 'Enter transfer description') }}"></textarea>
                                     @error('description') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
@@ -132,8 +132,8 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label class="control-label">Note</label>
-                                    <textarea class="form-control" wire:model="note" rows="2" placeholder="Enter additional notes"></textarea>
+                                    <label class="control-label">{{ __t('transfer.note', 'Note') }}</label>
+                                    <textarea class="form-control" wire:model="note" rows="2" placeholder="{{ __t('transfer.enter_additional_notes', 'Enter additional notes') }}"></textarea>
                                     @error('note') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
@@ -143,7 +143,7 @@
                         @if($originWarehouseSelected)
                         <div class="row">
                             <div class="col-md-12">
-                                <h6 class="text-semibold">Product Transfer Details</h6>
+                                <h6 class="text-semibold">{{ __t('transfer.product_transfer_details', 'Product Transfer Details') }}</h6>
                                 <hr>
                             </div>
                         </div>
@@ -152,7 +152,7 @@
                             <div class="col-md-12">
                                 <div class="alert alert-info">
                                     <i class="icon-info position-left"></i>
-                                    Please select an origin warehouse to add products for transfer.
+                                    {{ __t('transfer.select_origin_warehouse_first', 'Please select an origin warehouse to add products for transfer.') }}
                                 </div>
                             </div>
                         </div>
@@ -165,12 +165,12 @@
                                     <table class="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <th width="30%">Product</th>
-                                                <th width="15%">Quantity</th>
-                                                <th width="15%">Unit</th>
-                                                <th width="15%">Cost/Unit</th>
-                                                <th width="15%">Total Cost</th>
-                                                <th width="10%">Action</th>
+                                                <th width="30%">{{ __t('transfer.product', 'Product') }}</th>
+                                                <th width="15%">{{ __t('transfer.quantity', 'Quantity') }}</th>
+                                                <th width="15%">{{ __t('transfer.unit', 'Unit') }}</th>
+                                                <th width="15%">{{ __t('transfer.cost_per_unit', 'Cost/Unit') }}</th>
+                                                <th width="15%">{{ __t('transfer.total_cost', 'Total Cost') }}</th>
+                                                <th width="10%">{{ __t('transfer.action', 'Action') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -181,7 +181,7 @@
                                                        <input type="text"
                                                               class="form-control product-typeahead"
                                                               data-index="{{ $index }}"
-                                                              placeholder="Search product by name or SKU..."
+                                                              placeholder="{{ __t('transfer.search_product_placeholder', 'Search product by name or SKU...') }}"
                                                               wire:model.defer="transferProducts.{{ $index }}.product_search"
                                                               autocomplete="off">
                                                    </div>
@@ -189,14 +189,14 @@
                                                    @if(!empty($transferProducts[$index]['product_id']))
                                                        <div class="mt-1">
                                                            <span class="badge badge-info">
-                                                               Available: {{ $transferProducts[$index]['available_quantity'] ?? 0 }} {{ $transferProducts[$index]['unit_name'] ?? 'units' }}
+                                                               {{ __t('transfer.available', 'Available') }}: {{ $transferProducts[$index]['available_quantity'] ?? 0 }} {{ $transferProducts[$index]['unit_name'] ?? 'units' }}
                                                            </span>
                                                        </div>
                                                        
                                                        @if(($transferProducts[$index]['available_quantity'] ?? 0) <= 0)
                                                            <div class="alert alert-warning mt-1 mb-0" style="padding: 8px 12px; font-size: 12px;">
                                                                <i class="icon-warning position-left"></i>
-                                                               <strong>Warning:</strong> This product has no available stock in the origin warehouse.
+                                                               <strong>{{ __t('common.warning', 'Warning') }}:</strong> {{ __t('transfer.warning_no_stock', 'This product has no available stock in the origin warehouse.') }}
                                                            </div>
                                                        @endif
                                                    @endif
@@ -216,7 +216,7 @@
                                                     @if(!empty($transferProducts[$index]['product_id']) && ($transferProducts[$index]['quantity'] ?? 0) > ($transferProducts[$index]['available_quantity'] ?? 0))
                                                         <div class="alert alert-danger mt-1 mb-0" style="padding: 6px 10px; font-size: 11px;">
                                                             <i class="icon-warning position-left"></i>
-                                                            <strong>Exceeds Available:</strong> Requested {{ $transferProducts[$index]['quantity'] ?? 0 }} but only {{ $transferProducts[$index]['available_quantity'] ?? 0 }} available
+                                                            <strong>{{ __t('transfer.exceeds_available', 'Exceeds Available') }}:</strong> {{ __t('transfer.requested', 'Requested') }} {{ $transferProducts[$index]['quantity'] ?? 0 }} {{ __t('transfer.but_only_available', 'but only') }} {{ $transferProducts[$index]['available_quantity'] ?? 0 }} {{ __t('transfer.available_units', 'available') }}
                                                         </div>
                                                     @endif
                                                     
@@ -258,7 +258,7 @@
                                                 <td colspan="6" class="text-right">
                                                     @if(count($transferProducts) < $maxProducts)
                                                         <button type="button" class="btn btn-sm btn-success" wire:click="addEmptyProduct">
-                                                            <i class="icon-plus"></i> Add
+                                                            <i class="icon-plus"></i> {{ __t('transfer.add', 'Add') }}
                                                         </button>
                                                     @endif
                                                 </td>
@@ -280,10 +280,10 @@
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <strong>Total Quantity: {{ $this->getTotalQuantity() }}</strong>
+                                                <strong>{{ __t('transfer.total_quantity', 'Total Quantity') }}: {{ $this->getTotalQuantity() }}</strong>
                                             </div>
                                             <div class="col-md-6">
-                                                <strong>Total Cost: ${{ number_format($this->getTotalCost(), 2) }}</strong>
+                                                <strong>{{ __t('transfer.total_cost_label', 'Total Cost') }}: ${{ number_format($this->getTotalCost(), 2) }}</strong>
                                             </div>
                                         </div>
                                     </div>
@@ -297,15 +297,15 @@
                         <div class="text-right">
                             <button type="button" class="btn btn-default" wire:click="hideForm" 
                                     @if($isSubmitting) disabled @endif>
-                                Cancel
+                                {{ __t('common.cancel', 'Cancel') }}
                             </button>
                             @if($originWarehouseSelected)
                                 <button type="submit" class="btn btn-primary" 
                                         @if($isSubmitting) disabled @endif>
                                     @if($isSubmitting)
-                                        <i class="icon-spinner2 spinner"></i> Creating...
+                                        <i class="icon-spinner2 spinner"></i> {{ __t('transfer.creating', 'Creating...') }}
                                     @else
-                                        <i class="icon-checkmark"></i> Create Transfer
+                                        <i class="icon-checkmark"></i> {{ __t('transfer.create_transfer', 'Create Transfer') }}
                                     @endif
                                 </button>
                             @else
@@ -315,7 +315,7 @@
                                         wire:loading.attr="disabled"
                                         wire:target="proceedToProductSelection"
                                         @if(!$warehouseOriginId) disabled @endif>
-                                    <i class="icon-arrow-right5"></i> Next
+                                    <i class="icon-arrow-right5"></i> {{ __t('transfer.next', 'Next') }}
                                 </button>
                             @endif
                         </div>
