@@ -148,8 +148,8 @@
                                             {{ __t('common.status', 'สถานะ') }} :
                                         </div>
                                         <div class="col-md-8 col-xs-8 text-left">
-                                            <span class="badge bg-{{ $branch->is_active ? 'success' : 'danger' }}">
-                                                {{ $branch->is_active ? __t('common.active', 'Active') : __t('common.inactive', 'Inactive') }}
+                                            <span class="badge bg-{{ ($branch->branch_status_id ?? 0) == 1 ? 'success' : 'danger' }}">
+                                                {{ ($branch->branch_status_id ?? 0) == 1 ? __t('common.active', 'Active') : __t('common.inactive', 'Inactive') }}
                                             </span>
                                         </div>
                                     </span>

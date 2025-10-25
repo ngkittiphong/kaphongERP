@@ -80,7 +80,7 @@ class ProductStockCard extends Component
 
     public function loadBranches()
     {
-        $this->branches = Branch::where('is_active', true)
+        $this->branches = Branch::where('branch_status_id', 1)
             ->orderBy('name_en')
             ->get();
     }

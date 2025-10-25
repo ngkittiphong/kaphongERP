@@ -38,7 +38,7 @@
 
                              <div class="col-md-1 col-sm-1">
                                  <div class="media-right media-middle">
-                                     <span class="status-mark bg-{{ $branch->is_active ? 'success' : 'danger' }}" placeholder=""></span>
+                                    <span class="status-mark bg-{{ ($branch->branch_status_id ?? 0) == 1 ? 'success' : 'danger' }}" placeholder=""></span>
                                  </div>
                              </div>
                          </div>

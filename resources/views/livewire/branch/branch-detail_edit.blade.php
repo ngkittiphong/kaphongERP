@@ -5,11 +5,6 @@
             <div class="row p-l-10 p-r-10 panel panel-flat">
                 <div class="panel-heading">
                     <h4 class="panel-title">{{ __t('branch.edit_branch', 'Edit Branch') }} - {{ $branch->name_th ?? 'N/A' }}</h4>
-                    <div class="elements">
-                        <button type="button" class="btn btn-default" wire:click="$dispatch('refreshComponent')">
-                            <i class="icon-arrow-left8"></i> {{ __t('branch.back_to_details', 'Back to Details') }}
-                        </button>
-                    </div>
                 </div>
                 <div class="panel-body">
                     @if (session()->has('message'))
@@ -201,11 +196,12 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <div class="checkbox" style="display: none;">
-                                        <label>
-                                            <input type="checkbox" wire:model.live="is_active" {{ $is_active ? 'checked' : '' }}> {{ __t('branch.active_branch', 'Active Branch') }}
-                                        </label>
-                                    </div>
+                                    <label for="edit_branch_status">{{ __t('branch.status', 'Status') }} <span class="text-danger">*</span></label>
+                                    <select wire:model="branch_status_id" class="form-control" id="edit_branch_status">
+                                        <option value="1">{{ __t('branch.active', 'Active') }}</option>
+                                        <option value="2">{{ __t('branch.inactive', 'Inactive') }}</option>
+                                    </select>
+                                    @error('branch_status_id') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">

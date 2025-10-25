@@ -42,6 +42,10 @@ class BranchController
             'website' => 'nullable|url|max:255',
         ]);
 
+        // Add default values for branch creation
+        $validated['branch_status_id'] = 1; // Set to Active status
+        $validated['is_head_office'] = false;
+        
         Branch::create($validated);
 
         return redirect()->route('branches.index')
@@ -54,12 +58,10 @@ class BranchController
     public function getHeadOffice()
     {
         $headOffice = Branch::where('is_head_office', true)
-            ->where('is_active', true)
-            ->where('branch_status_id', '!=', 0)
+            ->where('branch_status_id', 1)
             ->first();
         $otherBranches = Branch::where('is_head_office', false)
-            ->where('is_active', true)
-            ->where('branch_status_id', '!=', 0)
+            ->where('branch_status_id', 1)
             ->get();
         return view('setting.setting_company_profile', compact('headOffice', 'otherBranches'));
     }
@@ -138,9 +140,8 @@ class BranchController
                 ], 400);
             }
 
-            // Soft delete by updating is_active and setting deleted_at
+            // Soft delete by setting deleted_at and branch_status_id to 0 (deleted)
             $branch->update([
-                'is_active' => false,
                 'deleted_at' => now(),
                 'branch_status_id' => 0
             ]);

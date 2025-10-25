@@ -200,13 +200,7 @@
 
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <div class="checkbox" style="display: none;">
-                                        <label>
-                                            <input type="checkbox" wire:model.live="is_active" {{ $is_active ? 'checked' : '' }}> {{ __t('branch.active', 'Active') }}
-                                        </label>
-                                    </div>
-                                </div>
+                                <!-- Status is set to Active (1) by default on create; hidden in UI -->
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">

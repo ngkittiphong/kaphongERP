@@ -38,7 +38,6 @@ class CompanyBranchSeeder extends Seeder
                 'fax'                => '021234568',
                 'website'            => 'https://example.com',
                 'email'              => "branch{$i}@example.com",
-                'is_active'          => true,
                 'is_head_office'     => ($i === 1),
                 'branch_status_id'   => 1, // Active status
                 'latitude'           => null,

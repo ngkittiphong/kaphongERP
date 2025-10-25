@@ -27,7 +27,6 @@ class Branch extends Model
         'fax',
         'website',
         'email',
-        'is_active',
         'is_head_office',
         'branch_status_id',
         'latitude',
@@ -50,6 +49,11 @@ class Branch extends Model
                     'branch_code' => $branch->branch_code,
                     'branch_name' => $branch->name_en ?? $branch->name_th ?? 'Unknown'
                 ]);
+            }
+
+            // Default status to Active (1) if not provided
+            if (empty($branch->branch_status_id) && $branch->branch_status_id !== 0) {
+                $branch->branch_status_id = 1;
             }
         });
     }
@@ -74,7 +78,8 @@ class Branch extends Model
      */
     public function scopeActive($query)
     {
-        return $query->where('branch_status_id', '!=', 0);
+        // Active means status id = 1 (see BranchStatusSeeder)
+        return $query->where('branch_status_id', 1);
     }
 
     /**

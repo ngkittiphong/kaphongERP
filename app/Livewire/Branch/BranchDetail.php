@@ -21,7 +21,7 @@ class BranchDetail extends Component
     // Branch form fields
     public $company_id, $branch_code, $name_th, $name_en, $address_th, $address_en;
     public $bill_address_th, $bill_address_en, $post_code, $phone_country_code, $phone_number;
-    public $fax, $website, $email, $is_active, $is_head_office, $latitude, $longitude;
+    public $fax, $website, $email, $is_head_office, $branch_status_id, $latitude, $longitude;
     public $contact_name, $contact_email, $contact_mobile;
     public $candidateBranchCode;
     
@@ -56,8 +56,8 @@ class BranchDetail extends Component
             'fax' => 'nullable|string|max:20',
             'website' => 'nullable|url|max:255',
             'email' => 'nullable|email|max:100',
-            'is_active' => 'boolean',
             'is_head_office' => 'boolean',
+            'branch_status_id' => 'required|integer|in:1,2',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'contact_name' => 'nullable|string|max:100',
@@ -121,8 +121,8 @@ class BranchDetail extends Component
             $this->fax = $this->branch->fax;
             $this->website = $this->branch->website;
             $this->email = $this->branch->email;
-            $this->is_active = $this->branch->is_active;
             $this->is_head_office = $this->branch->is_head_office;
+            $this->branch_status_id = $this->branch->branch_status_id;
             $this->latitude = $this->branch->latitude;
             $this->longitude = $this->branch->longitude;
             $this->contact_name = $this->branch->contact_name;
@@ -140,13 +140,13 @@ class BranchDetail extends Component
         $this->reset([
             'company_id', 'branch_code', 'name_th', 'name_en', 'address_th', 'address_en',
             'bill_address_th', 'bill_address_en', 'post_code', 'phone_country_code', 'phone_number',
-            'fax', 'website', 'email', 'is_active', 'is_head_office', 'latitude', 'longitude',
+            'fax', 'website', 'email', 'is_head_office', 'branch_status_id', 'latitude', 'longitude',
             'contact_name', 'contact_email', 'contact_mobile', 'candidateBranchCode', 'companyNameTh'
         ]);
         $this->resetErrorBag();
         $this->branch = null;
         $this->warehouses = [];
-        $this->is_active = true;
+        $this->branch_status_id = 1;
         $this->is_head_office = false;
         
         // Force company to ID=1 and set display name
@@ -187,8 +187,8 @@ class BranchDetail extends Component
             $this->fax = $this->branch->fax;
             $this->website = $this->branch->website;
             $this->email = $this->branch->email;
-            $this->is_active = $this->branch->is_active;
             $this->is_head_office = $this->branch->is_head_office;
+            $this->branch_status_id = $this->branch->branch_status_id;
             $this->latitude = $this->branch->latitude;
             $this->longitude = $this->branch->longitude;
             $this->contact_name = $this->branch->contact_name;
@@ -207,7 +207,7 @@ class BranchDetail extends Component
         $this->reset([
             'company_id', 'branch_code', 'name_th', 'name_en', 'address_th', 'address_en',
             'bill_address_th', 'bill_address_en', 'post_code', 'phone_country_code', 'phone_number',
-            'fax', 'website', 'email', 'is_active', 'is_head_office', 'latitude', 'longitude',
+            'fax', 'website', 'email', 'is_head_office', 'branch_status_id', 'latitude', 'longitude',
             'contact_name', 'contact_email', 'contact_mobile', 'candidateBranchCode'
         ]);
     }
@@ -315,8 +315,8 @@ class BranchDetail extends Component
                 'fax' => $this->fax,
                 'website' => $this->website,
                 'email' => $this->email,
-                'is_active' => $this->is_active ?? false,
                 'is_head_office' => $this->is_head_office ?? false,
+                'branch_status_id' => $this->branch_status_id ?? 1, // Default to Active status
                 'latitude' => $this->latitude,
                 'longitude' => $this->longitude,
                 'contact_name' => $this->contact_name,
@@ -375,7 +375,7 @@ class BranchDetail extends Component
                 'fax' => $this->fax,
                 'website' => $this->website,
                 'email' => $this->email,
-                'is_active' => $this->is_active ?? false,
+                'branch_status_id' => $this->branch_status_id ?? ($this->branch->branch_status_id ?? 1),
                 'is_head_office' => $this->is_head_office ?? false,
                 'latitude' => $this->latitude,
                 'longitude' => $this->longitude,
