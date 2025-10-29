@@ -531,6 +531,47 @@
             setAvatarFromSlim();
         }
 
+        // Client-side calculation for Buy Price Excl. VAT (no page refresh)
+        function calculateBuyPriceExVatClientSide() {
+            const buyPriceInput = document.getElementById('buy_price');
+            const buyVatSelect = document.getElementById('buy_vat_id');
+            const buyPriceExVatInput = document.getElementById('buy_price_ex_vat');
+
+            if (!buyPriceInput || !buyVatSelect || !buyPriceExVatInput) {
+                return;
+            }
+
+            const buyPrice = parseFloat(buyPriceInput.value) || 0;
+            const selectedVatId = buyVatSelect.value;
+            
+            // Get VAT data from Livewire component
+            const vats = @json($vats);
+            const selectedVat = vats.find(v => v.id == selectedVatId);
+            const vatPercent = selectedVat ? parseFloat(selectedVat.price_percent) || 0 : 0;
+            
+            const divider = 1 + (vatPercent / 100);
+            const exVatPrice = divider > 0 ? buyPrice / divider : buyPrice;
+            
+            buyPriceExVatInput.value = exVatPrice.toFixed(2);
+        }
+
+        function initBuyPriceCalculation() {
+            const buyPriceInput = document.getElementById('buy_price');
+            const buyVatSelect = document.getElementById('buy_vat_id');
+
+            if (buyPriceInput) {
+                buyPriceInput.addEventListener('input', calculateBuyPriceExVatClientSide);
+                buyPriceInput.addEventListener('change', calculateBuyPriceExVatClientSide);
+            }
+
+            if (buyVatSelect) {
+                buyVatSelect.addEventListener('change', calculateBuyPriceExVatClientSide);
+            }
+
+            // Calculate on page load
+            calculateBuyPriceExVatClientSide();
+        }
+
         initSlim();
 
         document.addEventListener('livewire:initialized', () => {
@@ -547,6 +588,7 @@
                 setTimeout(() => {
                     initSlim();
                     initTypeahead();
+                    initBuyPriceCalculation();
                     scheduleStockCardInit('productSelected event', 400);
                     $('.venobox').venobox();
                     
@@ -563,6 +605,7 @@
                 setTimeout(() => {
                     initSlim();
                     initTypeahead();
+                    initBuyPriceCalculation();
                     
                     // Safely add event listener only if element exists
                     const addForm = document.getElementById('addProductForm');

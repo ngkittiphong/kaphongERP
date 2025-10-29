@@ -106,13 +106,18 @@
 
                             <div class="form-group">
                                 <label for="buy_price">{{ __t('product.buy_price', 'Buy Price') }} ({{ currency_symbol() }})</label>
-                                <input type="number" step="0.01" class="form-control" id="buy_price" wire:model="buy_price" value="{{ $product ? $product->buy_price : 0.00 }}">
+                                <input type="number" step="0.01" class="form-control" id="buy_price" wire:model.defer="buy_price" value="{{ $product ? $product->buy_price : 0.00 }}">
                                 @error('buy_price') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="form-group">
+                                <label>{{ __t('product.buy_price_ex_vat', 'Buy Price (Excl. VAT)') }} ({{ currency_symbol() }})</label>
+                                <input type="text" class="form-control" id="buy_price_ex_vat" value="{{ number_format($buyPriceExVat ?? 0, 2) }}" readonly>
+                            </div>
+
+                            <div class="form-group">
                                 <label for="buy_vat_id">{{ __t('product.buy_vat', 'Buy VAT') }}</label>
-                                <select class="form-control" id="buy_vat_id" wire:model="buy_vat_id" required>
+                                <select class="form-control" id="buy_vat_id" wire:model.defer="buy_vat_id" required>
                                     @foreach($vats as $vat)
                                         <option value="{{ $vat->id }}" {{ $vat->name === 'VAT 0%' ? 'selected' : '' }}>
                                             {{ $vat->name }}
@@ -142,7 +147,7 @@
 
                             <div class="form-group">
                                 <label for="sale_vat_id">{{ __t('product.sale_vat', 'Sale VAT') }}</label>
-                                <select class="form-control" id="sale_vat_id" wire:model="sale_vat_id" required>
+                                <select class="form-control" id="sale_vat_id" wire:model.live="sale_vat_id" required>
                                     @foreach($vats as $vat)
                                         <option value="{{ $vat->id }}" {{ $vat->name === 'VAT 0%' ? 'selected' : '' }}>
                                             {{ $vat->name }}
@@ -245,5 +250,4 @@
 
 
 @endpush
-
 

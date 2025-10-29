@@ -50,6 +50,7 @@ class ProductDetail extends Component
     public $buy_vat_id;
     public $buy_withholding_id;
     public $buy_description;
+    public $buyPriceExVat = 0;
     public $sale_price;
     public $sale_vat_id;
     public $candidateProductNo;
@@ -218,7 +219,8 @@ class ProductDetail extends Component
             'product_group_id', 'product_group_name', 'product_status_id', 'unit_name', 
             'buy_price', 'buy_vat_id', 'buy_withholding_id', 'buy_description',
             'sale_price', 'sale_vat_id', 'sale_withholding_id', 'sale_description',
-            'minimum_quantity', 'maximum_quantity', 'product_cover_img', 'candidateProductNo'
+            'minimum_quantity', 'maximum_quantity', 'product_cover_img', 'candidateProductNo',
+            'buyPriceExVat'
         ]);
         
         // Generate candidate product number
@@ -226,11 +228,37 @@ class ProductDetail extends Component
         
         // Set default values
         $this->buy_price = 0.00;
+        $this->buyPriceExVat = 0.00;
         $this->sale_price = 0.00;
         $this->product_status_id = 1; // Set default to Active status
         
         $this->product = null;
         $this->dispatch('addProduct');
+    }
+
+    public function updatedBuyPrice($value)
+    {
+        $this->calculateBuyPriceExVat();
+    }
+
+    public function updatedBuyVatId($value)
+    {
+        $this->calculateBuyPriceExVat();
+    }
+
+    protected function calculateBuyPriceExVat(): void
+    {
+        $buyPrice = (float) ($this->buy_price ?? 0);
+
+        $vatPercent = 0;
+        if ($this->buy_vat_id && $this->vats) {
+            $vatCollection = is_array($this->vats) ? collect($this->vats) : $this->vats;
+            $vat = $vatCollection->firstWhere('id', $this->buy_vat_id);
+            $vatPercent = $vat ? (float) ($vat->price_percent ?? 0) : 0;
+        }
+
+        $divider = 1 + ($vatPercent / 100);
+        $this->buyPriceExVat = $divider > 0 ? round($buyPrice / $divider, 2) : $buyPrice;
     }
 
     public function displayEditProductForm()
@@ -262,6 +290,7 @@ class ProductDetail extends Component
         $this->minimum_quantity = $this->product->minimum_quantity;
         $this->maximum_quantity = $this->product->maximum_quantity;
         $this->product_cover_img = $this->product->product_cover_img;
+        $this->calculateBuyPriceExVat();
         $this->dispatch('addProduct');
     }
 
@@ -295,6 +324,7 @@ class ProductDetail extends Component
             $this->minimum_quantity = $this->product->minimum_quantity;
             $this->maximum_quantity = $this->product->maximum_quantity;
             $this->product_cover_img = $this->product->product_cover_img;
+            $this->calculateBuyPriceExVat();
         }
         
         \Log::info("Edit product form cancelled, returning to product detail view");
@@ -315,8 +345,10 @@ class ProductDetail extends Component
             'product_group_id', 'product_group_name', 'product_status_id', 'unit_name', 
             'buy_price', 'buy_vat_id', 'buy_withholding_id', 'buy_description',
             'sale_price', 'sale_vat_id', 'sale_withholding_id', 'sale_description',
-            'minimum_quantity', 'maximum_quantity', 'product_cover_img', 'candidateProductNo'
+            'minimum_quantity', 'maximum_quantity', 'product_cover_img', 'candidateProductNo',
+            'buyPriceExVat'
         ]);
+        $this->buyPriceExVat = 0;
         
         \Log::info("Add product form cancelled, returning to product list view");
     }
