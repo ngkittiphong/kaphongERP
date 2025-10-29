@@ -321,26 +321,24 @@
             console.log('  - All tabs:', $('.panel-flat .tab-pane').map(function() { return this.id; }).get());
         }, 500);
         
-        (function() {
-            console.log('🔧 IIFE Started - Warehouse Detail DataTables');
-            var inventoryDT = null;
-            var movementsDT = null;
-
+        function initWarehouseDetailDataTables() {
+            console.log('🔧 Initializing Warehouse Detail DataTables');
+            
+            // Simplified initialization function for inventory table
             function initInventoryTable() {
                 console.log('🔍 initInventoryTable called');
                 
                 if (!$.fn.DataTable) { 
                     console.error('❌ DataTables plugin missing'); 
-                    return; 
+                    return null;
                 }
-                console.log('✅ DataTables plugin found');
                 
                 var $table = $('#inventoryTable');
                 console.log('🔍 Looking for #inventoryTable, found:', $table.length);
                 
                 if ($table.length === 0) { 
                     console.warn('⚠️ #inventoryTable not found');
-                    return; 
+                    return null;
                 }
 
                 console.log('📊 Table structure check:');
@@ -348,17 +346,23 @@
                 console.log('  - tbody:', $table.find('tbody').length);
                 console.log('  - rows:', $table.find('tbody tr').length);
 
+                // Destroy existing DataTable if present
                 if ($.fn.DataTable.isDataTable($table)) {
-                    console.log('🔄 Destroying existing DataTable');
-                    $table.DataTable().destroy();
+                    console.log('🔄 Destroying existing inventory DataTable');
+                    try {
+                        $table.DataTable().destroy();
+                        console.log('✅ Inventory DataTable destroyed successfully');
+                    } catch (error) {
+                        console.error('❌ Error destroying inventory DataTable:', error);
+                    }
                 }
 
-                console.log('🚀 Initializing DataTable...');
+                console.log('🚀 Initializing Inventory DataTable...');
                 try {
-                    inventoryDT = $table.DataTable({
+                    var inventoryDT = $table.DataTable({
                         autoWidth: true,
                         colReorder: true,
-                        dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>', // Standard layout with search and length
+                        dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
                         lengthMenu: [10, 25, 50],
                         searching: true,
                         language: { 
@@ -375,103 +379,144 @@
                         pageLength: 10,
                         order: [[ 0, 'asc' ]]
                     });
-                    console.log('✅ DataTable initialized successfully:', inventoryDT);
+                    console.log('✅ Inventory DataTable initialized successfully');
+                    return inventoryDT;
                 } catch (error) {
-                    console.error('❌ DataTable initialization failed:', error);
-                    return;
+                    console.error('❌ Inventory DataTable initialization failed:', error);
+                    return null;
                 }
-
-                // DataTable search is now handled by default search box
-                
-                console.log('✅ Inventory table setup complete');
             }
 
+            // Simplified initialization function for movements table
             function initMovementsTable() {
-                if (!$.fn.DataTable) { console.error('DataTables plugin missing'); return; }
+                console.log('🔍 initMovementsTable called');
+                
+                if (!$.fn.DataTable) {
+                    console.error('❌ DataTables plugin missing');
+                    return null;
+                }
+                
                 var $table = $('#movementsTable');
-                if ($table.length === 0) { return; }
+                console.log('🔍 Looking for #movementsTable, found:', $table.length);
+                
+                if ($table.length === 0) {
+                    console.warn('⚠️ #movementsTable not found');
+                    return null;
+                }
 
+                // Destroy existing DataTable if present
                 if ($.fn.DataTable.isDataTable($table)) {
-                    $table.DataTable().destroy();
-                }
-
-                movementsDT = $table.DataTable({
-                    autoWidth: true,
-                    colReorder: true,
-                    dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>', // Standard layout with search and length
-                    lengthMenu: [10, 25, 50],
-                    searching: true,
-                    language: { 
-                        search: '_INPUT_', 
-                        lengthMenu: '_MENU_', 
-                        paginate: { 
-                            first: '{{ __t("common.first", "First") }}', 
-                            last: '{{ __t("common.last", "Last") }}', 
-                            next: '&rarr;', 
-                            previous: '&larr;' 
-                        } 
-                    },
-                    stateSave: true,
-                    pageLength: 10,
-                    order: [[ 0, 'asc' ]]
-                });
-
-                // DataTable search is now handled by default search box
-
-                // Date range filter scoped to movements table
-                var filterName = 'warehouseMovementsDateFilter';
-                $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(function(fn) { return fn.name !== filterName; });
-                function warehouseMovementsDateFilter(settings, data) {
-                    if (settings.nTable.id !== 'movementsTable') { return true; }
-                    var from = $('#movementDateFrom').val();
-                    var to = $('#movementDateTo').val();
-                    var date = new Date(data[1]);
-                    if (from && date < new Date(from)) { return false; }
-                    if (to && date > new Date(to)) { return false; }
-                    return true;
-                }
-                $.fn.dataTable.ext.search.push(warehouseMovementsDateFilter);
-
-                $('#movementDateFrom, #movementDateTo').off('change.mov').on('change.mov', function(){
-                    if (movementsDT) { movementsDT.draw(); }
-                });
-
-                window.clearMovementFilters = function() {
-                    $('#movementDateFrom').val('');
-                    $('#movementDateTo').val('');
-                    if (movementsDT) {
-                        movementsDT.draw();
+                    console.log('🔄 Destroying existing movements DataTable');
+                    try {
+                        $table.DataTable().destroy();
+                        console.log('✅ Movements DataTable destroyed successfully');
+                    } catch (error) {
+                        console.error('❌ Error destroying movements DataTable:', error);
                     }
-                };
+                }
+
+                console.log('🚀 Initializing Movements DataTable...');
+                try {
+                    var movementsDT = $table.DataTable({
+                        autoWidth: true,
+                        colReorder: true,
+                        dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+                        lengthMenu: [10, 25, 50],
+                        searching: true,
+                        language: { 
+                            search: '_INPUT_', 
+                            lengthMenu: '_MENU_', 
+                            paginate: { 
+                                first: '{{ __t("common.first", "First") }}', 
+                                last: '{{ __t("common.last", "Last") }}', 
+                                next: '&rarr;', 
+                                previous: '&larr;' 
+                            } 
+                        },
+                        stateSave: true,
+                        pageLength: 10,
+                        order: [[ 0, 'asc' ]]
+                    });
+
+                    // Date range filter scoped to movements table
+                    var filterName = 'warehouseMovementsDateFilter';
+                    $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(function(fn) { 
+                        return fn.name !== filterName; 
+                    });
+                    
+                    function warehouseMovementsDateFilter(settings, data) {
+                        if (settings.nTable.id !== 'movementsTable') { return true; }
+                        var from = $('#movementDateFrom').val();
+                        var to = $('#movementDateTo').val();
+                        var date = new Date(data[1]);
+                        if (from && date < new Date(from)) { return false; }
+                        if (to && date > new Date(to)) { return false; }
+                        return true;
+                    }
+                    warehouseMovementsDateFilter.name = filterName;
+                    $.fn.dataTable.ext.search.push(warehouseMovementsDateFilter);
+
+                    $('#movementDateFrom, #movementDateTo').off('change.mov').on('change.mov', function(){
+                        if (movementsDT) { movementsDT.draw(); }
+                    });
+
+                    window.clearMovementFilters = function() {
+                        $('#movementDateFrom').val('');
+                        $('#movementDateTo').val('');
+                        if (movementsDT) {
+                            movementsDT.draw();
+                        }
+                    };
+                    
+                    console.log('✅ Movements DataTable initialized successfully');
+                    return movementsDT;
+                } catch (error) {
+                    console.error('❌ Movements DataTable initialization failed:', error);
+                    return null;
+                }
             }
 
+            // Initialize tables and apply enhancements
             function initTables() {
                 console.log('🔧 initTables called');
-                initInventoryTable();
-                initMovementsTable();
+                
+                var inventoryTable = initInventoryTable();
+                var movementsTable = initMovementsTable();
 
-                // Placeholder text
+                // Apply common enhancements
                 $('.dataTables_filter input[type=search]').attr('placeholder', '{{ __t("common.find", "Find") }}');
-                // Length select
                 $('.dataTables_length select').select2({ minimumResultsForSearch: Infinity, width: 'auto' });
+                
                 console.log('🔧 initTables complete');
+                return {
+                    inventory: inventoryTable,
+                    movements: movementsTable
+                };
             }
 
             // Test function to manually trigger search
             window.testInventorySearch = function(searchTerm) {
                 console.log('🧪 Testing inventory search with term:', searchTerm);
-                if (inventoryDT) {
-                    inventoryDT.search(searchTerm).draw();
+                var $table = $('#inventoryTable');
+                if ($table.length && $.fn.DataTable.isDataTable($table)) {
+                    var table = $table.DataTable();
+                    table.search(searchTerm).draw();
                     console.log('✅ Test search applied');
                 } else {
-                    console.error('❌ inventoryDT not available for testing');
+                    console.error('❌ Inventory table not initialized');
                 }
             };
 
             // Force initialization function for testing
             window.forceInitInventory = function() {
                 console.log('🔨 Force initializing inventory table...');
-                initInventoryTable();
+                return initInventoryTable();
+            };
+            
+            // Force initialization function for movements table
+            window.forceInitMovements = function() {
+                console.log('🔨 Force initializing movements table...');
+                return initMovementsTable();
             };
 
 
@@ -486,83 +531,77 @@
             document.addEventListener('livewire:initialized', () => {
                 console.log('⚡ Livewire initialized - setting up DataTable events');
                 
-                // Tab switch events
+                // Tab switch events for inventory and movements tabs
                 $('a[href="#tab-inventory"]').off('shown.bs.tab.inventory').on('shown.bs.tab.inventory', function(){
-                    console.log('📋 Inventory tab shown');
+                    console.log('📋 Inventory tab shown, initializing table');
                     setTimeout(function() {
-                        console.log('⏰ Delayed inventory table init after tab switch');
                         initInventoryTable();
                     }, 200);
                 });
                 
                 $('a[href="#tab-movements"]').off('shown.bs.tab.movements').on('shown.bs.tab.movements', function(){
-                    console.log('📋 Movements tab shown');
-                    setTimeout(initMovementsTable, 200);
+                    console.log('📋 Movements tab shown, initializing table');
+                    setTimeout(function() {
+                        initMovementsTable();
+                    }, 200);
                 });
 
-                // Check if we're already on inventory tab after Livewire loads
+                // Check if we're already on a tab that needs DataTable initialization
                 setTimeout(() => {
-                    if ($('#tab-inventory').hasClass('active')) {
-                        console.log('🔍 Already on inventory tab after Livewire init, initializing');
-                        initTables();
-                    } else {
-                        console.log('⏳ Not on inventory tab, waiting for tab switch');
+                    var activeTab = $('.panel-flat .tab-pane.active').attr('id');
+                    console.log('🔍 Active tab after Livewire init:', activeTab);
+                    
+                    if (activeTab === 'tab-inventory' && $('#inventoryTable').length > 0) {
+                        console.log('📋 Already on inventory tab, initializing table');
+                        initInventoryTable();
+                    } else if (activeTab === 'tab-movements' && $('#movementsTable').length > 0) {
+                        console.log('📋 Already on movements tab, initializing table');
+                        initMovementsTable();
                     }
                 }, 300);
 
-                // Listen for warehouse loaded event
+                // Listen for warehouse loaded event (fired when clicking a warehouse)
                 @this.on('warehouseLoaded', (data) => {
                     console.log('🏢 Warehouse loaded:', data);
-                    console.log('🔍 Debugging tab state:');
-                    console.log('  - #tab-inventory exists:', $('#tab-inventory').length);
-                    console.log('  - #tab-inventory has active class:', $('#tab-inventory').hasClass('active'));
-                    console.log('  - Active tab:', $('.panel-flat .tab-pane.active').attr('id'));
-                    console.log('  - #inventoryTable exists:', $('#inventoryTable').length);
-                    console.log('  - #movementsTable exists:', $('#movementsTable').length);
+                    
+                    // Trigger reinit of warehouse list DataTable
+                    setTimeout(() => {
+                        if ($('.datatable-reorder-state-saving').length > 0 && !$.fn.DataTable.isDataTable('.datatable-reorder-state-saving')) {
+                            console.log('⚠️ Warehouse list table lost DataTable after loading detail, dispatching warehouseListUpdated...');
+                            Livewire.dispatch('warehouseListUpdated');
+                        }
+                    }, 200);
                     
                     setTimeout(() => {
-                        // More flexible check - initialize if inventory tab exists and is active OR if we're on detail tab
-                        const inventoryTabActive = $('#tab-inventory').hasClass('active');
-                        const inventoryTableExists = $('#inventoryTable').length > 0;
-                        const movementsTabActive = $('#tab-movements').hasClass('active');
-                        const movementsTableExists = $('#movementsTable').length > 0;
+                        var activeTab = $('.panel-flat .tab-pane.active').attr('id');
+                        console.log('📋 Warehouse loaded, active tab:', activeTab);
                         
-                        console.log('📋 After timeout check:');
-                        console.log('  - inventoryTabActive:', inventoryTabActive);
-                        console.log('  - inventoryTableExists:', inventoryTableExists);
-                        console.log('  - movementsTabActive:', movementsTabActive);
-                        console.log('  - movementsTableExists:', movementsTableExists);
-                        
-                        if (inventoryTabActive && inventoryTableExists) {
-                            console.log('📋 Warehouse loaded, initializing inventory table');
+                        // Initialize tables based on which tab is active
+                        if (activeTab === 'tab-inventory' && $('#inventoryTable').length > 0) {
+                            console.log('📋 Initializing inventory table for new warehouse');
                             initInventoryTable();
-                        } else if (inventoryTableExists) {
-                            // Initialize even if not active, for when user switches to tab later
-                            console.log('📋 Inventory table exists, pre-initializing for later use');
+                        } else if (activeTab === 'tab-movements' && $('#movementsTable').length > 0) {
+                            console.log('📋 Initializing movements table for new warehouse');
+                            initMovementsTable();
+                        } else if ($('#inventoryTable').length > 0) {
+                            // Pre-initialize inventory table even if not active
+                            console.log('📋 Pre-initializing inventory table for later use');
                             initInventoryTable();
                         }
-                        
-                        if (movementsTabActive && movementsTableExists) {
-                            console.log('📋 Warehouse loaded, initializing movements table');
-                            initMovementsTable();
-                        } else if (movementsTableExists) {
-                            console.log('📋 Movements table exists, pre-initializing for later use');
-                            initMovementsTable();
-                        }
-                    }, 500); // Increased delay to ensure DOM is ready
+                    }, 500);
                 });
 
                 // Listen for warehouse updated event
                 @this.on('warehouseUpdated', (data) => {
                     console.log('⚡ Warehouse updated:', data);
                     setTimeout(() => {
-                        // Check if inventory tab is active and reinitialize if needed
-                        if ($('#tab-inventory').hasClass('active') && $('#inventoryTable').length > 0) {
-                            console.log('🏢 Warehouse updated, re-initializing inventory table');
+                        var activeTab = $('.panel-flat .tab-pane.active').attr('id');
+                        
+                        if (activeTab === 'tab-inventory' && $('#inventoryTable').length > 0) {
+                            console.log('🔄 Re-initializing inventory table after update');
                             initInventoryTable();
-                        }
-                        if ($('#tab-movements').hasClass('active') && $('#movementsTable').length > 0) {
-                            console.log('🏢 Warehouse updated, re-initializing movements table');
+                        } else if (activeTab === 'tab-movements' && $('#movementsTable').length > 0) {
+                            console.log('🔄 Re-initializing movements table after update');
                             initMovementsTable();
                         }
                     }, 300);
@@ -770,7 +809,9 @@
                 });
             });
 
-        })();
+        }
+
+        initWarehouseDetailDataTables();
 
         // Test functions (outside IIFE so they're globally accessible)
         window.testShowModal = function() {
@@ -804,6 +845,35 @@
         // Re-initialize tooltips after Livewire updates
         document.addEventListener('livewire:updated', function() {
             $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        document.addEventListener('livewire:load', () => {
+            console.log('warehouse-detail :: livewire:load');
+
+            if (!(window.Livewire && typeof Livewire.on === 'function')) {
+                console.warn('warehouse-detail :: Livewire helpers not available, skipping DataTable re-init hooks');
+                return;
+            }
+
+            Livewire.on('warehouseLoaded', () => {
+                console.log('warehouse-detail :: warehouseLoaded event received');
+                setTimeout(() => {
+                    initWarehouseDetailDataTables();
+                }, 150);
+            });
+
+            if (typeof Livewire.hook === 'function') {
+                Livewire.hook('message.processed', (message, component) => {
+                    if (component.fingerprint?.name === 'warehouse.warehouse-detail') {
+                        if (component.el && component.el.querySelector('#inventoryTable')) {
+                            console.log('warehouse-detail :: message processed, re-initializing tables');
+                            setTimeout(() => {
+                                initWarehouseDetailDataTables();
+                            }, 100);
+                        }
+                    }
+                });
+            }
         });
     </script>
 

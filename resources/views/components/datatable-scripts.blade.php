@@ -186,11 +186,19 @@
 
         function initReorderStateSavingTables() {
             if ($('.datatable-reorder-state-saving').length === 0) {
+                console.log('No datatable-reorder-state-saving table found');
                 return;
             }
 
+            // If already initialized, destroy and reinitialize to ensure fresh state
             if ($.fn.DataTable.isDataTable('.datatable-reorder-state-saving')) {
-                return;
+                console.log('DataTable already exists for .datatable-reorder-state-saving, destroying and recreating...');
+                try {
+                    $('.datatable-reorder-state-saving').DataTable().destroy();
+                    console.log('✅ DataTable destroyed successfully');
+                } catch (error) {
+                    console.error('❌ Error destroying DataTable:', error);
+                }
             }
 
             console.log('Found datatable-reorder-state-saving table, initializing...');
@@ -205,9 +213,9 @@
             });
             
             if (productTable) {
-                console.log('Product table initialized successfully via DataTableManager');
+                console.log('✅ Warehouse list table initialized successfully via DataTableManager');
             } else {
-                console.error('Failed to initialize product table via DataTableManager');
+                console.error('❌ Failed to initialize warehouse list table via DataTableManager');
             }
         }
 
@@ -364,6 +372,18 @@
 
         // Reinitialize on Livewire updates for warehouse, product, and branch data changes
         document.addEventListener('livewire:updated', (event) => {
+            // Check if the warehouse list table exists and needs reinitialization
+            if ($('.datatable-reorder-state-saving').length > 0) {
+                console.log('Livewire:updated - checking if warehouse list table needs reinit');
+                // Check if the table is already initialized
+                if (!$.fn.DataTable.isDataTable('.datatable-reorder-state-saving')) {
+                    console.log('⚠️ Warehouse list table lost DataTable initialization, reinitializing...');
+                    setTimeout(() => {
+                        tryInitDataTable();
+                    }, 300);
+                }
+            }
+            
             // Reinitialize if the update is related to warehouse, product, or branch data
             if (event.detail && event.detail.component && 
                 (event.detail.component.includes('warehouse') || event.detail.component.includes('product') || event.detail.component.includes('branch'))) {
