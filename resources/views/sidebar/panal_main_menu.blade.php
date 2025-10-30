@@ -17,8 +17,8 @@
                 <a href=""><i class="icon-alignment-unalign"></i> <span>{{ __t('menu.products', 'Products') }}</span></a>
                 <ul>							
                     <li><a href="/menu/menu_product">{{ __t('menu.products', 'Products') }}</a></li>
-                    <li><a href="/menu/menu_category">{{ __t('menu.category', 'Category') }}</a></li>
-                    <li><a href="/menu/menu_transfer">{{ __t('menu.transfer', 'Transfer') }}</a></li>																			
+                    {{-- <li><a href="/menu/menu_category">{{ __t('menu.category', 'Category') }}</a></li>
+                    <li><a href="/menu/menu_transfer">{{ __t('menu.transfer', 'Transfer') }}</a></li>																			 --}}
                 </ul>
             </li>
         @endcan
@@ -50,7 +50,7 @@
                     <li><a href="/menu/menu_warehouse">{{ __t('menu.warehouse', 'Warehouse') }}</a></li>
                     <li><a href="/menu/menu_warehouse_checkstock">{{ __t('menu.check_stock', 'Check Stock') }}</a></li>
                     <li><a href="/menu/menu_warehouse_transfer">{{ __t('menu.transfer', 'Transfer') }}</a></li>
-                    <li><a href="/menu/menu_warehouse_stock">{{ __t('menu.stock_operations', 'Stock Operations') }}</a></li>																			
+                    {{-- <li><a href="/menu/menu_warehouse_stock">{{ __t('menu.stock_operations', 'Stock Operations') }}</a></li>																			 --}}
                 </ul>
             </li>
         @endcan										
